@@ -1,0 +1,6 @@
+**/__pycache__
+managed_gamesettings/
+active_servers.json
+*.log
+.coverage
+htmlcov/
