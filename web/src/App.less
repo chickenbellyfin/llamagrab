@@ -1,0 +1,57 @@
+@import 'antd/lib/style/themes/dark.less';
+@import 'antd/dist/antd.dark.less';
+
+// list of vars
+// https://github.com/ant-design/ant-design/blob/master/components/style/themes/default.less
+//@body-background: #141414;
+@body-background: #2f343c;
+@component-background: #383e47;
+//@input-bg: #2c3139;
+
+@card-head-background: @component-background;
+
+@border-color-base: #22272d;
+@border-color-split: @border-color-base;
+
+// header inherits this
+@popover-background: #404854;
+
+@logo-color: #aab0b9;
+
+body, #root {
+  height: 100%
+}
+
+// .logo a {
+//   color: @logo-color;
+//   :hover,:visited {
+//     color: @logo-color;
+//   }
+// }
+
+
+.ant-layout-header h1 {
+  color: #aab0b9;
+}
+
+.ant-list .ant-card {
+  background: @component-background;
+}
+
+.ant-divider-horizontal {
+  margin: 16px 0;
+}
+
+.ant-card .ant-divider-horizontal {
+  border-color: @border-color-base;
+  opacity: 50%;
+  
+}
+
+.action-delete:hover {
+  color: @error-color;
+  transition: 0.3s;
+}
+
+// @import 'antd/lib/style/themes/default.less';
+// @import 'antd/dist/antd.less';

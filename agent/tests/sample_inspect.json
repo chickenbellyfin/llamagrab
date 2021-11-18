@@ -1,0 +1,905 @@
+[
+    {
+        "Id": "fc7561ad6fc20d0e32231eadcf72e7b985940a5db2122445fde6b04967a11d8c",
+        "Created": "2021-11-20T20:18:57.234231419Z",
+        "Path": "./run_taserver.sh",
+        "Args": [
+            "--port-offset=6"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 2052,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2021-11-25T08:02:53.897638072Z",
+            "FinishedAt": "2021-11-25T08:00:36.589116734Z"
+        },
+        "Image": "sha256:99776b4e2634ab444f0a06bde85fa55d8c3d80bb63b583990ba323908d1c79a7",
+        "ResolvConfPath": "/var/lib/docker/containers/fc7561ad6fc20d0e32231eadcf72e7b985940a5db2122445fde6b04967a11d8c/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/fc7561ad6fc20d0e32231eadcf72e7b985940a5db2122445fde6b04967a11d8c/hostname",
+        "HostsPath": "/var/lib/docker/containers/fc7561ad6fc20d0e32231eadcf72e7b985940a5db2122445fde6b04967a11d8c/hosts",
+        "LogPath": "/var/lib/docker/containers/fc7561ad6fc20d0e32231eadcf72e7b985940a5db2122445fde6b04967a11d8c/fc7561ad6fc20d0e32231eadcf72e7b985940a5db2122445fde6b04967a11d8c-json.log",
+        "Name": "/taserver_111",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "docker-default",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/home/azureuser/taservers/ctf:/gamesettings"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "default",
+            "PortBindings": {
+                "7783/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "7783"
+                    }
+                ],
+                "7783/udp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "7783"
+                    }
+                ],
+                "7784/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "7784"
+                    }
+                ],
+                "7784/udp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "7784"
+                    }
+                ],
+                "9008/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "9008"
+                    }
+                ]
+            },
+            "RestartPolicy": {
+                "Name": "unless-stopped",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "host",
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/a4ebd8bc928e25a7e09caf92295ed4e9c9afc3deef1bcebc62081554898e8b0d-init/diff:/var/lib/docker/overlay2/3663c7e62a617c3c9dd0022c8df31d4d6ff050ed6eab4792051bc2431cd7f1c2/diff:/var/lib/docker/overlay2/54402baaf074cce032aed32a0764d8a2229342165143cd17743552991d05e073/diff:/var/lib/docker/overlay2/34ebb4745a051da3a01d90bb881ffb7f6503d9b516846d11ceab262c164139f6/diff:/var/lib/docker/overlay2/b72516ff85d075465b9d1d403bddb83f227b1cf095e1b80985cdf67c79ad05c9/diff:/var/lib/docker/overlay2/dc505a2f3b7e876c8a2d5cdd34014357472f86fb10d8ca339dba83bdcbbf83fb/diff:/var/lib/docker/overlay2/b52e6cbeee84487ee5c743f0d570f7e901ba984aaa50fc4633b7420132e4aa7f/diff:/var/lib/docker/overlay2/00ed7691d6da35781bd26ad9af0c7bafa8a1921c7da00e9f3c97df0723021b40/diff:/var/lib/docker/overlay2/267cc2fad89f62d2a36672cfafe2847d3646e428f6e8d785f06e31feb763cf9b/diff:/var/lib/docker/overlay2/273377b8bd5ead8c868f16398f228afaf4bf62d2bd1d0eda970a33bbc25ce2bf/diff:/var/lib/docker/overlay2/12bcc08ff28d2abee387c2ec8e674b5384cb3d2ec2bff7288fa3f5552244177c/diff:/var/lib/docker/overlay2/3333f26d63e292c67c450b44fe53b0c6f0542ad55640b70341421e78bd0c7123/diff",
+                "MergedDir": "/var/lib/docker/overlay2/a4ebd8bc928e25a7e09caf92295ed4e9c9afc3deef1bcebc62081554898e8b0d/merged",
+                "UpperDir": "/var/lib/docker/overlay2/a4ebd8bc928e25a7e09caf92295ed4e9c9afc3deef1bcebc62081554898e8b0d/diff",
+                "WorkDir": "/var/lib/docker/overlay2/a4ebd8bc928e25a7e09caf92295ed4e9c9afc3deef1bcebc62081554898e8b0d/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/home/azureuser/taservers/ctf",
+                "Destination": "/gamesettings",
+                "Mode": "",
+                "RW": true,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "fc7561ad6fc2",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "7783/tcp": {},
+                "7783/udp": {},
+                "7784/tcp": {},
+                "7784/udp": {},
+                "9008/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "DEBIAN_FRONTEND=noninteractive",
+                "WINEARCH=win32",
+                "WINEPREFIX=/app/.wine"
+            ],
+            "Cmd": [
+                "--port-offset=6"
+            ],
+            "Image": "taserver",
+            "Volumes": null,
+            "WorkingDir": "/app",
+            "Entrypoint": [
+                "./run_taserver.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {}
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "f5066e92791565880c3f7cafd1c9cb18d23a497226a626eba6fe0924e81212c1",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {
+                "7783/tcp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "7783"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "7783"
+                    }
+                ],
+                "7783/udp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "7783"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "7783"
+                    }
+                ],
+                "7784/tcp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "7784"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "7784"
+                    }
+                ],
+                "7784/udp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "7784"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "7784"
+                    }
+                ],
+                "9008/tcp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "9008"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "9008"
+                    }
+                ]
+            },
+            "SandboxKey": "/var/run/docker/netns/f5066e927915",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "ffca46717165f98d82f405730dbfc3469ae4df739e03f1edf7452341e93fa61d",
+            "Gateway": "172.17.0.1",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "172.17.0.4",
+            "IPPrefixLen": 16,
+            "IPv6Gateway": "",
+            "MacAddress": "02:42:ac:11:00:04",
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "e07db5d78e58d36fb5f19604ab659f6bfdc5c6aae1a0a8d8cba860f52115bf7b",
+                    "EndpointID": "ffca46717165f98d82f405730dbfc3469ae4df739e03f1edf7452341e93fa61d",
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.4",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:11:00:04",
+                    "DriverOpts": null
+                }
+            }
+        }
+    },
+    {
+        "Id": "7e567f6b7777d33b0f3d6aa46b62f9ba5ca23b826ee562dd4f22a928a45e3966",
+        "Created": "2021-11-14T05:27:41.917523734Z",
+        "Path": "./run_taserver.sh",
+        "Args": [
+            "--port-offset=2"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 1997,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2021-11-25T08:02:53.700312081Z",
+            "FinishedAt": "2021-11-25T08:00:36.560074129Z"
+        },
+        "Image": "sha256:99776b4e2634ab444f0a06bde85fa55d8c3d80bb63b583990ba323908d1c79a7",
+        "ResolvConfPath": "/var/lib/docker/containers/7e567f6b7777d33b0f3d6aa46b62f9ba5ca23b826ee562dd4f22a928a45e3966/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/7e567f6b7777d33b0f3d6aa46b62f9ba5ca23b826ee562dd4f22a928a45e3966/hostname",
+        "HostsPath": "/var/lib/docker/containers/7e567f6b7777d33b0f3d6aa46b62f9ba5ca23b826ee562dd4f22a928a45e3966/hosts",
+        "LogPath": "/var/lib/docker/containers/7e567f6b7777d33b0f3d6aa46b62f9ba5ca23b826ee562dd4f22a928a45e3966/7e567f6b7777d33b0f3d6aa46b62f9ba5ca23b826ee562dd4f22a928a45e3966-json.log",
+        "Name": "/taserver_222",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "docker-default",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/home/azureuser/taservers/arena:/gamesettings"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "default",
+            "PortBindings": {
+                "7779/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "7779"
+                    }
+                ],
+                "7779/udp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "7779"
+                    }
+                ],
+                "7780/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "7780"
+                    }
+                ],
+                "7780/udp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "7780"
+                    }
+                ],
+                "9004/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "9004"
+                    }
+                ]
+            },
+            "RestartPolicy": {
+                "Name": "unless-stopped",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "host",
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/a4ac1942357b5fe9fc3d714e30cb1abb62bee3c916dda394b24f4c5d52f2646e-init/diff:/var/lib/docker/overlay2/3663c7e62a617c3c9dd0022c8df31d4d6ff050ed6eab4792051bc2431cd7f1c2/diff:/var/lib/docker/overlay2/54402baaf074cce032aed32a0764d8a2229342165143cd17743552991d05e073/diff:/var/lib/docker/overlay2/34ebb4745a051da3a01d90bb881ffb7f6503d9b516846d11ceab262c164139f6/diff:/var/lib/docker/overlay2/b72516ff85d075465b9d1d403bddb83f227b1cf095e1b80985cdf67c79ad05c9/diff:/var/lib/docker/overlay2/dc505a2f3b7e876c8a2d5cdd34014357472f86fb10d8ca339dba83bdcbbf83fb/diff:/var/lib/docker/overlay2/b52e6cbeee84487ee5c743f0d570f7e901ba984aaa50fc4633b7420132e4aa7f/diff:/var/lib/docker/overlay2/00ed7691d6da35781bd26ad9af0c7bafa8a1921c7da00e9f3c97df0723021b40/diff:/var/lib/docker/overlay2/267cc2fad89f62d2a36672cfafe2847d3646e428f6e8d785f06e31feb763cf9b/diff:/var/lib/docker/overlay2/273377b8bd5ead8c868f16398f228afaf4bf62d2bd1d0eda970a33bbc25ce2bf/diff:/var/lib/docker/overlay2/12bcc08ff28d2abee387c2ec8e674b5384cb3d2ec2bff7288fa3f5552244177c/diff:/var/lib/docker/overlay2/3333f26d63e292c67c450b44fe53b0c6f0542ad55640b70341421e78bd0c7123/diff",
+                "MergedDir": "/var/lib/docker/overlay2/a4ac1942357b5fe9fc3d714e30cb1abb62bee3c916dda394b24f4c5d52f2646e/merged",
+                "UpperDir": "/var/lib/docker/overlay2/a4ac1942357b5fe9fc3d714e30cb1abb62bee3c916dda394b24f4c5d52f2646e/diff",
+                "WorkDir": "/var/lib/docker/overlay2/a4ac1942357b5fe9fc3d714e30cb1abb62bee3c916dda394b24f4c5d52f2646e/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/home/azureuser/taservers/arena",
+                "Destination": "/gamesettings",
+                "Mode": "",
+                "RW": true,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "7e567f6b7777",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "7779/tcp": {},
+                "7779/udp": {},
+                "7780/tcp": {},
+                "7780/udp": {},
+                "9004/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "DEBIAN_FRONTEND=noninteractive",
+                "WINEARCH=win32",
+                "WINEPREFIX=/app/.wine"
+            ],
+            "Cmd": [
+                "--port-offset=2"
+            ],
+            "Image": "taserver",
+            "Volumes": null,
+            "WorkingDir": "/app",
+            "Entrypoint": [
+                "./run_taserver.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {}
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "2ca34e0ab6deb359c23684dfac33bd6092667783ca5c41775bb5af39a93041b1",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {
+                "7779/tcp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "7779"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "7779"
+                    }
+                ],
+                "7779/udp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "7779"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "7779"
+                    }
+                ],
+                "7780/tcp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "7780"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "7780"
+                    }
+                ],
+                "7780/udp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "7780"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "7780"
+                    }
+                ],
+                "9004/tcp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "9004"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "9004"
+                    }
+                ]
+            },
+            "SandboxKey": "/var/run/docker/netns/2ca34e0ab6de",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "921f0b85048033e46c278bc4f76a7262b3df5e0840e5b90d6a44fc29d54a37c4",
+            "Gateway": "172.17.0.1",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "172.17.0.3",
+            "IPPrefixLen": 16,
+            "IPv6Gateway": "",
+            "MacAddress": "02:42:ac:11:00:03",
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "e07db5d78e58d36fb5f19604ab659f6bfdc5c6aae1a0a8d8cba860f52115bf7b",
+                    "EndpointID": "921f0b85048033e46c278bc4f76a7262b3df5e0840e5b90d6a44fc29d54a37c4",
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.3",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:11:00:03",
+                    "DriverOpts": null
+                }
+            }
+        }
+    },
+    {
+        "Id": "63c3da5c16b3eb98ba9f6426f21c2375d00c066ada79ebb35d01f792859359a9",
+        "Created": "2021-11-14T05:27:31.07456867Z",
+        "Path": "./run_taserver.sh",
+        "Args": [
+            "--port-offset=0"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 1932,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2021-11-25T08:02:53.025276821Z",
+            "FinishedAt": "2021-11-25T08:00:36.477480246Z"
+        },
+        "Image": "sha256:99776b4e2634ab444f0a06bde85fa55d8c3d80bb63b583990ba323908d1c79a7",
+        "ResolvConfPath": "/var/lib/docker/containers/63c3da5c16b3eb98ba9f6426f21c2375d00c066ada79ebb35d01f792859359a9/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/63c3da5c16b3eb98ba9f6426f21c2375d00c066ada79ebb35d01f792859359a9/hostname",
+        "HostsPath": "/var/lib/docker/containers/63c3da5c16b3eb98ba9f6426f21c2375d00c066ada79ebb35d01f792859359a9/hosts",
+        "LogPath": "/var/lib/docker/containers/63c3da5c16b3eb98ba9f6426f21c2375d00c066ada79ebb35d01f792859359a9/63c3da5c16b3eb98ba9f6426f21c2375d00c066ada79ebb35d01f792859359a9-json.log",
+        "Name": "/taserver_333",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "docker-default",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/home/azureuser/taservers/tdm:/gamesettings"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "default",
+            "PortBindings": {
+                "7777/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "7777"
+                    }
+                ],
+                "7777/udp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "7777"
+                    }
+                ],
+                "7778/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "7778"
+                    }
+                ],
+                "7778/udp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "7778"
+                    }
+                ],
+                "9002/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "9002"
+                    }
+                ]
+            },
+            "RestartPolicy": {
+                "Name": "unless-stopped",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "host",
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/d20a3d9be3a894d6395120f2c7ac5954e912fbb60db6bcb89831efd8b6fbd033-init/diff:/var/lib/docker/overlay2/3663c7e62a617c3c9dd0022c8df31d4d6ff050ed6eab4792051bc2431cd7f1c2/diff:/var/lib/docker/overlay2/54402baaf074cce032aed32a0764d8a2229342165143cd17743552991d05e073/diff:/var/lib/docker/overlay2/34ebb4745a051da3a01d90bb881ffb7f6503d9b516846d11ceab262c164139f6/diff:/var/lib/docker/overlay2/b72516ff85d075465b9d1d403bddb83f227b1cf095e1b80985cdf67c79ad05c9/diff:/var/lib/docker/overlay2/dc505a2f3b7e876c8a2d5cdd34014357472f86fb10d8ca339dba83bdcbbf83fb/diff:/var/lib/docker/overlay2/b52e6cbeee84487ee5c743f0d570f7e901ba984aaa50fc4633b7420132e4aa7f/diff:/var/lib/docker/overlay2/00ed7691d6da35781bd26ad9af0c7bafa8a1921c7da00e9f3c97df0723021b40/diff:/var/lib/docker/overlay2/267cc2fad89f62d2a36672cfafe2847d3646e428f6e8d785f06e31feb763cf9b/diff:/var/lib/docker/overlay2/273377b8bd5ead8c868f16398f228afaf4bf62d2bd1d0eda970a33bbc25ce2bf/diff:/var/lib/docker/overlay2/12bcc08ff28d2abee387c2ec8e674b5384cb3d2ec2bff7288fa3f5552244177c/diff:/var/lib/docker/overlay2/3333f26d63e292c67c450b44fe53b0c6f0542ad55640b70341421e78bd0c7123/diff",
+                "MergedDir": "/var/lib/docker/overlay2/d20a3d9be3a894d6395120f2c7ac5954e912fbb60db6bcb89831efd8b6fbd033/merged",
+                "UpperDir": "/var/lib/docker/overlay2/d20a3d9be3a894d6395120f2c7ac5954e912fbb60db6bcb89831efd8b6fbd033/diff",
+                "WorkDir": "/var/lib/docker/overlay2/d20a3d9be3a894d6395120f2c7ac5954e912fbb60db6bcb89831efd8b6fbd033/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/home/azureuser/taservers/tdm",
+                "Destination": "/gamesettings",
+                "Mode": "",
+                "RW": true,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "63c3da5c16b3",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "7777/tcp": {},
+                "7777/udp": {},
+                "7778/tcp": {},
+                "7778/udp": {},
+                "9002/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "DEBIAN_FRONTEND=noninteractive",
+                "WINEARCH=win32",
+                "WINEPREFIX=/app/.wine"
+            ],
+            "Cmd": [
+                "--port-offset=0"
+            ],
+            "Image": "taserver",
+            "Volumes": null,
+            "WorkingDir": "/app",
+            "Entrypoint": [
+                "./run_taserver.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {}
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "b66f869effbf1fc9b4ff5ec44d506504160a255ef315fba8ab5113342116488b",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {
+                "7777/tcp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "7777"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "7777"
+                    }
+                ],
+                "7777/udp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "7777"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "7777"
+                    }
+                ],
+                "7778/tcp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "7778"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "7778"
+                    }
+                ],
+                "7778/udp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "7778"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "7778"
+                    }
+                ],
+                "9002/tcp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "9002"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "9002"
+                    }
+                ]
+            },
+            "SandboxKey": "/var/run/docker/netns/b66f869effbf",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "b090269b5ea3da21eb2bcbdce253167fb1780667d5bc46e1bf8666d92a4af744",
+            "Gateway": "172.17.0.1",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "172.17.0.2",
+            "IPPrefixLen": 16,
+            "IPv6Gateway": "",
+            "MacAddress": "02:42:ac:11:00:02",
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "e07db5d78e58d36fb5f19604ab659f6bfdc5c6aae1a0a8d8cba860f52115bf7b",
+                    "EndpointID": "b090269b5ea3da21eb2bcbdce253167fb1780667d5bc46e1bf8666d92a4af744",
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.2",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:11:00:02",
+                    "DriverOpts": null
+                }
+            }
+        }
+    }
+]

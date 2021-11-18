@@ -1,0 +1,137 @@
+[
+  {
+    "key": "ctf_katabatic",
+    "name": "Katabatic",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.Katabatic"
+  },
+  {
+    "key": "ctf_arx_novena",
+    "name": "Arx Novena",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.ArxNovena"
+  },
+  {
+    "key": "ctf_dangerous_crossing",
+    "name": "Dangerous Crossing",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.DangerousCrossing"
+  },
+  {
+    "key": "ctf_crossfire",
+    "name": "Crossfire",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.Crossfire"
+  },
+  {
+    "key": "ctf_drydock",
+    "name": "Drydock",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.Drydock"
+  },
+  {
+    "key": "ctf_terminus",
+    "name": "Terminus",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.Terminus"
+  },
+  {
+    "key": "ctf_sunstar",
+    "name": "Sunstar",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.Sunstar"
+  },
+  {
+    "key": "ctf_bella_omega",
+    "name": "Bella Omega",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.BellaOmega"
+  },
+  {
+    "key": "ctf_bella_omega_ns",
+    "name": "Bella Omega NS",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.BellaOmegaNS"
+  },
+  {
+    "key": "ctf_blueshift",
+    "name": "Blueshift",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.Blueshift"
+  },
+  {
+    "key": "ctf_canyon_crusade",
+    "name": "Canyon Crusade",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.CanyonCrusade"
+  },
+  {
+    "key": "ctf_hellfire",
+    "name": "Hellfire",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.Hellfire"
+  },
+  {
+    "key": "ctf_icecoaster",
+    "name": "IceCoaster",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.IceCoaster"
+  },
+  {
+    "key": "ctf_perdition",
+    "name": "Perdition",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.Perdition"
+  },
+  {
+    "key": "ctf_permafrost",
+    "name": "Permafrost",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.Permafrost"
+  },
+  {
+    "key": "ctf_raindance",
+    "name": "Raindance",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.Raindance"
+  },
+  {
+    "key": "ctf_stonehenge",
+    "name": "Stonehenge",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.Stonehenge"
+  },
+  {
+    "key": "ctf_tartarus",
+    "name": "Tartarus",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.Tartarus"
+  },
+  {
+    "key": "ctf_temple_ruins",
+    "name": "Temple Ruins",
+    "gameMode": "CTF",
+    "lua": "Maps.CTF.TempleRuins"
+  },
+  {
+    "key": "ctf_blues",
+    "name": "Blues",
+    "gameMode": "CTF",
+    "lua": "TrCTF-Blues",
+    "isCustom": true
+  },
+  {
+    "key": "ctf_incidamus",
+    "name": "Incidamus",
+    "gameMode": "CTF",
+    "lua": "TrCTF-Incidamus",
+    "isCustom": true
+  },
+  {
+    "key": "ctf_periculo",
+    "name": "Periculo",
+    "gameMode": "CTF",
+    "lua": "TrCTF-Periculo",
+    "isCustom": true
+  }
+]

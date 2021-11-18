@@ -1,0 +1,4 @@
+gamesettings_dir: managed_gamesettings
+auth_key: '9c22a375263b971e254c' # not a real auth key
+port: 8999
+testing: true

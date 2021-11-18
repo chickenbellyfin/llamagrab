@@ -1,0 +1,10 @@
+required features:
+- other game modes
+- weapon bans/modification
+- vehicle Config
+- GOTY
+
+ideas:
+- username based admin lists
+- server schedules
+- server banner console message

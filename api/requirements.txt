@@ -1,0 +1,10 @@
+argon2_cffi
+fastapi
+fastapi-camelcase
+fastapi-login
+fastapi-users[sqlalchemy]
+loguru
+passlib
+pyyaml
+sqlalchemy
+uvicorn

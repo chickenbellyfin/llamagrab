@@ -1,0 +1,388 @@
+{
+	"info": {
+		"_postman_id": "569acd3f-82e1-47ef-a433-cc0a054b1430",
+		"name": "Server Manager",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Server API",
+			"item": [
+				{
+					"name": "Get Servers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/servers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"servers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Server Config",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/server/3/config",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"server",
+								"3",
+								"config"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Server",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"serverConfig\": {\r\n    \"displayName\": \"Postman CTF\",\r\n    \"description\": \"Created with Server Manager\",\r\n    \"teamAssignType\": \"balanced\",\r\n    \"autoBalance\": true,\r\n\r\n    \"timeLimit\": 25,\r\n    \"overtimeLimit\": 10,\r\n\r\n    \"friendlyFire\": true,\r\n\r\n    \"maps\": [\r\n        \"ctf_katabatic\",\r\n        \"ctf_arx_novena\",\r\n        \"ctf_dangerous_crossing\",\r\n        \"ctf_drydock\",\r\n        \"ctf_terminus\",\r\n        \"ctf_canyon_crusade\",\r\n        \"ctf_permafrost\",\r\n        \"ctf_raindance\",\r\n        \"ctf_tartarus\",\r\n        \"ctf_temple_ruins\",\r\n        \"ctf_periculo\"\r\n    ]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/servers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"servers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Server Config",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n    \"displayName\": \"Postman CTF\",\r\n    \"description\": \"Created with Server Manager\",\r\n    \"teamAssignType\": \"balanced\",\r\n    \"autoBalance\": true,\r\n\r\n    \"timeLimit\": 24,\r\n    \"overtimeLimit\": 10,\r\n\r\n    \"friendlyFire\": true,\r\n\r\n    \"maps\": [\r\n        \"ctf_katabatic\",\r\n        \"ctf_arx_novena\",\r\n        \"ctf_dangerous_crossing\",\r\n        \"ctf_drydock\",\r\n        \"ctf_terminus\",\r\n        \"ctf_canyon_crusade\",\r\n        \"ctf_permafrost\",\r\n        \"ctf_raindance\",\r\n        \"ctf_tartarus\",\r\n        \"ctf_temple_ruins\",\r\n        \"ctf_periculo\"\r\n    ]\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/server/3/config",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"server",
+								"3",
+								"config"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Start Server",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/server/1/start",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"server",
+								"1",
+								"start"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stop Server",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/server/1/stop",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"server",
+								"1",
+								"stop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Server",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/server/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"server",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Server Settings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": null
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Account API",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"postman.setEnvironmentVariable(\"token\", jsonData.access_token);\r",
+									"pm.test(\"Access Token Updated\", function(){\r",
+									"    postman.getEnvironmentVariable(\"token\") == jsonData.access_token;\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"asdfasdf\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/account/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/account/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"testuser4\",\r\n    \"password\": \"testpassword\",\r\n    \"invite_token\": \"{{invite_token}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/account/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin API",
+			"item": [
+				{
+					"name": "Create Invite Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"postman.setEnvironmentVariable(\"invite_token\", jsonData.invite_token);\r",
+									"pm.test(\"Invite Token Updated\", function() {\r",
+									"    postman.getEnvironmentVariable(\"invite_token\") == jsonData.access_token;\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/invite",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"invite"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Data API",
+			"item": [
+				{
+					"name": "Get Regions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/regions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"regions"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
