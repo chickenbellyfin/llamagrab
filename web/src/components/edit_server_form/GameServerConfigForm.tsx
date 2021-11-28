@@ -1,20 +1,15 @@
-import React, { ChangeEvent } from "react";
-import { 
-  Form,
-  Input,
-  InputNumber, 
-  Radio, 
-  RadioChangeEvent, 
-  Switch, 
-  Tabs,
-  Typography
-} from "antd";
+import React from "react";
+import { Tabs } from "antd";
 
 import { API, GameServerConfig } from "../../api";
 
-import MapSelector from "./MapSelector";
 import Loader from "../Loader";
-import Rules from "./validation";
+import { createUpdateCallbacks } from "./tabHelpers";
+import GameSettingsTab from "./GameSettingsTab";
+import MapRotationSettingsTab from "./MapRotationSettingsTab";
+import BasicSettingsTab from "./BasicSettingsTab";
+import WeaponsSettingsTab from "./WeaponsSettingsTab";
+import VehicleSettingsTab from "./VehicleSettingsTab";
 
 const { TabPane } = Tabs;
 
@@ -24,9 +19,10 @@ type EditorProps = {
 }
 
 type EditorState = {
-  config: any,
+  config: GameServerConfig,
   isSaving: boolean
 }
+
 
 export class GameServerConfigForm extends React.Component<EditorProps, EditorState> {
 
@@ -38,174 +34,42 @@ export class GameServerConfigForm extends React.Component<EditorProps, EditorSta
     }
   }
 
-  onUpdate(key: string, value: any) {
+  onUpdate = (key: string, value: any) => {
     this.setState(
-      Object.assign(this.state.config, {[key]: value}),
+      Object.assign(this.state.config as any, {[key]: value}),
       () => {
         if (this.props.onChange) {
-          this.props.onChange(Object.assign({}, this.state.config))
+          this.props.onChange(this.state.config)
         }
       }
-    )
+    )    
   }
-
+  
   render() {
-    const config = this.state.config;
-
-    const updateText = (key: string) => {
-      return (e: ChangeEvent<HTMLInputElement>) => {
-        this.onUpdate(key, e.target.value)
-      }
-    }
-
-    const updateRadio = (key: string) => {
-      return (e: RadioChangeEvent) => {
-        this.onUpdate(key, e.target.value)
-      }
-    }
-
-    const updateBoolean = (key: string) => {
-      return (e: boolean) => this.onUpdate(key, e)
-    }
-
-    const updateNumber = (key: string) => {
-      return (e: number) => this.onUpdate(key, e)
-    }
-
-    const updateMapList = (mapList: Array<string>) => {
-      this.onUpdate('maps', mapList)
-    }
-
+    const updateCallbacks = createUpdateCallbacks(this.onUpdate)
     return (
-      <>  
-        {/* -------- BASIC INFO -------- */}
+      <>
         <Tabs defaultActiveKey='basic'>
           <TabPane tab="Basic Settings" key='basic'>
-            <Form
-              labelCol={{span: 4}}
-              wrapperCol={{span: 14}}
-              >
-
-              <Form.Item 
-                label='Name'
-                name='name'
-                rules={[Rules.required, Rules.allowedCharacters]}>
-                <Input
-                  defaultValue={config['displayName']} value={config['displayName']}
-                  onChange={updateText('displayName')}/>
-              </Form.Item>
-
-              <Form.Item name='description' label='Description' rules={[Rules.allowedCharacters]}>
-                <Input 
-                  defaultValue={config['description']}
-                  onChange={updateText('description')}/>
-              </Form.Item>
-  
-              <Form.Item name='password' label='Server Password' rules={[Rules.allowedCharacters]}>
-                <Input.Password
-                  defaultValue={config['password']}
-                  onChange={updateText('password')}/>
-              </Form.Item>
-              
-              <Form.Item name='adminPassword' label='Admin Password' rules={[Rules.allowedCharacters]}>
-                <Input.Password
-                  defaultValue={config['adminPassword']}
-                  onChange={updateText('adminPassword')}/>
-              </Form.Item>
-            </Form>
-  
+            <BasicSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
           </TabPane>
           
-  
-          {/* -------- GAME SETTINGS -------- */}
           <TabPane tab="Game Settings" key='game'>
-  
-          <Form
-              labelCol={{span: 4}}
-              wrapperCol={{span: 14}}>
-            <Form.Item 
-              label='Team Assign Type:'>
-              <Radio.Group
-                defaultValue='balanced'
-                buttonStyle='solid'
-                value={config['teamAssignType']}
-                onChange={updateRadio('teamAssignType')}>
-                <Radio.Button value='balanced'>Balanced</Radio.Button>
-                <Radio.Button value='unbalanced'>Unbalanced</Radio.Button>
-                <Radio.Button value='auto'>Auto Assign</Radio.Button>
-              </Radio.Group>
-            </Form.Item>
-
-            <Form.Item label='Auto Balance'>
-              <Switch 
-                defaultChecked
-                checked={config['autoBalance']}
-                onChange={updateBoolean('autoBalance')} />
-            </Form.Item>
-  
-            <Form.Item label='Time Limit'>
-              <InputNumber 
-                precision={0}
-                min={1}
-                value={config['timeLimit']}
-                onChange={updateNumber('timeLimit')}
-                addonAfter='mins' />
-            </Form.Item>          
-            
-            <Form.Item label='Overtime Limit'>
-              <InputNumber
-                precision={0}
-                min={0}
-                value={config['overtimeLimit']}
-                onChange={updateNumber('overtimeLimit')}
-                addonAfter='mins' />
-            </Form.Item>
-  
-            <Form.Item label='Friendly Fire'>
-              <Switch 
-                defaultChecked 
-                checked={config['friendlyFire']}
-                onChange={updateBoolean('friendlyFire')} />
-            </Form.Item>
-            </Form>
+            <GameSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
           </TabPane>
   
-  
-          {/* -------- MAP ROTATION -------- */}
           <TabPane tab="Map Rotation" key='maps'>
-          <Form labelCol={{span: 4}} wrapperCol={{span: 14}}>
-            <Form.Item label='Map Voting'>
-              <Switch defaultChecked onChange={(checked: boolean) => null} />
-            </Form.Item>
-            <fieldset>
-              <legend >
-                <MapSelector 
-                  gameType='CTF'
-                  mapList={config['maps']}
-                  onChange={updateMapList}/>
-              </legend>
-            </fieldset>
-          </Form>
+            <MapRotationSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
           </TabPane>
-  
-  
-          {/* -------- WEAPONS -------- */} 
+
           <TabPane tab="Weapons" key='weapons'>
-            <Form labelCol={{span: 4}} wrapperCol={{span: 14}}>
-              <Typography.Title level={2} type="secondary">Coming Soon</Typography.Title>
-            </Form>
+            <WeaponsSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
           </TabPane>
-  
-  
-          {/* -------- VEHICLES -------- */}
+
           <TabPane tab="Vehicles" key='vehicles'>
-            <Form labelCol={{span: 4}} wrapperCol={{span: 14}}>
-              
-            <Typography.Title level={2} type="secondary">Coming Soon</Typography.Title>
-            </Form>
+            <VehicleSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
           </TabPane>
         </Tabs>
-  
       </>
     )
   }
