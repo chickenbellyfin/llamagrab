@@ -1,4 +1,5 @@
 import { Form, InputNumber, Radio, Switch } from "antd";
+import {InputInteger} from "./Inputs";
 import { GameServerConfigTabProps } from "./tabHelpers";
 
 
@@ -10,27 +11,9 @@ export default function GameSettingsTab (
 
   return (
   <Form
-  labelCol={{span: 4}}
-  wrapperCol={{span: 14}}>
-    <Form.Item 
-      label='Team Assign Type:'>
-      <Radio.Group
-        defaultValue='balanced'
-        buttonStyle='solid'
-        value={config['teamAssignType']}
-        onChange={updateRadio('teamAssignType')}>
-        <Radio.Button value='balanced'>Balanced</Radio.Button>
-        <Radio.Button value='unbalanced'>Unbalanced</Radio.Button>
-        <Radio.Button value='auto'>Auto Assign</Radio.Button>
-      </Radio.Group>
-    </Form.Item>
+  labelCol={{span: 6}}
+  wrapperCol={{span: 12}}>
 
-    <Form.Item label='Auto Balance'>
-      <Switch 
-        defaultChecked
-        checked={config['autoBalance']}
-        onChange={updateSwitch('autoBalance')} />
-    </Form.Item>
 
     <Form.Item label='Time Limit'>
       <InputNumber 
@@ -38,7 +21,8 @@ export default function GameSettingsTab (
         min={1}
         value={config['timeLimit']}
         onChange={updateInputNumber('timeLimit')}
-        addonAfter='mins' />
+        addonAfter='mins'
+        placeholder={'25'} />
     </Form.Item>          
 
     <Form.Item label='Overtime Limit'>
@@ -47,15 +31,56 @@ export default function GameSettingsTab (
         min={0}
         value={config['overtimeLimit']}
         onChange={updateInputNumber('overtimeLimit')}
-        addonAfter='mins' />
+        addonAfter='mins'
+        placeholder={'10'} />
     </Form.Item>
 
-    <Form.Item label='Friendly Fire'>
-      <Switch 
-        defaultChecked 
-        checked={config['friendlyFire']}
-        onChange={updateSwitch('friendlyFire')} />
+    <Form.Item label='Warmup Time'>
+      <InputNumber
+        precision={0}
+        min={0}
+        value={config['warmupTime']}
+        onChange={updateInputNumber('warmupTime')}
+        addonAfter='secs'
+        placeholder={'20'} />
     </Form.Item>
+
+    <Form.Item label='Respawn Time'>
+      <InputInteger
+        min={0}
+        value={config['respawnTime']}
+        onChange={updateInputNumber('respawnTime')}
+        addonAfter='secs'
+        placeholder={'5'} />
+    </Form.Item>
+
+    <Form.Item label='Sniper Respawn Delay' extra='Additional respawn time incurred when the player has a sniper rifle'>
+      <InputInteger
+        min={0}
+        value={config['sniperRespawnDelay']}
+        onChange={updateInputNumber('sniperRespawnDelay')}
+        addonAfter='secs'
+        placeholder={'0'} />
+    </Form.Item>
+
+    <Form.Item label='Ammo Pickup Lifespan'>
+      <InputInteger
+        min={0}
+        value={config['ammoPickupLifespan']}
+        onChange={updateInputNumber('ammoPickupLifespan')}
+        addonAfter='secs'
+        placeholder={'15'} />
+    </Form.Item>
+
+    <Form.Item label='CTF Flag Timeout'>
+      <InputInteger
+        min={0}
+        value={config['ctfFlagTimeout']}
+        onChange={updateInputNumber('ctfFlagTimeout')}
+        addonAfter='secs'
+        placeholder={'40'} />
+    </Form.Item>
+
     </Form>
   );
 }

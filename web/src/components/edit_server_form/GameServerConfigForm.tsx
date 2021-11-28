@@ -10,6 +10,7 @@ import MapRotationSettingsTab from "./MapRotationSettingsTab";
 import BasicSettingsTab from "./BasicSettingsTab";
 import WeaponsSettingsTab from "./WeaponsSettingsTab";
 import VehicleSettingsTab from "./VehicleSettingsTab";
+import TeamSettingsTab from "./TeamSettingsTab";
 
 const { TabPane } = Tabs;
 
@@ -56,6 +57,10 @@ export class GameServerConfigForm extends React.Component<EditorProps, EditorSta
           
           <TabPane tab="Game Settings" key='game'>
             <GameSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
+          </TabPane>
+
+          <TabPane tab="Team Settings" key='team'>
+            <TeamSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
           </TabPane>
   
           <TabPane tab="Map Rotation" key='maps'>

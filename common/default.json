@@ -4,9 +4,6 @@
   "teamAssignType": "balanced",
   "autoBalance": true,
 
-  "timeLimit": 25,
-  "overtimeLimit": 10,
-
   "friendlyFire": true,
 
   "maps": [
