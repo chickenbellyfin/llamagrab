@@ -25,17 +25,37 @@ export type ServerSettings = {
 }
 
 export type GameServerConfig = {
-  displayName: string,
-  description: string,
-  password?: string,
-  adminPassword?: string,
+  displayName: string
+  description: string
+  password?: string
+  adminPassword?: string
 
-  teamAssignType: string,
-  autoBalance: boolean,
-  timeLimit: number,
-  overtimeLimit: number,
+  teamAssignType: string
+  autoBalance: boolean
+  timeLimit?: number
+  overtimeLimit?: number
+  respawnTime?: number
+  sniperRespawnDelay?: number
+  ammoPickupLifespan?: number
+  ctfFlagTimeout?: number
+  warmupTime?: number
+  
+  maxPlayers?: number
+  nakedSpawn?: boolean
+
+  friendlyFireMultiplier?: number
+
+
   friendlyFire: boolean
   maps: Array<string> | []
+
+  vehicleHealthMultiplier?: number
+  gravCycleLimit?: number
+  shrikeLimit?: number
+  beowulfLimit?: number
+  gravCycleSpawnTime?: number
+  shrikeSpawnTime?: number
+  beowulfSpawnTime?: number
 }
 
 export type InviteToken = {

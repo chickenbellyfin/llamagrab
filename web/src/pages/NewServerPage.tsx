@@ -29,7 +29,7 @@ export default function NewServerPage() {
       message.success('Created New Server');
       navigate('/')
     } catch (error) {
-      message.error('Failed to Create Server' + (error as Error).message);
+      message.error('Failed to Create Server: ' + (error as Error).message);
     }
     setIsSaving(false)
   }

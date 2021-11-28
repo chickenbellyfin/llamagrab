@@ -10,12 +10,28 @@ class GameServerConfig(BaseModel):
   
   team_assign_type: str
   auto_balance: bool
-  time_limit: int
-  overtime_limit: int
-
-  friendly_fire: bool
+  time_limit: Optional[int]
+  overtime_limit: Optional[int]
+  warmup_time: Optional[int]
+  respawn_time: Optional[int]
+  sniper_respawn_delay: Optional[int]
+  ammo_pickup_lifespan: Optional[int]
+  ctf_flag_timeout: Optional[int]
+  max_players: Optional[int]
+  naked_spawn: Optional[int]
+  friendly_fire_multiplier: Optional[float]
+  
+  friendly_fire: Optional[int]
 
   maps: List[str]
+
+  vehicle_health_multiplier: Optional[float]
+  grav_cycle_limit: Optional[int]
+  grav_cycle_spawn_time: Optional[int]
+  shrike_limit: Optional[int]
+  shrike_spawn_time: Optional[int]
+  beowulf_limit: Optional[int]
+  beowulf_spawn_time: Optional[int]
 
 
   def serialize(self):
