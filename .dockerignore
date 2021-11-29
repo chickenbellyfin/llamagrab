@@ -1,1 +1,8 @@
 web/node_modules
+web/build
+data/
+**/__pycache__
+**/*.log
+api/data.db
+**/.coverage
+**/htmlcov

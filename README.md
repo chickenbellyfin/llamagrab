@@ -8,6 +8,12 @@
 docker build . -t taservermanager
 ```
 
+build for amd64 & arm64
+```
+docker buildx build --platform linux/amd64,linux/arm64 --tag public.ecr.aws/i2q9d4v7/taservermanager:latest --push .
+```
+
+
 ## Run
 Minimal run command:
 ```

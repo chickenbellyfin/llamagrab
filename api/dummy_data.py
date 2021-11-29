@@ -2,7 +2,7 @@ from passlib.hash import argon2
 from sqlalchemy.orm.session import Session
 from schema.game_server_config import GameServerConfig
 from database import models, queries
-from schema import requests
+from schema import requests, responses
 from schema.game_server_config import GameServerConfig
 
 
@@ -19,7 +19,9 @@ users = [
 
 servers = [
   requests.ServerCreateRequest(
-    region='central_us',
+    server_settings=responses.ServerSettings(
+      region='central_us'
+    ),
     server_config=GameServerConfig(
       display_name='NA Mixer',
       description='Mixer-Style Rules: No HS/chain, FF on',
@@ -33,8 +35,10 @@ servers = [
       maps=['ctf_katabatic', 'ctf_dangerous_crossing']
     )  
   ),
-  requests.ServerCreateRequest(
-    region='west_us',
+  requests.ServerCreateRequest(    
+    server_settings=responses.ServerSettings(
+      region='west_us',
+    ),
     server_config=GameServerConfig.parse(default_json)
   )
 ]
@@ -50,7 +54,7 @@ def populate(db: Session):
     db_server = models.Server(
       user=user1.id,
       name=server.server_config.display_name,
-      region=server.region,
+      region=server.server_settings.region,
       server_config=server.server_config.serialize()
     )
     db.add(db_server)
