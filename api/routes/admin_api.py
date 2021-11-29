@@ -18,7 +18,7 @@ TOKEN_TTL_SECS = 60 * 60 * 24 # 1 day
 
 router = APIRouter()
 
-@router.post('/api/admin/invite')
+@router.post('/admin/invite')
 async def create_invite(
   user: models.User = Depends(deps.login),
   db: Session = Depends(deps.db)):

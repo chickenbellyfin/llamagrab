@@ -37,7 +37,7 @@ def get_server(
   
   return server
 
-@router.get('/api/servers')
+@router.get('/servers')
 async def list_servers(
   user: models.User = Depends(deps.login),
   db: Session = Depends(deps.db)
@@ -56,7 +56,7 @@ async def list_servers(
     for s in servers
   ]
 
-@router.get('/api/server/{server_id}/settings')
+@router.get('/server/{server_id}/settings')
 async def get_server_settings(
   server: models.Server = Depends(get_server)
 ):
@@ -64,7 +64,7 @@ async def get_server_settings(
     region=server.region
   )
 
-@router.post('/api/server/{server_id}/settings')
+@router.post('/server/{server_id}/settings')
 async def set_server_settings(
   request: responses.ServerSettings,
   server: models.Server = Depends(get_server),
@@ -78,7 +78,7 @@ async def set_server_settings(
   server.region = request.region
   db.commit()
 
-@router.put('/api/servers',  status_code=http_status.HTTP_201_CREATED)
+@router.put('/servers',  status_code=http_status.HTTP_201_CREATED)
 async def create_server(
   request: requests.ServerCreateRequest,
   user: models.User = Depends(deps.login),
@@ -107,12 +107,12 @@ async def create_server(
       game_mode=new_server.game_mode
     )
 
-@router.get('/api/server/{server_id}/config')
+@router.get('/server/{server_id}/config')
 async def get_server_config(server: models.Server = Depends(get_server)) -> GameServerConfig:
   return responses.GameServerConfig.parse(server.server_config)
 
 
-@router.post('/api/server/{server_id}/config')
+@router.post('/server/{server_id}/config')
 async def set_server_config(
   game_server_config: GameServerConfig,
   server: models.Server = Depends(get_server),
@@ -124,20 +124,20 @@ async def set_server_config(
   deps.server_manager().sync()
 
 
-@router.post('/api/server/{server_id}/start')
+@router.post('/server/{server_id}/start')
 async def start_server( server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
   server.status = 'running'
   db.commit()
   deps.server_manager().sync()
 
 
-@router.post('/api/server/{server_id}/stop')
+@router.post('/server/{server_id}/stop')
 async def stop_server(server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
   server.status = 'stopped'
   db.commit()
   deps.server_manager().sync()
 
-@router.delete('/api/server/{server_id}')
+@router.delete('/server/{server_id}')
 async def delete_server(server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
   db.delete(server)
   db.commit()

@@ -20,7 +20,7 @@ from loguru import logger
 
 router = APIRouter()
 
-@router.post('/api/account/login')
+@router.post('/account/login')
 async def login(login: requests.LoginRequest, db: Session = Depends(deps.db)):
   user = db_queries.get_user(db, login.username)
 
@@ -36,7 +36,7 @@ async def login(login: requests.LoginRequest, db: Session = Depends(deps.db)):
     'access_token': access_token
   }
 
-@router.get('/api/account/user')
+@router.get('/account/user')
 async def get_user(
   user: models.User = Depends(deps.login),
   db: Session = Depends(deps.db)):
@@ -48,7 +48,7 @@ async def get_user(
     role=user.role
   )
 
-@router.post('/api/account/change_password')
+@router.post('/account/change_password')
 async def change_password(
   request: UpdatePasswordRequest,
   user: models.User = Depends(deps.login),
@@ -61,7 +61,7 @@ async def change_password(
   db.add(user) # user is from different db session and needs to be added to this one
   db.commit()
 
-@router.post('/api/account/create')
+@router.post('/account/create')
 async def create_account(create_req: requests.AccountCreateRequest, db: Session = Depends(deps.db)):
   
   if db_queries.get_user(db, create_req.username) != None:
