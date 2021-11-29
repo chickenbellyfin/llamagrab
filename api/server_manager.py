@@ -69,7 +69,7 @@ class ServerManager:
             connection.send(message)
             connection.recv()
         except Exception as e:
-          logger.error(f'{type(e)} while syncing to {region}')
+          logger.error(f'Error while syncing to {region} - {type(e)}: {e}')
 
   def _wait_for_sync(self) -> bool:
     secs_since_last_sync = time.time() - self.last_sync_time

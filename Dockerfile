@@ -1,9 +1,9 @@
-from node:lts as build_web
+FROM --platform=$BUILDPLATFORM node:lts as build_web
 WORKDIR /app
 COPY web web
 COPY common common
 
-WORKDIR web
+WORKDIR /app/web
 RUN yarn install
 RUN yarn build
 
