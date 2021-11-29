@@ -135,13 +135,15 @@ def main(argv: List[str]):
   # Make sure the admin user exists
   ensure_admin_user(db)
   
-  app = create_app(
+  api = create_app(
     db_instance=db,
     login_manager=login_manager,
     server_manager=server_manager,
     regions=config['regions']
   )
   
+  app = FastAPI()
+  app.mount('/api', api)  
   # For deployment, the API serve also serves the static web app
   if config.get('serve_static'):
     app.mount('/', SPAStaticFiles(directory=config['serve_static'], html=True), name='webapp')

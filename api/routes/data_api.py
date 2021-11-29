@@ -9,6 +9,6 @@ from dependencies import dependencies as deps
 
 router = APIRouter()
 
-@router.get('/api/data/regions')
+@router.get('/data/regions')
 async def get_regions():
   return deps.regions

@@ -1,3 +1,4 @@
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 import pytest
 from unittest.mock import MagicMock
@@ -76,12 +77,15 @@ def test_app(
   mock_login_manager,
   inmemory_db,
   test_regions):
-  return app.create_app(
+  api = app.create_app(
     db_instance=inmemory_db,
     login_manager=mock_login_manager,
     server_manager=MagicMock(),
     regions=test_regions
   )
+  top_level = FastAPI()
+  top_level.mount('/api', api)
+  return top_level
 
 @pytest.fixture
 def test_client(test_app):
