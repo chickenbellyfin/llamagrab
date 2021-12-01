@@ -15,6 +15,7 @@ from schema.game_server_config import GameServerConfig
 from dependencies import dependencies as deps
 import time
 from loguru import logger
+import permissions
 
 router = APIRouter()
 
@@ -27,9 +28,7 @@ def get_server(
   Raises 403 if the server does not belong to the requesting user
   Raises 404 if the server does not exist
   """
-  logger.info(f'get_server {server_id}')
   server = db_queries.get_server(db, server_id)
-  logger.info(f'server {server_id} = {server}')
   if server is None:
     raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND)
   elif server.owner.id != user.id:
@@ -84,7 +83,8 @@ async def create_server(
   user: models.User = Depends(deps.login),
   db: Session = Depends(deps.db)):
   count = db_queries.count_servers(db, user)
-  if count >= user.server_quota:
+  
+  if not permissions.can_create_server(db, user):
     raise HTTPException(
       status_code=http_status.HTTP_429_TOO_MANY_REQUESTS,
       detail="Server limit reached for user")

@@ -8,6 +8,7 @@ import defaultConfig from '../../../common/default.json'
 import { SaveOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { NewServerConfigForm } from "../components/edit_server_form/ServerConfigForm";
+import { useAuth } from "../auth";
 
 
 const defaultServerSettings: ServerSettings = {}
@@ -15,6 +16,7 @@ const defaultServerSettings: ServerSettings = {}
 export default function NewServerPage() {
 
   const navigate = useNavigate()
+  const auth = useAuth()
   const [config, setConfig] = useState<GameServerConfig>(defaultConfig)
   const [settings, setSettings] = useState<ServerSettings>(defaultServerSettings)
   
@@ -32,6 +34,7 @@ export default function NewServerPage() {
       message.error('Failed to Create Server: ' + (error as Error).message);
     }
     setIsSaving(false)
+    auth.refresh()
   }
 
 

@@ -1,12 +1,18 @@
 import {BASE_URL} from './config'
 import { getToken } from './auth' 
 
+
+export type UserLimits = {
+  serverLimit: number,
+  activeLimit: number,
+  serverCount: number
+}
+
 export type User = {
   id: number,
   username: string,
-  serverLimit: number,
-  serverCount: number
-  role: string
+  tier: string,
+  limits: UserLimits
 }
 
 export type ServerStatus = {
@@ -67,9 +73,7 @@ export type LoginRequest = {
   password: string
 }
 
-export type AccountCreateRequest = LoginRequest & {
-  inviteToken: string
-}
+export type AccountCreateRequest = LoginRequest
 
 type UpdatePasswordRequest = {
   currentPassword: string,
@@ -129,6 +133,12 @@ async function doRequest<T>({path, method, headers, body, includeAuthToken = tru
 async function getUser(): Promise<User> {
   return doRequest({
     path: '/api/account/user'
+  })
+}
+
+async function getAllUsers(): Promise<Array<User>> {
+  return doRequest({
+    path: '/api/accounts'
   })
 }
 
@@ -216,10 +226,24 @@ async function deleteServer(serverId: number): Promise<any> {
   })
 }
 
-async function createInvite(): Promise<InviteToken> {
+async function verifyUser(userId: number): Promise<InviteToken> {
   return doRequest({
     method: 'POST',
-    path: `/api/admin/invite`
+    path: `/api/admin/verify_user/${userId}`
+  })
+}
+
+async function makeAdmin(userId: number): Promise<InviteToken> {
+  return doRequest({
+    method: 'POST',
+    path: `/api/admin/make_admin/${userId}`
+  })
+}
+
+async function removeAdmin(userId: number): Promise<InviteToken> {
+  return doRequest({
+    method: 'DELETE',
+    path: `/api/admin/make_admin/${userId}`
   })
 }
 
@@ -234,10 +258,13 @@ export const API = {
   Account: {
     getUser,
     createUser,
-    changePassword
+    changePassword,
+    getAllUsers
   },
   Admin: {
-    createInvite
+    verifyUser,
+    makeAdmin,
+    removeAdmin,
   },
   Server: {
     getServerList,

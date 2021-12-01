@@ -26,7 +26,7 @@ class LoginRequest(BaseModel):
     return validations.validate_password(v)
 
 class AccountCreateRequest(LoginRequest):
-  invite_token: str
+  pass
 
 class UpdatePasswordRequest(BaseModel):
   current_password: str

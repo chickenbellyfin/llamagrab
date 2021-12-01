@@ -1,17 +1,100 @@
+import pytest
 from fastapi.testclient import TestClient
 from fastapi import status
 from sqlalchemy.orm.session import Session
 
 from database import models
 
-def test_create_invite_user(test_client: TestClient, logged_in_user):
-  response = test_client.post('/api/admin/invite', logged_in_user)
+@pytest.fixture
+def user_to_verify(db_session: Session):
+  user = models.User(
+    id=55,
+    username='usertoverify',
+    password='',
+    tier='unverified',
+    limits=models.UserLimits(server_limit=1, active_limit=1)
+  )
+  db_session.add(user)
+  db_session.commit()
+  return user
+
+@pytest.fixture
+def user_to_admin(db_session: Session):
+  user = models.User(
+    id=77,
+    username='usertoadmin',
+    password='',
+    tier='verified',
+    limits=models.UserLimits(server_limit=1, active_limit=1)
+  )
+  db_session.add(user)
+  db_session.commit()
+  return user
+
+@pytest.fixture
+def user_to_unadmin(db_session: Session):
+  user = models.User(
+    id=88,
+    username='usertounadmin',
+    password='',
+    tier='admin',
+    limits=models.UserLimits(server_limit=1, active_limit=1)
+  )
+  db_session.add(user)
+  db_session.commit()
+  return user
+
+def test_verify_user(test_client: TestClient, logged_in_admin, user_to_verify, db_session: Session):
+  response = test_client.post('/api/admin/verify_user/55')
+  assert response.status_code == status.HTTP_200_OK
+  db_user = db_session.query(models.User).filter_by(id=55).first()
+  assert db_user.tier == 'verified'
+  assert db_user.limits.server_limit == 5
+  assert db_user.limits.active_limit == 2
+
+
+def test_verify_user_not_admin(test_client: TestClient, logged_in_user, user_to_verify, db_session: Session):
+  response = test_client.post('/api/admin/verify_user/55')
   assert response.status_code == status.HTTP_403_FORBIDDEN
 
-def test_create_invite_admin(test_client: TestClient, db_session: Session, logged_in_admin):
-  response = test_client.post('/api/admin/invite', logged_in_admin)
-  token = response.json()['invite_token']
-  db_invite = db_session.query(models.Invite).filter(models.Invite.token == token).first()
+def test_verify_user_already_verified(test_client: TestClient, logged_in_admin, user_to_verify, db_session: Session):
+  user_to_verify.tier = 'admin'
+  db_session.commit()
+  response = test_client.post('/api/admin/verify_user/55')
+  assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+def test_make_admin(test_client: TestClient, logged_in_super, user_to_admin, db_session: Session):
+  response = test_client.post('/api/admin/make_admin/77')
   assert response.status_code == status.HTTP_200_OK
-  assert token is not None
-  assert db_invite.token == token
+  db_user = db_session.query(models.User).filter_by(id=77).first()
+  assert db_user.tier == 'admin'
+  assert db_user.limits.server_limit is None
+  assert db_user.limits.active_limit is None
+
+def test_make_admin_not_super(test_client: TestClient, logged_in_admin, user_to_admin, db_session: Session):
+  response = test_client.post('/api/admin/make_admin/77')
+  assert response.status_code == status.HTTP_403_FORBIDDEN
+
+def test_make_admin_already_admin(test_client: TestClient, logged_in_admin, user_to_admin, db_session: Session):
+  user_to_admin.tier = 'admin'
+  db_session.commit()
+  response = test_client.post('/api/admin/verify_user/77')
+  assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+def test_remove_admin(test_client: TestClient, logged_in_super, user_to_unadmin, db_session: Session):
+  response = test_client.delete('/api/admin/make_admin/88')
+  assert response.status_code == status.HTTP_200_OK
+  db_user = db_session.query(models.User).filter_by(id=88).first()
+  assert db_user.tier == 'verified'
+  assert db_user.limits.server_limit == 5
+  assert db_user.limits.active_limit == 2
+
+def test_remove_admin_not_super(test_client: TestClient, logged_in_admin, user_to_unadmin, db_session: Session):
+  response = test_client.delete('/api/admin/make_admin/88')
+  assert response.status_code == status.HTTP_403_FORBIDDEN
+
+def test_remove_admin_not_admin(test_client: TestClient, logged_in_super, user_to_unadmin, db_session: Session):
+  user_to_unadmin.tier = 'verified'
+  db_session.commit()
+  response = test_client.delete('/api/admin/make_admin/88')
+  assert response.status_code == status.HTTP_400_BAD_REQUEST

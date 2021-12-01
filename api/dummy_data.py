@@ -13,8 +13,8 @@ users = [
   models.User(
     username='admin',
     password=argon2.hash('asdfasdf'),
-    role='admin',
-    server_quota=10)
+    tier='super'
+  )
 ]
 
 servers = [
@@ -46,6 +46,10 @@ servers = [
 def populate(db: Session):
   for user in users:
     db.add(user)
+    db.commit()
+  
+  db.add(models.UserLimits(user_id=user.id))
+
 
   db.commit()
   user1 = queries.get_user(db, user.username)
