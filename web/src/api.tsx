@@ -51,8 +51,8 @@ export type GameServerConfig = {
 
   friendlyFireMultiplier?: number
 
-
-  friendlyFire: boolean
+  friendlyFire?: boolean
+  mapVoting?: boolean
   maps: Array<string> | []
 
   vehicleHealthMultiplier?: number
@@ -62,10 +62,6 @@ export type GameServerConfig = {
   gravCycleSpawnTime?: number
   shrikeSpawnTime?: number
   beowulfSpawnTime?: number
-}
-
-export type InviteToken = {
-  invite_token: string
 }
 
 export type LoginRequest = {
@@ -226,21 +222,21 @@ async function deleteServer(serverId: number): Promise<any> {
   })
 }
 
-async function verifyUser(userId: number): Promise<InviteToken> {
+async function verifyUser(userId: number): Promise<any> {
   return doRequest({
     method: 'POST',
     path: `/api/admin/verify_user/${userId}`
   })
 }
 
-async function makeAdmin(userId: number): Promise<InviteToken> {
+async function makeAdmin(userId: number): Promise<any> {
   return doRequest({
     method: 'POST',
     path: `/api/admin/make_admin/${userId}`
   })
 }
 
-async function removeAdmin(userId: number): Promise<InviteToken> {
+async function removeAdmin(userId: number): Promise<any> {
   return doRequest({
     method: 'DELETE',
     path: `/api/admin/make_admin/${userId}`

@@ -1,4 +1,4 @@
-import { Form, Radio, RadioChangeEvent, Select, Switch} from "antd"
+import { Button, Form, Popconfirm, Radio, RadioChangeEvent, Select, Space, Switch} from "antd"
 import { LabeledValue } from "antd/lib/select";
 import { useState } from "react"
 
@@ -8,98 +8,73 @@ import { getMaps, MapsByKey } from "../../data";
 const { Option } = Select;
 
 type MapSelectorProps = {
-  gameType: 'CTF',
+  gameTypes: Array<string>,
   mapList: Array<string>,
   onChange: (maps: Array<string>) => void
 }
 
+type MapSelectorState = {
+  gameTypes: Array<string>,
+  maps: Array<string>
+}
 
-export default function MapSelector({gameType, mapList, onChange}: MapSelectorProps) {
-  
+export default function MapSelector({gameTypes, mapList, onChange}: MapSelectorProps) {
+
   // If there is already a map list (existing server), start in select mode
   // if not, default to all maps
-  let initialMapList = mapList
-  let initialAllMaps = false;
+  let initialMapList = mapList.filter(m => gameTypes.includes( MapsByKey[m].gameMode))
   if (initialMapList.length === 0) {
-    initialMapList = getMaps(gameType)
-    initialAllMaps = true
+    initialMapList = getMaps(gameTypes)
   }
 
-  const [allMaps, setAllMaps] = useState(initialAllMaps)
-  const [includeCustomMaps, setIncludeCustomMaps] = useState(false)
-  const [selectedMaps, setSelectedMaps] = useState<Array<string>>(initialMapList)
-  console.log(`allMaps = ${allMaps}`)
-  
-  const updateMapList = (
-    newAllMaps: boolean,
-    newIncludeCustomMaps: boolean,
-    newSelectedMaps: Array<string>) => {
-    if (newAllMaps) {
-      var mapList = getMaps(gameType)
-      if (newIncludeCustomMaps) {
-        mapList = getMaps(gameType, true)
-      }
-      setSelectedMaps(mapList)
-      onChange(mapList)
-    } else {
-      setSelectedMaps(newSelectedMaps)
-      onChange(newSelectedMaps)
-    }
+  const [state, setState] = useState<MapSelectorState>({
+    gameTypes: gameTypes,
+    maps: initialMapList
+  })
+
+  // if game types changed, remove maps which are not part of the game types anymore
+  if (state.gameTypes != gameTypes) {
+    setState({
+      gameTypes,
+      maps: state.maps.filter(m => gameTypes.includes( MapsByKey[m].gameMode))
+    });
   }
   
-
-  const allMapsUpdated = (e: RadioChangeEvent) => {
-    const value = e.target.value
-    setAllMaps(value)
-    
-    if (!value) {
-      setIncludeCustomMaps(false)
-      updateMapList(value, false, selectedMaps)
-    } else {
-      updateMapList(value, includeCustomMaps, selectedMaps)
-    }
+  const updateMapList = (newSelectedMaps: Array<string>) => {
+    setState({
+      gameTypes: state.gameTypes,
+      maps: newSelectedMaps
+    })
+    onChange(newSelectedMaps)
   }
 
-  const handleIncludeCustomMaps = (value: boolean) => {
-    setIncludeCustomMaps(value)
-    updateMapList(allMaps, value, selectedMaps)
+  const addMaps = (mapsToAdd: Array<string>) => {
+    updateMapList(state.maps.concat(mapsToAdd))
   }
 
   const handleCustomMapListChange = (selected: Array<LabeledValue>) => {
     const selectedKeys = selected.map(v => v.value as string)
     console.log(`selected ${selectedKeys}`)
-    updateMapList(allMaps, includeCustomMaps, selectedKeys)
+    updateMapList(selectedKeys)
   }
 
-  const unSelectedMaps = getMaps(gameType, true)
-    .filter(map => !selectedMaps.includes(map))
+  const unSelectedMaps = getMaps(gameTypes, false)
+    .filter(map => !state.maps.includes(map))
+
+  const unSelectedCustomMaps = getMaps(gameTypes, true, false)
+    .filter(map => !state.maps.includes(map))
+
 
   return (
     <>
-      <Form.Item
-        label='Map List'>
-        <Radio.Group value={allMaps} onChange={allMapsUpdated}>
-          <Radio value={true}>All Maps</Radio>
-          <Radio value={false}>Select...</Radio>
-        </Radio.Group>
-      </Form.Item>
-      <Form.Item 
-        
-        label={`Include Custom Maps`}>
-        <Switch disabled={!allMaps}
-          defaultChecked={false}
-          checked={includeCustomMaps}
-          onChange={handleIncludeCustomMaps}/>
-      </Form.Item>
 
       <Form.Item label='Select Maps'>
         <Select 
           size='large'
           mode='multiple'
           allowClear
-          disabled={allMaps}
           onChange={handleCustomMapListChange}
-          value={selectedMaps.map(mapName => {
+          value={state.maps.map(mapName => {
             return {
               key: mapName,
               value: mapName,
@@ -121,6 +96,39 @@ export default function MapSelector({gameType, mapList, onChange}: MapSelectorPr
   
         </Select>
       </Form.Item>
+      <Form.Item label=' ' colon={false}>
+        <Space>
+        {unSelectedMaps.length > 0 &&
+          <Button 
+            disabled={!(unSelectedMaps.length > 0)}
+            size='small'
+            onClick={e => addMaps(unSelectedMaps)}>
+              {`Add All (${unSelectedMaps.length} more)`}
+          </Button>
+        }
+        {unSelectedCustomMaps.length > 0 &&
+          <Popconfirm
+            title='Players must have the custom maps installed'
+            onConfirm={e => addMaps(unSelectedCustomMaps)}
+            okText="Understood"
+            >
+          <Button 
+            disabled={!(unSelectedCustomMaps.length > 0)}
+            size='small'>
+              {`Add (${unSelectedCustomMaps.length} custom maps)`}
+          </Button>
+          </Popconfirm>
+        }
+        </Space>
+      </Form.Item>
+      {/* <Form.Item 
+        
+        label={`Include Custom Maps`}>
+        <Switch disabled={!allMaps}
+          defaultChecked={false}
+          checked={includeCustomMaps}
+          onChange={handleIncludeCustomMaps}/>
+      </Form.Item> */}
     </>
   )
 }

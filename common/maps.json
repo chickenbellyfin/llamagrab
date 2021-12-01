@@ -166,7 +166,7 @@
   },
   {
     "key": "arena_lavaarena",
-    "name": "LavaArena",
+    "name": "Lava Arena",
     "gameMode": "Arena",
     "lua": "Maps.Arena.LavaArena"
   },
@@ -251,7 +251,7 @@
   {
     "key": "tdm_miasma",
     "name": "Miasma",
-    "gameMode": "Arena",
+    "gameMode": "TDM",
     "lua": "Maps.TDM.Miasma"
   },
   {

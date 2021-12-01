@@ -20,14 +20,14 @@ export default function CredentialsForm({ submitLabel, onSubmit, disabled }: Cre
   }
   
   return (
-    <Form labelCol={{span: 8}} wrapperCol={{span: 16}} onFinish={handleSubmit}>
+    <Form labelCol={{span: 4}} wrapperCol={{span: 18}} onFinish={handleSubmit}>
       <Form.Item label="Username" name="username" rules={[{ required: true, message: 'Required' }]}>
         <Input onChange={(e) => setUsername(e.target.value)} disabled={disabled}/>
       </Form.Item>
       <Form.Item label="Password" name="password" rules={[{ required: true, message: 'Required' }]}>
         <Input.Password onChange={e => setPassword(e.target.value)} disabled={disabled}/>
       </Form.Item>
-      <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+      <Form.Item wrapperCol={{ offset: 4, span: 18 }}>
         <Button type="primary" htmlType="submit" disabled={disabled}>{ submitLabel }</Button>
       </Form.Item>
     </Form>

@@ -10,7 +10,7 @@ export default function VehicleSettingsTab (
   const { updateInput, updateRadio, updateSwitch, updateInputNumber } = updateCallbacks;
 
   return (
-    <Form labelCol={{span: 4}} wrapperCol={{span: 14}}>
+    <Form labelCol={{span: 6}} wrapperCol={{span: 14}}>
       <Form.Item label='Vehicle Health Multiplier' extra="Multiplier affecting all vehicles' health">
         <InputPercent        
           value={config.vehicleHealthMultiplier}

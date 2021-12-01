@@ -79,7 +79,7 @@ export default function LoginPage() {
     return <Navigate to='/'/>
   } else {
     return   (
-      <Card title='Login' style={{margin: '1em'}}>
+      <Card title='Login'>
         <Content>
           <CredentialsForm submitLabel={ 'Login' } onSubmit={onSubmit}/>
           { errorMessage && <Text type="danger">{errorMessage}</Text> }
