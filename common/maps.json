@@ -133,5 +133,221 @@
     "gameMode": "CTF",
     "lua": "TrCTF-Periculo",
     "isCustom": true
+  },
+  {
+    "key": "arena_walledin",
+    "name": "Walled In",
+    "gameMode": "Arena",
+    "lua": "Maps.Arena.WalledIn"
+  },
+  {
+    "key": "arena_hinterland",
+    "name": "Hinterland",
+    "gameMode": "Arena",
+    "lua": "Maps.Arena.Hinterland"
+  },
+  {
+    "key": "arena_fraytown",
+    "name": "Fray Town",
+    "gameMode": "Arena",
+    "lua": "Maps.Arena.FrayTown"
+  },
+  {
+    "key": "arena_undercroft",
+    "name": "Undercroft",
+    "gameMode": "Arena",
+    "lua": "Maps.Arena.Undercroft"
+  },
+  {
+    "key": "arena_airarena",
+    "name": "Air Arena",
+    "gameMode": "Arena",
+    "lua": "Maps.Arena.AirArena"
+  },
+  {
+    "key": "arena_lavaarena",
+    "name": "LavaArena",
+    "gameMode": "Arena",
+    "lua": "Maps.Arena.LavaArena"
+  },
+  {
+    "key": "arena_whiteout",
+    "name": "Whiteout",
+    "gameMode": "Arena",
+    "lua": "Maps.Arena.Whiteout"
+  },
+  {
+    "key": "rabbit_nightabatic",
+    "name": "Nightabatic",
+    "gameMode": "Rabbit",
+    "lua": "Maps.Rabbit.Nightabatic"
+  },
+  {
+    "key": "rabbit_sulfurcove",
+    "name": "Sulfur Cove",
+    "gameMode": "Rabbit",
+    "lua": "Maps.Rabbit.SulfurCove"
+  },
+  {
+    "key": "rabbit_inferno",
+    "name": "Inferno",
+    "gameMode": "Rabbit",
+    "lua": "Maps.Rabbit.Inferno"
+  },
+  {
+    "key": "rabbit_crossfire",
+    "name": "Crossfire",
+    "gameMode": "Rabbit",
+    "lua": "Maps.Rabbit.Crossfire"
+  },
+  {
+    "key": "rabbit_outskirts",
+    "name": "Outskirts",
+    "gameMode": "Rabbit",
+    "lua": "Maps.Rabbit.Outskirts"
+  },
+  {
+    "key": "rabbit_quicksand",
+    "name": "Quicksand",
+    "gameMode": "Rabbit",
+    "lua": "Maps.Rabbit.Quicksand"
+  },
+  {
+    "key": "tdm_outskirts",
+    "name": "Outskirts",
+    "gameMode": "TDM",
+    "lua": "Maps.TDM.Outskirts"
+  },
+  {
+    "key": "tdm_quicksand",
+    "name": "Quicksand",
+    "gameMode": "TDM",
+    "lua": "Maps.TDM.Quicksand"
+  },
+  {
+    "key": "tdm_sulfur_cove",
+    "name": "Sulfur Cove",
+    "gameMode": "TDM",
+    "lua": "Maps.TDM.SulfurCove"
+  },
+  {
+    "key": "tdm_drydock_night",
+    "name": "DrydockNight",
+    "gameMode": "TDM",
+    "lua": "Maps.TDM.DrydockNight"
+  },
+  {
+    "key": "tdm_nightabatic",
+    "name": "Nightabatic",
+    "gameMode": "TDM",
+    "lua": "Maps.TDM.Nightabatic"
+  },
+  {
+    "key": "tdm_inferno",
+    "name": "Inferno",
+    "gameMode": "TDM",
+    "lua": "Maps.TDM.Inferno"
+  },
+  {
+    "key": "tdm_miasma",
+    "name": "Miasma",
+    "gameMode": "Arena",
+    "lua": "Maps.TDM.Miasma"
+  },
+  {
+    "key": "blitz_arx_novena",
+    "name": "ArxNovena",
+    "gameMode": "Blitz",
+    "lua": "Maps.Blitz.ArxNovena"
+  },
+  {
+    "key": "blitz_bella_omega",
+    "name": "BellaOmega",
+    "gameMode": "Blitz",
+    "lua": "Maps.Blitz.BellaOmega"
+  },
+  {
+    "key": "blitz_blueshift",
+    "name": "Blueshift",
+    "gameMode": "Blitz",
+    "lua": "Maps.Blitz.Blueshift"
+  },
+  {
+    "key": "blitz_crossfire",
+    "name": "Crossfire",
+    "gameMode": "Blitz",
+    "lua": "Maps.Blitz.Crossfire"
+  },
+  {
+    "key": "blitz_canyon",
+    "name": "Canyon Crusade Revival",
+    "gameMode": "Blitz",
+    "lua": "Maps.Blitz.CanyonCrusadeRevival"
+  },
+  {
+    "key": "blitz_drydock",
+    "name": "Drydock",
+    "gameMode": "Blitz",
+    "lua": "Maps.Blitz.Drydock"
+  },
+  {
+    "key": "blitz_hellfire",
+    "name": "Hellfire",
+    "gameMode": "Blitz",
+    "lua": "Maps.Blitz.Hellfire"
+  },
+  {
+    "key": "blitz_icecoaster",
+    "name": "IceCoaster",
+    "gameMode": "Blitz",
+    "lua": "Maps.Blitz.IceCoaster"
+  },
+  {
+    "key": "blitz_katabatic",
+    "name": "Katabatic",
+    "gameMode": "Blitz",
+    "lua": "Maps.Blitz.Katabatic"
+  },
+  {
+    "key": "cah_perdition",
+    "name": "Perdition",
+    "gameMode": "Blitz",
+    "lua": "Maps.Blitz.Perdition"
+  },
+  {
+    "key": "cah_outskirts",
+    "name": "Outskirts",
+    "gameMode": "CaH",
+    "lua": "Maps.CaH.Outskirts"
+  },
+  {
+    "key": "cah_katabatic",
+    "name": "Katabatic",
+    "gameMode": "CaH",
+    "lua": "Maps.CaH.Katabatic"
+  },
+  {
+    "key": "cah_raindance",
+    "name": "Raindance",
+    "gameMode": "CaH",
+    "lua": "Maps.CaH.Raindance"
+  },
+  {
+    "key": "cah_sulfur_cove",
+    "name": "Sulfur Cove",
+    "gameMode": "CaH",
+    "lua": "Maps.CaH.SulfurCove"
+  },
+  {
+    "key": "cah_tartarus",
+    "name": "Tartarus",
+    "gameMode": "CaH",
+    "lua": "Maps.CaH.Tartarus"
+  },
+  {
+    "key": "cah_canyon",
+    "name": "Canyon Crusade Revival",
+    "gameMode": "CaH",
+    "lua": "Maps.CaH.CanyonCrusadeRevival"
   }
 ]
