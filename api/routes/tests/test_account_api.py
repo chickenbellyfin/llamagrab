@@ -5,13 +5,24 @@ from fastapi_login.fastapi_login import LoginManager
 from sqlalchemy.orm.session import Session
 from starlette.testclient import TestClient
 from fastapi import status
+from database.models import UserLimits
 from database import models
 import time
 
-def test_get_user(test_client: TestClient, logged_in_user):
+def test_get_user(test_client: TestClient, logged_in_user, db_session: Session):
+  db_session.add(logged_in_user)
+  db_session.commit()
   response = test_client.get('/api/account/user')
   assert response.json() == {
-    'id': 0, 'username': 'testuser', 'serverLimit': 1, 'serverCount':0, 'role':'user'
+    'id': 0,
+    'username':
+    'testuser',
+    'tier':'verified',
+    'limits': {
+      'serverLimit': 1,
+      'activeLimit': 1,
+      'serverCount': 0
+    }
   }
 
 
@@ -56,42 +67,30 @@ def test_create_account(test_client: TestClient, db_session: Session):
   db_session.commit()
   response = test_client.post('/api/account/create', json={
     'username': 'testuser2',
-    'password': 'testpassword2',
-    'inviteToken': 'good_token'
+    'password': 'testpassword2'
   })
   assert response.status_code == status.HTTP_200_OK
   db_user = db_session.query(models.User).filter_by(username='testuser2').first()
   assert db_user is not None
+  assert db_user.tier == 'unverified'
+  assert db_user.limits.server_limit == 1
+  assert db_user.limits.active_limit == 1
   
 
-def test_create_account_bad_token_used(test_client: TestClient, db_session: Session):
-  db_session.add(models.Invite(
-    token='bad_used',
-    expires_at=time.time() + 3600,
-    created_by=0,
-    used_by=1 # used
-  ))
-  db_session.commit() 
+def test_create_second_account(test_client: TestClient, db_session: Session):
   response = test_client.post('/api/account/create', json={
     'username': 'testuser2',
     'password': 'testpassword2',
-    'inviteToken': 'bad_used'
   })
-  assert response.status_code == status.HTTP_400_BAD_REQUEST
+  assert response.status_code == status.HTTP_200_OK
+  
+  # second one fails
+  response = test_client.post('/api/account/create', json={
+    'username': 'testuser3',
+    'password': 'testpassword3',
+  })
+  assert response.status_code == status.HTTP_429_TOO_MANY_REQUESTS
 
-def test_create_account_bad_token_expired(test_client: TestClient, db_session: Session):
-  db_session.add(models.Invite(
-    token='bad_expired',
-    expires_at=time.time() - 1, # expired
-    created_by=0,
-  ))
-  db_session.commit() 
-  response = test_client.post('/api/account/create', json={
-    'username': 'testuser2',
-    'password': 'testpassword2',
-    'inviteToken': 'bad_expired'
-  })
-  assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 def test_create_account_exists(test_client: TestClient, db_session: Session, user: models.User):
   db_session.add(user)
@@ -138,4 +137,3 @@ def test_change_password_bad_password(test_client: TestClient, db_session: Sessi
     'newPassword': 'password123'
   })
   assert response.status_code == status.HTTP_401_UNAUTHORIZED
-

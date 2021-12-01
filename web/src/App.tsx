@@ -1,6 +1,6 @@
 
-import { Navigate, Route, Routes} from 'react-router-dom'
-import { Col, Layout, Row } from 'antd'
+import { Link, Navigate, Route, Routes, useLocation, useNavigate} from 'react-router-dom'
+import { Col, Layout, Menu, Row } from 'antd'
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import { ProtectedRoute, useAuth } from './auth'
@@ -12,40 +12,80 @@ import SettingsPage from './pages/SettingsPage';
 import AdminPage from './pages/AdminPage';
 import SignupPage from './pages/SignupPage';
 import AppHeader from './components/AppHeader';
+import Icon, { DatabaseFilled, GlobalOutlined } from '@ant-design/icons';
 
+import { ReactComponent as adminLogo } from '../public/admin.svg'
 
-const { Content } = Layout;
-
+const { Header, Content, Sider } = Layout;
+const { SubMenu } = Menu;
 
 function App () {
   
   const auth = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const sidebarVisible = Boolean(auth.user)
   
   return (
-    <Layout style={{height: '100%'}}>
-      <AppHeader/>
-      <Content style={{padding: '20px'}}>
-        <Row justify='center'><Col span={18} style={{maxWidth:'1200px'}}>
-        <Routes>
+    <>
+    <Layout style={{height: '100vh'}}>
+      <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
+        <AppHeader/>
+      </Header>
+      <Layout style={{height: '100%', marginTop: '64px'}}>
+        {sidebarVisible &&
+          <Sider style={{
+            overflow: 'auto',
+            height: '100vh',
+            position: 'fixed',
+            left: 0,
+          }}>
+          <Menu theme="dark" selectedKeys={[location.pathname]} mode="inline">
+              <Menu.Item key='/'>
+              <Link to='/'><DatabaseFilled/>&nbsp;&nbsp;Servers</Link>
+              </Menu.Item>
 
-          {/* Login & Signup pages disabled for logged in users, will redirect to '/' */}
-          { !auth.user && <Route path='/login' element={<LoginPage/>}/>}
-          { !auth.user && <Route path='/signup' element={<SignupPage/>}/>}
-          
-          {/* Logged in pages should be wrapped in <ProtectedRoute> so that logged out users
-              get redirected to /login */}
-          <Route path='/' element={<ProtectedRoute><HomePage/></ProtectedRoute>}/>
-          <Route path='/edit/:serverId' element={<ProtectedRoute><EditServerPage/></ProtectedRoute>}/>
-          <Route path='/new' element={<ProtectedRoute><NewServerPage/></ProtectedRoute>}/>
-          <Route path='/admin' element={<ProtectedRoute><AdminPage/></ProtectedRoute>}/>
-          <Route path='/settings' element={<ProtectedRoute><SettingsPage/></ProtectedRoute>}/>
-          
-          {/* Any paths not defined redirect to '/' */}
-          <Route path='*' element={<Navigate replace to='/'/>}/>
-        </Routes>
-        </Col></Row>
-      </Content>
+              
+              <Menu.Item key="/regions" disabled>
+                <Link to='/regions'><GlobalOutlined/>&nbsp;&nbsp;Regions</Link>
+              </Menu.Item>
+
+              {auth.permissions.isAdmin() &&
+                <Menu.Item 
+                  key="/admin"
+                  onClick={() => navigate('/admin')}>
+                  <Link to='/admin'><Icon style={{fontSize:'18px'}} component={adminLogo}/>&nbsp;&nbsp;Admin</Link>
+                </Menu.Item>
+              }
+            </Menu>
+          </Sider>
+        }
+    
+        <Content style={{padding: '20px', marginLeft: (sidebarVisible ? '200px': '0')}}>
+          <Row justify='center'><Col span={24} style={{maxWidth:'1200px'}}>
+          <Routes>
+
+            {/* Login & Signup pages disabled for logged in users, will redirect to '/' */}
+            { !auth.user && <Route path='/login' element={<LoginPage/>}/>}
+            { !auth.user && <Route path='/signup' element={<SignupPage/>}/>}
+            
+            {/* Logged in pages should be wrapped in <ProtectedRoute> so that logged out users
+                get redirected to /login */}
+            <Route path='/' element={<ProtectedRoute><HomePage/></ProtectedRoute>}/>
+            <Route path='/edit/:serverId' element={<ProtectedRoute><EditServerPage/></ProtectedRoute>}/>
+            <Route path='/new' element={<ProtectedRoute><NewServerPage/></ProtectedRoute>}/>
+            <Route path='/admin' element={<ProtectedRoute><AdminPage/></ProtectedRoute>}/>
+            <Route path='/settings' element={<ProtectedRoute><SettingsPage/></ProtectedRoute>}/>
+            
+            {/* Any paths not defined redirect to '/' */}
+            <Route path='*' element={<Navigate replace to='/'/>}/>
+          </Routes>
+          </Col></Row>
+        </Content>
+      </Layout>
     </Layout>
+    </>
   );
 }
 

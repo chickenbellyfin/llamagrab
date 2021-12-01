@@ -3,6 +3,7 @@ import { List, Card, Divider, Descriptions, Badge, Popconfirm, message, Spin } f
 import { useState } from "react"
 import { Link } from "react-router-dom"
 import { API, ServerStatus } from "../api"
+import { useAuth } from "../auth"
 
 type ServerListItemProps = {
   server: ServerStatus
@@ -11,9 +12,14 @@ type ServerListItemProps = {
 
 export default function ServerListItem({ server, invalidate }: ServerListItemProps) {
 
+  const auth = useAuth()
   const [actionInProgress, setActionInProgress] = useState(false)
 
-  const makeAction = (apiCall: (serverId: number) => Promise<any>, success: string, error: string) => {
+  const makeAction = (
+    apiCall: (serverId: number) => Promise<any>,
+    success: string,
+    error: string,
+    callback?: () => void) => {
     return async () => {
       setActionInProgress(true)
       try {
@@ -24,6 +30,9 @@ export default function ServerListItem({ server, invalidate }: ServerListItemPro
       } finally {
         setActionInProgress(false)
         invalidate()
+        if (callback) {
+          callback()
+        }
       }
     }
   }
@@ -31,7 +40,8 @@ export default function ServerListItem({ server, invalidate }: ServerListItemPro
   const onDelete = makeAction(
     API.Server.deleteServer,
     `Deleted ${ server.name }`,
-    `Error deleting ${ server.name }`
+    `Error deleting ${ server.name }`,
+    auth.refresh
   )
 
   const onStart = makeAction(

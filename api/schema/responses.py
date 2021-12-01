@@ -2,12 +2,16 @@ from typing import Optional
 from fastapi_camelcase import CamelModel as BaseModel
 from .game_server_config import GameServerConfig
 
+class UserLimits(BaseModel):
+  server_limit: Optional[int]
+  active_limit: Optional[int]
+  server_count: int
+
 class User(BaseModel):
   id: int
   username: str
-  server_limit: int
-  server_count: int
-  role: str
+  tier: str
+  limits: UserLimits
   # DO NOT INCLUDE PASSWORD HERE
 
   class Config:

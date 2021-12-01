@@ -3,6 +3,7 @@ from fastapi.testclient import TestClient
 import pytest
 from unittest.mock import MagicMock
 import asyncio
+from database.models import UserLimits
 from database.database import Database
 from database import database, models
 from sqlalchemy.pool import StaticPool
@@ -17,8 +18,8 @@ def user():
     id=0,
     username='testuser',
     password=argon2.hash('testpassword'),
-    role='user',
-    server_quota=1
+    tier='verified',
+    limits=models.UserLimits(server_limit=1, active_limit=1)
   )
 
 @pytest.fixture
@@ -40,13 +41,30 @@ def logged_in_admin(mock_login_manager):
     id=1,
     username='testadmin',
     password=argon2.hash('testadminpassword'),
-    role='admin',
-    server_quota=10
+    tier='admin',    
+    limits=models.UserLimits(server_limit=-1, active_limit=-1)
   )
   f = asyncio.Future()
   f.set_result(admin_user)
   mock_login_manager.return_value = f
   return admin_user
+
+@pytest.fixture
+def logged_in_super(mock_login_manager):
+  """
+  Sets up the LoginManager with a user(role=admin) and return the user object
+  """
+  super_user = models.User(
+    id=2,
+    username='testsuper',
+    password=argon2.hash('testsuperpassword'),
+    tier='super',    
+    limits=models.UserLimits(server_limit=-1, active_limit=-1)
+  )
+  f = asyncio.Future()
+  f.set_result(super_user)
+  mock_login_manager.return_value = f
+  return super_user
   
 
 @pytest.fixture

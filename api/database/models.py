@@ -9,10 +9,19 @@ class User(Base):
   id = Column(Integer, primary_key=True, autoincrement=True)
   username = Column(String, nullable=False, unique=True)
   password = Column(String, nullable=False) # hashed
-  role = Column(String, default='user')
-  server_quota = Column(Integer, default=1, nullable=False)
+  tier = Column(String, default='unverified')
 
   servers = relationship("Server", back_populates='owner')
+  limits = relationship("UserLimits", uselist=False)
+
+class UserLimits(Base):
+  __tablename__ = 'user_limits'
+  id = Column(Integer, primary_key=True, autoincrement=True)
+  user_id = Column(Integer, ForeignKey('users.id'))
+  server_limit = Column(Integer)
+  active_limit = Column(Integer)
+
+  relationship('User', back_populates='limits')
 
 
 

@@ -3,16 +3,21 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
 import { Navigate } from "react-router-dom";
 import { API, User } from "./api";
+import { AuthPermissions, getPermissions } from "./permissions";
 
 type AuthContext = {
   user?: User,
   login: (user: User) => void
-  logout: () => void
+  logout: () => void,
+  refresh: () => void,
+  permissions: AuthPermissions
 }
 
 const authContext = createContext<AuthContext>({
   login: () => {},
-  logout: () => {}
+  logout: () => {},
+  refresh: () => {},
+  permissions: getPermissions(undefined)
 });
 
 // https://usehooks.com/useAuth/
@@ -31,10 +36,16 @@ function useProvideAuth(): AuthContext {
     setUser(undefined)
   }
 
+  const refresh = () => {
+    API.Account.getUser().then(setUser)
+  }
+
   return {
     user,
     login,
-    logout
+    logout,
+    refresh,
+    permissions: getPermissions(user)
   };
 
 }

@@ -12,37 +12,15 @@ export default function AppHeader() {
 
   return (
     <>
-    <Header>
-
-      
+    <Header style={{padding: '0px', background: 'none'}}>      
     <a href='/'><h1 style={{display: 'inline', float:'left'}}><Icon component={logo}/> Server Manager</h1></a>
-{/*     
-    { auth.user &&
-      <span style={{float: 'right'}}>{auth.user.username}</span>
-    } */}
     <Menu 
       style={{float: 'right'}}
       theme='dark'
       mode='horizontal'
       selectedKeys={[]}
       disabledOverflow>
-       
-      { auth.user &&
-        <Menu.Item key='home'>
-          <Tooltip title='Home'>
-            <Link to='/'><DatabaseFilled style={{fontSize: '18px'}}/></Link>
-          </Tooltip>
-        </Menu.Item>
-      }
-
-      { auth.user?.role === 'admin' &&              
-        <Menu.Item key='admin'>
-          <Tooltip title='Admin'>
-            <Link to='/admin'><Icon style={{fontSize:'18px'}} component={adminLogo}/></Link>
-          </Tooltip>
-        </Menu.Item>
-      }
-      
+    
       { auth.user &&
         <Menu.Item key='settings'>
           <Tooltip title='Settings'>
