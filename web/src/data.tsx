@@ -8,14 +8,19 @@ type Map = {
 }
 
 function getMaps(
-  gameMode: string | undefined = undefined,
-  includeCustom: boolean | undefined = false): Array<string> {
+  gameModes: string[] | undefined = undefined,
+  includeCustom: boolean | undefined = false,
+  includeBuiltIn: boolean | undefined = true): Array<string> {
   return Maps.filter(map => {
-    if (gameMode && map.gameMode !== gameMode) {
+    if (gameModes && !gameModes.includes(map.gameMode)) {
       return false
     }
 
-    if (!includeCustom && map.isCustom) {
+    if (!includeCustom && Boolean(map.isCustom)) {
+      return false
+    }
+
+    if (!includeBuiltIn && !Boolean(map.isCustom)) {
       return false
     }
     return true;

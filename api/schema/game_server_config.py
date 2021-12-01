@@ -23,6 +23,7 @@ class GameServerConfig(BaseModel):
   
   friendly_fire: Optional[int]
 
+  map_voting: Optional[bool]
   maps: List[str]
 
   vehicle_health_multiplier: Optional[float]

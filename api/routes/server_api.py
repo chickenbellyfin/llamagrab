@@ -8,6 +8,9 @@ from fastapi.exceptions import HTTPException
 from fastapi.routing import APIRouter
 from sqlalchemy.orm.session import Session
 import os
+
+from starlette.responses import PlainTextResponse, Response
+from lua import to_lua
 import database.queries as db_queries
 from database import models
 from schema import requests, responses
@@ -31,7 +34,7 @@ def get_server(
   server = db_queries.get_server(db, server_id)
   if server is None:
     raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND)
-  elif server.owner.id != user.id:
+  elif server.owner.id != user.id and not permissions.is_admin(user):
     raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN)
   
   return server
@@ -142,3 +145,9 @@ async def delete_server(server: models.Server = Depends(get_server), db: Session
   db.delete(server)
   db.commit()
   deps.server_manager().sync()
+
+# TODO
+# users should get cleaned-up lua without admin settings/passwords
+# @router.get('/server/{server_id}/lua', response_class=PlainTextResponse)
+# async def get_server_lua(server: models.Server = Depends(get_server)):
+#   return to_lua(GameServerConfig.parse(server.server_config))
