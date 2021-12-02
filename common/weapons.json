@@ -1,0 +1,348 @@
+{
+  "Light": [
+    {
+      "key": "light_spinfusor",
+      "name": "Light Spinfusor",
+      "type": "impact"
+    },
+    {
+      "key": "light_bolt_launcher",
+      "name": "Bolt Launcher",
+      "type": "impact"
+    },
+    {
+      "key": "light_twinfusor",
+      "name": "Light Twinfusor",
+      "type": "impact"
+    },
+    {
+      "key": "light_blinksfusor",
+      "name": "Light Blinksfusor",
+      "type": "impact"
+    },
+    {
+      "key": "light_jackal",
+      "name": "Jackal",
+      "type": "timed"
+    },
+    {
+      "key": "light_grenade_launcher",
+      "name": "Light Grenade Launcher",
+      "type": "timed"
+    },
+    {
+      "key": "light_falcon",
+      "name": "Falcon",
+      "type": "chain"
+    },
+    {
+      "key": "light_assault_rifle",
+      "name": "Light Assault Rifle",
+      "type": "chain"
+    },
+    {
+      "key": "light_throwing_knives",
+      "name": "Throwing Knives",
+      "type": "chain"
+    },
+    {
+      "key": "light_shocklance",
+      "name": "Shocklance",
+      "type": "hitscan"
+    },
+    {
+      "key": "light_impact_nitron",
+      "name": "Impact Nitron",
+      "type": "belt"
+    },
+    {
+      "key": "light_sticky_grenades",
+      "name": "Sticky Grenades",
+      "type": "belt"
+    },
+    {
+      "key": "light_claymore_mine",
+      "name": "Claymore Mine",
+      "type": "belt"
+    },
+    {
+      "key": "light_explosive_nitron",
+      "name": "Explosive Nitron",
+      "type": "belt"
+    },
+    {
+      "key": "light_prism_mine",
+      "name": "Prism Mine",
+      "type": "belt"
+    },
+    {
+      "key": "light_t5_grenade",
+      "name": "T5 Grenade",
+      "type": "belt"
+    },
+    {
+      "key": "light_chaff_grenade",
+      "name": "Chaff Grenade",
+      "type": "belt"
+    },
+    {
+      "key": "light_thrust_pack",
+      "name": "Thrust Pack",
+      "type": "pack"
+    },
+    {
+      "key": "light_energy_pack",
+      "name": "Light Energy Pack",
+      "type": "pack"
+    },
+    {
+      "key": "light_stealth_pack",
+      "name": "Stealth Pack",
+      "type": "pack"
+    },
+    {
+      "key": "light_utility_pack",
+      "name": "Light Utility Pack",
+      "type": "pack"
+    }
+  ],
+  "Medium": [
+    {
+      "key": "medium_spinfusor",
+      "name": "Spinfusor",
+      "type": "impact"
+    },
+    {
+      "key": "medium_thumper",
+      "name": "Thumper",
+      "type": "impact"
+    },
+    {
+      "key": "medium_twinfusor",
+      "name": "Twinfusor",
+      "type": "impact"
+    },
+    {
+      "key": "medium_thumper_dx",
+      "name": "Thumper DX",
+      "type": "impact"
+    },
+    {
+      "key": "medium_blinksfusor",
+      "name": "Blinksfusor",
+      "type": "impact"
+    },
+    {
+      "key": "medium_arx_buster",
+      "name": "Arx Buster",
+      "type": "timed"
+    },
+    {
+      "key": "medium_grenade_launcher",
+      "name": "Grenade Launcher",
+      "type": "timed"
+    },
+    {
+      "key": "medium_advanced_repair_tool",
+      "name": "Advanced Repair Tool",
+      "type": "specialty"
+    },
+    {
+      "key": "medium_elf_projector",
+      "name": "ELF Projector",
+      "type": "specialty"
+    },
+    {
+      "key": "medium_honorfusor",
+      "name": "Honorfusor",
+      "type": "specialty"
+    },
+    {
+      "key": "medium_assault_rifle",
+      "name": "Assault Rifle",
+      "type": "chain"
+    },
+    {
+      "key": "medium_nova_blaster",
+      "name": "Nova Blaster",
+      "type": "chain"
+    },
+    {
+      "key": "medium_nj4_smg",
+      "name": "NJ4 SMG",
+      "type": "chain"
+    },
+    {
+      "key": "medium_nj5b_smg",
+      "name": "NJ5-B SMG",
+      "type": "chain"
+    },
+    {
+      "key": "medium_plasma_gun",
+      "name": "Plasma Gun",
+      "type": "chain"
+    },
+    {
+      "key": "medium_flak_cannon",
+      "name": "Flak Cannon",
+      "type": "specialty"
+    },
+    {
+      "key": "medium_motion_sensor",
+      "name": "Motion Sensor",
+      "type": "belt"
+    },
+    {
+      "key": "medium_blackout_grenade",
+      "name": "Blackout Grenade",
+      "type": "belt"
+    },
+    {
+      "key": "medium_antipersonnel_grenade",
+      "name": "Anti-Personnel Grenade",
+      "type": "belt"
+    },
+    {
+      "key": "medium_emp_grenade",
+      "name": "EMP Grenade",
+      "type": "belt"
+    },
+    {
+      "key": "medium_cluster_grenade",
+      "name": "Cluster Grenade",
+      "type": "belt"
+    },
+    {
+      "key": "medium_light_turret",
+      "name": "Light Turret",
+      "type": "belt"
+    },
+    {
+      "key": "medium_exr_turret",
+      "name": "EXR Turret",
+      "type": "belt"
+    },
+    {
+      "key": "medium_drop_station",
+      "name": "Drop Station",
+      "type": "pack"
+    },
+    {
+      "key": "medium_jammer_pack",
+      "name": "Jammer Pack",
+      "type": "pack"
+    },
+    {
+      "key": "medium_shield_pack",
+      "name": "Shield Pack",
+      "type": "pack"
+    },
+    {
+      "key": "medium_utility_pack",
+      "name": "Utility Pack",
+      "type": "pack"
+    }
+  ],
+  "Heavy": [
+    {
+      "key": "heavy_spinfusor",
+      "name": "Heavy Spinfusor",
+      "type": "impact"
+    },
+    {
+      "key": "heavy_bolt_launcher",
+      "name": "Heavy Bolt Launcher",
+      "type": "impact"
+    },
+    {
+      "key": "heavy_blinksfusor",
+      "name": "Heavy Blinksfusor",
+      "type": "impact"
+    },
+    {
+      "key": "heavy_twinfusor",
+      "name": "Heavy Twinfusor",
+      "type": "impact"
+    },
+    {
+      "key": "heavy_fusion_mortar",
+      "name": "Fusion Mortar",
+      "type": "timed"
+    },
+    {
+      "key": "heavy_mirv_launcher",
+      "name": "MIRV Launcher",
+      "type": "timed"
+    },
+    {
+      "key": "heavy_saber_launcher",
+      "name": "Saber Launcher",
+      "type": "specialty"
+    },
+    {
+      "key": "heavy_gladiator",
+      "name": "Gladiator",
+      "type": "specialty"
+    },
+    {
+      "key": "heavy_chain_gun",
+      "name": "Chain Gun",
+      "type": "chain"
+    },
+    {
+      "key": "heavy_x1_lmg",
+      "name": "X1 LMG",
+      "type": "chain"
+    },
+    {
+      "key": "heavy_plasma_cannon",
+      "name": "Plasma Cannon",
+      "type": "chain"
+    },
+    {
+      "key": "heavy_nova_blaster_mx",
+      "name": "Nova Blaster MX",
+      "type": "chain"
+    },
+    {
+      "key": "heavy_efg",
+      "name": "EFG",
+      "type": "specialty"
+    },
+    {
+      "key": "heavy_frag_grenade",
+      "name": "Frag Grenade",
+      "type": "belt"
+    },
+    {
+      "key": "heavy_mines",
+      "name": "Mines",
+      "type": "belt"
+    },
+    {
+      "key": "heavy_fractal_grenade",
+      "name": "Fractal Grenade",
+      "type": "belt"
+    },
+    {
+      "key": "heavy_force_field",
+      "name": "Force Field",
+      "type": "pack"
+    },
+    {
+      "key": "heavy_shield_pack",
+      "name": "Heavy Shield Pack",
+      "type": "pack"
+    },
+    {
+      "key": "heavy_energy_pack",
+      "name": "Heavy Energy Pack",
+      "type": "pack"
+    },
+    {
+      "key": "heavy_utility_pack",
+      "name": "Heavy Utility Pack",
+      "type": "pack"
+    }
+  ]
+}

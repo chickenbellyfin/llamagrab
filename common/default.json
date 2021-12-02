@@ -16,7 +16,10 @@
     "ctf_permafrost",
     "ctf_raindance",
     "ctf_tartarus",
-    "ctf_temple_ruins",
-    "ctf_periculo"
-  ]
+    "ctf_temple_ruins"
+  ],
+
+  "lightWeaponBans": [],
+  "mediumWeaponBans": [],
+  "heavyWeaponBans": []
 }

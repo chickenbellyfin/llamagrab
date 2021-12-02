@@ -62,6 +62,10 @@ export type GameServerConfig = {
   gravCycleSpawnTime?: number
   shrikeSpawnTime?: number
   beowulfSpawnTime?: number
+
+  lightWeaponBans: Array<string>
+  mediumWeaponBans: Array<string>
+  heavyWeaponBans: Array<string>
 }
 
 export type LoginRequest = {
