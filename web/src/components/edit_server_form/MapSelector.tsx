@@ -121,14 +121,6 @@ export default function MapSelector({gameTypes, mapList, onChange}: MapSelectorP
         }
         </Space>
       </Form.Item>
-      {/* <Form.Item 
-        
-        label={`Include Custom Maps`}>
-        <Switch disabled={!allMaps}
-          defaultChecked={false}
-          checked={includeCustomMaps}
-          onChange={handleIncludeCustomMaps}/>
-      </Form.Item> */}
     </>
   )
 }

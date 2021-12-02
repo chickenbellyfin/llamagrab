@@ -11,8 +11,8 @@ export default function BasicSettingsTab (
 
   return (
     <Form
-    labelCol={{span: 4}}
-    wrapperCol={{span: 14}}
+    labelCol={{span: 6}}
+    wrapperCol={{span: 12}}
     >
 
     <Form.Item 

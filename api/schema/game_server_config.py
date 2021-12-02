@@ -3,13 +3,13 @@ from typing import List, Optional
 import json
 
 class GameServerConfig(BaseModel):
-  display_name: str
-  description: str
+  display_name: Optional[str]
+  description: Optional[str]
   password: Optional[str] # this is a non-secure game server password
   admin_password: Optional[str]
   
-  team_assign_type: str
-  auto_balance: bool
+  team_assign_type: Optional[str]
+  auto_balance: Optional[bool]
   time_limit: Optional[int]
   overtime_limit: Optional[int]
   warmup_time: Optional[int]
@@ -24,7 +24,7 @@ class GameServerConfig(BaseModel):
   friendly_fire: Optional[int]
 
   map_voting: Optional[bool]
-  maps: List[str]
+  maps: Optional[List[str]]
 
   vehicle_health_multiplier: Optional[float]
   grav_cycle_limit: Optional[int]
@@ -33,6 +33,10 @@ class GameServerConfig(BaseModel):
   shrike_spawn_time: Optional[int]
   beowulf_limit: Optional[int]
   beowulf_spawn_time: Optional[int]
+
+  light_weapon_bans: Optional[List[str]]
+  medium_weapon_bans: Optional[List[str]]
+  heavy_weapon_bans: Optional[List[str]]
 
 
   def serialize(self):

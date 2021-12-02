@@ -19,7 +19,7 @@ export default function MapRotationSettingsTab (
 
 
   return (
-    <Form labelCol={{span: 4}} wrapperCol={{span: 14}}>
+    <Form labelCol={{span: 6}} wrapperCol={{span: 12}}>
     
     <Form.Item label='Map Voting'>
       <Switch checked={config.mapVoting} onChange={updateSwitch('mapVoting')} />
