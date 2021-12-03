@@ -10,6 +10,7 @@ from sqlalchemy.orm.session import Session
 import os
 
 from starlette.responses import PlainTextResponse, Response
+from lua import LuaSettings
 from lua import to_lua
 import database.queries as db_queries
 from database import models
@@ -148,6 +149,7 @@ async def delete_server(server: models.Server = Depends(get_server), db: Session
 
 # TODO
 # users should get cleaned-up lua without admin settings/passwords
-# @router.get('/server/{server_id}/lua', response_class=PlainTextResponse)
-# async def get_server_lua(server: models.Server = Depends(get_server)):
-#   return to_lua(GameServerConfig.parse(server.server_config))
+@router.get('/server/{server_id}/lua', response_class=PlainTextResponse)
+async def get_server_lua(server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
+  lua_settings = LuaSettings(include_admin=True, site_admins=db_queries.get_admin_tribes_usernames(db))
+  return to_lua(GameServerConfig.parse(server.server_config), lua_settings)

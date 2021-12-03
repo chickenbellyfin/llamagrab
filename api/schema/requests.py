@@ -28,6 +28,14 @@ class LoginRequest(BaseModel):
 class AccountCreateRequest(LoginRequest):
   pass
 
+class SetTribesUsernameRequest(BaseModel):
+  tribes_username: str
+
+  @validator('tribes_username')
+  def validate_tribes_username(v):
+    return validations.validate_tribes_username(v)
+
+
 class UpdatePasswordRequest(BaseModel):
   current_password: str
   new_password: str

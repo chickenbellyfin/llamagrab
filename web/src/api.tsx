@@ -12,7 +12,8 @@ export type User = {
   id: number,
   username: string,
   tier: string,
-  limits: UserLimits
+  limits: UserLimits,
+  tribesUsername?: string
 }
 
 export type ServerStatus = {
@@ -34,7 +35,7 @@ export type GameServerConfig = {
   displayName: string
   description: string
   password?: string
-  adminPassword?: string
+  admins?: string[]
 
   teamAssignType: string
   autoBalance: boolean
@@ -159,6 +160,14 @@ async function changePassword(request: UpdatePasswordRequest): Promise<any> {
   })
 }
 
+async function setTribesUsername(name: string): Promise<any> {
+  return doRequest({
+    method: 'POST',
+    path: '/api/account/set_tribes_name',
+    body: JSON.stringify({tribesUsername: name})
+  })
+}
+
 async function getServerList(): Promise<Array<ServerStatus>> {
   return doRequest({
     path: '/api/servers'
@@ -259,6 +268,7 @@ export const API = {
     getUser,
     createUser,
     changePassword,
+    setTribesUsername,
     getAllUsers
   },
   Admin: {

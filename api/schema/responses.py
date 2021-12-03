@@ -12,6 +12,7 @@ class User(BaseModel):
   username: str
   tier: str
   limits: UserLimits
+  tribes_username: Optional[str]
   # DO NOT INCLUDE PASSWORD HERE
 
   class Config:

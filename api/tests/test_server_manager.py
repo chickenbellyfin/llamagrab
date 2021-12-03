@@ -53,6 +53,7 @@ def actual_port(listener):
 
 def test_sync_empty(listener, actual_port, monkeypatch):
   monkeypatch.setattr(database.queries, "get_active_servers", lambda db,region: [])
+  monkeypatch.setattr(database.queries, "get_admin_tribes_usernames", lambda db: [])
 
   server_manager = ServerManager(
     nodes={ 'test_host': 'localhost' },
@@ -89,8 +90,9 @@ def test_sync_multiple(listener: Listener, actual_port: int, monkeypatch):
     return active[region]
   
   monkeypatch.setattr(database.queries, 'get_active_servers', mocked_active_servers)
+  monkeypatch.setattr(database.queries, "get_admin_tribes_usernames", lambda db: [])
 
-  def mocked_lua(config):
+  def mocked_lua(config, lua_settings):
     return name_to_test_lua[config.display_name]
 
   monkeypatch.setattr(lua, 'to_lua', mocked_lua)
@@ -114,6 +116,7 @@ def test_sync_multiple(listener: Listener, actual_port: int, monkeypatch):
 
 def test_sync_rate_limit(listener, actual_port, monkeypatch):
   monkeypatch.setattr(database.queries, 'get_active_servers', lambda db,region: [])
+  monkeypatch.setattr(database.queries, "get_admin_tribes_usernames", lambda db: [])
 
   server_manager = ServerManager(
     nodes=TEST_NODES,

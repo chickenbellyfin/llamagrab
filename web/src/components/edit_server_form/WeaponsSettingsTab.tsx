@@ -29,7 +29,7 @@ function ClassSettings ({selected, clazz, onChange}: ClassSettingsProps) {
           size='large'
           mode='multiple'
           allowClear
-          value={selected}
+          value={selected || []}
           onChange={onChange}
           >
           { 

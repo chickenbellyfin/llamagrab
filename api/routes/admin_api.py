@@ -38,7 +38,7 @@ async def verify_user(id_to_verify: int, user: models.User = Depends(deps.login_
 @router.post('/admin/make_admin/{id_to_admin}')
 async def make_admin(id_to_admin: int, user: models.User = Depends(deps.login_super), db: Session = Depends(deps.db)): 
   user_to_admin = db.query(models.User).filter_by(id=id_to_admin).first()
-  if not id_to_admin:
+  if not user_to_admin:
     raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND)
   
   if permissions.is_admin(user_to_admin):
@@ -57,7 +57,7 @@ async def make_admin(id_to_admin: int, user: models.User = Depends(deps.login_su
 @router.delete('/admin/make_admin/{id_to_unadmin}')
 async def make_admin(id_to_unadmin: int, user: models.User = Depends(deps.login_super), db: Session = Depends(deps.db)): 
   user_to_unadmin = db.query(models.User).filter_by(id=id_to_unadmin).first()
-  if not id_to_unadmin:
+  if not user_to_unadmin:
     raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND)
   
   if not permissions.is_admin(user_to_unadmin):
