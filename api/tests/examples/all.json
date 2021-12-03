@@ -1,0 +1,47 @@
+{
+  "displayName": "Test Server",
+  "description": "the description the description",
+  "password": "testpassword",
+  "admins": [
+    "siteuser1",
+    "siteuser2"
+  ],
+  "teamAssignType": "unbalanced",
+  "autoBalance": false,
+  "timeLimit": 44,
+  "maxPlayers": 28,
+  "overtimeLimit": 13,
+  "warmupTime": 54,
+  "respawnTime": 12,
+  "sniperRespawnDelay": 2,
+  "ammoPickupLifespan": 99,
+  "ctfFlagTimeout": 45,
+  "friendlyFire": true,
+  "friendlyFireMultiplier": 1.3,
+  "nakedSpawn": true,
+  "vehicleHealthMultiplier": 0.5,
+  "gravCycleLimit": 4,
+  "gravCycleSpawnTime": 40,
+  "shrikeLimit": 5,
+  "shrikeSpawnTime": 50,
+  "beowulfLimit": 6,
+  "beowulfSpawnTime": 60,
+  "mapVoting": true,
+  "maps": [
+    "ctf_katabatic",
+    "arena_walledin",
+    "ctf_periculo"
+  ],
+  "lightWeaponBans": [
+    "light_bolt_launcher",
+    "light_prism_mine"
+  ],
+  "mediumWeaponBans": [
+    "medium_nj5b_smg",
+    "medium_cluster_grenade"
+  ],
+  "heavyWeaponBans": [
+    "heavy_spinfusor",
+    "heavy_fusion_mortar"
+  ]
+}

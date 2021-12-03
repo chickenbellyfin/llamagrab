@@ -10,6 +10,7 @@ class User(Base):
   username = Column(String, nullable=False, unique=True)
   password = Column(String, nullable=False) # hashed
   tier = Column(String, default='unverified')
+  tribes_username = Column(String)
 
   servers = relationship("Server", back_populates='owner')
   limits = relationship("UserLimits", uselist=False)

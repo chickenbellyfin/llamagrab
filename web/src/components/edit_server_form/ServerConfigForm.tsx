@@ -29,7 +29,6 @@ function ServerConfigForm({ regions, settings, onChange }: ServerConfigFormProps
     <Select 
       style={{ width: 200 }}
       onChange={onRegionChange}
-      defaultValue={settings.region || Object.keys(regions)[0]}
       >
       { 
         Object.keys(regions).map(key => {

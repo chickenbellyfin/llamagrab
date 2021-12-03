@@ -1,0 +1,8 @@
+ServerSettings.BannedItems.add("Light", "Sparrow")
+ServerSettings.BannedItems.add("Light", "Phase Rifle")
+ServerSettings.BannedItems.add("Light", "BXT1 Rifle")
+ServerSettings.BannedItems.add("Light", "Shotgun")
+ServerSettings.BannedItems.add("Medium", "Eagle Pistol")
+ServerSettings.BannedItems.add("Medium", "Sawed-Off Shotgun")
+ServerSettings.BannedItems.add("Heavy", "Nova Colt")
+ServerSettings.BannedItems.add("Heavy", "Automatic Shotgun")

@@ -63,6 +63,10 @@ def test_verify_user_already_verified(test_client: TestClient, logged_in_admin, 
   response = test_client.post('/api/admin/verify_user/55')
   assert response.status_code == status.HTTP_400_BAD_REQUEST
 
+def test_verify_user_doesnt_exist(test_client: TestClient, logged_in_admin, db_session: Session):
+  response = test_client.post('/api/admin/verify_user/55')
+  assert response.status_code == status.HTTP_404_NOT_FOUND
+
 def test_make_admin(test_client: TestClient, logged_in_super, user_to_admin, db_session: Session):
   response = test_client.post('/api/admin/make_admin/77')
   assert response.status_code == status.HTTP_200_OK
@@ -75,10 +79,14 @@ def test_make_admin_not_super(test_client: TestClient, logged_in_admin, user_to_
   response = test_client.post('/api/admin/make_admin/77')
   assert response.status_code == status.HTTP_403_FORBIDDEN
 
-def test_make_admin_already_admin(test_client: TestClient, logged_in_admin, user_to_admin, db_session: Session):
+def test_make_admin_doesnt_exist(test_client: TestClient, logged_in_super, db_session: Session):
+  response = test_client.post('/api/admin/make_admin/77')
+  assert response.status_code == status.HTTP_404_NOT_FOUND
+
+def test_make_admin_already_admin(test_client: TestClient, logged_in_super, user_to_admin, db_session: Session):
   user_to_admin.tier = 'admin'
   db_session.commit()
-  response = test_client.post('/api/admin/verify_user/77')
+  response = test_client.post('/api/admin/make_admin/77')
   assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 def test_remove_admin(test_client: TestClient, logged_in_super, user_to_unadmin, db_session: Session):
@@ -98,3 +106,7 @@ def test_remove_admin_not_admin(test_client: TestClient, logged_in_super, user_t
   db_session.commit()
   response = test_client.delete('/api/admin/make_admin/88')
   assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+def test_remove_admin_doesnt_exist(test_client: TestClient, logged_in_super, db_session: Session):
+  response = test_client.delete('/api/admin/make_admin/123')
+  assert response.status_code == status.HTTP_404_NOT_FOUND

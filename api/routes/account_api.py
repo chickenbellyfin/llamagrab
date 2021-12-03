@@ -9,7 +9,6 @@ from fastapi import Depends, status as http_status, Request
 from fastapi.exceptions import HTTPException
 from fastapi.routing import APIRouter
 from fastapi_login.exceptions import InvalidCredentialsException
-from slowapi.extension import Limiter
 from sqlalchemy.orm.session import Session
 from schema.requests import UpdatePasswordRequest
 from schema import requests, responses
@@ -32,7 +31,8 @@ def _to_user_response(user: models.User, db: Session):
       server_limit=user.limits.server_limit,
       active_limit=user.limits.active_limit,
       server_count=db_queries.count_servers(db, user)
-    )
+    ),
+    tribes_username=user.tribes_username
   )
 
 
@@ -82,6 +82,17 @@ async def change_password(
   
   user.password = argon2.hash(request.new_password)
   db.add(user) # user is from different db session and needs to be added to this one
+  db.commit()
+
+
+@router.post('/account/set_tribes_name')
+async def set_tribes_name(
+  request: requests.SetTribesUsernameRequest,
+  user: models.User = Depends(deps.login),
+  db: Session = Depends(deps.db)):
+  logger.info(f'{request.tribes_username}')
+  user.tribes_username = request.tribes_username
+  db.add(user)
   db.commit()
 
 

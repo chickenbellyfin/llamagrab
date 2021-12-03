@@ -1,0 +1,1 @@
+ServerSettings.GameSettingMode = ServerSettings.GameSettingModes.OOTB

@@ -1,5 +1,7 @@
 from typing import List
+from loguru import logger
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from . import models
 
 
@@ -33,3 +35,11 @@ def get_active_servers(db: Session, region: str = None, user: models.User = None
   query = query.filter(models.Server.status == 'running')
   servers = query.all()
   return servers
+
+def get_admin_tribes_usernames(db: Session) -> List[str]:
+  query = db.query(models.User.tribes_username)
+  query = query.filter(or_(models.User.tier == 'admin', models.User.tier == 'super'))
+  query = query.filter(models.User.tribes_username.isnot(None))
+  result = query.all()
+  return map(lambda t: t[0], result)
+

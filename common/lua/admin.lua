@@ -51,9 +51,23 @@ function doSetupRoles(roles)
   end
   
   for roleIdx, role in pairs(roles) do
-      Admin.Roles.add(role.name, role.password, role.canLua)
+      Admin.Roles.addLoginlessRole(role.name, role.canLua)
       for cmdIdx, cmdName in pairs(role.commands) do
           Admin.Roles.addAllowedCommand(role.name, cmdName)
       end
   end
 end
+
+local roles = {
+    {
+        name     = "admin",
+        commands = {"NextMap", "NextMapName", "StartMap", "EndMap"},
+        canLua   = true,
+    },
+    {
+        name     = "mod",
+        commands = {"NextMap", "NextMapName", "StartMap", "EndMap"},
+        canLua   = false,
+    },
+  }
+doSetupRoles(roles)

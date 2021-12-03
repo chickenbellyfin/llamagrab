@@ -6,7 +6,7 @@ class GameServerConfig(BaseModel):
   display_name: Optional[str]
   description: Optional[str]
   password: Optional[str] # this is a non-secure game server password
-  admin_password: Optional[str]
+  admins: Optional[List[str]]
   
   team_assign_type: Optional[str]
   auto_balance: Optional[bool]
@@ -18,10 +18,10 @@ class GameServerConfig(BaseModel):
   ammo_pickup_lifespan: Optional[int]
   ctf_flag_timeout: Optional[int]
   max_players: Optional[int]
-  naked_spawn: Optional[int]
+  naked_spawn: Optional[bool]
   friendly_fire_multiplier: Optional[float]
   
-  friendly_fire: Optional[int]
+  friendly_fire: Optional[bool]
 
   map_voting: Optional[bool]
   maps: Optional[List[str]]

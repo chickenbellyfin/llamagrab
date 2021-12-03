@@ -2,19 +2,24 @@ import threading
 from threading import Event
 from typing import Mapping
 from multiprocessing.connection import Client
+from sqlalchemy.orm import Session
 from sqlalchemy.orm.session import sessionmaker
+from lua import LuaSettings
 from schema.game_server_config import GameServerConfig
 import database
 import lua
 import hashlib
 import time
+from database import queries
 
 from loguru import logger
-
 
 def md5(data: str) -> str:
   return hashlib.md5(data.encode('utf-8')).hexdigest()
 
+def get_lua_settings(db: Session) -> LuaSettings:
+  admin_users = queries.get_admin_tribes_usernames(db)
+  return LuaSettings(include_admin=True, site_admins=admin_users)
 
 class ServerManager:
   """
@@ -35,8 +40,6 @@ class ServerManager:
     self.auth_key = auth_key.encode()
     self.session = db_session
     self.rate_limit_secs = rate_limit_secs
-    # TODO: Rate limit updates and if there are multiple sync requests, just use the latest one
-    #self.message_queue = queue.Queue()
     self.event = Event()
     self.sync_requested = False
     self.last_sync_time = 0
@@ -45,7 +48,7 @@ class ServerManager:
   def _do_sync(self):
     with self.session() as db:
       logger.info(f'Running sync')
-
+      lua_settings = get_lua_settings(db)
       for region in self.nodes:
         active_for_region = database.queries.get_active_servers(db, region)
         # Note: even if a region has no active servers, we should still sync so that newly stopped
@@ -53,7 +56,7 @@ class ServerManager:
         payload = {}
         for server in active_for_region:
           server_config = GameServerConfig.parse(server.server_config)
-          server_lua = lua.to_lua(server_config)
+          server_lua = lua.to_lua(server_config, lua_settings)
           payload[server.id] = server_lua
 
         message = {

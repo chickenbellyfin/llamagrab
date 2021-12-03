@@ -69,7 +69,7 @@ function UserList ({ users, invalidate }: UserListProps) {
           {auth.permissions.canVerifyUser(user) && <Button size='small' onClick={() => updateUser(user, API.Admin.verifyUser)}>Verify</Button>}
           {auth.permissions.canMakeAdmin(user) && <Button size='small' onClick={() => updateUser(user, API.Admin.makeAdmin)}>Make Admin</Button>}
           {auth.permissions.canRemoveAdmin(user) && <Button size='small' onClick={() => updateUser(user, API.Admin.removeAdmin)}>Remove Admin</Button>}
-          {auth.permissions.canResetPassword(user) && <Button size='small'>Reset Password</Button>}
+          {/* TODO {auth.permissions.canResetPassword(user) && <Button size='small'>Reset Password</Button>} */}
           {auth.permissions.canDeleteUser(user) && <Button danger size='small'>Delete</Button>}
         </Space>
       )

@@ -22,7 +22,8 @@ def test_get_user(test_client: TestClient, logged_in_user, db_session: Session):
       'serverLimit': 1,
       'activeLimit': 1,
       'serverCount': 0
-    }
+    },
+    'tribesUsername': None
   }
 
 
