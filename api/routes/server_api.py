@@ -35,7 +35,7 @@ def get_server(
   server = db_queries.get_server(db, server_id)
   if server is None:
     raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND)
-  elif server.owner.id != user.id and not permissions.is_admin(user):
+  elif server.user != user.id and not permissions.is_admin(user):
     raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN)
   
   return server
@@ -80,13 +80,13 @@ async def set_server_settings(
     )
   server.region = request.region
   db.commit()
+  deps.server_manager().sync()
 
-@router.put('/servers',  status_code=http_status.HTTP_201_CREATED)
+@router.put('/servers', status_code=http_status.HTTP_201_CREATED)
 async def create_server(
   request: requests.ServerCreateRequest,
   user: models.User = Depends(deps.login),
   db: Session = Depends(deps.db)):
-  count = db_queries.count_servers(db, user)
   
   if not permissions.can_create_server(db, user):
     raise HTTPException(

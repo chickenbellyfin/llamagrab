@@ -60,12 +60,6 @@ def test_login_wrong_password(test_client: TestClient, mock_login_manager: Login
 
 
 def test_create_account(test_client: TestClient, db_session: Session):
-  db_session.add(models.Invite(
-    token='good_token',
-    expires_at=time.time() + 3600,
-    created_by=0
-  ))
-  db_session.commit()
   response = test_client.post('/api/account/create', json={
     'username': 'testuser2',
     'password': 'testpassword2'
@@ -95,16 +89,10 @@ def test_create_second_account(test_client: TestClient, db_session: Session):
 
 def test_create_account_exists(test_client: TestClient, db_session: Session, user: models.User):
   db_session.add(user)
-  db_session.add(models.Invite( # also add a good token
-    token='good_token',
-    expires_at=time.time() + 3600,
-    created_by=0
-  ))
   db_session.commit() 
   response = test_client.post('/api/account/create', json={
     'username': 'testuser',
     'password': 'notthetestpassword',
-    'inviteToken': 'good_token'
   })
   assert response.status_code == status.HTTP_400_BAD_REQUEST
 

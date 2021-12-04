@@ -106,7 +106,6 @@ async def create_account(create_req: requests.AccountCreateRequest, request: Req
     raise HTTPException(
       status_code=http_status.HTTP_429_TOO_MANY_REQUESTS
     )
-  deps.created_account.add(request.client.host)
 
   if db_queries.get_user(db, create_req.username) != None:
     raise HTTPException(
@@ -123,3 +122,6 @@ async def create_account(create_req: requests.AccountCreateRequest, request: Req
   db.commit()
   db.add(models.UserLimits(user_id=new_user.id, server_limit=1, active_limit=1))
   db.commit()
+  
+  # record client created an account
+  deps.created_account.add(request.client.host)

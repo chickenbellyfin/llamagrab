@@ -1,3 +1,8 @@
+bugs
+- server form for region does not load value
+- server api needs more calls to sync()
+
+
 required features:
 - other game modes
 - weapon bans/modification

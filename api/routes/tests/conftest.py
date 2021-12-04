@@ -1,15 +1,52 @@
+import pytest
+
+import asyncio
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-import pytest
-from unittest.mock import MagicMock
-import asyncio
-from database.models import UserLimits
-from database.database import Database
-from database import database, models
-from sqlalchemy.pool import StaticPool
 from passlib.hash import argon2
+from sqlalchemy.pool import StaticPool
+from sqlalchemy.orm.session import Session
+from unittest.mock import MagicMock
 
 import app
+from database.database import Database
+from database import database, models
+from schema.game_server_config import GameServerConfig
+
+
+@pytest.fixture
+def server1(user: models.User):
+  return models.Server(
+    id=0,
+    user=user.id,
+    name='Test Server 1',
+    region='region1',
+    status='stopped',
+    game_mode='CTF',
+    server_config=GameServerConfig(
+      display_name='TestServer1Config'
+    ).serialize()
+  )
+
+
+@pytest.fixture
+def server2(admin_user: models.User):
+  return models.Server(
+    id=1,
+    user=admin_user.id,
+    name='Test Server 2',
+    region='region2',
+    status='stopped',
+    game_mode='CTF',
+    server_config=GameServerConfig().serialize()
+  )
+
+
+@pytest.fixture
+def add_servers(db_session: Session, server1, server2):
+  db_session.add(server1)
+  db_session.add(server2)
+  db_session.commit()
 
 
 @pytest.fixture
@@ -20,6 +57,17 @@ def user():
     password=argon2.hash('testpassword'),
     tier='verified',
     limits=models.UserLimits(server_limit=1, active_limit=1)
+  )
+
+
+@pytest.fixture
+def admin_user():
+  return models.User(
+    id=1,
+    username='testadmin',
+    password=argon2.hash('testadminpassword'),
+    tier='admin',    
+    limits=models.UserLimits(server_limit=-1, active_limit=-1)
   )
 
 @pytest.fixture
@@ -33,17 +81,10 @@ def logged_in_user(mock_login_manager, user):
   return user
 
 @pytest.fixture
-def logged_in_admin(mock_login_manager):
+def logged_in_admin(mock_login_manager, admin_user):
   """
   Sets up the LoginManager with a user(role=admin) and return the user object
   """
-  admin_user = models.User(
-    id=1,
-    username='testadmin',
-    password=argon2.hash('testadminpassword'),
-    tier='admin',    
-    limits=models.UserLimits(server_limit=-1, active_limit=-1)
-  )
   f = asyncio.Future()
   f.set_result(admin_user)
   mock_login_manager.return_value = f
@@ -75,8 +116,8 @@ def mock_login_manager():
 @pytest.fixture
 def test_regions():
   return {
-    'region1': 'host1',
-    'region2': 'host2'
+    'region1': 'TestRegion1',
+    'region2': 'TestRegion2'
   }
 
 @pytest.fixture
@@ -90,15 +131,25 @@ def inmemory_db():
   # sqlite will be inmemory if path is empty
   return database.Database('', '', poolclass=StaticPool)
 
+@pytest.fixture 
+def should_sync(server_manager):
+  yield server_manager
+  server_manager.sync.assert_called_once()
+
+@pytest.fixture
+def server_manager():
+  return MagicMock()
+
 @pytest.fixture
 def test_app(
   mock_login_manager,
   inmemory_db,
-  test_regions):
+  test_regions,
+  server_manager):
   api = app.create_app(
     db_instance=inmemory_db,
     login_manager=mock_login_manager,
-    server_manager=MagicMock(),
+    server_manager=server_manager,
     regions=test_regions
   )
   top_level = FastAPI()

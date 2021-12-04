@@ -23,16 +23,18 @@ function ServerConfigForm({ regions, settings, onChange }: ServerConfigFormProps
     }
   }
 
+  console.log(updatedSettings)
   return (
     <Form layout='inline' onFinish={() => {}}>
     <Form.Item label="Region" name="region" rules={[{ required: true, message: 'Required' }]}>
-    <Select 
+    <Select
       style={{ width: 200 }}
+      defaultValue={updatedSettings.region}
       onChange={onRegionChange}
       >
       { 
         Object.keys(regions).map(key => {
-          return <Option value={key}>{regions[key]}</Option>
+          return <Option key={key} value={key}>{regions[key]}</Option>
         })
       }
     </Select>
