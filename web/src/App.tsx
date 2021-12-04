@@ -1,6 +1,6 @@
 
 import { Link, Navigate, Route, Routes, useLocation, useNavigate} from 'react-router-dom'
-import { Col, Layout, Menu, Row } from 'antd'
+import { Col, Layout, Menu, Row, Spin } from 'antd'
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import { ProtectedRoute, useAuth } from './auth'
@@ -26,6 +26,17 @@ function App () {
   const location = useLocation();
 
   const sidebarVisible = Boolean(auth.user)
+
+  // Show a loading screen on first load while we confirm login status
+  // if the user is logged in, they will end up at the URL page
+  // if not, ProtectedRoute will take them to the login screen
+  if (auth.firstLoad) {
+    return (
+      <Spin>
+        <div style={{width:'100%', height: '100vh'}}/>
+      </Spin>
+    );
+  }
   
   return (
     <>
