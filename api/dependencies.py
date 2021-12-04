@@ -35,7 +35,7 @@ class Dependencies:
     finally:
       session.close()
 
-  def server_manager(self):
+  def server_manager(self) -> ServerManager:
     return self._server_manager
 
   async def login(self, request: Request, security_scopes: SecurityScopes = None) -> User:

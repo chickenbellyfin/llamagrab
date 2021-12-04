@@ -25,7 +25,6 @@ class UserLimits(Base):
   relationship('User', back_populates='limits')
 
 
-
 class Server(Base):
   __tablename__ = 'servers'
   id = Column(Integer, primary_key=True, autoincrement=True)
@@ -37,10 +36,3 @@ class Server(Base):
   server_config = Column(String)
 
   owner = relationship("User", back_populates="servers")
-
-class Invite(Base):
-  __tablename__ = 'invites'
-  token = Column(String, primary_key=True)
-  expires_at = Column(Integer)
-  created_by = Column(Integer, ForeignKey('users.id'))
-  used_by = Column(Integer, ForeignKey('users.id'))
