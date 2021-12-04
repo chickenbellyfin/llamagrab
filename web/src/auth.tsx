@@ -6,6 +6,7 @@ import { API, User } from "./api";
 import { AuthPermissions, getPermissions } from "./permissions";
 
 type AuthContext = {
+  firstLoad: boolean,
   user?: User,
   login: (user: User) => void
   logout: () => void,
@@ -14,6 +15,7 @@ type AuthContext = {
 }
 
 const authContext = createContext<AuthContext>({
+  firstLoad: true,
   login: () => {},
   logout: () => {},
   refresh: () => {},
@@ -25,27 +27,43 @@ function useAuth() {
   return useContext(authContext);  
 }
 
+
+type ProvideAuthState = {
+  firstLoad: boolean,
+  user?: User
+}
+
 function useProvideAuth(): AuthContext {
-  const [user, setUser] = useState<User>()
+  const [state, setState] = useState<ProvideAuthState>({
+    firstLoad: true,
+    user: undefined
+  })
 
   const login = (user: User) => {
-    setUser(user)
+    setState({
+      firstLoad: false,
+      user: user
+    })
   }
 
   const logout = () => {
-    setUser(undefined)
+    setState({
+      firstLoad: false,
+      user: undefined
+    })
   }
 
   const refresh = () => {
-    API.Account.getUser().then(setUser)
+    API.Account.getUser().then(login)
   }
 
   return {
-    user,
+    firstLoad: state.firstLoad,
+    user: state.user,
     login,
     logout,
     refresh,
-    permissions: getPermissions(user)
+    permissions: getPermissions(state.user)
   };
 
 }
@@ -54,8 +72,12 @@ function ProvideAuth({ children }: any) {
   const auth = useProvideAuth();
 
   useEffect(() => {
-    if (! auth.user) {
-      API.Account.getUser().then(auth.login).catch(() => {})
+    if (!getToken()) {
+      auth.logout()
+    } else if (!auth.user) {
+      API.Account.getUser()
+        .then(auth.login)
+        .catch(auth.logout);
     }
   }, []);
   
