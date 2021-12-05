@@ -9,7 +9,6 @@ export default function MapRotationSettingsTab (
 ) {
 
   const inferredGameModes = Array.from(new Set(config.maps.map(m => {
-    console.log(`keying ${m}`);
     return MapsByKey[m].gameMode})));
   const [gameModes, setGameModes] = useState(inferredGameModes);
   

@@ -1,6 +1,16 @@
 from fastapi_camelcase import CamelModel as BaseModel
-from typing import List, Optional
+from typing import List, Optional, Any
 import json
+
+
+class Property(BaseModel):
+  name: str
+  value: Any
+
+class ItemProperties(BaseModel):
+  player_class: str
+  weapon: str
+  properties: List[Property]
 
 class GameServerConfig(BaseModel):
   display_name: Optional[str]
@@ -38,6 +48,8 @@ class GameServerConfig(BaseModel):
   medium_weapon_bans: Optional[List[str]]
   heavy_weapon_bans: Optional[List[str]]
 
+  item_properties: Optional[List[ItemProperties]]
+
 
   def serialize(self):
     return json.dumps(self.dict())
@@ -47,3 +59,4 @@ class GameServerConfig(BaseModel):
 
   class Config:
     orm_mode = True
+

@@ -1,4 +1,4 @@
-import { PoweroffOutlined, ReloadOutlined, EditOutlined, DeleteOutlined, PlayCircleOutlined } from "@ant-design/icons"
+import { PoweroffOutlined, EditOutlined, DeleteOutlined, PlayCircleOutlined } from "@ant-design/icons"
 import { List, Card, Divider, Descriptions, Badge, Popconfirm, message, Spin } from "antd"
 import { useState } from "react"
 import { Link } from "react-router-dom"
@@ -64,7 +64,7 @@ export default function ServerListItem({ server, invalidate }: ServerListItemPro
 
   const startAction = ( <div onClick={onStart}><PlayCircleOutlined/> START</div>)
   const stopAction = (<div onClick={onStop}><PoweroffOutlined/> STOP</div>);
-  const restartAction = (<div><ReloadOutlined/> RESTART</div>);
+  // const restartAction = (<div><ReloadOutlined/> RESTART</div>);
   const deleteAction = (
     <Popconfirm 
       title={<span>Are you sure you want to delete <b>{server.name}</b>?</span>}

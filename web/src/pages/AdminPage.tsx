@@ -1,11 +1,7 @@
-import { CopyOutlined, InfoCircleOutlined, ReloadOutlined } from "@ant-design/icons";
-import { Button, Card, Empty, Input, List, message, PageHeader, Space, Statistic, Table, Tag, Tooltip, Typography } from "antd";
-import Item from "antd/lib/list/Item";
-import { useState } from "react";
+import { Button, message, PageHeader, Space, Table, Tag, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 import { API, User, UserLimits } from "../api";
 import Loader from "../components/Loader";
-import { ColumnsType } from 'antd/es/table';
 import { useAuth } from "../auth";
 
 const tierColors: {[key: string]: any} = {

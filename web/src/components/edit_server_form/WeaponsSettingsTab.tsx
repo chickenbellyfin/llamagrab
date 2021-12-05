@@ -1,13 +1,9 @@
-import { Form, InputNumber, Radio, Select, Switch, Tabs, Typography } from "antd";
-import { LabeledValue } from "antd/lib/select";
-import { Weapon, WeaponsGrouped } from "../../data";
+import {  Form,  Select } from "antd";
+
+import { PlayerClass, weaponOptions } from "../../data";
+import { ItemPropertiesList } from "./ItemPropertiesSection";
 import { GameServerConfigTabProps } from "./tabHelpers";
 
-
-const { TabPane } = Tabs;
-const { Option, OptGroup } = Select;
-
-type PlayerClass = 'Light' | 'Medium' | 'Heavy'
 
 type ClassSettingsProps = {
   selected?: Array<string>
@@ -15,13 +11,7 @@ type ClassSettingsProps = {
   onChange: (selected: Array<string>) => void
 }
 
-function ClassSettings ({selected, clazz, onChange}: ClassSettingsProps) {
-   
-  const classWeapons = WeaponsGrouped[clazz];
-
-  const handleOnChange = (values: Array<LabeledValue>) => {
-   onChange(values.map(v => v.key as string))
-  }
+function ClassSettings ({selected, clazz, onChange}: ClassSettingsProps) { 
 
   return (
     <Form.Item label={`${clazz} Weapon Bans`}>
@@ -32,28 +22,16 @@ function ClassSettings ({selected, clazz, onChange}: ClassSettingsProps) {
           value={selected || []}
           onChange={onChange}
           >
-          { 
-            Object.keys(classWeapons).map(group => {
-              return (
-                <OptGroup label={group.toUpperCase()}>
-                  { classWeapons[group].map(weapon => {
-                    return <Option key={weapon.key} value={weapon.key}>{weapon.name}</Option>
-                  })}
-                </OptGroup>
-              );
-            })
-          }
+          { weaponOptions(clazz) }
         </Select>
       </Form.Item>
   );
 }
 
-export default function WeaponsSettingsTab (
-  { config, updateCallbacks }: GameServerConfigTabProps
-) {
+ 
 
-
-  const { updateInput, updateRadio, updateSwitch, updateInputNumber, update } = updateCallbacks;
+export default function WeaponsSettingsTab ({ config, updateCallbacks }: GameServerConfigTabProps) {
+  const { update } = updateCallbacks;
 
   return (
     <Form labelCol={{span: 6}} wrapperCol={{span: 16}}>
@@ -69,6 +47,11 @@ export default function WeaponsSettingsTab (
         selected={config.heavyWeaponBans}
         clazz={'Heavy' as PlayerClass}
         onChange={update('heavyWeaponBans')}/>
+
+      <Form.Item label='Item Properties' style={{marginBottom: 0}}/>
+      <Form.Item wrapperCol={{offset: 2}}>
+      <ItemPropertiesList config={config} updateCallbacks={updateCallbacks}/>
+      </Form.Item>
     </Form>
   );
 }

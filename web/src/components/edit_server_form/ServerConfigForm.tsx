@@ -1,5 +1,5 @@
 import { Form, Select } from "antd";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { API, ServerSettings } from "../../api";
 import Loader from "../Loader";
 

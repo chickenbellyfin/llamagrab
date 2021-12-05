@@ -1,9 +1,8 @@
-import Icon, { DatabaseFilled, SettingFilled } from "@ant-design/icons";
+import Icon, { SettingFilled } from "@ant-design/icons";
 import { Menu, Tooltip, Layout } from "antd";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth";
 import { ReactComponent as logo } from '../../public/gen.svg'
-import { ReactComponent as adminLogo } from '../../public/admin.svg'
 
 const { Header } = Layout;
 export default function AppHeader() {
@@ -36,4 +35,3 @@ export default function AppHeader() {
     </>
   );
 }
-//<EyeFilled style={{fontSize: '18px'}}/>

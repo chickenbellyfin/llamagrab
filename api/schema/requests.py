@@ -14,8 +14,8 @@ class LoginRequest(BaseModel):
 
   @validator('username')
   def validate_username(cls, v):
-    if len(v) < 5 or len(v) > 16:
-      raise ValueError('Username must be 5-16 characters')
+    if len(v) < 4 or len(v) > 16:
+      raise ValueError('Username must be 4-16 characters')
 
     if not re.match('^[a-zA-Z0-9_]+$', v):
       raise ValueError('Username may only contain a-z A-Z 0-9 _')

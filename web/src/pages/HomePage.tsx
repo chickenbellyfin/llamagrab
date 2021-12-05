@@ -1,6 +1,6 @@
 import { Button, PageHeader, Popover, Space } from 'antd'
 import ServerList from '../components/ServerList';
-import { PlusCircleOutlined, UserAddOutlined } from '@ant-design/icons';
+import { PlusCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth';
 

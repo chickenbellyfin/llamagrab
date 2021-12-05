@@ -1,5 +1,10 @@
 import Maps from '../../common/maps.json'
 import Weapons from '../../common/weapons.json'
+import ItemPropertyOptions from '../../common/item_properties.json'
+import { Select } from 'antd';
+
+
+const { Option, OptGroup } = Select;
 
 type Map = {
   key: string,
@@ -13,6 +18,9 @@ export type Weapon = {
   name: string,
   type: string
 }
+
+
+export type PlayerClass = 'Light' | 'Medium' | 'Heavy'
 
 function getMaps(
   gameModes: string[] | undefined = undefined,
@@ -54,9 +62,40 @@ const WeaponsGrouped = {
   'Heavy': groupByType(Weapons['Heavy']),
 }
 
+
+function weaponOptions(clazz: PlayerClass) {
+  return Object.keys(WeaponsGrouped[clazz]).map(group => {
+    return (
+      <OptGroup key={group.toUpperCase()} label={group.toUpperCase()}>
+        { WeaponsGrouped[clazz][group].map(weapon => {
+          return <Option key={weapon.key} value={weapon.key}>{weapon.name}</Option>
+        })}
+      </OptGroup>
+    );
+  });
+}
+
+type ItemPropertySpec = {
+  name: string,
+  type: string,
+  restrictions?: string,
+  unit?: string,
+  description?: string
+}
+
+const ItemPropertiesByName = Object.keys(ItemPropertyOptions).reduce((prev, group) => {
+  const props = ItemPropertyOptions[group as keyof typeof ItemPropertyOptions]
+  props.forEach(prop => Object.assign(prev, {[prop.name]: prop}))
+  return prev;
+}, {} as {[key: string]: ItemPropertySpec})
+
+
 export {
   Maps,
   MapsByKey,
   getMaps,
-  WeaponsGrouped
+  WeaponsGrouped,
+  weaponOptions,
+  ItemPropertyOptions,
+  ItemPropertiesByName
 }

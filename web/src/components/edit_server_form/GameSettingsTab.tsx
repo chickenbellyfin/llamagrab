@@ -1,4 +1,4 @@
-import { Form, InputNumber, Radio, Switch } from "antd";
+import { Form, InputNumber } from "antd";
 import {InputInteger} from "./Inputs";
 import { GameServerConfigTabProps } from "./tabHelpers";
 
@@ -7,7 +7,7 @@ export default function GameSettingsTab (
   { config, updateCallbacks }: GameServerConfigTabProps
 ) {
 
-  const { updateInput, updateRadio, updateSwitch, updateInputNumber } = updateCallbacks;
+  const { updateInputNumber } = updateCallbacks;
 
   return (
   <Form

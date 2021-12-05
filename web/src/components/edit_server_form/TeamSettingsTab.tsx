@@ -1,4 +1,4 @@
-import { Form, InputNumber, Radio, Switch, Typography } from "antd";
+import { Form, Radio, Switch } from "antd";
 import {InputInteger, InputPercent } from "./Inputs";
 import { GameServerConfigTabProps } from "./tabHelpers";
 
@@ -7,7 +7,7 @@ export default function TeamSettingsTab (
   { config, updateCallbacks }: GameServerConfigTabProps
 ) {
 
-  const { updateInput, updateRadio, updateSwitch, updateInputNumber } = updateCallbacks;
+  const { updateRadio, updateSwitch, updateInputNumber } = updateCallbacks;
 
   return (
     <Form labelCol={{span: 6}} wrapperCol={{span: 12}}>
