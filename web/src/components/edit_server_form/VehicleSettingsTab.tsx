@@ -1,4 +1,4 @@
-import { Form, InputNumber, Radio, Switch, Typography } from "antd";
+import { Form } from "antd";
 import { InputInteger, InputPercent } from "./Inputs";
 import { GameServerConfigTabProps } from "./tabHelpers";
 
@@ -7,7 +7,7 @@ export default function VehicleSettingsTab (
   { config, updateCallbacks }: GameServerConfigTabProps
 ) {
 
-  const { updateInput, updateRadio, updateSwitch, updateInputNumber } = updateCallbacks;
+  const { updateInputNumber } = updateCallbacks;
 
   return (
     <Form labelCol={{span: 6}} wrapperCol={{span: 14}}>

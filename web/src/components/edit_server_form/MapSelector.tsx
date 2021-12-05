@@ -1,4 +1,4 @@
-import { Button, Form, Popconfirm, Radio, RadioChangeEvent, Select, Space, Switch} from "antd"
+import { Button, Form, Popconfirm, Select, Space} from "antd"
 import { LabeledValue } from "antd/lib/select";
 import { useState } from "react"
 
@@ -33,7 +33,7 @@ export default function MapSelector({gameTypes, mapList, onChange}: MapSelectorP
   })
 
   // if game types changed, remove maps which are not part of the game types anymore
-  if (state.gameTypes != gameTypes) {
+  if (state.gameTypes !== gameTypes) {
     setState({
       gameTypes,
       maps: state.maps.filter(m => gameTypes.includes( MapsByKey[m].gameMode))

@@ -31,6 +31,17 @@ export type ServerSettings = {
   region?: string
 }
 
+export type ItemProperty = {
+  name?: string,
+  value?: any
+}
+
+export type ItemProperties = {
+  playerClass?: string,
+  weapon?: string,
+  properties?: ItemProperty[]
+}
+
 export type GameServerConfig = {
   displayName: string
   description: string
@@ -67,6 +78,8 @@ export type GameServerConfig = {
   lightWeaponBans: Array<string>
   mediumWeaponBans: Array<string>
   heavyWeaponBans: Array<string>
+
+  itemProperties?: Array<ItemProperties>
 }
 
 export type LoginRequest = {

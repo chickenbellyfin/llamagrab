@@ -42,7 +42,7 @@ export class AuthPermissions {
   }
 
   canDeleteUser(other: User): boolean {
-    return this.isSuper() && this.user?.id != other.id
+    return this.isSuper() && this.user?.id !== other.id
   }
 
   canResetPassword(other: User): boolean {

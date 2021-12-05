@@ -1,0 +1,113 @@
+{
+  "Ammo": [
+    {
+      "name": "ClipAmmo",
+      "type": "integer",
+      "restrictions": ">0",
+      "unit": "Bullets",
+      "description": "The number of bullets in a clip"
+    },
+    {
+      "name": "SpareAmmo",
+      "type": "integer",
+      "restrictions": ">=0",
+      "unit": "Bullets",
+      "description": "Starting amount of spare ammo"
+    },
+    {
+      "name": "AmmoPerShot",
+      "type": "integer",
+      "restrictions": ">=0",
+      "unit": "Bullets",
+      "description": "Amount of ammo consumed by each shot"
+    },
+    {
+      "name": "LowAmmoCutoff",
+      "type": "integer",
+      "restrictions": ">=0",
+      "unit": "Bullets",
+      "description": "Ammo count (either in the clip, or overall) at which 'low ammo' warnings will appear on the weapon"
+    }
+  ],
+  "Damage": [
+    {
+      "name": "Damage",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Damage the weapon does, before considering multipliers, falloff etc."
+    }
+  ],
+  "Reloading & Firing": [
+    {
+      "name": "ReloadTime",
+      "type": "float",
+      "restrictions": ">0",
+      "unit": "Seconds"
+    },
+    {
+      "name": "FireInterval",
+      "type": "float",
+      "restrictions": ">0",
+      "unit": "Seconds",
+      "description": "Time between shots"
+    },
+    {
+      "name": "HoldToFire",
+      "type": "boolean",
+      "description": "Whether the player can hold the button to keep firing"
+    },
+    {
+      "name": "CanZoom",
+      "type": "boolean",
+      "description": "(Currently not working) Whether the weapon may be fired while zoomed"
+    },
+    {
+      "name": "ReloadSingle",
+      "type": "boolean",
+      "description": "Whether the weapon should be reloaded one bullet at a time, like the Light's shotgun"
+    },
+    {
+      "name": "ReloadApplicationProportion",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+      "description": "Proportion of the way through the reload that ammo actually reloads; affects reload cancelling"
+    },
+    {
+      "name": "BurstShotCount",
+      "type": "integer",
+      "restrictions": ">0",
+      "unit": "Bullets",
+      "description": "Number of shots in a LAR burst"
+    },
+    {
+      "name": "BurstShotRefireTime",
+      "type": "float",
+      "restrictions": ">0",
+      "unit": "Seconds",
+      "description": "Time between shots in a LAR burst"
+    },
+    {
+      "name": "SpinupTime",
+      "type": "float",
+      "restrictions": ">0",
+      "unit": "Seconds",
+      "description": "Time for chain-gun type weapons to spin up before firing begins"
+    },
+    {
+      "name": "ShotgunShotCount",
+      "type": "integer",
+      "restrictions": ">0",
+      "unit": "Shots",
+      "description": "description"
+    },
+    {
+      "name": "ShotEnergyCost",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Energy",
+      "description": "description"
+    }
+
+  ]
+}
+

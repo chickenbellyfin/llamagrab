@@ -18,7 +18,7 @@ def test_usernames():
   
   # 4 chars
   with pytest.raises(ValueError):
-    mk_login_request(username='aaaa')
+    mk_login_request(username='aaa')
 
   # 17 chars
   with pytest.raises(ValueError):

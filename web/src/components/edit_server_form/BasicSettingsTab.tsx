@@ -7,7 +7,7 @@ export default function BasicSettingsTab (
   { config, updateCallbacks }: GameServerConfigTabProps
 ) {
 
-  const { updateInput, updateRadio, updateSwitch, updateInputNumber, update } = updateCallbacks;
+  const { updateInput, update } = updateCallbacks;
 
   const adminListUpdate = update('admins')
   const handleAdminListChange = (values: Array<string>) => {

@@ -17,7 +17,6 @@ import Icon, { DatabaseFilled, GlobalOutlined } from '@ant-design/icons';
 import { ReactComponent as adminLogo } from '../public/admin.svg'
 
 const { Header, Content, Sider } = Layout;
-const { SubMenu } = Menu;
 
 function App () {
   
