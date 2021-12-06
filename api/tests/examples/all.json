@@ -43,5 +43,35 @@
   "heavyWeaponBans": [
     "heavy_spinfusor",
     "heavy_fusion_mortar"
+  ],
+  "item_properties": [
+    {
+      "playerClass": "Light",
+      "weapon": "light_spinfusor",
+      "properties": [
+        {
+          "name": "Damage",
+          "value": 800
+        },
+        {
+          "name": "CanZoom",
+          "value": true
+        }
+      ]
+    },
+    {
+      "playerClass": "Heavy",
+      "weapon": "heavy_bolt_launcher",
+      "properties": [
+        {
+          "name": "ShotEnergyCost",
+          "value": 10.0
+        },
+        {
+          "name": "BurstShotCount",
+          "value": 3
+        }
+      ]
+    }
   ]
 }

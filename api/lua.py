@@ -1,7 +1,6 @@
 import os
 from typing import List
 
-from pydantic.main import BaseModel
 from schema.game_server_config import GameServerConfig
 import json
 
@@ -18,6 +17,15 @@ weapons = {
     wep_obj['key']: wep_obj for wep_obj in weapons_raw[clazz]
   } for clazz in weapons_raw
 }
+
+with open('../common/item_properties.json') as item_props_json:
+  item_props_by_group = json.load(item_props_json)
+
+item_props = {}
+for group in item_props_by_group:
+  for item_prop in item_props_by_group[group]:
+    item_props[item_prop['name']] = item_prop
+
 
 team_assign_types = {
   'balanced': 'TeamAssignTypes.Balanced',
@@ -126,9 +134,25 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
         weapon = weapons[clazz][weapon_key]
         lua('ServerSettings.BannedItems.add("%s", "%s")', clazz, weapon['name'])
   
+  
   if lua_settings.include_hitscan_ban:
     lua.require('hitscan.lua')
 
+  # Item Properties
+  if config.item_properties:
+    for weapon in config.item_properties:
+      weapon_name = weapons[weapon.player_class][weapon.weapon]['name']
+      for property in weapon.properties:
+        value_str = ''
+        prop = item_props[property.name]
+        if prop['type'] == 'integer':
+          value_str = str(int(property.value))
+        elif prop['type'] == 'float':
+          value_str = '%0.2f' % property.value
+        elif prop['type'] == 'boolean':
+          value_str = _bool(property.value)
+
+        lua('Items.setProperty("%s", "%s", Items.Properties.%s, %s)', weapon.player_class, weapon_name, property.name, value_str)
 
   # ### Admin
   if lua_settings.include_admin:

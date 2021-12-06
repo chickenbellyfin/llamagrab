@@ -1,4 +1,4 @@
-import { Form, InputNumber } from "antd";
+import { Divider, Form, InputNumber, Switch } from "antd";
 import {InputInteger} from "./Inputs";
 import { GameServerConfigTabProps } from "./tabHelpers";
 
@@ -7,14 +7,15 @@ export default function GameSettingsTab (
   { config, updateCallbacks }: GameServerConfigTabProps
 ) {
 
-  const { updateInputNumber } = updateCallbacks;
+  const { updateInputNumber, updateSwitch } = updateCallbacks;
 
   return (
-  <Form
-  labelCol={{span: 6}}
-  wrapperCol={{span: 12}}>
+    <Form
+    labelCol={{span: 6}}
+    wrapperCol={{span: 12}}>
 
 
+    <Divider orientation='left'>Time Settings</Divider>
     <Form.Item label='Time Limit'>
       <InputNumber 
         precision={0}
@@ -80,6 +81,69 @@ export default function GameSettingsTab (
         addonAfter='secs'
         placeholder={'40'} />
     </Form.Item>
+
+    <Divider orientation='left'>Scoring</Divider>
+
+    <Form.Item label='CTF Cap Limit'>
+      <InputInteger
+        min={1}
+        value={config.ctfCapLimit}
+        onChange={updateInputNumber('ctfCapLimit')}
+        placeholder={'5'} 
+        addonAfter='caps'/>
+    </Form.Item>
+
+    <Form.Item label='TDM Kill Limit'>
+      <InputInteger
+        min={1}
+        value={config.tdmKillLimit}
+        onChange={updateInputNumber('tdmKillLimit')}
+        addonAfter='kills'
+        placeholder={'100'} />
+    </Form.Item>
+
+    <Form.Item label='Arena Rounds'>
+      <InputInteger
+        min={1}
+        value={config.arenaRounds}
+        onChange={updateInputNumber('arenaRounds')}
+        addonAfter='rounds'
+        placeholder={'3'} />
+    </Form.Item>
+
+    <Form.Item label='Arena Lives' extra='Number of lives per round in Arena'>
+      <InputInteger
+        min={1}
+        value={config.arenaLives}
+        onChange={updateInputNumber('arenaLives')}
+        addonAfter='lives'
+        placeholder={'25'} />
+    </Form.Item>
+
+    <Form.Item label='Rabbit Score Limit'>
+      <InputInteger
+        min={1}
+        value={config.rabbitScoreLimit}
+        onChange={updateInputNumber('rabbitScoreLimit')}
+        addonAfter='points'
+        placeholder={'30'} />
+    </Form.Item>
+
+    <Form.Item label='CaH Score Limit' extra='Score to win in Capture and Hold'>
+      <InputInteger
+        min={1}
+        value={config.cahScoreLimit}
+        onChange={updateInputNumber('cahScoreLimit')}
+        addonAfter='points'
+        placeholder={'50'} />
+    </Form.Item>
+
+    <Form.Item label='CTF Blitz All Flag Move' extra="Whether both teams' flags move after a cap in Blitz">
+      <Switch
+        checked={config.ctfBlitzAllFlagsMove}
+        onChange={updateSwitch('ctfBlitzAllFlagsMove')} />
+    </Form.Item>
+
 
     </Form>
   );
