@@ -96,13 +96,19 @@ async def set_tribes_name(
   db.commit()
 
 
+def _get_ip(request: Request):
+  forwarded = request.headers.get("X-Forwarded-For")
+  if forwarded:
+      return forwarded.split(",")[0]
+  return request.client.host
+
 @router.post('/account/create')
 async def create_account(create_req: requests.AccountCreateRequest, request: Request, db: Session = Depends(deps.db)):
-
+  client_host = _get_ip(request)
   # only allow 1 account to be created from a client address
   # this only persists during the lifetime of the process but probably good enough
-  if request.client.host in deps.created_account:
-    logger.error(f'Client @ {request.client.host} tried to create extra account: {create_req.username}')
+  if client_host in deps.created_account:
+    logger.error(f'Client @ {client_host} tried to create extra account: {create_req.username}')
     raise HTTPException(
       status_code=http_status.HTTP_429_TOO_MANY_REQUESTS
     )
@@ -122,6 +128,6 @@ async def create_account(create_req: requests.AccountCreateRequest, request: Req
   db.commit()
   db.add(models.UserLimits(user_id=new_user.id, server_limit=1, active_limit=1))
   db.commit()
-  
+  logger.info(f'Client @ {client_host} created account: {new_user.username}')
   # record client created an account
-  deps.created_account.add(request.client.host)
+  deps.created_account.add(client_host)
