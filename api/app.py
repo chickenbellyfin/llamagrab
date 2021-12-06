@@ -149,7 +149,7 @@ def main(argv: List[str]):
   if config.get('serve_static'):
     app.mount('/', SPAStaticFiles(directory=config['serve_static'], html=True), name='webapp')
 
-  uvicorn.run(app, host='0.0.0.0', port=config.get('port', 8000), debug=True, log_config=None)
+  uvicorn.run(app, host='0.0.0.0', port=config.get('port', 8000), debug=True, log_config=None, proxy_headers=True)
 
 
 if __name__ == '__main__':

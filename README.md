@@ -22,7 +22,7 @@ docker run -P taservermanager
 The minimal command will store data inside the container, won't be able to keep host servers in sync, and only good for trying out the UI locally.
 
 ```
-docker run -p 8000:8000 -v $(pwd)/data:/data sm /data/config.yaml 
+docker run -p 8000:8000 -v $(pwd)/data:/data taservermanager /data/config.yaml 
 ```
 
 ## Development Setup
@@ -77,14 +77,13 @@ touch ~/data/config.yaml # Must add config here before continuing
 docker pull public.ecr.aws/i2q9d4v7/taservermanager:latest
 docker tag public.ecr.aws/i2q9d4v7/taservermanager:latest taservermanager
 
-
-docker run --restart unless-stopped -p 8000:8000 -v $(pwd)/data:/data taservermanager /data/config.yaml
+docker run --name taservermanager -d --restart unless-stopped -p 8000:8000 -v "$data_path:/data" taservermanager "/data/config.yaml" 
 ```
 
 
 Caddyfile:
 ```
-servermanager-alpha.westus.cloudapp.azure.com {
+servers.llamagrab.net {
   reverse_proxy localhost:8000
 }
 ```
