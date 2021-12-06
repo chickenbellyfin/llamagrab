@@ -29,8 +29,22 @@ class GameServerConfig(BaseModel):
   ctf_flag_timeout: Optional[int]
   max_players: Optional[int]
   naked_spawn: Optional[bool]
+
+  ctf_cap_limit: Optional[int]
+  tdm_kill_limit: Optional[int]
+  arena_rounds: Optional[int]
+  arena_lives: Optional[int]
+  rabbit_score_limit: Optional[int]
+  cah_score_limit: Optional[int]
+  ctf_blitz_all_flags_move: Optional[bool]
+
+  energy_multiplier: Optional[float]
+  flag_drag_light: Optional[int]
+  flag_drag_medium: Optional[int]
+  flag_drag_heavy: Optional[int]
+  flag_drag_deceleration: Optional[int]
+
   friendly_fire_multiplier: Optional[float]
-  
   friendly_fire: Optional[bool]
 
   map_voting: Optional[bool]

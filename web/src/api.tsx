@@ -66,6 +66,12 @@ export type GameServerConfig = {
   cahScoreLimit?: number
   ctfBlitzAllFlagsMove?: boolean
 
+  energyMultiplier?: number
+
+  flagDragLight?: number
+  flagDragMedium?: number
+  flagDragHeavy?: number
+  flagDragDeceleration?: number
   
   maxPlayers?: number
   nakedSpawn?: boolean

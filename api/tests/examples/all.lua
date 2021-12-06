@@ -22,6 +22,18 @@ ServerSettings.ShrikeLimit = 5
 ServerSettings.ShrikeSpawnTime = 50
 ServerSettings.BeowulfLimit = 6
 ServerSettings.BeowulfSpawnTime = 60
+ServerSettings.CTFCapLimit = 90
+ServerSettings.TDMKillLimit = 91
+ServerSettings.ArenaRounds = 92
+ServerSettings.ArenaLives = 93
+ServerSettings.RabbitScoreLimit = 94
+ServerSettings.CaHScoreLimit = 95
+ServerSettings.CTFBlitzAllFlagsMove = true
+ServerSettings.EnergyMultiplier = 1.22
+ServerSettings.FlagDragLight = 101
+ServerSettings.FlagDragMedium = 102
+ServerSettings.FlagDragHeavy = 103
+ServerSettings.FlagDragDeceleration = 104
 ServerSettings.MapRotation.VotingEnabled = true
 ServerSettings.MapRotation.add(Maps.CTF.Katabatic)
 ServerSettings.MapRotation.add(Maps.Arena.WalledIn)
