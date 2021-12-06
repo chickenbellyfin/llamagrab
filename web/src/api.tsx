@@ -57,6 +57,15 @@ export type GameServerConfig = {
   ammoPickupLifespan?: number
   ctfFlagTimeout?: number
   warmupTime?: number
+
+  ctfCapLimit?: number
+  tdmKillLimit?: number
+  arenaRounds?: number
+  arenaLives?: number
+  rabbitScoreLimit?: number
+  cahScoreLimit?: number
+  ctfBlitzAllFlagsMove?: boolean
+
   
   maxPlayers?: number
   nakedSpawn?: boolean

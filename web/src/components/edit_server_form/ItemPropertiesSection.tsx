@@ -1,4 +1,4 @@
-import { CheckCircleOutlined, DeleteOutlined, ExclamationCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, DeleteOutlined, ExclamationCircleOutlined, InfoCircleOutlined, PlusCircleOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { Button, Card, Col, List, Popover, Row, Select, Space, Switch} from "antd";
 import { useState } from "react";
 import { GameServerConfig, ItemProperties, ItemProperty } from "../../api";
@@ -41,6 +41,14 @@ function SingleItemProperty({property, onChange, onDelete}: SingleItemPropertyPr
   let input = null;
   if (property.name) {
     spec = ItemPropertiesByName[property.name]
+    let help = null;
+    if (spec.description) {
+      help = (
+        <Popover content={spec.description}>
+        <QuestionCircleOutlined />
+        </Popover>
+      )
+    }
 
     if (spec.type === 'boolean') {
       input = <Switch
@@ -49,11 +57,13 @@ function SingleItemProperty({property, onChange, onDelete}: SingleItemPropertyPr
       />
     } else if (spec.type === 'integer') {
       input = <InputInteger
+        addOnBefore={'help'}
         value={property.value}
         addonAfter={spec.unit}
         onChange={updateValue}/>
     } else if (spec.type === 'float') {
       input = <InputFloat
+        addonBefore={help}
         value={property.value}
         addonAfter={spec.unit}
         onChange={updateValue}/>

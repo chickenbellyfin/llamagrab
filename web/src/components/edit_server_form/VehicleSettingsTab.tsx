@@ -3,9 +3,7 @@ import { InputInteger, InputPercent } from "./Inputs";
 import { GameServerConfigTabProps } from "./tabHelpers";
 
 
-export default function VehicleSettingsTab (
-  { config, updateCallbacks }: GameServerConfigTabProps
-) {
+export default function VehicleSettingsTab ({ config, updateCallbacks }: GameServerConfigTabProps) {
 
   const { updateInputNumber } = updateCallbacks;
 
@@ -69,7 +67,6 @@ export default function VehicleSettingsTab (
           placeholder={'120'}
           addonAfter='secs'  />
       </Form.Item>
-      
       
     </Form>
   );

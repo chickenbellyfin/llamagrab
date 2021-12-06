@@ -28,8 +28,6 @@ function ClassSettings ({selected, clazz, onChange}: ClassSettingsProps) {
   );
 }
 
- 
-
 export default function WeaponsSettingsTab ({ config, updateCallbacks }: GameServerConfigTabProps) {
   const { update } = updateCallbacks;
 

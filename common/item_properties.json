@@ -34,7 +34,63 @@
       "name": "Damage",
       "type": "float",
       "restrictions": ">=0",
-      "description": "Damage the weapon does, before considering multipliers, falloff etc."
+      "description": "Damage the weapon does, before considering multipliers, falloff etc.",
+      "unit": "Damage"
+    },
+    {
+      "name": "DirectHitMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Damage multiplier to apply to the damage done on a direct hit"
+    },
+    {
+      "name": "EnergyDrain",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Amount of energy to drain from targets",
+      "unit": "Energy"
+    },
+    {
+      "name": "DamageAgainstArmorMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier for damage against armoured targets"
+    },
+    {
+      "name": "DamageAgainstGeneratorMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier for damage against generators"
+    },
+    {
+      "name": "DamageAgainstBaseTurretMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier for damage against base turrets"
+    },
+    {
+      "name": "DamageAgainstBaseSensorMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier for damage against sensors"
+    },
+    {
+      "name": "DamageAgainstGravCycleMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier for damage against Grav Cycles"
+    },
+    {
+      "name": "DamageAgainstBeowulfMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier for damage against Beowulfs"
+    },
+    {
+      "name": "DamageAgainstShrikeMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier for damage against Shrikes"
     }
   ],
   "Reloading & Firing": [
@@ -97,17 +153,519 @@
       "name": "ShotgunShotCount",
       "type": "integer",
       "restrictions": ">0",
-      "unit": "Shots",
-      "description": "description"
+      "unit": "Shots"
     },
     {
       "name": "ShotEnergyCost",
       "type": "float",
       "restrictions": ">=0",
-      "unit": "Energy",
-      "description": "description"
+      "unit": "Energy"
     }
+  ],
+  "Impulse": [
+    {
+      "name": "ImpactMomentum",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Momentum",
+      "description": "Amount of momentum applied to a player hit by this weapon"
+    },
+    {
+      "name": "SelfImpactMomentumMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Energy",
+      "description": "Multiplier to apply to the impact momentum when the player hit is the one who shot the weapon"
+    },
+    {
+      "name": "SelfImpactExtraZMomentum",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Momentum",
+      "description": "Additional vertical momentum to apply when self-impulsing"
+    }
+  ],
+  "Falloff": [
+    {
+      "name": "ExplosiveRadius",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Size of the weapon's damaging explosion"
+    },
+    {
+      "name": "BulletDamageRange",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Size of the damage range (not the total range of the weapon)"
+    },
+    {
+      "name": "MaxDamageRangeProportion",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+      "description": "Proportion of the damage range at which falloff starts"
+    },
+    {
+      "name": "MinDamageRangeProportion",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+      "description": "Proportion of the damage range at which falloff ends"
+    },
+    {
+      "name": "MinDamageProportion",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+      "description": "Proportion of the normal damage dealt at the MinDamageRangeProportion"
+    }
+  ],
+  "Miscellaneous​": [
+    {
+      "name": "DoesImpulseFlag",
+      "type": "boolean",
+      "description": "Whether the weapon's explosion pushes the flag around"
+    },
+    {
+      "name": "DoesGibOnKill",
+      "type": "boolean",
+      "description": "Whether this weapon will cause a killed enemy to explode into pieces"
+    },
+    {
+      "name": "GibImpulseRadius",
+      "type": "float",
+      "description": "Radius for which gibbing impulse is applied to pieces of deceased enemy"
+    },
+    {
+      "name": "GibStrength",
+      "type": "float",
+      "description": "Momentum applied to gibbed pieces of an enemy"
+    }
+  ],
+  "Projectile & Tracer": [
+    {
+      "name": "ProjectileSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Launch speed of the projectile"
+    },
+    {
+      "name": "ProjectileMaxSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Cap on the absolute projectile speed, regardless of inheritance"
+    },
+    {
+      "name": "CollisionSize",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Radius of the projectile's collision sphere"
+    },
+    {
+      "name": "ProjectileInheritance",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Proportion of the shooter's velocity the projectile inherits"
+    },
+    {
+      "name": "ProjectileLifespan",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "How long the projectile travels for before exploding in midair"
+    },
+    {
+      "name": "ProjectileGravity",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier by which gravity affects the projectile"
+    },
+    {
+      "name": "ProjectileTerminalVelocity",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Terminal velocity due to gravity"
+    },
+    {
+      "name": "ProjectileBounceDamping",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "For projectiles which don't explode on impact, the proportion of energy lost on bounce"
+    },
+    {
+      "name": "HitscanRange",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "The range of the hitscan weapon"
+    },
+    {
+      "name": "FireOffsetX",
+      "type": "float",
+      "description": "Offset to the player of the spawned projectile in the X direction (forwards/backwards)"
+    },
+    {
+      "name": "FireOffsetY",
+      "type": "float",
+      "description": "Offset to the player of the spawned projectile in the Y direction (left/right)"
+    },
+    {
+      "name": "FireOffsetZ",
+      "type": "float",
+      "description": "Offset to the player of the spawned projectile in the Z direction (up/down)"
+    }
+  ],
+  "Fractal Grenades": [
+    {
+      "name": "FractalDuration",
+      "type": "float",
+      "description": "Duration of the Fractal effect",
+      "restrictions": ">0",
+      "unit": "Seconds"
+    },
+    {
+      "name": "FractalShardInterval",
+      "type": "float",
+      "description": "Interval at which Fractal 'shards' fire",
+      "restrictions": ">0",
+      "unit": "Seconds"
+    },
+    {
+      "name": "FractalAscentTime",
+      "type": "float",
+      "description": "How long the Fractal takes to float off the ground to full height",
+      "restrictions": ">0",
+      "unit": "Seconds"
+    },
+    {
+      "name": "FractalAscentHeight",
+      "type": "float",
+      "description": "Height off the ground that the Fractal ascends to",
+      "restrictions": ">=0"
+    },
+    {
+      "name": "FractalShardDistance",
+      "type": "float",
+      "description": "Horizontal distance which Fractal shards extend to",
+      "restrictions": ">0"
+    },
+    {
+      "name": "FractalShardHeight",
+      "type": "float",
+      "description": "Vertical distance above/below the Fractal which shards extend to",
+      "restrictions": ">=0"
+    },
+    {
+      "name": "FractalShardDamage",
+      "type": "float",
+      "description": "Damage done by each shard",
+      "restrictions": ">=0",
+      "unit": "Damage"
+    },
+    {
+      "name": "FractalShardDamageRadius",
+      "type": "float",
+      "description": "Damage radius from the end of each shard",
+      "restrictions": ">0"
+    }
+  ],
+  "Melee": [
+    {
+      "name": "MeleeDamageRadius",
+      "type": "float",
+      "description": "Distance at which melee will hit",
+      "restrictions": ">=0"
+    },
+    {
+      "name": "MeleeConeAngle",
+      "type": "float",
+      "description": "Angle of the cone for which melee will hit",
+      "restrictions": "0<=x<=360",
+      "unit": "Degrees"
+    }
+  ],
+  "Accuracy": [
+    {
+      "name": "Accuracy",
+      "type": "float",
+      "description": "Proportion of accuracy for the weapon's shot",
+      "restrictions": "0<=x<=1"
+    },
+    {
+      "name": "AccuracyLossOnShot",
+      "type": "float",
+      "description": "Accuracy decrease after shooting",
+      "restrictions": "0<=x<=1"
+    },
+    {
+      "name": "AccuracyLossOnJump",
+      "type": "float",
+      "description": "Accuracy decrease when jumping",
+      "restrictions": "0<=x<=1"
+    },
+    {
+      "name": "AccuracyLossMax",
+      "type": "float",
+      "description": "Maximum decrease in accuracy at a given time",
+      "restrictions": "0<=x<=1"
+    },
+    {
+      "name": "AccuracyCorrectionRate",
+      "type": "float",
+      "description": "Rate at which accuracy returns after decreasing",
+      "restrictions": "0<=x<=1"
+    },
+    {
+      "name": "ShotgunUseGOTYSpread",
+      "type": "boolean",
+      "description": "Whether to use the older GOTY-patch shotgun spread (tighter, random) as opposed to the OOTB-patch spread (wider, non-random)"
+    }
+  ],
+  "Grenades & Thrown Weapons": [
+    {
+      "name": "ThrowDelay",
+      "type": "float",
+      "description": "Time taken for the projectile to be thrown",
+      "restrictions": ">=0",
+      "unit": "Seconds"
+    },
+    {
+      "name": "ThrowPullPinTime",
+      "type": "float",
+      "description": "Time before the pin is pulled; after this it will be spawned even if the thrower dies",
+      "restrictions": ">=0",
+      "unit": "Seconds"
+    },
+    {
+      "name": "StuckDamageMultiplier",
+      "type": "float",
+      "description": "Multiplier for damage when projectile is stuck to an enemy",
+      "restrictions": ">=0"
+    },
+    {
+      "name": "StuckMomentumMultiplier",
+      "type": "float",
+      "description": "Multiplier for impulse when projectile is stuck to an enemy",
+      "restrictions": ">=0"
+    },
+    {
+      "name": "FuseTimer",
+      "type": "float",
+      "description": "Fuse time on the grenade",
+      "restrictions": ">=0",
+      "unit": "Seconds"
+    },
+    {
+      "name": "ExplodeOnContact",
+      "type": "boolean",
+      "description": "Whether the projectile explodes on contact with an enemy"
+    },
+    {
+      "name": "ExplodeOnFuse",
+      "type": "boolean",
+      "description": "Whether the projectile explodes after its fuse timer"
+    },
+    {
+      "name": "MustBounceBeforeExplode",
+      "type": "boolean",
+      "description": "Whether the projectile must bounce at least once before exploding due to a fuse"
+    }
+  ],
+  "Packs": [
+    {
+      "name": "PackSustainedEnergyCost",
+      "type": "float",
+      "description": "Energy per second to maintain a given pack",
+      "restrictions": ">=0",
+      "unit": "Energy/Second"
+    },
+    {
+      "name": "ThrustPackEnergyCost",
+      "type": "float",
+      "description": "Energy cost to thrust",
+      "restrictions": ">=0",
+      "unit": "Energy"
+    },
+    {
+      "name": "ThrustPackImpulse",
+      "type": "float",
+      "description": "Forward momentum given by a thrust",
+      "unit": "Momentum"
+    },
+    {
+      "name": "ThrustPackSidewaysImpulse",
+      "type": "float",
+      "description": "Sideways momentum given by a thrust",
+      "unit": "Momentum"
+    },
+    {
+      "name": "ThrustPackMinVerticalImpulse",
+      "type": "float",
+      "description": "Minimum amount of vertical impulse given by a thrust",
+      "restrictions": ">=0",
+      "unit": "Momentum"
+    },
+    {
+      "name": "ThrustPackCooldownTime",
+      "type": "float",
+      "description": "Cooldown before thrust can be used again",
+      "restrictions": ">=0",
+      "unit": "Seconds"
+    },
+    {
+      "name": "ThrustPackSpeedRangeStart",
+      "type": "float",
+      "description": "Speed at which impulse generated by a thrust begins to falloff",
+      "restrictions": ">=0"
+    },
+    {
+      "name": "ThrustPackSpeedRangeEnd",
+      "type": "float",
+      "description": "Speed cap at which thrust impulse is fully lowered",
+      "restrictions": ">=0"
+    },
+    {
+      "name": "ThrustPackSpeedCapReduction",
+      "type": "float",
+      "description": "Proportion of thrust impulse reduced when past the speed cap",
+      "restrictions": "0<=x<=1"
+    },
+    {
+      "name": "ShieldPackEnergyCostPerDamagePoint",
+      "type": "float",
+      "description": "How much energy is consumed by the shield pack when taking a point of damage",
+      "restrictions": ">=0",
+      "unit": "Energy/Damage"
+    },
+    {
+      "name": "JammerPackRange",
+      "type": "float",
+      "description": "Radius for how far the jammer pack effect extends",
+      "restrictions": ">=0"
+    },
+    {
+      "name": "PackBuffAmount",
+      "type": "float",
+      "description": "Buff effect amount for buffing packs like the energy recharge pack",
+      "restrictions": ">=0"
+    },
+    {
+      "name": "StealthPackMaxSpeed",
+      "type": "float",
+      "description": "Speed threshold past which a stealthed player is visible",
+      "restrictions": ">=0"
+    }
+  ],
+  "Deployables": [
+    {
+      "name": "DeployableRange",
+      "type": "float",
+      "description": "Range of a deployable (e.g. turret range)",
+      "restrictions": ">=0",
+      "unit": "UU"
+    },
+    {
+      "name": "DeployableMaxAllowed",
+      "type": "integer",
+      "description": "Maximum number of deployables of this type a player can have",
+      "restrictions": ">=0"
+    },
+    {
+      "name": "DeployableMinProximity",
+      "type": "float",
+      "description": "How close two deployables of the same type can be placed",
+      "restrictions": ">=0",
+      "unit": "UU"
+    },
+    {
+      "name": "TurretTimeToAcquireTarget",
+      "type": "float",
+      "description": "How long a turret takes to lock onto a target",
+      "restrictions": ">=0",
+      "unit": "Seconds"
+    },
+    {
+      "name": "TurretCanTargetVehicle",
+      "type": "boolean",
+      "description": "Whether the turret can target vehicles",
+      "unit": "Seconds"
+    },
+    {
+      "name": "ForcefieldMinDamage",
+      "type": "float",
+      "description": "Minimum damage incurred by passing through a forcefield",
+      "restrictions": ">=0",
+      "unit": "Damage"
 
+    },
+    {
+      "name": "ForcefieldMaxDamage",
+      "type": "float",
+      "description": "Maximum damage incurred by passing through a forcefield",
+      "restrictions": ">=0",
+      "unit": "Damage"
+
+    },
+    {
+      "name": "ForcefieldMinDamageSpeed",
+      "type": "float",
+      "description": "The minimum speed at which damage will be dealt when passing through a forcefield",
+      "restrictions": ">=0",
+      "unit": "UU/S"
+
+    },
+    {
+      "name": "ForcefieldMaxDamageSpeed",
+      "type": "float",
+      "description": "The speed at which the maximum forcefield damage occurs",
+      "restrictions": ">=0",
+      "unit": "UU/S"
+
+    }
+  ],
+  "Mines": [
+    {
+      "name": "MineDeployTime",
+      "type": "float",
+      "description": "How long before the mine is active and armed",
+      "restrictions": ">=0",
+      "unit": "Seconds"
+
+    },
+    {
+      "name": "MineMaxAllowed",
+      "type": "integer",
+      "description": "Maximum number of mines of this type a player can have out",
+      "restrictions": ">=0"
+
+    },
+    {
+      "name": "MineCollisionCylinderRadius",
+      "type": "float",
+      "description": "Radius of the collision cylinder used to check detonation",
+      "restrictions": ">=0",
+      "unit": "UU"
+
+    },
+    {
+      "name": "MineCollisionCylinderHeight",
+      "type": "float",
+      "description": "Height of the collision cylinder used to check detonation",
+      "restrictions": ">=0",
+      "unit": "UU"
+
+    },
+    {
+      "name": "ClaymoreDetonationAngle",
+      "type": "float",
+      "description": "Cone angle at which the Claymore will trigger",
+      "restrictions": "0<=x<=360",
+      "unit": "Degrees"
+
+    },
+    {
+      "name": "PrismMineTripDistance",
+      "type": "float",
+      "description": "Amount the Prism Mine's tripwire extends left and right",
+      "restrictions": ">=0",
+      "unit": "UU"
+
+    }
   ]
 }
 

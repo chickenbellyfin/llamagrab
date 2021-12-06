@@ -45,6 +45,10 @@ ServerSettings.BannedItems.add("Heavy", "Nova Colt")
 ServerSettings.BannedItems.add("Heavy", "Automatic Shotgun")
 
 --------------------------------------------------------------------------------
+Items.setProperty("Light", "Light Spinfusor", Items.Properties.Damage, 800.00)
+Items.setProperty("Light", "Light Spinfusor", Items.Properties.CanZoom, true)
+Items.setProperty("Heavy", "Heavy Bolt Launcher", Items.Properties.ShotEnergyCost, 10.00)
+Items.setProperty("Heavy", "Heavy Bolt Launcher", Items.Properties.BurstShotCount, 3)
 
 -- [admin.lua]
 --------------------------------------------------------------------------------
