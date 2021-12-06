@@ -112,6 +112,19 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
   lua('ServerSettings.BeowulfLimit = %d', config.beowulf_limit)
   lua('ServerSettings.BeowulfSpawnTime = %d', config.beowulf_spawn_time)
 
+  lua('ServerSettings.CTFCapLimit = %d', config.ctf_cap_limit)
+  lua('ServerSettings.TDMKillLimit = %d', config.tdm_kill_limit)
+  lua('ServerSettings.ArenaRounds = %d', config.arena_rounds)
+  lua('ServerSettings.ArenaLives = %d', config.arena_lives)
+  lua('ServerSettings.RabbitScoreLimit = %d', config.rabbit_score_limit)
+  lua('ServerSettings.CaHScoreLimit = %d', config.cah_score_limit)
+  lua('ServerSettings.CTFBlitzAllFlagsMove = %s', _bool(config.ctf_blitz_all_flags_move))
+  lua('ServerSettings.EnergyMultiplier = %0.2f', config.energy_multiplier)
+  lua('ServerSettings.FlagDragLight = %d', config.flag_drag_light)
+  lua('ServerSettings.FlagDragMedium = %d', config.flag_drag_medium)
+  lua('ServerSettings.FlagDragHeavy = %d', config.flag_drag_heavy)
+  lua('ServerSettings.FlagDragDeceleration = %d', config.flag_drag_deceleration)
+
   ### Map Rotation  
   lua('ServerSettings.MapRotation.VotingEnabled = %s', _bool(config.map_voting))
   if config.maps:
