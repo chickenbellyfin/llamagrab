@@ -17,7 +17,7 @@ def count_servers(db: Session, user: models.User) -> int:
 
 def get_servers(db: Session, user: models.User) -> List[models.Server]:
   servers = db.query(models.Server).filter(models.Server.user == user.id).all()
-  return servers
+  return list(servers)
 
 def get_server(db: Session, server_id: int) -> models.Server:
   server = db.query(models.Server).filter(models.Server.id == server_id).first()
@@ -34,12 +34,12 @@ def get_active_servers(db: Session, region: str = None, user: models.User = None
     
   query = query.filter(models.Server.status == 'running')
   servers = query.all()
-  return servers
+  return list(servers)
 
 def get_admin_tribes_usernames(db: Session) -> List[str]:
   query = db.query(models.User.tribes_username)
   query = query.filter(or_(models.User.tier == 'admin', models.User.tier == 'super'))
   query = query.filter(models.User.tribes_username.isnot(None))
   result = query.all()
-  return map(lambda t: t[0], result)
+  return list(map(lambda t: t[0], result))
 

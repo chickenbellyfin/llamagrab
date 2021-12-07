@@ -56,7 +56,6 @@ class LuaConfig:
       if len(args) > 0:
         for arg in args:
           if arg is None:
-            print(f'for template {template}, arg is None')
             return
       self.lua += (template % args) + '\n'
 
