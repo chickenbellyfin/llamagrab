@@ -1,4 +1,5 @@
-import { Divider, Form, Input, Select } from "antd";
+import { Divider, Form, Input, Select, Space } from "antd";
+import ClassProperties from "./ClassProperties";
 import { InputFloat, InputInteger } from "./Inputs";
 import { GameServerConfigTabProps } from "./tabHelpers";
 import Rules from "./validation";
@@ -8,7 +9,7 @@ export default function PlayerSettingsTab (
   { config, updateCallbacks }: GameServerConfigTabProps
 ) {
 
-  const { updateInputNumber } = updateCallbacks;
+  const { updateInputNumber, update } = updateCallbacks;
 
   
 
@@ -52,6 +53,15 @@ export default function PlayerSettingsTab (
           onChange={updateInputNumber('flagDragDeceleration')}
           addonAfter='UU/S²'
           placeholder='0' />
+      </Form.Item>
+      
+      <Divider orientation='left'>Class Properties</Divider>
+      <Form.Item wrapperCol={{offset: 2}}>
+        <Space direction='vertical' style={{width: '100%'}}>
+        <ClassProperties classLabel='Light' classProperties={config.lightClassProperties} onChange={update('lightClassProperties')}/>
+        <ClassProperties classLabel='Medium' classProperties={config.mediumClassProperties} onChange={update('mediumClassProperties')}/>
+        <ClassProperties classLabel='Heavy' classProperties={config.heavyClassProperties} onChange={update('heavyClassProperties')}/>
+        </Space>
       </Form.Item>
     </Form>
 

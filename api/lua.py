@@ -1,5 +1,6 @@
 import os
-from typing import List
+from typing import Any, List, Mapping
+from schema.game_server_config import ModProperty
 
 from schema.game_server_config import GameServerConfig
 import json
@@ -25,6 +26,14 @@ item_props = {}
 for group in item_props_by_group:
   for item_prop in item_props_by_group[group]:
     item_props[item_prop['name']] = item_prop
+
+with open('../common/class_properties.json') as class_props_json:
+  class_props_by_group = json.load(class_props_json)
+
+class_props = {}
+for group in class_props_by_group:
+  for class_prop in class_props_by_group[group]:
+    class_props[class_prop['name']] = class_prop
 
 
 team_assign_types = {
@@ -76,6 +85,24 @@ class LuaConfig:
 def _bool(val):
   return None if val is None else str(val).lower()
 
+# Convert value of ModProperty to string based on type
+def _mod_property_value(p: ModProperty, prop_specs: Mapping[str, Any]) -> str:
+  prop = prop_specs[p.name]
+  if prop['type'] == 'integer':
+    return str(int(p.value))
+  elif prop['type'] == 'float':
+    return '%0.2f' % p.value
+  elif prop['type'] == 'boolean':
+    return _bool(p.value)
+  else:
+    return None
+
+def _item_property_value(p: ModProperty) -> str:
+  return _mod_property_value(p, item_props)
+
+def _class_property_value(p: ModProperty) -> str:
+  return _mod_property_value(p, class_props)
+
 def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
   lua = LuaConfig()
 
@@ -124,7 +151,7 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
   lua('ServerSettings.FlagDragHeavy = %d', config.flag_drag_heavy)
   lua('ServerSettings.FlagDragDeceleration = %d', config.flag_drag_deceleration)
 
-  ### Map Rotation  
+  # Map Rotation  
   lua('ServerSettings.MapRotation.VotingEnabled = %s', _bool(config.map_voting))
   if config.maps:
     for map_key in config.maps:
@@ -146,7 +173,7 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
         weapon = weapons[clazz][weapon_key]
         lua('ServerSettings.BannedItems.add("%s", "%s")', clazz, weapon['name'])
   
-  
+  # Global Hitscan Ban
   if lua_settings.include_hitscan_ban:
     lua.require('hitscan.lua')
 
@@ -155,18 +182,25 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
     for weapon in config.item_properties:
       weapon_name = weapons[weapon.player_class][weapon.weapon]['name']
       for property in weapon.properties:
-        value_str = ''
-        prop = item_props[property.name]
-        if prop['type'] == 'integer':
-          value_str = str(int(property.value))
-        elif prop['type'] == 'float':
-          value_str = '%0.2f' % property.value
-        elif prop['type'] == 'boolean':
-          value_str = _bool(property.value)
+        lua(
+          'Items.setProperty("%s", "%s", Items.Properties.%s, %s)', 
+          weapon.player_class,  weapon_name, property.name, _item_property_value(property)
+        )
+  
+  # Class Properties
+  for clazz, class_props in [
+    ('Light', config.light_class_properties),
+    ('Medium', config.medium_class_properties),
+    ('Heavy', config.heavy_class_properties),
+  ]:
+    if class_props:
+      for property in class_props:
+        lua(
+          'Classes.setProperty("%s", Classes.Properties.%s, %s)',
+          clazz, property.name, _class_property_value(property)
+        )
 
-        lua('Items.setProperty("%s", "%s", Items.Properties.%s, %s)', weapon.player_class, weapon_name, property.name, value_str)
-
-  # ### Admin
+  # Admin
   if lua_settings.include_admin:
     lua.require('admin.lua')
 

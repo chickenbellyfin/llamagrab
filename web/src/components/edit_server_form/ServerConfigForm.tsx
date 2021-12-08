@@ -23,7 +23,6 @@ function ServerConfigForm({ regions, settings, onChange }: ServerConfigFormProps
     }
   }
 
-  console.log(updatedSettings)
   return (
     <Form layout='inline' onFinish={() => {}}>
     <Form.Item label="Region" name="region" rules={[{ required: true, message: 'Required' }]}>

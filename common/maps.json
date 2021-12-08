@@ -309,12 +309,6 @@
     "lua": "Maps.Blitz.Katabatic"
   },
   {
-    "key": "cah_perdition",
-    "name": "Perdition",
-    "gameMode": "Blitz",
-    "lua": "Maps.Blitz.Perdition"
-  },
-  {
     "key": "cah_outskirts",
     "name": "Outskirts",
     "gameMode": "CaH",

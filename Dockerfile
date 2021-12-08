@@ -17,10 +17,10 @@ WORKDIR /app
 COPY api/requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY --from=build_web /app/web/build /app/api/static
 COPY api api
 RUN mv api/config_docker.yaml api/config.yaml
 COPY common common
+COPY --from=build_web /app/web/build /app/api/static
 
 WORKDIR /app/api
 ENTRYPOINT ["python3", "app.py"]
