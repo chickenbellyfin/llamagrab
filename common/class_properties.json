@@ -1,0 +1,224 @@
+{
+  "Base Stats": [
+    {
+      "name": "HealthPool",
+      "type": "float",
+      "restrictions": ">0",
+      "unit": "Health",
+      "description": "Health for this class"
+    },
+    {
+      "name": "EnergyPool",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Energy",
+      "description": "Energy for the class"
+    },
+    {
+      "name": "EnergyRechargeRate",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Energy/S",
+      "description": "Rate at which energy recovers"
+    },
+    {
+      "name": "JetEnergyCost",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Energy/S",
+      "description": "Energy per second needed to jet"
+    },
+    {
+      "name": "InitialJetEnergyCost",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Energy",
+      "description": "Amount of energy used in initiating the jetpack"
+    },
+    {
+      "name": "RegenTime",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Seconds",
+      "description": "Time before health regen starts"
+    },
+    {
+      "name": "RegenRate",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "How fast to regenerate health while regen is ongoing"
+    },
+    {
+      "name": "LowHealthThreshold",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Percentage of health at which low health UI effects play"
+    }
+  ],
+  "Movement & Skiing": [
+    {
+      "name": "Mass",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Mass for players of this type"
+    },
+    {
+      "name": "GroundSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU/S",
+      "description": "Walking speed"
+    },
+    {
+      "name": "MaxSkiingSpeed",
+      "type": "float",
+      "unit": "UU/S",
+      "description": "Max speed achievable via skiing"
+    },
+    {
+      "name": "MaxSkiControl",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+      "description": "Max proportion of turn control the player can have while skiing"
+    },
+    {
+      "name": "SkiControlPeakSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Speed at which the player has maximum turning control; the mean of the normal curve for turn control"
+    },
+    {
+      "name": "SkiControlVariance",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Variance of the normal / bell curve for turn control; larger values mean a broader speed range with high control"
+    },
+    {
+      "name": "SkiSlopeGravity",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Gravity applied to the player while skiing down a slope"
+    },
+    {
+      "name": "VehicleSpeedInheritance",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+      "description": "Proportion of speed to inherit when jumping out of a vehicle; affected by the vehicle's exit speed cap"
+    },
+    {
+      "name": "MomentumDampeningEnabled",
+      "type": "boolean",
+      "description": "Whether impulse from an explosive weapon is reduced when the player is moving fast enough"
+    },
+    {
+      "name": "MomentumDampeningThreshold",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU/S",
+      "description": "Speed threshold past which momentum dampening is active"
+    },
+    {
+      "name": "MomentumDampeningProportion",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+      "description": "Proportional reduction in impulse when momentum is dampened"
+    },
+    {
+      "name": "MaxHealthRegenSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU/S",
+      "description": "Speed threshold above which health regen is disabled"
+    }
+  ],
+  "Jetting & Air Control": [
+    {
+      "name": "MaxJettingSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Max speed achievable via jetting",
+      "unit": "UU/S"
+    },
+    {
+      "name": "JetAcceleration",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Acceleration caused by jetting",
+      "unit": "UU/S²"
+    },
+    {
+      "name": "InitialJetAccelerationMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier to acceleration for an initial jetpack boost"
+    },
+    {
+      "name": "InitialJetLength",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "How long the initial jetpack boost lasts",
+      "unit": "Seconds"
+    },
+    {
+      "name": "ForwardJetProportion",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+      "description": "Proportion of jetting acceleration applied to forwards momentum"
+    },
+    {
+      "name": "JetBoostMaxGroundSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Maximum ground speed achievable via jetting while skiing",
+      "unit": "UU/S"
+    },
+    {
+      "name": "DefaultAirControl",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+      "description": "Base proportion of turn / strafe control the player has in the air"
+    },
+    {
+      "name": "AirControlMaxMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier applied to air control at speeds below the reduction range"
+    },
+    {
+      "name": "AirControlMinMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier applied to air control at speeds above the reduction range"
+    },
+    {
+      "name": "AirControlReductionRangeMax",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Speed at which air control begins to decrease",
+      "unit": "UU/S"
+    },
+    {
+      "name": "AirControlReductionRangeMin",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Speed at which air control stops decreasing",
+      "unit": "UU/S"
+    }
+  ],
+  "Collision": [
+    {
+      "name": "CollisionCylinderRadius",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Radius of the class's collision cylinder",
+      "unit": "UU"
+    },
+    {
+      "name": "CollisionCylinderHeight",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Height of the class's collision cylinder",
+      "unit": "UU"
+    }
+  ]
+}
