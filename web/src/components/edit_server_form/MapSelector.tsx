@@ -54,7 +54,6 @@ export default function MapSelector({gameTypes, mapList, onChange}: MapSelectorP
 
   const handleCustomMapListChange = (selected: Array<LabeledValue>) => {
     const selectedKeys = selected.map(v => v.value as string)
-    console.log(`selected ${selectedKeys}`)
     updateMapList(selectedKeys)
   }
 

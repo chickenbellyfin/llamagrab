@@ -68,7 +68,7 @@ export class GameServerConfigForm extends React.Component<EditorProps, EditorSta
             <MapRotationSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
           </TabPane>
 
-          <TabPane tab="Player" key='player'>
+          <TabPane tab="Player/Classes" key='player'>
             <PlayerSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
           </TabPane>
 

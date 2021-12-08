@@ -12,7 +12,12 @@ export default function AppHeader() {
   return (
     <>
     <Header style={{padding: '0px', background: 'none'}}>      
-    <a href='/'><h1 style={{display: 'inline', float:'left'}}><Icon component={logo}/> Server Manager</h1></a>
+      <a href='/'>
+        <h1 style={{display: 'inline', float:'left'}}>
+          <Icon component={logo}/>
+          &nbsp;Server Manager (alpha)
+        </h1>
+      </a>
     <Menu 
       style={{float: 'right'}}
       theme='dark'

@@ -48,7 +48,7 @@ export default function WeaponsSettingsTab ({ config, updateCallbacks }: GameSer
 
       <Form.Item label='Item Properties' style={{marginBottom: 0}}/>
       <Form.Item wrapperCol={{offset: 2}}>
-      <ItemPropertiesList config={config} updateCallbacks={updateCallbacks}/>
+        <ItemPropertiesList configItemProperties={config.itemProperties} updateCallbacks={updateCallbacks}/>
       </Form.Item>
     </Form>
   );

@@ -31,7 +31,7 @@ export type ServerSettings = {
   region?: string
 }
 
-export type ItemProperty = {
+export type ModProperty = {
   name?: string,
   value?: any
 }
@@ -39,7 +39,7 @@ export type ItemProperty = {
 export type ItemProperties = {
   playerClass?: string,
   weapon?: string,
-  properties?: ItemProperty[]
+  properties?: ModProperty[]
 }
 
 export type GameServerConfig = {
@@ -95,6 +95,34 @@ export type GameServerConfig = {
   heavyWeaponBans: Array<string>
 
   itemProperties?: Array<ItemProperties>
+  lightClassProperties?: ModProperty[]
+  mediumClassProperties?: ModProperty[]
+  heavyClassProperties?: ModProperty[]
+}
+
+function removeEmptyModProperties(items: ModProperty[] | undefined): ModProperty[] | undefined {
+  return items != undefined
+    ? items.filter(item => item.name !== undefined && item.value !== undefined)
+    : undefined;
+}
+
+function sanitizeGameServerConfig(config: GameServerConfig): GameServerConfig {
+  const sanitized = Object.assign({}, config);
+
+  if (sanitized.itemProperties) {
+    sanitized.itemProperties = sanitized.itemProperties
+      // filter out any weapons where the class/weapon are not set
+      .filter(item => (item.playerClass !== undefined && item.weapon !== undefined))
+      // remove any item properties which are incomplete (name or value not set)
+      .map(item =>  Object.assign(item, {properties: removeEmptyModProperties(item.properties)}))
+      // remove any weapons which have no completed item properties
+      .filter(item =>item.properties !== undefined && item.properties.length > 0)
+  }
+
+  sanitized.lightClassProperties = removeEmptyModProperties(sanitized.lightClassProperties)
+  sanitized.mediumClassProperties = removeEmptyModProperties(sanitized.mediumClassProperties)
+  sanitized.heavyClassProperties = removeEmptyModProperties(sanitized.heavyClassProperties)
+  return sanitized;
 }
 
 export type LoginRequest = {
@@ -221,7 +249,7 @@ async function createServer(serverConfig: GameServerConfig, serverSettings: Serv
     method: 'PUT',
     path: '/api/servers',
     body: JSON.stringify({
-      serverConfig: serverConfig,
+      serverConfig: sanitizeGameServerConfig(serverConfig),
       serverSettings: serverSettings
     })
   })
@@ -237,7 +265,7 @@ async function setServerConfig(serverId: number, serverConfig: GameServerConfig)
   return doRequest({
     method: 'POST',
     path: `/api/server/${serverId}/config`,
-    body: JSON.stringify(serverConfig)
+    body: JSON.stringify(sanitizeGameServerConfig(serverConfig))
   })
 }
 

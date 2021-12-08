@@ -61,6 +61,10 @@ Items.setProperty("Light", "Light Spinfusor", Items.Properties.Damage, 800.00)
 Items.setProperty("Light", "Light Spinfusor", Items.Properties.CanZoom, true)
 Items.setProperty("Heavy", "Heavy Bolt Launcher", Items.Properties.ShotEnergyCost, 10.00)
 Items.setProperty("Heavy", "Heavy Bolt Launcher", Items.Properties.BurstShotCount, 3)
+Classes.setProperty("Light", Classes.Properties.EnergyPool, 110.00)
+Classes.setProperty("Light", Classes.Properties.MomentumDampeningEnabled, true)
+Classes.setProperty("Medium", Classes.Properties.Mass, 5.00)
+Classes.setProperty("Heavy", Classes.Properties.RegenTime, 15.00)
 
 -- [admin.lua]
 --------------------------------------------------------------------------------

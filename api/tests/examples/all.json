@@ -85,5 +85,27 @@
         }
       ]
     }
+  ],
+  "lightClassProperties": [
+    {
+      "name": "EnergyPool",
+      "value": 110
+    },    
+    {
+      "name": "MomentumDampeningEnabled",
+      "value": true
+    }
+  ],
+  "mediumClassProperties": [
+    {
+      "name": "Mass",
+      "value": 5.0
+    }
+  ],
+  "heavyClassProperties": [
+    {
+      "name": "RegenTime",
+      "value": 15
+    }
   ]
 }

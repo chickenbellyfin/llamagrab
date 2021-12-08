@@ -1,6 +1,7 @@
 import Maps from '../../common/maps.json'
 import Weapons from '../../common/weapons.json'
 import ItemPropertyOptions from '../../common/item_properties.json'
+import ClassPropertyOptions from '../../common/class_properties.json'
 import { Select } from 'antd';
 
 
@@ -75,7 +76,7 @@ function weaponOptions(clazz: PlayerClass) {
   });
 }
 
-type ItemPropertySpec = {
+export type ModPropertySpec = {
   name: string,
   type: string,
   restrictions?: string,
@@ -83,12 +84,45 @@ type ItemPropertySpec = {
   description?: string
 }
 
+// used by ModPropertyList.tsx to show options & look up values
+export type ModPropertySpecSet = {
+  byName: {[key: string]: ModPropertySpec}
+  groupedOptions: JSX.Element[]
+}
+
+function createModPropertyOptions(options: {[key: string]: ModPropertySpec[]}): JSX.Element[]  {
+  return Object.keys(options).map((group) => {
+    return (
+      <OptGroup key={group.toUpperCase()} label={group.toUpperCase()}>
+        { options[group as keyof typeof options].map((itemProp) => {
+          return <Option key={itemProp.name} value={itemProp.name}>{itemProp.name}</Option>
+        })}
+      </OptGroup>
+    );
+  })
+}
+
 const ItemPropertiesByName = Object.keys(ItemPropertyOptions).reduce((prev, group) => {
   const props = ItemPropertyOptions[group as keyof typeof ItemPropertyOptions]
   props.forEach(prop => Object.assign(prev, {[prop.name]: prop}))
   return prev;
-}, {} as {[key: string]: ItemPropertySpec})
+}, {} as {[key: string]: ModPropertySpec})
 
+const ClassPropertiesByName = Object.keys(ClassPropertyOptions).reduce((prev, group) => {
+  const props = ClassPropertyOptions[group as keyof typeof ClassPropertyOptions]
+  props.forEach(prop => Object.assign(prev, {[prop.name]: prop}))
+  return prev;
+}, {} as {[key: string]: ModPropertySpec})
+
+const ItemPropertiesSpecSet: ModPropertySpecSet = {
+  byName: ItemPropertiesByName,
+  groupedOptions: createModPropertyOptions(ItemPropertyOptions)
+}
+
+const ClassPropertiesSpecSet: ModPropertySpecSet = {
+  byName: ClassPropertiesByName,
+  groupedOptions: createModPropertyOptions(ClassPropertyOptions)
+}
 
 export {
   Maps,
@@ -96,6 +130,6 @@ export {
   getMaps,
   WeaponsGrouped,
   weaponOptions,
-  ItemPropertyOptions,
-  ItemPropertiesByName
+  ItemPropertiesSpecSet,
+  ClassPropertiesSpecSet
 }

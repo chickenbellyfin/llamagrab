@@ -3,14 +3,14 @@ from typing import List, Optional, Any
 import json
 
 
-class Property(BaseModel):
+class ModProperty(BaseModel):
   name: str
   value: Any
 
 class ItemProperties(BaseModel):
   player_class: str
   weapon: str
-  properties: List[Property]
+  properties: List[ModProperty]
 
 class GameServerConfig(BaseModel):
   display_name: Optional[str]
@@ -63,6 +63,9 @@ class GameServerConfig(BaseModel):
   heavy_weapon_bans: Optional[List[str]]
 
   item_properties: Optional[List[ItemProperties]]
+  light_class_properties: Optional[List[ModProperty]]
+  medium_class_properties: Optional[List[ModProperty]]
+  heavy_class_properties: Optional[List[ModProperty]]
 
 
   def serialize(self):

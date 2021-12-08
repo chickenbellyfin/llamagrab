@@ -56,17 +56,25 @@ export default function LoginPage() {
       })
   }
 
-  const onFailure = (error: Response) => {
-    error.json().then(data => {
-      const details = data.detail
-      if (typeof details === 'string') {
-        setErrorMessage(details)
-      } else if (typeof details === 'object') {
-        setErrorMessage(details[0]['msg'])
-      } else {
-        setErrorMessage('Uknown Error')
+  const onFailure = (error: any) => {
+    if (error.message) {
+      setErrorMessage(error.message)
+    } else {
+      try {
+        error.json().then((data: any) => {
+          const details = data.detail
+          if (typeof details === 'string') {
+            setErrorMessage(details)
+          } else if (typeof details === 'object') {
+            setErrorMessage(details[0]['msg'])
+          } else {
+            setErrorMessage('Unknown Error')
+          }
+        })
+      } catch (e: any) {
+        setErrorMessage('Unknown Error')
       }
-    })
+    }
   }
 
   const onSubmit = (username: string, password: string) => {
