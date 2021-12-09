@@ -131,3 +131,19 @@ async def create_account(create_req: requests.AccountCreateRequest, request: Req
   logger.info(f'Client @ {client_host} created account: {new_user.username}')
   # record client created an account
   deps.created_account.add(client_host)
+
+@router.delete('/account/{user_id}')
+async def delete_user(user_id: int, admin: models.User = Depends(deps.login_super), db: Session = Depends(deps.db)):
+  user_to_delete = db_queries.user_by_id(db, user_id)
+
+  if not user_to_delete:
+    raise HTTPException(
+      status_code=http_status.HTTP_404_NOT_FOUND
+    )
+  else:
+    servers_to_delete = db_queries.get_servers(db, user_to_delete)
+    for server in servers_to_delete:
+      db.delete(server)
+    db.delete(user_to_delete)
+    db.commit()
+  deps.server_manager().sync()

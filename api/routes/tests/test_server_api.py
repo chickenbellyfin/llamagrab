@@ -16,7 +16,9 @@ def _remove_nones(obj: dict):
   return obj
 
 def test_list_servers(test_client: TestClient, db_session: Session, add_servers, server1, logged_in_user):
-  response = test_client.get('/api/servers')
+  db_session.add(logged_in_user)
+  db_session.commit()
+  response = test_client.get('/api/servers/user')
   assert response.status_code == status.HTTP_200_OK
   assert response.json() == [
     {
@@ -31,7 +33,7 @@ def test_list_servers(test_client: TestClient, db_session: Session, add_servers,
   ]
 
 def test_list_servers_empty(test_client: TestClient, db_session: Session, logged_in_user):
-  response = test_client.get('/api/servers')
+  response = test_client.get('/api/servers/user')
   assert response.status_code == status.HTTP_200_OK
   assert response.json() == []
 
@@ -131,3 +133,29 @@ def test_delete_server(test_client: TestClient, db_session: Session, logged_in_u
   assert response.status_code == status.HTTP_200_OK
   assert db_session.query(Server).filter_by(id=0).first() == None
 
+def test_list__all_servers(test_client: TestClient, db_session: Session, add_servers, user, logged_in_admin):
+  db_session.add(user)
+  db_session.add(logged_in_admin)
+  db_session.commit()
+  response = test_client.get('/api/servers/all')
+  assert response.status_code == status.HTTP_200_OK
+  assert response.json() == [
+    {
+      'id': 0,
+      'owner': 'testuser',
+      'name': 'Test Server 1',
+      'region': 'region1',
+      'regionName': 'TestRegion1',
+      'status': 'stopped',
+      'gameMode': 'CTF'
+    },
+    {
+      'id': 1,
+      'owner': 'testadmin',
+      'name': 'Test Server 2',
+      'region': 'region2',
+      'regionName': 'TestRegion2',
+      'status': 'stopped',
+      'gameMode': 'CTF'
+    }
+  ]

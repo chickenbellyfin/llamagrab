@@ -20,6 +20,6 @@ export function ServerList({ serverList, invalidate }: ServerListProps) {
 }
 
 export default Loader({
-  loaderFunc: API.Server.getServerList,
+  loaderFunc: API.Server.getUserServerList,
   componentBuilder: ((result, props, invalidate) => <ServerList serverList={result} invalidate={invalidate}/>)
 })

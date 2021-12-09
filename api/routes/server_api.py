@@ -3,6 +3,7 @@
 Methods for managing servers & server configs
 Endpoints in the Server API require user authentication.
 """
+from typing import List
 from fastapi import Depends, status as http_status
 from fastapi.exceptions import HTTPException
 from fastapi.routing import APIRouter
@@ -40,16 +41,12 @@ def get_server(
   
   return server
 
-@router.get('/servers')
-async def list_servers(
-  user: models.User = Depends(deps.login),
-  db: Session = Depends(deps.db)
-):
-  servers = db_queries.get_servers(db, user)
+
+def server_status_list(servers: List[models.Server], db: Session) -> List[responses.ServerStatus]:
   return [
     responses.ServerStatus(
       id=s.id,
-      owner=user.username,
+      owner=db_queries.user_by_id(db, s.user).username,
       name=s.name,
       region=s.region,
       region_name=deps.regions.get(s.region, s.region),
@@ -58,6 +55,15 @@ async def list_servers(
     )
     for s in servers
   ]
+
+
+@router.get('/servers/user')
+async def list_servers(
+  user: models.User = Depends(deps.login),
+  db: Session = Depends(deps.db)
+):
+  servers = db_queries.get_servers(db, user)
+  return server_status_list(servers, db)
 
 @router.get('/server/{server_id}/settings')
 async def get_server_settings(
@@ -146,6 +152,13 @@ async def delete_server(server: models.Server = Depends(get_server), db: Session
   db.delete(server)
   db.commit()
   deps.server_manager().sync()
+
+
+@router.get('/servers/all')
+async def list_servers_all(admin: models.User = Depends(deps.login_admin), db: Session = Depends(deps.db)):
+  servers = db.query(models.Server).all()
+  return server_status_list(servers, db)
+
 
 # TODO
 # users should get cleaned-up lua without admin settings/passwords
