@@ -208,6 +208,13 @@ async function createUser(request: AccountCreateRequest): Promise<any> {
   })
 }
 
+async function deleteUser(userId: number): Promise<any> {
+  return doRequest({
+    method: 'DELETE',
+    path: `/api/account/${userId}`
+  })
+}
+
 async function changePassword(request: UpdatePasswordRequest): Promise<any> {
   return doRequest({
     method: 'POST',
@@ -224,9 +231,15 @@ async function setTribesUsername(name: string): Promise<any> {
   })
 }
 
-async function getServerList(): Promise<Array<ServerStatus>> {
+async function getUserServerList(): Promise<Array<ServerStatus>> {
   return doRequest({
-    path: '/api/servers'
+    path: '/api/servers/user'
+  })
+}
+
+async function getAllServerList(): Promise<Array<ServerStatus>> {
+  return doRequest({
+    path: '/api/servers/all'
   })
 }
 
@@ -325,7 +338,8 @@ export const API = {
     createUser,
     changePassword,
     setTribesUsername,
-    getAllUsers
+    getAllUsers,
+    deleteUser,
   },
   Admin: {
     verifyUser,
@@ -333,7 +347,8 @@ export const API = {
     removeAdmin,
   },
   Server: {
-    getServerList,
+    getUserServerList,
+    getAllServerList,
     createServer,
     getServerSettings,
     setServerSettings,

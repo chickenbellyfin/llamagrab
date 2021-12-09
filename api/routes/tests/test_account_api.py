@@ -126,3 +126,34 @@ def test_change_password_bad_password(test_client: TestClient, db_session: Sessi
     'newPassword': 'password123'
   })
   assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_delete_user(test_client: TestClient, logged_in_super: models.User, user, add_servers, db_session: Session):
+  db_session.add(user)
+  db_session.commit()
+
+  response = test_client.delete('/api/account/0')
+  assert response.status_code == status.HTTP_200_OK
+  assert db_session.query(models.User).filter(models.User.id == 0).first() == None
+  assert db_session.query(models.UserLimits).filter(models.UserLimits.user_id == 0).first() == None
+  assert list(db_session.query(models.Server).filter(models.Server.user == 0).all()) == []
+  # the other server should still be there
+  assert list(db_session.query(models.Server).all()) != []
+
+
+def test_delete_user_not_found(test_client: TestClient, logged_in_super: models.User, user, add_servers, db_session: Session):
+  db_session.add(user)
+  db_session.commit()
+
+  response = test_client.delete('/api/account/45')
+  assert response.status_code == status.HTTP_404_NOT_FOUND
+  assert db_session.query(models.User).filter(models.User.id == 0).first() != None
+
+
+def test_delete_not_super(test_client: TestClient, logged_in_admin: models.User, user, add_servers, db_session: Session):
+  db_session.add(user)
+  db_session.commit()
+
+  response = test_client.delete('/api/account/0')
+  assert response.status_code == status.HTTP_403_FORBIDDEN
+  assert db_session.query(models.User).filter(models.User.id == 0).first() != None
