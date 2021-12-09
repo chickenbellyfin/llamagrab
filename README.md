@@ -1,19 +1,30 @@
 # Tribes Server Manager
 
 ## Components
+### Web
+React Web UI for adding & configuring servers. The web UI will contain some permissions/validation logic for a better user experience, but should not be depended on to validate data or enforcing permissions.
 
+For deployment, it is built as a static site and served by the API server from the api/static/ dir.
+
+### API
+Backend for the web UI, also handles user management. All validation/permissions are implemented/enforced in this layer.
+
+Data is written to a local sqlite database.
+
+Whenever a server config (including game settings,start,stop,delete) is changed, it triggers a `sync` with all of the hosts. A sync re-generates all of the lua scripts for all RUNNING servers and sends them to the respective agent instances on each host. Syncs are rate limited to every 30 seconds, but will be eventually consistent.
+
+### Agent
+Service which runs on each host server. Receives sync commands from API and schedules taserver instances using docker.
+
+See [agent](/agent/README.md) for more details.
+
+### Architecture Diagram
 ![diagram](taservermanager.drawio.png)
 
 ## Build
 ```
 docker build . -t taservermanager
 ```
-
-build for amd64 & arm64
-```
-docker buildx build --platform linux/amd64,linux/arm64 --tag public.ecr.aws/i2q9d4v7/taservermanager:latest --push .
-```
-
 
 ## Run
 Minimal run command:
@@ -26,7 +37,7 @@ The minimal command will store data inside the container, won't be able to keep 
 docker run -p 8000:8000 -v $(pwd)/data:/data taservermanager /data/config.yaml 
 ```
 
-## Development Setup
+## Development
 For development, the API and the Web App need to be started. The agents are optional but can also be run in a local enviroment for testing.
 
 All components will be able to commicate with each other on localhost without any configuration:
@@ -60,15 +71,21 @@ python3 agent.py
 
 ### Unit Tests
 ```
-cd api
-python3 -m pytest --full-trace
+$ (cd api && python -m pytest)
+$ (cd web && yarn test --ci)
+$ (cd agent && python -m pytest)
 
-# Using coverage.py (run test & open in browser)
+# Using coverage.py in api/ or agent/ (run test & open in browser)
 coverage run --source=. -m pytest && coverage html && xdg-open htmlcov/index.html
 ```
 
-## Production Deployment Setup
+## Release
+Build for amd64 & arm64 & push to ECR
+```
+docker buildx build --platform linux/amd64,linux/arm64 --tag public.ecr.aws/i2q9d4v7/taservermanager:latest --push .
+```
 
+## Production Deployment Setup
 ```
 # first time setup
 mkdir -p ~/data
@@ -78,17 +95,19 @@ touch ~/data/config.yaml # Must add config here before continuing
 docker pull public.ecr.aws/i2q9d4v7/taservermanager:latest
 docker tag public.ecr.aws/i2q9d4v7/taservermanager:latest taservermanager
 
+# kill existing container and start new one
+docker rm -f taservermanager
 docker run --name taservermanager -d --restart unless-stopped -p 8000:8000 -v "$data_path:/data" taservermanager "/data/config.yaml" 
 ```
 
+Caddy is used as a reverse proxy and for automatically provisioning TLS certificates.
 
-Caddyfile:
+/etc/caddy/Caddyfile:
 ```
 servers.llamagrab.net {
   reverse_proxy localhost:8000
 }
 ```
-
 Open :80 and :443 in network security group/firewall
 
 
