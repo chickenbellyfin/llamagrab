@@ -1,7 +1,8 @@
 # Tribes Server Manager
 
 ## Components
-- insert diagram
+
+![diagram](taservermanager.drawio.png)
 
 ## Build
 ```
