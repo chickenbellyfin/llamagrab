@@ -107,5 +107,42 @@
       "name": "RegenTime",
       "value": 15
     }
+  ],
+  "forceHardcodedLoadouts": true,
+  "lightHardcodedLoadouts": [
+    {
+      "primary": "light_spinfusor",
+      "belt": "light_explosive_nitron"
+    },
+    {
+      "pack": "light_thrust_pack"
+    }
+  ],
+  "mediumHardcodedLoadouts": [
+    {
+      "primary": "medium_spinfusor",
+      "secondary": "medium_honorfusor",
+      "belt": "medium_antipersonnel_grenade",
+      "pack": "medium_utility_pack"
+    },
+    {
+      "primary": "medium_spinfusor",
+      "secondary": "medium_honorfusor",
+      "belt": "medium_antipersonnel_grenade",
+      "pack": "medium_utility_pack"
+    },
+    {
+      "primary": "medium_spinfusor",
+      "secondary": "medium_honorfusor",
+      "belt": "medium_antipersonnel_grenade",
+      "pack": "medium_utility_pack"
+    }
+  ],
+  "heavyHardcodedLoadouts": [
+    {},
+    {},
+    {
+      "tertiary": "heavy_bolt_launcher"
+    }
   ]
 }

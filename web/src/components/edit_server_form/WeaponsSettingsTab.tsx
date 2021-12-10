@@ -1,6 +1,8 @@
-import {  Form,  Select } from "antd";
+import {  Divider, Form,  Select, Switch, Table } from "antd";
 
 import { PlayerClass, weaponOptions } from "../../data";
+import HardcodedLoadoutsForm from "./HardcodedLoadouts";
+import HardcodedLoadouts from "./HardcodedLoadouts";
 import { ItemPropertiesList } from "./ItemPropertiesSection";
 import { GameServerConfigTabProps } from "./tabHelpers";
 
@@ -28,6 +30,7 @@ function ClassSettings ({selected, clazz, onChange}: ClassSettingsProps) {
   );
 }
 
+
 export default function WeaponsSettingsTab ({ config, updateCallbacks }: GameServerConfigTabProps) {
   const { update } = updateCallbacks;
 
@@ -50,6 +53,10 @@ export default function WeaponsSettingsTab ({ config, updateCallbacks }: GameSer
       <Form.Item wrapperCol={{offset: 2}}>
         <ItemPropertiesList configItemProperties={config.itemProperties} updateCallbacks={updateCallbacks}/>
       </Form.Item>
+
+      <Divider orientation='left'>Hardcoded Loadouts</Divider>
+      <HardcodedLoadoutsForm
+        config={config} updateCallbacks={updateCallbacks}/>
     </Form>
   );
 }

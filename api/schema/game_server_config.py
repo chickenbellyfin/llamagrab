@@ -12,6 +12,13 @@ class ItemProperties(BaseModel):
   weapon: str
   properties: List[ModProperty]
 
+class HardcodedLoadout(BaseModel):
+  primary: Optional[str]
+  secondary: Optional[str]
+  tertiary: Optional[str]
+  belt: Optional[str]
+  pack: Optional[str]
+
 class GameServerConfig(BaseModel):
   display_name: Optional[str]
   description: Optional[str]
@@ -67,6 +74,10 @@ class GameServerConfig(BaseModel):
   medium_class_properties: Optional[List[ModProperty]]
   heavy_class_properties: Optional[List[ModProperty]]
 
+  force_hardcoded_loadouts: Optional[bool]
+  light_hardcoded_loadouts: Optional[List[HardcodedLoadout]]
+  medium_hardcoded_loadouts: Optional[List[HardcodedLoadout]]
+  heavy_hardcoded_loadouts: Optional[List[HardcodedLoadout]]
 
   def serialize(self):
     return json.dumps(self.dict())

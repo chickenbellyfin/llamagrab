@@ -42,6 +42,7 @@ team_assign_types = {
   'auto': 'TeamAssignTypes.AutoAssign'
 }
 
+
 class LuaSettings():
   def __init__(
     self, 
@@ -80,6 +81,11 @@ class LuaConfig:
   
   def get(self):
     return self.lua
+
+def _weapon(clazz, weapon_key):
+  if clazz and weapon_key:
+    return weapons[clazz][weapon_key]['name']
+  return None
 
 # covert optional bool to lowercase string
 def _bool(val):
@@ -199,6 +205,22 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
           'Classes.setProperty("%s", Classes.Properties.%s, %s)',
           clazz, property.name, _class_property_value(property)
         )
+  
+  # Hardcoded Loadouts
+  lua('ServerSettings.ForceHardcodedLoadouts = %s', _bool(config.force_hardcoded_loadouts))
+  for clazz, hardcoded_loadouts in [
+    ('Light', config.light_hardcoded_loadouts),
+    ('Medium', config.medium_hardcoded_loadouts),
+    ('Heavy', config.heavy_hardcoded_loadouts),
+  ]:
+    if hardcoded_loadouts:
+      for idx, loadout in enumerate(hardcoded_loadouts):
+        print(f'{idx} {clazz} {loadout}')
+        lua('Loadouts.Hardcoded.%s.set(%d, Loadouts.EquipPoints.Primary, "%s")', clazz, idx, _weapon(clazz, loadout.primary))
+        lua('Loadouts.Hardcoded.%s.set(%d, Loadouts.EquipPoints.Secondary, "%s")', clazz, idx, _weapon(clazz, loadout.secondary))
+        lua('Loadouts.Hardcoded.%s.set(%d, Loadouts.EquipPoints.Tertiary, "%s")', clazz, idx, _weapon(clazz, loadout.tertiary))
+        lua('Loadouts.Hardcoded.%s.set(%d, Loadouts.EquipPoints.Belt, "%s")', clazz, idx, _weapon(clazz, loadout.belt))
+        lua('Loadouts.Hardcoded.%s.set(%d, Loadouts.EquipPoints.Pack, "%s")', clazz, idx, _weapon(clazz, loadout.pack))
 
   # Admin
   if lua_settings.include_admin:

@@ -64,15 +64,17 @@ const WeaponsGrouped = {
 }
 
 
-function weaponOptions(clazz: PlayerClass) {
-  return Object.keys(WeaponsGrouped[clazz]).map(group => {
-    return (
-      <OptGroup key={group.toUpperCase()} label={group.toUpperCase()}>
-        { WeaponsGrouped[clazz][group].map(weapon => {
-          return <Option key={weapon.key} value={weapon.key}>{weapon.name}</Option>
-        })}
-      </OptGroup>
-    );
+function weaponOptions(clazz: PlayerClass, groups?: string[]) {
+  return Object.keys(WeaponsGrouped[clazz])
+    .filter(group => groups? groups.includes(group) : true)
+    .map(group => {
+      return (
+        <OptGroup key={group.toUpperCase()} label={group.toUpperCase()}>
+          { WeaponsGrouped[clazz][group].map(weapon => {
+            return <Option key={weapon.key} value={weapon.key}>{weapon.name}</Option>
+          })}
+        </OptGroup>
+      );
   });
 }
 

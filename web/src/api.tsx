@@ -42,6 +42,14 @@ export type ItemProperties = {
   properties?: ModProperty[]
 }
 
+export type HardcodedLoadout = {
+  primary?: string
+  secondary?: string
+  tertiary?: string
+  belt?: string
+  pack?: string
+}
+
 export type GameServerConfig = {
   displayName: string
   description: string
@@ -98,6 +106,11 @@ export type GameServerConfig = {
   lightClassProperties?: ModProperty[]
   mediumClassProperties?: ModProperty[]
   heavyClassProperties?: ModProperty[]
+
+  forceHardcodedLoadouts?: boolean
+  lightHardcodedLoadouts?: HardcodedLoadout[]
+  mediumHardcodedLoadouts?: HardcodedLoadout[]
+  heavyHardcodedLoadouts?: HardcodedLoadout[]
 }
 
 function removeEmptyModProperties(items: ModProperty[] | undefined): ModProperty[] | undefined {
