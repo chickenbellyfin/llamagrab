@@ -65,6 +65,23 @@ Classes.setProperty("Light", Classes.Properties.EnergyPool, 110.00)
 Classes.setProperty("Light", Classes.Properties.MomentumDampeningEnabled, true)
 Classes.setProperty("Medium", Classes.Properties.Mass, 5.00)
 Classes.setProperty("Heavy", Classes.Properties.RegenTime, 15.00)
+ServerSettings.ForceHardcodedLoadouts = true
+Loadouts.Hardcoded.Light.set(0, Loadouts.EquipPoints.Primary, "Light Spinfusor")
+Loadouts.Hardcoded.Light.set(0, Loadouts.EquipPoints.Belt, "Explosive Nitron")
+Loadouts.Hardcoded.Light.set(1, Loadouts.EquipPoints.Pack, "Thrust Pack")
+Loadouts.Hardcoded.Medium.set(0, Loadouts.EquipPoints.Primary, "Spinfusor")
+Loadouts.Hardcoded.Medium.set(0, Loadouts.EquipPoints.Secondary, "Honorfusor")
+Loadouts.Hardcoded.Medium.set(0, Loadouts.EquipPoints.Belt, "Anti-Personnel Grenade")
+Loadouts.Hardcoded.Medium.set(0, Loadouts.EquipPoints.Pack, "Utility Pack")
+Loadouts.Hardcoded.Medium.set(1, Loadouts.EquipPoints.Primary, "Spinfusor")
+Loadouts.Hardcoded.Medium.set(1, Loadouts.EquipPoints.Secondary, "Honorfusor")
+Loadouts.Hardcoded.Medium.set(1, Loadouts.EquipPoints.Belt, "Anti-Personnel Grenade")
+Loadouts.Hardcoded.Medium.set(1, Loadouts.EquipPoints.Pack, "Utility Pack")
+Loadouts.Hardcoded.Medium.set(2, Loadouts.EquipPoints.Primary, "Spinfusor")
+Loadouts.Hardcoded.Medium.set(2, Loadouts.EquipPoints.Secondary, "Honorfusor")
+Loadouts.Hardcoded.Medium.set(2, Loadouts.EquipPoints.Belt, "Anti-Personnel Grenade")
+Loadouts.Hardcoded.Medium.set(2, Loadouts.EquipPoints.Pack, "Utility Pack")
+Loadouts.Hardcoded.Heavy.set(2, Loadouts.EquipPoints.Tertiary, "Heavy Bolt Launcher")
 
 -- [admin.lua]
 --------------------------------------------------------------------------------
