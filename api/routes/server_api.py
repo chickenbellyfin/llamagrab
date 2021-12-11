@@ -148,7 +148,7 @@ async def stop_server(server: models.Server = Depends(get_server), db: Session =
   deps.server_manager().sync()
 
 @router.delete('/server/{server_id}')
-async def delete_server(server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
+async def delete_server(user: models.User = Depends(deps.login_super), server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
   db.delete(server)
   db.commit()
   deps.server_manager().sync()

@@ -142,7 +142,7 @@ function AllServersList({serverList, invalidate, invalidateParent}: AllServersLi
               <Button size='small' loading={inProgress} onClick={() => onStop(server)}><CloseSquareOutlined/> Stop</Button> }
             { server.status == 'stopped' && 
               <Button size='small' loading={inProgress} onClick={() => onStart(server)}><CaretRightFilled/> Start</Button> }
-            {      
+            { auth.permissions.canDeleteServer(server) &&
               <Popconfirm
                 title={<span>Are you sure you want to delete <b>{server.name}</b>?</span>}
                 onConfirm={() => onDelete(server)}
