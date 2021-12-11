@@ -7,10 +7,10 @@ import pytest
 import database.queries
 import lua
 
-with open('../common/test/test1.json') as f:
+with open('tests/examples/test1.json') as f:
   test_server_config1 = f.read()
 
-with open('../common/test/test2.json') as f:
+with open('tests/examples/test2.json') as f:
   test_server_config2 = f.read()
 
 test_server = Server(
