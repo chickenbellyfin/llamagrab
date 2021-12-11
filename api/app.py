@@ -10,7 +10,7 @@ import uvicorn
 import uvicorn.config
 from database.database import Database
 
-from server_manager import ServerManager
+from host_manager import HostManager
 from database import models, queries
 import database.database as database
 import dependencies
@@ -66,11 +66,11 @@ def load_config(argv: List[str]):
 def create_database(config):
   return database.Database(config['base_path'])
 
-def create_server_manager(config, db: Database) -> ServerManager:
-  return ServerManager(
-    nodes=config['server_manager']['nodes'],
-    port=int(config['server_manager']['port']),
-    auth_key=config['server_manager']['auth_key'],
+def create_host_manager(config, db: Database) -> HostManager:
+  return HostManager(
+    nodes=config['host_manager']['nodes'],
+    port=int(config['host_manager']['port']),
+    auth_key=config['host_manager']['auth_key'],
     db_session=db.SessionFactory
   )
 
@@ -100,14 +100,14 @@ def ensure_admin_user(db: Database):
 def create_app(
   db_instance: Database,
   login_manager: LoginManager,
-  server_manager: ServerManager,
+  host_manager: HostManager,
   regions: Mapping[str, str]
 ) -> FastAPI:
 
   dependencies.dependencies.set(
     db_session=db_instance.SessionFactory,
     login_manager=login_manager,
-    server_manager=server_manager,
+    host_manager=host_manager,
     regions=regions
   )
   app = FastAPI()
@@ -131,7 +131,7 @@ def main(argv: List[str]):
 
   db = create_database(config)
   login_manager = create_login_manager(config, db)
-  server_manager = create_server_manager(config, db)
+  host_manager = create_host_manager(config, db)
 
   # Make sure the admin user exists
   ensure_admin_user(db)
@@ -139,7 +139,7 @@ def main(argv: List[str]):
   api = create_app(
     db_instance=db,
     login_manager=login_manager,
-    server_manager=server_manager,
+    host_manager=host_manager,
     regions=config['regions']
   )
   

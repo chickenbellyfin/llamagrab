@@ -90,7 +90,6 @@ async def set_tribes_name(
   request: requests.SetTribesUsernameRequest,
   user: models.User = Depends(deps.login),
   db: Session = Depends(deps.db)):
-  logger.info(f'{request.tribes_username}')
   user.tribes_username = request.tribes_username
   db.add(user)
   db.commit()
@@ -146,4 +145,4 @@ async def delete_user(user_id: int, admin: models.User = Depends(deps.login_supe
       db.delete(server)
     db.delete(user_to_delete)
     db.commit()
-  deps.server_manager().sync()
+  deps.host_manager().sync()

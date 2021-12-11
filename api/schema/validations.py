@@ -9,7 +9,7 @@ def validate_tribes_username(v):
   # length 2-15 chars
   # https://github.com/Griffon26/taserver/blob/master/login_server/player/player.py#L40
   if len(v) < 2 or len(v) > 15:
-    raise ValueError('Length must be 2-15 character')
+    raise ValueError('Length must be 2-15 characters')
 
   # must be ascii encodable
   # https://github.com/Griffon26/taserver/blob/master/login_server/loginserver.py#L175

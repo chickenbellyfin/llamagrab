@@ -5,7 +5,7 @@ from fastapi.params import Depends
 from fastapi.security.oauth2 import SecurityScopes
 from fastapi_login.fastapi_login import LoginManager
 from sqlalchemy.orm.session import Session, sessionmaker
-from server_manager import ServerManager
+from host_manager import HostManager
 
 from database.models import User
 import permissions
@@ -18,11 +18,11 @@ class Dependencies:
   def set(self, 
     db_session: sessionmaker ,
     login_manager: LoginManager,
-    server_manager: ServerManager,
+    host_manager: HostManager,
     regions: Mapping[str, str]):
     self._db_session = db_session
     self.login_manager = login_manager
-    self._server_manager = server_manager
+    self._host_manager = host_manager
     self.regions = regions
 
     # set of IPs which created an account
@@ -35,8 +35,8 @@ class Dependencies:
     finally:
       session.close()
 
-  def server_manager(self) -> ServerManager:
-    return self._server_manager
+  def host_manager(self) -> HostManager:
+    return self._host_manager
 
   async def login(self, request: Request, security_scopes: SecurityScopes = None) -> User:
     return await self.login_manager(request, security_scopes)

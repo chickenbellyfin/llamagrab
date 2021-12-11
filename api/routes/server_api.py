@@ -8,9 +8,8 @@ from fastapi import Depends, status as http_status
 from fastapi.exceptions import HTTPException
 from fastapi.routing import APIRouter
 from sqlalchemy.orm.session import Session
-import os
 
-from starlette.responses import PlainTextResponse, Response
+from starlette.responses import PlainTextResponse
 from lua import LuaSettings
 from lua import to_lua
 import database.queries as db_queries
@@ -18,7 +17,6 @@ from database import models
 from schema import requests, responses
 from schema.game_server_config import GameServerConfig
 from dependencies import dependencies as deps
-import time
 from loguru import logger
 import permissions
 
@@ -86,7 +84,7 @@ async def set_server_settings(
     )
   server.region = request.region
   db.commit()
-  deps.server_manager().sync()
+  deps.host_manager().sync()
 
 @router.put('/servers', status_code=http_status.HTTP_201_CREATED)
 async def create_server(
@@ -131,27 +129,33 @@ async def set_server_config(
   server.name = game_server_config.display_name
   server.server_config = game_server_config.serialize()
   db.commit()
-  deps.server_manager().sync()
+  deps.host_manager().sync()
 
 
 @router.post('/server/{server_id}/start')
 async def start_server( server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
   server.status = 'running'
   db.commit()
-  deps.server_manager().sync()
+  deps.host_manager().sync()
 
 
 @router.post('/server/{server_id}/stop')
 async def stop_server(server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
   server.status = 'stopped'
   db.commit()
-  deps.server_manager().sync()
+  deps.host_manager().sync()
 
 @router.delete('/server/{server_id}')
-async def delete_server(user: models.User = Depends(deps.login_super), server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
+async def delete_server(user: models.User = Depends(deps.login), server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
+
+  if server.user != user.id and user.tier != 'super':
+    raise HTTPException(
+      status_code=http_status.HTTP_403_FORBIDDEN
+    )
+
   db.delete(server)
   db.commit()
-  deps.server_manager().sync()
+  deps.host_manager().sync()
 
 
 @router.get('/servers/all')

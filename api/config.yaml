@@ -17,7 +17,7 @@ regions:
   west_us: 'NA West'
   east_au: 'Australia East'
 
-server_manager:
+host_manager:
   port: 8999
 
   # for testing - not a real auth key
@@ -25,7 +25,7 @@ server_manager:
   auth_key: '9c22a375263b971e254c'
   
   # mapping from region key to hostname
-  # server_manager iterates over this list so missing or extra regions wont cause errors
+  # host_manager iterates over this list so missing or extra regions wont cause errors
   nodes:
     central_us: 'localhost'
     east_us: 'localhost'
