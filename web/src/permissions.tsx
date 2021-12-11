@@ -3,7 +3,7 @@
  * actual permissions should be enforced in the API
  */
 
-import { User } from "./api";
+import { ServerStatus, User } from "./api";
 
 function isUserSuper(user: User | undefined): boolean {
   return user?.tier === 'super'
@@ -56,6 +56,10 @@ export class AuthPermissions {
   
   canRemoveAdmin(other: User): boolean {
     return this.isSuper() && other.tier === 'admin'
+  }
+
+  canDeleteServer(server: ServerStatus): boolean {
+    return this.isSuper()
   }
 
 }
