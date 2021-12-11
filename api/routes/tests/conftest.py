@@ -71,6 +71,17 @@ def admin_user():
   )
 
 @pytest.fixture
+def super_user():
+  return models.User(
+    id=2,
+    username='testsuper',
+    password=argon2.hash('testsuperpassword'),
+    tier='super',    
+    limits=models.UserLimits(server_limit=-1, active_limit=-1)
+  )
+
+
+@pytest.fixture
 def logged_in_user(mock_login_manager, user):
   """
   Sets up the LoginManager with a user(role=user) and return the user object
@@ -91,17 +102,10 @@ def logged_in_admin(mock_login_manager, admin_user):
   return admin_user
 
 @pytest.fixture
-def logged_in_super(mock_login_manager):
+def logged_in_super(mock_login_manager, super_user):
   """
   Sets up the LoginManager with a user(role=admin) and return the user object
   """
-  super_user = models.User(
-    id=2,
-    username='testsuper',
-    password=argon2.hash('testsuperpassword'),
-    tier='super',    
-    limits=models.UserLimits(server_limit=-1, active_limit=-1)
-  )
   f = asyncio.Future()
   f.set_result(super_user)
   mock_login_manager.return_value = f
@@ -132,12 +136,12 @@ def inmemory_db():
   return database.Database('', '', poolclass=StaticPool)
 
 @pytest.fixture 
-def should_sync(server_manager):
-  yield server_manager
-  server_manager.sync.assert_called_once()
+def should_sync(host_manager):
+  yield host_manager
+  host_manager.sync.assert_called_once()
 
 @pytest.fixture
-def server_manager():
+def host_manager():
   return MagicMock()
 
 @pytest.fixture
@@ -145,11 +149,11 @@ def test_app(
   mock_login_manager,
   inmemory_db,
   test_regions,
-  server_manager):
+  host_manager):
   api = app.create_app(
     db_instance=inmemory_db,
     login_manager=mock_login_manager,
-    server_manager=server_manager,
+    host_manager=host_manager,
     regions=test_regions
   )
   top_level = FastAPI()

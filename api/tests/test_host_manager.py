@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 from multiprocessing.connection import Listener
-from server_manager import ServerManager
+from host_manager import HostManager
 from database.models import Server
 import socket
 import pytest
@@ -55,13 +55,13 @@ def test_sync_empty(listener, actual_port, monkeypatch):
   monkeypatch.setattr(database.queries, "get_active_servers", lambda db,region: [])
   monkeypatch.setattr(database.queries, "get_admin_tribes_usernames", lambda db: [])
 
-  server_manager = ServerManager(
+  host_manager = HostManager(
     nodes={ 'test_host': 'localhost' },
     port=actual_port,
     auth_key=TEST_AUTH_KEY,
     db_session=MagicMock()
   )
-  server_manager.sync()
+  host_manager.sync()
 
   with listener.accept() as conn:
     sync_message = conn.recv()
@@ -97,13 +97,13 @@ def test_sync_multiple(listener: Listener, actual_port: int, monkeypatch):
 
   monkeypatch.setattr(lua, 'to_lua', mocked_lua)
   
-  server_manager = ServerManager(
+  host_manager = HostManager(
     nodes=test_nodes,
     port=actual_port, 
     auth_key=TEST_AUTH_KEY,
     db_session=MagicMock
   )
-  server_manager.sync()
+  host_manager.sync()
 
   with listener.accept() as conn:
     assert conn.recv() == {'type': 'sync', 'payload': {1: 'TEST_LUA_1'}}
@@ -118,19 +118,19 @@ def test_sync_rate_limit(listener, actual_port, monkeypatch):
   monkeypatch.setattr(database.queries, 'get_active_servers', lambda db,region: [])
   monkeypatch.setattr(database.queries, "get_admin_tribes_usernames", lambda db: [])
 
-  server_manager = ServerManager(
+  host_manager = HostManager(
     nodes=TEST_NODES,
     port=actual_port,
     auth_key=TEST_AUTH_KEY,
     db_session=MagicMock(),
     rate_limit_secs=0 # don't rate limit syncs
   )
-  server_manager.sync()
+  host_manager.sync()
 
   with listener.accept() as conn:
     # server manager is blocked, request 100 syncs
     for i in range(100):
-      server_manager.sync()
+      host_manager.sync()
 
     assert conn.recv() == EMPTY_SYNC_MESSAGE
     conn.send(0)

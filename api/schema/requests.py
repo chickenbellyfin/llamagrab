@@ -9,8 +9,12 @@ from . import validations
 from .responses import ServerSettings
 
 class LoginRequest(BaseModel):
+  class Config:
+    extra='forbid'
+  
   username: str
   password: str
+
 
   @validator('username')
   def validate_username(cls, v):
@@ -28,7 +32,10 @@ class LoginRequest(BaseModel):
 class AccountCreateRequest(LoginRequest):
   pass
 
-class SetTribesUsernameRequest(BaseModel):
+class SetTribesUsernameRequest(BaseModel):  
+  class Config:
+    extra='forbid'
+    
   tribes_username: str
 
   @validator('tribes_username')

@@ -21,9 +21,9 @@ def get_lua_settings(db: Session) -> LuaSettings:
   admin_users = queries.get_admin_tribes_usernames(db)
   return LuaSettings(include_admin=True, site_admins=admin_users)
 
-class ServerManager:
+class HostManager:
   """
-  Handles syncing of server configs to Server Manager Agent instances on region hosts.
+  Handles syncing of server configs to ServerManager Agent instances on region hosts.
   When sync() is called (by the API or some other process), will return immediately and all of the
   running server's Lua's will be regenerated and sent to the nodes where they are supposed to be
   running.

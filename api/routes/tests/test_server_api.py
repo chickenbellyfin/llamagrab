@@ -1,13 +1,8 @@
-from logging import log
-import pytest
 from fastapi.testclient import TestClient
 from fastapi import status
 from sqlalchemy.orm.session import Session
-from starlette import responses
-from starlette.status import HTTP_200_OK
-from schema.game_server_config import GameServerConfig
 
-from database.models import Server, User, UserLimits
+from database.models import Server, User
 
 def _remove_nones(obj: dict):
   for key in obj.copy():
@@ -82,7 +77,7 @@ def test_set_server_config(test_client: TestClient, db_session: Session, logged_
   assert get_response.status_code == status.HTTP_200_OK
   assert _remove_nones(get_response.json()) == {'displayName': 'NewDisplayName'}
 
-def test_create_server(test_client: TestClient, db_session: Session, logged_in_user: User, server_manager):
+def test_create_server(test_client: TestClient, db_session: Session, logged_in_user: User, host_manager):
   db_session.add(logged_in_user)
   db_session.commit()
   response = test_client.put('/api/servers', json={
@@ -132,6 +127,14 @@ def test_delete_server(test_client: TestClient, db_session: Session, logged_in_u
   response = test_client.delete('/api/server/0')
   assert response.status_code == status.HTTP_200_OK
   assert db_session.query(Server).filter_by(id=0).first() == None
+
+def test_delete_server_admin_403(test_client: TestClient, db_session: Session, logged_in_admin: User, add_servers):
+  response = test_client.delete('/api/server/0')
+  assert response.status_code == status.HTTP_403_FORBIDDEN
+
+def test_delete_server_super_ok(test_client: TestClient, db_session: Session, logged_in_super: User, add_servers, should_sync):
+  response = test_client.delete('/api/server/0')
+  assert response.status_code == status.HTTP_200_OK
 
 def test_list__all_servers(test_client: TestClient, db_session: Session, add_servers, user, logged_in_admin):
   db_session.add(user)
