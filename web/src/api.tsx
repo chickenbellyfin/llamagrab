@@ -1,4 +1,3 @@
-import {BASE_URL} from './config'
 import { getToken } from './auth' 
 
 
@@ -189,7 +188,7 @@ async function doRequest<T>({path, method, headers, body, includeAuthToken = tru
   }
   const authHeader = includeAuthToken && { 'Authorization': `Bearer ${getToken()}` };
 
-  return fetch(BASE_URL + path, {
+  return fetch(path, {
     method: method || 'GET',
     headers: {...authHeader, ...headers},
     body: body

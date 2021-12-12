@@ -6,6 +6,7 @@ import { useAuth } from "../auth";
 import ServerStatusLabel from "../components/ServerStatusLabel";
 import { CaretRightFilled, CloseCircleFilled, CloseSquareOutlined, DeleteOutlined, PlayCircleFilled } from "@ant-design/icons";
 import { useState } from "react";
+import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 
 const tierColors: {[key: string]: any} = {
   'super': 'red',
@@ -79,7 +80,7 @@ function UserList ({ users, invalidate, invalidateParent }: UserListProps) {
   ];
 
   return (
-    <Table<User> pagination={false} columns={columns} dataSource={users}/>
+    <Table<User> pagination={false} columns={columns} dataSource={users} size='small'/>
   );
 }
 
@@ -137,7 +138,7 @@ function AllServersList({serverList, invalidate, invalidateParent}: AllServersLi
       dataIndex: 'id',
       render: (id: number, server: ServerStatus) => {
         return (
-          <Space>
+          <Space wrap>
             { server.status == 'running' && 
               <Button size='small' loading={inProgress} onClick={() => onStop(server)}><CloseSquareOutlined/> Stop</Button> }
             { server.status == 'stopped' && 
@@ -155,7 +156,7 @@ function AllServersList({serverList, invalidate, invalidateParent}: AllServersLi
     }
   ] 
   return (
-    <Table<ServerStatus> pagination={false} columns={serverColumns} dataSource={serverList}/>
+    <Table<ServerStatus> pagination={false} columns={serverColumns} dataSource={serverList} size='small'/>
   );
 }
 
