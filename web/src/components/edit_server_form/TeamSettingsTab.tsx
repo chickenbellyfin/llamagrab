@@ -52,6 +52,27 @@ export default function TeamSettingsTab (
         min={0}
       />
     </Form.Item>
+    <Form.Item label='Light Limit' extra='Maximum light players per team'>
+      <InputInteger
+        min={0}
+        value={config.lightCountLimit}
+        onChange={updateInputNumber('lightCountLimit')}
+        placeholder={'32'} />
+    </Form.Item>
+    <Form.Item label='Medium Limit' extra='Maximum medium players per team'>
+      <InputInteger
+        min={0}
+        value={config.mediumCountLimit}
+        onChange={updateInputNumber('mediumCountLimit')}
+        placeholder={'32'} />
+    </Form.Item>
+    <Form.Item label='Heavy Limit' extra='Maximum heavy players per team'>
+      <InputInteger
+        min={0}
+        value={config.heavyCountLimit}
+        onChange={updateInputNumber('heavyCountLimit')}
+        placeholder={'32'} />
+    </Form.Item>
 
     <Form.Item label='Naked Spawn' extra='Whether players should spawn naked (as lights without their loadout)'>
       <Switch 

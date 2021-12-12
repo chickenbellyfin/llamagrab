@@ -1,9 +1,25 @@
-import { Divider, Form, Input, Select, Space } from "antd";
+import { Checkbox, Divider, Form, Input, Select, Space } from "antd";
+import { PlayerClass } from "../../data";
 import ClassProperties from "./ClassProperties";
 import { InputFloat, InputInteger } from "./Inputs";
 import { GameServerConfigTabProps } from "./tabHelpers";
 import Rules from "./validation";
 
+interface DisabledEquipPointsProps {
+  clazz: PlayerClass
+  value?: string[]
+  onChange: (value: string[]) => void
+}
+function DisabledEquipPoints(props: DisabledEquipPointsProps) {
+  return (
+    <Form.Item label={props.clazz} wrapperCol={{span:18}}>
+      <Checkbox.Group
+        options={['Melee', 'Primary', 'Secondary', 'Tertiary', 'Pack', 'Belt', 'LaserTarget']}
+        value={props.value || []}
+        onChange={e => props.onChange(e as string[])}/>
+    </Form.Item>
+  );
+}
 
 export default function PlayerSettingsTab (
   { config, updateCallbacks }: GameServerConfigTabProps
@@ -54,6 +70,12 @@ export default function PlayerSettingsTab (
           addonAfter='UU/S²'
           placeholder='0' />
       </Form.Item>
+
+      <Divider orientation='left'>Disabled Equip Points</Divider>
+      <DisabledEquipPoints clazz='Light' value={config.lightDisabledEquipPoints} onChange={update('lightDisabledEquipPoints')}/>
+      <DisabledEquipPoints clazz='Medium' value={config.mediumDisabledEquipPoints} onChange={update('mediumDisabledEquipPoints')}/>
+      <DisabledEquipPoints clazz='Heavy' value={config.heavyDisabledEquipPoints} onChange={update('heavyDisabledEquipPoints')}/>
+      
       
       <Divider orientation='left'>Class Properties</Divider>
       <Form.Item wrapperCol={{offset: 2}}>

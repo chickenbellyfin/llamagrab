@@ -36,6 +36,9 @@ class GameServerConfig(BaseModel):
   ctf_flag_timeout: Optional[int]
   max_players: Optional[int]
   naked_spawn: Optional[bool]
+  light_count_limit: Optional[int]
+  medium_count_limit: Optional[int]
+  heavy_count_limit: Optional[int]
 
   ctf_cap_limit: Optional[int]
   tdm_kill_limit: Optional[int]
@@ -78,6 +81,10 @@ class GameServerConfig(BaseModel):
   light_hardcoded_loadouts: Optional[List[HardcodedLoadout]]
   medium_hardcoded_loadouts: Optional[List[HardcodedLoadout]]
   heavy_hardcoded_loadouts: Optional[List[HardcodedLoadout]]
+
+  light_disabled_equip_points: Optional[List[str]]
+  medium_disabled_equip_points: Optional[List[str]]
+  heavy_disabled_equip_points: Optional[List[str]]
 
   def serialize(self):
     return json.dumps(self.dict())

@@ -15,6 +15,9 @@ ServerSettings.CTFFlagTimeout = 45
 ServerSettings.FriendlyFire = true
 ServerSettings.FriendlyFireMultiplier = 1.30
 ServerSettings.NakedSpawn = true
+ServerSettings.LightCountLimit = 24
+ServerSettings.MediumCountLimit = 25
+ServerSettings.HeavyCountLimit = 26
 ServerSettings.VehicleHealthMultiplier = 0.50
 ServerSettings.GravCycleLimit = 4
 ServerSettings.GravCycleSpawnTime = 40
@@ -65,6 +68,16 @@ Classes.setProperty("Light", Classes.Properties.EnergyPool, 110.00)
 Classes.setProperty("Light", Classes.Properties.MomentumDampeningEnabled, true)
 Classes.setProperty("Medium", Classes.Properties.Mass, 5.00)
 Classes.setProperty("Heavy", Classes.Properties.RegenTime, 15.00)
+ServerSettings.DisabledEquipPoints.add("Light", Loadouts.EquipPoints.LaserTarget)
+ServerSettings.DisabledEquipPoints.add("Medium", Loadouts.EquipPoints.Primary)
+ServerSettings.DisabledEquipPoints.add("Medium", Loadouts.EquipPoints.Pack)
+ServerSettings.DisabledEquipPoints.add("Heavy", Loadouts.EquipPoints.Melee)
+ServerSettings.DisabledEquipPoints.add("Heavy", Loadouts.EquipPoints.Primary)
+ServerSettings.DisabledEquipPoints.add("Heavy", Loadouts.EquipPoints.Secondary)
+ServerSettings.DisabledEquipPoints.add("Heavy", Loadouts.EquipPoints.Tertiary)
+ServerSettings.DisabledEquipPoints.add("Heavy", Loadouts.EquipPoints.Pack)
+ServerSettings.DisabledEquipPoints.add("Heavy", Loadouts.EquipPoints.Belt)
+ServerSettings.DisabledEquipPoints.add("Heavy", Loadouts.EquipPoints.Deployable)
 ServerSettings.ForceHardcodedLoadouts = true
 Loadouts.Hardcoded.Light.set(0, Loadouts.EquipPoints.Primary, "Light Spinfusor")
 Loadouts.Hardcoded.Light.set(0, Loadouts.EquipPoints.Belt, "Explosive Nitron")

@@ -83,6 +83,9 @@ export type GameServerConfig = {
   
   maxPlayers?: number
   nakedSpawn?: boolean
+  lightCountLimit?: number
+  mediumCountLimit?: number
+  heavyCountLimit?: number
 
   friendlyFireMultiplier?: number
 
@@ -111,6 +114,10 @@ export type GameServerConfig = {
   lightHardcodedLoadouts?: HardcodedLoadout[]
   mediumHardcodedLoadouts?: HardcodedLoadout[]
   heavyHardcodedLoadouts?: HardcodedLoadout[]
+
+  lightDisabledEquipPoints?: string[]
+  mediumDisabledEquipPoints?: string[]
+  heavyDisabledEquipPoints?: string[]
 }
 
 function removeEmptyModProperties(items: ModProperty[] | undefined): ModProperty[] | undefined {
