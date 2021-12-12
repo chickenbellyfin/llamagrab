@@ -141,10 +141,10 @@
     "lua": "Maps.Arena.WalledIn"
   },
   {
-    "key": "arena_hinterland",
-    "name": "Hinterland",
+    "key": "arena_hinterlands",
+    "name": "Hinterlands",
     "gameMode": "Arena",
-    "lua": "Maps.Arena.Hinterland"
+    "lua": "Maps.Arena.Hinterlands"
   },
   {
     "key": "arena_fraytown",
