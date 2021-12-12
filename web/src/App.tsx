@@ -40,17 +40,20 @@ function App () {
   return (
     <>
     <Layout style={{height: '100vh'}}>
-      <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
+      <Header style={{zIndex: 1, width: '100%', padding: '0px' }}>
         <AppHeader/>
       </Header>
-      <Layout style={{height: '100%', marginTop: '64px'}}>
+      <Layout style={{height: '100%'}}>
         {sidebarVisible &&
-          <Sider style={{
-            overflow: 'auto',
-            height: '100vh',
-            position: 'fixed',
-            left: 0,
-          }}>
+          <Sider 
+            breakpoint='md'
+            collapsedWidth={0}
+             style={{
+               height: '100vh',
+               position: 'sticky',
+               zIndex: 2
+            }}
+          >
           <Menu theme="dark" selectedKeys={[location.pathname]} mode="inline">
               <Menu.Item key='/'>
               <Link to='/'><DatabaseFilled/>&nbsp;&nbsp;Servers</Link>
@@ -71,9 +74,8 @@ function App () {
             </Menu>
           </Sider>
         }
-    
-        <Content style={{padding: '20px', marginLeft: (sidebarVisible ? '200px': '0')}}>
-          <Row justify='center'><Col span={24} style={{maxWidth:'1200px'}}>
+        <Content style={{padding: '20px', overflowX: 'hidden'}}>
+          <Row justify='center'><Col lg={24} xl={18} xxl={16}>
           <Routes>
 
             {/* Login & Signup pages disabled for logged in users, will redirect to '/' */}

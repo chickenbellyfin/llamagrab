@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { BASE_URL } from '../config'
 import { setToken, useAuth } from '../auth'
 import { Typography, Card, Layout } from 'antd'
 import { Navigate, useNavigate } from 'react-router';
@@ -18,7 +17,7 @@ async function doLogin(
   username: string,
   password: string,
   ): Promise<LoginResponse> {
-  return fetch( BASE_URL + '/api/account/login', {
+  return fetch('/api/account/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
