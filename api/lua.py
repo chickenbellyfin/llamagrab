@@ -133,6 +133,9 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
   lua('ServerSettings.FriendlyFire = %s', _bool(config.friendly_fire))
   lua('ServerSettings.FriendlyFireMultiplier = %0.2f', config.friendly_fire_multiplier)
   lua('ServerSettings.NakedSpawn = %s', _bool(config.naked_spawn))
+  lua('ServerSettings.LightCountLimit = %d', config.light_count_limit)
+  lua('ServerSettings.MediumCountLimit = %d', config.medium_count_limit)
+  lua('ServerSettings.HeavyCountLimit = %d', config.heavy_count_limit)
 
   lua('ServerSettings.VehicleHealthMultiplier = %0.2f', config.vehicle_health_multiplier)
   lua('ServerSettings.GravCycleLimit = %d', config.grav_cycle_limit)
@@ -205,6 +208,16 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
           'Classes.setProperty("%s", Classes.Properties.%s, %s)',
           clazz, property.name, _class_property_value(property)
         )
+  
+  # Disabled Equip Points
+  for clazz, equip_points in [
+    ('Light', config.light_disabled_equip_points),
+    ('Medium', config.medium_disabled_equip_points),
+    ('Heavy', config.heavy_disabled_equip_points),
+  ]:
+    if equip_points:
+      for equip_point in equip_points:
+        lua('ServerSettings.DisabledEquipPoints.add("%s", Loadouts.EquipPoints.%s)', clazz, equip_point)
   
   # Hardcoded Loadouts
   lua('ServerSettings.ForceHardcodedLoadouts = %s', _bool(config.force_hardcoded_loadouts))

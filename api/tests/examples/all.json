@@ -38,6 +38,9 @@
   "flagDragMedium": 102,
   "flagDragHeavy": 103,
   "flagDragDeceleration": 104,
+  "lightCountLimit": 24,
+  "mediumCountLimit": 25,
+  "heavyCountLimit": 26,
   "mapVoting": true,
   "maps": [
     "ctf_katabatic",
@@ -144,5 +147,8 @@
     {
       "tertiary": "heavy_bolt_launcher"
     }
-  ]
+  ],
+  "lightDisabledEquipPoints": ["LaserTarget"],
+  "mediumDisabledEquipPoints": ["Primary", "Pack"],
+  "heavyDisabledEquipPoints": ["Melee", "Primary", "Secondary", "Tertiary", "Pack", "Belt", "Deployable"]
 }
