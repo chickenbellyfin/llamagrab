@@ -1,11 +1,16 @@
-from unittest.mock import MagicMock
-from multiprocessing.connection import Listener
+from unittest.mock import MagicMock, Mock, call, patch
+
 from host_manager import HostManager
 from database.models import Server
-import socket
 import pytest
 import database.queries
 import lua
+import requests
+import time
+from typing import Callable, Tuple
+from loguru import logger
+
+TEST_PORT=23456;
 
 with open('tests/examples/test1.json') as f:
   test_server_config1 = f.read()
@@ -38,42 +43,47 @@ TEST_NODES = { 'test_host': 'localhost' }
 EMPTY_SYNC_MESSAGE = {'type': 'sync', 'payload': {}}
 
 
+def wait_for(assertion: Callable[[], bool], wait_time=1, interval=0.001) -> Tuple[float, int]:
+  """ wait for assertion to be true, if timeout assert false"""
+  start_time = time.time()
+  tries = 0
+  while time.time() - start_time < wait_time:
+    tries += 1
+    result = assertion()
+    if result:
+      return (time.time() - start_time, tries)
+    time.sleep(interval)
+  return (time.time() - start_time, tries)
+
 @pytest.fixture
-def listener():
-  # open listener on port 0 (os assigns) and then get the actual port
-  listener = Listener(('localhost', 0), authkey=TEST_AUTH_KEY.encode())
-  listener._listener._socket.settimeout(2)
-  yield listener
-  listener.close()
+def mock_requests():
+  with patch('host_manager.requests') as mock:
+    yield mock
 
-
-@pytest.fixture
-def actual_port(listener):
-  return listener.address[1]
-
-def test_sync_empty(listener, actual_port, monkeypatch):
+def test_sync_empty(monkeypatch, mock_requests: Mock):
   monkeypatch.setattr(database.queries, "get_active_servers", lambda db,region: [])
   monkeypatch.setattr(database.queries, "get_admin_tribes_usernames", lambda db: [])
 
+  mock = MagicMock()
+  monkeypatch.setattr(requests, 'post', lambda *a, **k: mock)
+
+
   host_manager = HostManager(
     nodes={ 'test_host': 'localhost' },
-    port=actual_port,
+    port=TEST_PORT,
     auth_key=TEST_AUTH_KEY,
     db_session=MagicMock()
   )
   host_manager.sync()
 
-  with listener.accept() as conn:
-    sync_message = conn.recv()
-    conn.send(0)
-
-  assert sync_message == EMPTY_SYNC_MESSAGE
+  wait_for(lambda: mock_requests.called)
+  mock_requests.post.assert_called_once_with('localhost:23456/message', json=EMPTY_SYNC_MESSAGE)
 
 
-def test_sync_multiple(listener: Listener, actual_port: int, monkeypatch):
+def test_sync_multiple(monkeypatch, mock_requests: Mock):
   test_nodes = {
-    'region1': 'localhost',
-    'region2': 'localhost'
+    'region1': 'hostname1',
+    'region2': 'hostname2'
   }
 
   active = {
@@ -99,51 +109,45 @@ def test_sync_multiple(listener: Listener, actual_port: int, monkeypatch):
   
   host_manager = HostManager(
     nodes=test_nodes,
-    port=actual_port, 
+    port=TEST_PORT, 
     auth_key=TEST_AUTH_KEY,
     db_session=MagicMock
   )
   host_manager.sync()
 
-  with listener.accept() as conn:
-    assert conn.recv() == {'type': 'sync', 'payload': {1: 'TEST_LUA_1'}}
-    conn.send(0)
-  
-  with listener.accept() as conn:
-    assert conn.recv() == {'type': 'sync', 'payload': {2: 'TEST_LUA_2'}}
-    conn.send(0)
+  wait_for(lambda: mock_requests.call_count == 2)
+  mock_requests.assert_has_calls([
+    call.post('hostname1:23456/message', json={'type': 'sync', 'payload': {1: 'TEST_LUA_1'}}),
+    call.post('hostname2:23456/message', json= {'type': 'sync', 'payload': {2: 'TEST_LUA_2'}})
+  ])
 
 
-def test_sync_rate_limit(listener, actual_port, monkeypatch):
+def test_sync_rate_limit(monkeypatch, mock_requests: Mock):
   monkeypatch.setattr(database.queries, 'get_active_servers', lambda db,region: [])
   monkeypatch.setattr(database.queries, "get_admin_tribes_usernames", lambda db: [])
 
   host_manager = HostManager(
     nodes=TEST_NODES,
-    port=actual_port,
+    port=TEST_PORT,
     auth_key=TEST_AUTH_KEY,
     db_session=MagicMock(),
     rate_limit_secs=0 # don't rate limit syncs
   )
+  
+  calls = []
+  def add_syncs(*args, **kwargs):
+    # server manager is blocked, request 100 syncs
+    if len(calls) == 0:
+      for i in range(100):
+        host_manager.sync()
+    calls.append(call(*args, **kwargs))
+    
+  mock_requests.post.side_effect = add_syncs
+  
   host_manager.sync()
 
-  with listener.accept() as conn:
-    # server manager is blocked, request 100 syncs
-    for i in range(100):
-      host_manager.sync()
-
-    assert conn.recv() == EMPTY_SYNC_MESSAGE
-    conn.send(0)
-
-  # expect 1 update
-  with listener.accept() as conn:
-    assert conn.recv() == EMPTY_SYNC_MESSAGE
-    conn.send(0)
-  
-  # no more connections
-  # listener._listener._socket.settimeout(5)
-  with pytest.raises(socket.timeout):
-    listener.accept()
-  
-    
-
+  wait_for(lambda: len(calls) > 2, wait_time=2)
+  assert calls == [
+    call('localhost:23456/message', json=EMPTY_SYNC_MESSAGE),
+    call('localhost:23456/message', json=EMPTY_SYNC_MESSAGE)
+  ]

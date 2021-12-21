@@ -1,7 +1,6 @@
 import threading
 from threading import Event
 from typing import Mapping
-from multiprocessing.connection import Client
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.session import sessionmaker
 from lua import LuaSettings
@@ -11,6 +10,7 @@ import lua
 import hashlib
 import time
 from database import queries
+import requests
 
 from loguru import logger
 
@@ -68,16 +68,14 @@ class HostManager:
         logger.info(f'Syncing configs to {region}@{self.nodes[region]}:{self.port} {message_hashed}')
 
         try:
-          with Client((self.nodes[region], self.port), authkey=self.auth_key) as connection:
-            connection.send(message)
-            connection.recv()
+          requests.post(f'http://{self.nodes[region]}:{self.port}/message', json=message)
         except Exception as e:
           logger.error(f'Error while syncing to {region} - {type(e)}: {e}')
 
   def _wait_for_sync(self) -> bool:
     secs_since_last_sync = time.time() - self.last_sync_time
     if secs_since_last_sync < self.rate_limit_secs:
-      time.sleep(self.rate_limit_secs - secs_since_last_sync)
+      time.sleep(max(0, self.rate_limit_secs - secs_since_last_sync))
     # todo maybe rewrite as a generator
     self.event.wait()
     should_sync = self.sync_requested
@@ -100,4 +98,3 @@ class HostManager:
   def sync(self):
     self.sync_requested = True
     self.event.set()
-

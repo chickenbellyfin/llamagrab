@@ -51,7 +51,7 @@ All components will be able to commicate with each other on localhost without an
 cd api
 pip install -r requirements.txt
 
-python3 app.py
+python3 -m app
 ```
 
 ### Start local web app
@@ -66,7 +66,7 @@ yarn start
 The local agent will stub out any calls to docker, so no game servers will actually be started.
 ```
 cd agent
-python3 agent.py
+python3 -m src.main
 ```
 
 ### Unit Tests

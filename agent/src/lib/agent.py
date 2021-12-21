@@ -5,27 +5,22 @@ ServerManager API and runs taserver docker containers on the host accordingly.
 import json
 from logging import Logger
 import logging
-from multiprocessing.connection import Listener
 import os
-import threading
-from typing import Tuple
 
-from hashing import md5
-from docker import Docker
+from .hashing import md5
+from .docker import Docker
 
 
 class Agent:
 
-  def __init__(self, 
+  def __init__(
+    self, 
     gamesettings_dir: str,
-    auth_key: str,
-    address: Tuple[str, int],
     docker: Docker,
-    logger: Logger = logging.getLogger()):
+    logger: Logger = logging.getLogger()
+  ):
     self.gamesettings_dir = gamesettings_dir
     self.active_servers_file = os.path.join(gamesettings_dir, 'active_servers.json')
-    self.auth_key = auth_key
-    self.address = address
     self.docker = docker
     self.logger = logger
 
@@ -54,6 +49,9 @@ class Agent:
       json.dump(active_servers, config_file, indent=2)
 
   def handle_sync(self, active_servers):
+    active_servers = {
+      int(k): active_servers[k] for k in active_servers
+    }
     active_hashes = {
       k: md5(active_servers[k]) for k in active_servers
     }
@@ -120,24 +118,3 @@ class Agent:
     else:
       self.logger.error(f'Message type "{message_type}" not recognized')
       return False
-    
-
-  def listen(self):
-    while True:
-      try:
-        with self.listener.accept() as connection:
-          try:
-            self.logger.info(f'Connection opened from {self.listener.last_accepted}')
-            result = self.handle_message(connection.recv())
-            connection.send(0 if result else 1)
-          except:
-            connection.send(1)
-      except Exception as e:
-        self.logger.error(e, exc_info=True)
-
-  def start(self) -> threading.Thread:
-    self.logger.info(f'Listening on {self.address[0]}:{self.address[1]}')  
-    self.listener = Listener(self.address, authkey=self.auth_key)
-    self.listener_thread = threading.Thread(target=self.listen, daemon=True)
-    self.listener_thread.start()
-    return self.listener_thread
