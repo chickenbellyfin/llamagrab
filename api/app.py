@@ -70,7 +70,6 @@ def create_host_manager(config, db: Database) -> HostManager:
   return HostManager(
     nodes=config['host_manager']['nodes'],
     port=int(config['host_manager']['port']),
-    auth_key=config['host_manager']['auth_key'],
     db_session=db.SessionFactory
   )
 
