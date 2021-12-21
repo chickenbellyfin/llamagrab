@@ -8,8 +8,10 @@ logger = logging.getLogger(__name__)
 
 class Docker:
 
-  def __init__(self, use_host_networking = False):
+  def __init__(self, use_host_networking: bool = False, loginserver: str = None, image = 'taserver'):
     self.use_host_networking = use_host_networking
+    self.loginserver = loginserver
+    self.image = image
   
   def _container_name(self, server_id):
     return f'taserver_{server_id}'
@@ -74,8 +76,12 @@ class Docker:
     # the ip address is detected correctly
     if self.use_host_networking:
       options += ['--network', 'host']
+    
+    # set environment var for login server host
+    if self.loginserver:
+      options += ['-e', f'LOGINSERVER={self.loginserver}']
 
-    args = ['docker', 'run'] + options + ['taserver', f'--port-offset={offset}']
+    args = ['docker', 'run'] + options + [self.image, f'--port-offset={offset}']
     command = ' '.join(args)
     logger.info(f'Running {command}')
     subprocess.call(args)
