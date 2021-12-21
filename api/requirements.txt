@@ -6,5 +6,6 @@ fastapi-users[sqlalchemy]
 loguru
 passlib
 pyyaml
+requests
 sqlalchemy
 uvicorn

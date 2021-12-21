@@ -59,7 +59,7 @@ $ nano config.yaml # add auth_key and disable testing mode
 # Add systemd service
 $ cp agent/scripts/smagent.service .
 $ nano smagent.service # edit paths if needed
-$ ln smagent.service /etc/systemd/system
+$ ln -f smagent.service /etc/systemd/system
 $ sudo systemctl enable smagent && sudo systemctl start smagent
 
 # Watch logs
