@@ -7,6 +7,9 @@ logger = logging.getLogger(__name__)
 
 
 class Docker:
+
+  def __init__(self, use_host_networking = False):
+    self.use_host_networking = use_host_networking
   
   def _container_name(self, server_id):
     return f'taserver_{server_id}'
@@ -27,6 +30,9 @@ class Docker:
 
     for container in docker_inspect:
       # Name is /taserver_$id
+      if not container['Name'].startswith('/taserver_'):
+        continue
+      
       server_id = int(container['Name'].split('_')[1])
       
       bindings = container['HostConfig']['PortBindings']
@@ -50,8 +56,8 @@ class Docker:
     control_port = 9002 + offset
 
     self.stop_server(server_id)
-    args = [
-      'docker', 'run',
+
+    options = [
       '--name', name,
       '-v', f'{abs_gamesettings}:/gamesettings',
       '-d', '--restart', 'unless-stopped',
@@ -62,8 +68,14 @@ class Docker:
       '-p', f'{gameserver2_port}:{gameserver2_port}/udp',
       '-p', f'{control_port}:{control_port}/tcp',
       '-p', f'{control_port}:{control_port}/udp',
-      'taserver', f'--port-offset={offset}'
     ]
+
+    # If the login server is on the same host as the container, use host networking so that 
+    # the ip address is detected correctly
+    if self.use_host_networking:
+      options += ['--network', 'host']
+
+    args = ['docker', 'run'] + options + ['taserver', f'--port-offset={offset}']
     command = ' '.join(args)
     logger.info(f'Running {command}')
     subprocess.call(args)

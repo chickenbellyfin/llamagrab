@@ -90,6 +90,24 @@ def test_start_server_offset(mock_subprocess):
     ])
   ])
 
+def test_start_server_host_network(mock_subprocess):
+  docker = Docker(use_host_networking=True)
+  docker.start_server(56, 0, '/test/gamesettings/path')
+
+  mock_subprocess.call.assert_has_calls([
+    call(['docker', 'rm', '-f', 'taserver_56']),
+    call([
+      'docker', 'run', '--name', 'taserver_56', 
+      '-v', '/test/gamesettings/path:/gamesettings', 
+      '-d', '--restart', 'unless-stopped', '--cap-add', 'NET_ADMIN',
+      '-p', '7777:7777/tcp', '-p', '7777:7777/udp',
+      '-p', '7778:7778/tcp', '-p', '7778:7778/udp',
+      '-p', '9002:9002/tcp', '-p', '9002:9002/udp',
+      '--network', 'host',
+      'taserver', '--port-offset=0'
+    ])
+  ])
+
 
 def test_stop_server(mock_subprocess):
   docker = Docker()

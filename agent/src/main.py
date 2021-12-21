@@ -33,6 +33,7 @@ def create_app(agent: Agent):
       json = await request.json()
       result = agent.handle_message(json)
     except:
+      logger.exception(f'Exception while handling request')
       raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if not result:
@@ -55,8 +56,9 @@ def main(argv: List[str]):
   gamesettings_dir = os.path.abspath(config['gamesettings_dir'])
   port = int(config['port'])
   testing = config.get('testing', False)
+  use_host_networking = config.get('use_host_networking', False)
 
-  docker = NullDocker() if testing else Docker()
+  docker = NullDocker() if testing else Docker(use_host_networking=use_host_networking)
 
   agent = Agent(
     gamesettings_dir=gamesettings_dir,
