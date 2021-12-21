@@ -1,25 +1,20 @@
-from typing import Tuple
+from fastapi import status
 import pytest
-from multiprocessing.connection import Client
 import tempfile
-import unittest
 from unittest.mock import Mock, call
 import os
 import json
 
-from ..agent import Agent
-from docker import Docker
+from src.lib.agent import Agent
+from src.lib.docker import Docker
 import shutil
-
-import logging
-
-TEST_AUTH_KEY = 'test_auth_key'.encode()
+from fastapi.testclient import TestClient
+from src.main import create_app
 
 
 @pytest.fixture
 def mock_docker():
   return Mock()
-
 
 @pytest.fixture
 def temp_dir():
@@ -27,59 +22,48 @@ def temp_dir():
   yield dir
   shutil.rmtree(dir)
 
-
 @pytest.fixture
 def agent(temp_dir, mock_docker) -> Agent:
-  the_agent =Agent(
+  the_agent = Agent(
     gamesettings_dir=temp_dir,
-    auth_key=TEST_AUTH_KEY,
-    address=('localhost', 0),
     docker=mock_docker
   )
-  the_agent.start()
   return the_agent
 
-
 @pytest.fixture
-def address(agent: Agent) -> Tuple[str, int]:
-  return ('localhost', agent.listener.address[1])
+def test_client(agent):
+  return TestClient(create_app(agent))
 
 
-def test_start(agent: Agent, address):
-  connected = False
-  with Client(address, authkey=TEST_AUTH_KEY) as conn:
-    connected = True
-    conn.send({'type': 'ping'})
-    assert 0 == conn.recv()
-  assert connected
+def test_start(test_client: TestClient):
+  response = test_client.post('/message', json={'type': 'ping'})
+  assert response.ok
 
-def test_sync_empty(agent: Agent, address, mock_docker: Docker):
+def test_sync_empty(test_client: TestClient, mock_docker: Docker):
+  
   mock_docker.status.return_value = {}
+  response = test_client.post('/message', json={
+    'type': 'sync',
+    'payload': {}
+  })
 
-  with Client(address, authkey=TEST_AUTH_KEY) as conn:
-    conn.send({
-      'type': 'sync',
-      'payload': {}
-    })
-    assert 0 == conn.recv()
-
+  assert response.ok
   mock_docker.status.assert_called()
   mock_docker.start_server.assert_not_called()
   mock_docker.stop_server.assert_not_called()
   
-def test_sync_new_server(agent: Agent, address, mock_docker: Docker, temp_dir):
+def test_sync_new_server(test_client: TestClient, mock_docker: Docker, temp_dir):
 
   mock_docker.status.return_value = {}
+  response = test_client.post('/message', json={
+    'type': 'sync',
+    'payload': {
+      1: 'Test Lua 1',
+      5: 'Test Lua 5'
+    }
+  })
 
-  with Client(address, authkey=TEST_AUTH_KEY) as conn:
-    conn.send({
-      'type': 'sync',
-      'payload': {
-        1: 'Test Lua 1',
-        5: 'Test Lua 5'
-      }
-    })
-    assert 0 == conn.recv()
+  assert response.ok
 
   mock_docker.status.assert_called()
   mock_docker.start_server.assert_has_calls([
@@ -88,50 +72,48 @@ def test_sync_new_server(agent: Agent, address, mock_docker: Docker, temp_dir):
   ])
   mock_docker.stop_server.assert_not_called()
 
-def test_sync_stop_server(agent: Agent, address, mock_docker: Docker):
+def test_sync_stop_server(test_client: TestClient, mock_docker: Docker):
   mock_docker.status.return_value = {}
-
   # create two servers
-  with Client(address, authkey=TEST_AUTH_KEY) as conn:
-    conn.send({
-      'type': 'sync',
-      'payload': {
-        1: 'Test Lua 1',
-        5: 'Test Lua 5'
-      }
-    })
-    assert 0 == conn.recv()
+  response1 = test_client.post('/message', json={
+    'type': 'sync',
+    'payload': {
+      1: 'Test Lua 1',
+      5: 'Test Lua 5'
+    }
+  })
+
+  assert response1.ok
 
   mock_docker.reset_mock()
   mock_docker.status.return_value = {
     1: 0,
     5: 2
   }
+
   # Remove server 1
-  with Client(address, authkey=TEST_AUTH_KEY) as conn:
-    conn.send({
-      'type': 'sync',
-      'payload': {
-        5: 'Test Lua 5'
-      }
-    })
-    assert 0 == conn.recv()
+  response2 = test_client.post('/message', json={
+    'type': 'sync',
+    'payload': {
+      5: 'Test Lua 5'
+    }
+  })
+  assert response2.ok
   mock_docker.status.assert_called()
   mock_docker.start_server.assert_not_called()
   mock_docker.stop_server.assert_called_once_with(1)
 
-def test_sync_update_server(agent: Agent, address, mock_docker: Docker, temp_dir):
+def test_sync_update_server(test_client: TestClient, mock_docker: Docker, temp_dir):
   mock_docker.status.return_value = {}
   # create two servers
-  with Client(address, authkey=TEST_AUTH_KEY) as conn:
-    conn.send({
-      'type': 'sync',
-      'payload': {
-        1: 'Test Lua 1',
-        5: 'Test Lua 5'
-      }
-    })
-    assert 0 == conn.recv()
+  response1 = test_client.post('/message', json={
+    'type': 'sync',
+    'payload': {
+      1: 'Test Lua 1',
+      5: 'Test Lua 5'
+    }
+  })
+  assert response1.ok
 
   mock_docker.reset_mock()
   mock_docker.status.return_value = {
@@ -140,37 +122,36 @@ def test_sync_update_server(agent: Agent, address, mock_docker: Docker, temp_dir
   }
 
   # update server 1
-  with Client(address, authkey=TEST_AUTH_KEY) as conn:
-    conn.send({
-      'type': 'sync',
-      'payload': {
-        1: 'Test Lua 1 updated',
-        5: 'Test Lua 5'
-      }
-    })
-    assert 0 == conn.recv()
+  response2 = test_client.post('/message', json={
+    'type': 'sync',
+    'payload': {
+      1: 'Test Lua 1 updated',
+      5: 'Test Lua 5'
+    }
+  })
+  assert response2.ok
+  
   mock_docker.status.assert_called()    
   mock_docker.stop_server.assert_not_called()
   mock_docker.start_server.assert_called_once_with(
     1, 0, os.path.join(temp_dir, 'server_1'))
 
-def test_sync_lua_written(agent: Agent, address, mock_docker: Docker, temp_dir):
+def test_sync_lua_written(test_client: TestClient, mock_docker: Docker, temp_dir):
   mock_docker.status.return_value = {}
   # create two servers
-  with Client(address, authkey=TEST_AUTH_KEY) as conn:
-    conn.send({
-      'type': 'sync',
-      'payload': {
-        1: 'Test Lua 1',
-        5: 'Test Lua 5'
-      }
-    })
-    assert 0 == conn.recv()
+  response = test_client.post('/message', json={
+    'type': 'sync',
+    'payload': {
+      1: 'Test Lua 1',
+      5: 'Test Lua 5'
+    }
+  })
+
+  assert response.ok
   
   with open(os.path.join(temp_dir, 'active_servers.json')) as f:
     assert {'1':'Test Lua 1', '5': 'Test Lua 5'} == json.load(f)
     
-  
   with open(os.path.join(temp_dir, 'server_1', 'serverconfig.lua')) as f:
     assert 'Test Lua 1' == f.read()
   
@@ -178,43 +159,40 @@ def test_sync_lua_written(agent: Agent, address, mock_docker: Docker, temp_dir):
     assert 'Test Lua 5' == f.read()
 
 
-def test_bad_message_type(agent: Agent, address, mock_docker: Docker):
+def test_bad_message_type(test_client: TestClient, mock_docker: Docker):
   # create two servers
-  with Client(address, authkey=TEST_AUTH_KEY) as conn:
-    conn.send({
-      'type': 'invalid_type',
-      'payload': {}
-    })
-    assert 1 == conn.recv()
+  response = test_client.post('/message', json={
+    'type': 'invalid_type',
+    'payload': {}
+  })
 
+  assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
 
   # still running
-  with Client(address, authkey=TEST_AUTH_KEY) as conn:
-    conn.send({
-      'type': 'ping'
-    })
-    assert 0 == conn.recv()
+  # still running
+  response2 = test_client.post('/message', json={
+    'type': 'ping'
+  })
+  assert response2.ok
 
   mock_docker.status.assert_not_called()
   mock_docker.stop_server.assert_not_called()
   mock_docker.start_server.assert_not_called()
 
-def test_bad_message_payload(agent: Agent, address, mock_docker: Docker):
+def test_bad_message_payload(test_client: TestClient, mock_docker: Docker):
   # create two servers
-  with Client(address, authkey=TEST_AUTH_KEY) as conn:
-    conn.send({
-      'type': 'sync',
-      'payload': 0
-    })
-    assert 1 == conn.recv()
+  response1 = test_client.post('/message', json={
+    'type': 'sync',
+    'payload': 0
+  })
 
+  assert response1.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
 
   # still running
-  with Client(address, authkey=TEST_AUTH_KEY) as conn:
-    conn.send({
-      'type': 'ping'
-    })
-    assert 0 == conn.recv()
+  response2 = test_client.post('/message', json={
+    'type': 'ping'
+  })
+  assert response2.ok
 
   mock_docker.status.assert_not_called()
   mock_docker.stop_server.assert_not_called()

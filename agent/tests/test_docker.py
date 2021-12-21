@@ -1,9 +1,7 @@
-from unittest import mock
 import pytest
-# import unittest
-from unittest.mock import Mock, patch, call
+from unittest.mock import patch, call
 from subprocess import CalledProcessError
-from docker import Docker, NullDocker
+from src.lib.docker import Docker, NullDocker
 
 # Sample inspect output from a live server w/ 3 taservers
 # $ docker inspect $(docker ps -q) > out.json
@@ -14,7 +12,7 @@ sample_inspect_ps_q = "fc7561ad6fc2\n7e567f6b7777\n63c3da5c16b3".encode()
 # class DocketTest(unittest.TestCase):
 @pytest.fixture
 def mock_subprocess():
-  with patch('docker.subprocess') as mock:
+  with patch('src.lib.docker.subprocess') as mock:
     yield mock
 
 def test_status_empty(mock_subprocess):

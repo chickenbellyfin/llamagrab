@@ -28,7 +28,7 @@ Empty payload, used for testing/status, has no effect.
 
 ## Run
 ```
-python3 main.py <config.yaml>
+python3 -m src.main <config.yaml>
 ```
 
 #### Run unit tests

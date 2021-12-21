@@ -2,7 +2,7 @@
 Description=TAServer Manager Agent
 
 [Service]
-ExecStart=/usr/bin/python3 /home/azureuser/agent/main.py config.yaml
+ExecStart=/usr/bin/python3 -m agent.src.main config.yaml
 WorkingDirectory=/home/azureuser
 Restart=on-failure
 RestartSec=60

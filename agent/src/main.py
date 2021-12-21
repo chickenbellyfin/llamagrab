@@ -2,12 +2,16 @@
 import logging
 import os
 import sys
+
+from fastapi.exceptions import HTTPException
+from fastapi import FastAPI, Request, status
 from typing import List
 import yaml
+import uvicorn
 
-from hashing import md5
-from agent import Agent
-from docker import Docker, NullDocker
+from .lib.hashing import md5
+from .lib.agent import Agent
+from .lib.docker import Docker, NullDocker
 
 logging.basicConfig(
   level=logging.INFO,
@@ -18,6 +22,24 @@ logging.basicConfig(
   ]
 )
 logger = logging.getLogger()
+
+
+def create_app(agent: Agent):
+  app = FastAPI()
+
+  @app.post('/message')
+  async def handle_message(request: Request):
+    try:
+      json = await request.json()
+      result = agent.handle_message(json)
+    except:
+      raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    if not result:
+      raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+  
+  return app
+
 
 def main(argv: List[str]):
   logger.info('Starting...')
@@ -31,7 +53,6 @@ def main(argv: List[str]):
     config = yaml.safe_load(config_file)
 
   gamesettings_dir = os.path.abspath(config['gamesettings_dir'])
-  auth_key = config['auth_key'].encode()
   port = int(config['port'])
   testing = config.get('testing', False)
 
@@ -39,8 +60,6 @@ def main(argv: List[str]):
 
   agent = Agent(
     gamesettings_dir=gamesettings_dir,
-    auth_key=auth_key,
-    address=('0.0.0.0', port),
     docker=docker
   )
 
@@ -49,8 +68,9 @@ def main(argv: List[str]):
     k: md5(active_servers[k]) for k in active_servers
   }
   logger.info(f'Current active servers: {active_hashes}')
-  agent.start().join()
-
+  
+  app = create_app(agent)
+  uvicorn.run(app, host='0.0.0.0', port=port)
 
 
 if __name__ == '__main__':
