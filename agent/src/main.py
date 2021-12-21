@@ -56,9 +56,15 @@ def main(argv: List[str]):
   gamesettings_dir = os.path.abspath(config['gamesettings_dir'])
   port = int(config['port'])
   testing = config.get('testing', False)
+  loginserver = config.get('loginserver', None)
   use_host_networking = config.get('use_host_networking', False)
+  image = config.get('image', 'taserver')
 
-  docker = NullDocker() if testing else Docker(use_host_networking=use_host_networking)
+  docker = NullDocker() if testing else Docker(
+    use_host_networking=use_host_networking,
+    loginserver=loginserver,
+    image=image
+  )
 
   agent = Agent(
     gamesettings_dir=gamesettings_dir,

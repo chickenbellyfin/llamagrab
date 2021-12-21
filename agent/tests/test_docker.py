@@ -108,6 +108,41 @@ def test_start_server_host_network(mock_subprocess):
     ])
   ])
 
+def test_start_server_custom_login(mock_subprocess):
+  docker = Docker(loginserver='loginserver.test.local')
+  docker.start_server(56, 0, '/test/gamesettings/path')
+
+  mock_subprocess.call.assert_has_calls([
+    call(['docker', 'rm', '-f', 'taserver_56']),
+    call([
+      'docker', 'run', '--name', 'taserver_56', 
+      '-v', '/test/gamesettings/path:/gamesettings', 
+      '-d', '--restart', 'unless-stopped', '--cap-add', 'NET_ADMIN',
+      '-p', '7777:7777/tcp', '-p', '7777:7777/udp',
+      '-p', '7778:7778/tcp', '-p', '7778:7778/udp',
+      '-p', '9002:9002/tcp', '-p', '9002:9002/udp',
+      '-e', 'LOGINSERVER="loginserver.test.local"',
+      'taserver', '--port-offset=0'
+    ])
+  ])
+
+def test_start_server_custom_image(mock_subprocess):
+  docker = Docker(image='some.registry/taseZZrver')
+  docker.start_server(56, 0, '/test/gamesettings/path')
+
+  mock_subprocess.call.assert_has_calls([
+    call(['docker', 'rm', '-f', 'taserver_56']),
+    call([
+      'docker', 'run', '--name', 'taserver_56', 
+      '-v', '/test/gamesettings/path:/gamesettings', 
+      '-d', '--restart', 'unless-stopped', '--cap-add', 'NET_ADMIN',
+      '-p', '7777:7777/tcp', '-p', '7777:7777/udp',
+      '-p', '7778:7778/tcp', '-p', '7778:7778/udp',
+      '-p', '9002:9002/tcp', '-p', '9002:9002/udp',
+      'some.registry/taseZZrver', '--port-offset=0'
+    ])
+  ])
+
 
 def test_stop_server(mock_subprocess):
   docker = Docker()

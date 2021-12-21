@@ -2,5 +2,10 @@ gamesettings_dir: managed_gamesettings
 port: 8999
 testing: true
 
+image: taserver
+
 # Set to true if loginserver is on the same host as taserver & is detecting the docker bridged IP (172...)
 # use_host_networking: false # default false
+
+# Use to override the loginserver host
+# loginserver: localost
