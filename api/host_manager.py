@@ -32,12 +32,10 @@ class HostManager:
   def __init__(self,
     nodes: Mapping[str, str],
     port: int,
-    auth_key: str,
     db_session: sessionmaker,
     rate_limit_secs=30):
     self.nodes = nodes
     self.port = port
-    self.auth_key = auth_key.encode()
     self.session = db_session
     self.rate_limit_secs = rate_limit_secs
     self.event = Event()
