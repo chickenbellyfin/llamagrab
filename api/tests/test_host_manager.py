@@ -77,7 +77,7 @@ def test_sync_empty(monkeypatch, mock_requests: Mock):
   host_manager.sync()
 
   wait_for(lambda: mock_requests.called)
-  mock_requests.post.assert_called_once_with('localhost:23456/message', json=EMPTY_SYNC_MESSAGE)
+  mock_requests.post.assert_called_once_with('http://localhost:23456/message', json=EMPTY_SYNC_MESSAGE)
 
 
 def test_sync_multiple(monkeypatch, mock_requests: Mock):
@@ -117,8 +117,8 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
 
   wait_for(lambda: mock_requests.call_count == 2)
   mock_requests.assert_has_calls([
-    call.post('hostname1:23456/message', json={'type': 'sync', 'payload': {1: 'TEST_LUA_1'}}),
-    call.post('hostname2:23456/message', json= {'type': 'sync', 'payload': {2: 'TEST_LUA_2'}})
+    call.post('http://hostname1:23456/message', json={'type': 'sync', 'payload': {1: 'TEST_LUA_1'}}),
+    call.post('http://hostname2:23456/message', json= {'type': 'sync', 'payload': {2: 'TEST_LUA_2'}})
   ])
 
 
@@ -148,6 +148,6 @@ def test_sync_rate_limit(monkeypatch, mock_requests: Mock):
 
   wait_for(lambda: len(calls) > 2, wait_time=2)
   assert calls == [
-    call('localhost:23456/message', json=EMPTY_SYNC_MESSAGE),
-    call('localhost:23456/message', json=EMPTY_SYNC_MESSAGE)
+    call('http://localhost:23456/message', json=EMPTY_SYNC_MESSAGE),
+    call('http://localhost:23456/message', json=EMPTY_SYNC_MESSAGE)
   ]
