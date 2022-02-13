@@ -1,5 +1,5 @@
 argon2_cffi
-fastapi
+fastapi==0.70.1
 fastapi-camelcase
 fastapi-login
 fastapi-users[sqlalchemy]
