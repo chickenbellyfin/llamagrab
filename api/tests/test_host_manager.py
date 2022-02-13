@@ -38,7 +38,6 @@ test_server2 = Server(
   server_config=test_server_config2
 )
 
-TEST_AUTH_KEY = 'test_auth_key'
 TEST_NODES = { 'test_host': 'localhost' }
 EMPTY_SYNC_MESSAGE = {'type': 'sync', 'payload': {}}
 
@@ -71,7 +70,6 @@ def test_sync_empty(monkeypatch, mock_requests: Mock):
   host_manager = HostManager(
     nodes={ 'test_host': 'localhost' },
     port=TEST_PORT,
-    auth_key=TEST_AUTH_KEY,
     db_session=MagicMock()
   )
   host_manager.sync()
@@ -110,7 +108,6 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
   host_manager = HostManager(
     nodes=test_nodes,
     port=TEST_PORT, 
-    auth_key=TEST_AUTH_KEY,
     db_session=MagicMock
   )
   host_manager.sync()
@@ -129,7 +126,6 @@ def test_sync_rate_limit(monkeypatch, mock_requests: Mock):
   host_manager = HostManager(
     nodes=TEST_NODES,
     port=TEST_PORT,
-    auth_key=TEST_AUTH_KEY,
     db_session=MagicMock(),
     rate_limit_secs=0 # don't rate limit syncs
   )
