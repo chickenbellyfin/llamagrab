@@ -135,6 +135,41 @@
     "isCustom": true
   },
   {
+    "key": "ctf_fracture",
+    "name": "Fracture",
+    "gameMode": "CTF",
+    "lua": "TrCTF-Fracture",
+    "isCustom": true
+  },
+  {
+    "key": "ctf_phlegethon",
+    "name": "Phlegethon",
+    "gameMode": "CTF",
+    "lua": "TrCTF-Phlegethon",
+    "isCustom": true
+  },
+  {
+    "key": "ctf_deserted_valley",
+    "name": "Deserted Valley",
+    "gameMode": "CTF",
+    "lua": "TrCTF-DesertedValley",
+    "isCustom": true
+  },
+  {
+    "key": "ctf_acheron",
+    "name": "Acheron",
+    "gameMode": "CTF",
+    "lua": "TrCTF-Acheron",
+    "isCustom": true
+  },
+  {
+    "key": "ctf_styx",
+    "name": "Styx",
+    "gameMode": "CTF",
+    "lua": "TrCTF-Styx",
+    "isCustom": true
+  },
+  {
     "key": "arena_walledin",
     "name": "Walled In",
     "gameMode": "Arena",
@@ -175,6 +210,13 @@
     "name": "Whiteout",
     "gameMode": "Arena",
     "lua": "Maps.Arena.Whiteout"
+  },
+  {
+    "key": "arena_elysian_battleground",
+    "name": "Elysian Battleground",
+    "gameMode": "Arena",
+    "lua": "TrArena-ElysianBattleground",
+    "isCustom": true
   },
   {
     "key": "rabbit_nightabatic",
@@ -307,6 +349,13 @@
     "name": "Katabatic",
     "gameMode": "Blitz",
     "lua": "Maps.Blitz.Katabatic"
+  },
+  {
+    "key": "blitz_broadside",
+    "name": "Broadside",
+    "gameMode": "Blitz",
+    "lua": "TrCTFBlitz-Broadside",
+    "isCustom": true
   },
   {
     "key": "cah_outskirts",
