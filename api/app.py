@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from fastapi_login import LoginManager
 import uvicorn
 import uvicorn.config
-from database.database import Database
+from database.database import Database, run_migrations
 
 from host_manager import HostManager
 from database import models, queries
@@ -127,6 +127,9 @@ def main(argv: List[str]):
   base_path = os.path.abspath(config.get('base_path', ''))
   logger.info(f'base_path={base_path}')
   logger.add(os.path.join(base_path, 'app.log'), rotation='10 MB')
+
+  # run DB migrations
+  run_migrations(base_path)
 
   db = create_database(config)
   login_manager = create_login_manager(config, db)

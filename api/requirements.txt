@@ -1,3 +1,4 @@
+alembic
 argon2_cffi
 fastapi==0.70.1
 fastapi-camelcase

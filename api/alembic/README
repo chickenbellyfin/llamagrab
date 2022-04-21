@@ -1,0 +1,6 @@
+Generic single-database configuration.
+
+## New DB Version
+```
+$ alembic revision
+```
