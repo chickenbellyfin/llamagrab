@@ -128,10 +128,10 @@ def main(argv: List[str]):
   logger.info(f'base_path={base_path}')
   logger.add(os.path.join(base_path, 'app.log'), rotation='10 MB')
 
+  db = create_database(config)
   # run DB migrations
   run_migrations(base_path)
 
-  db = create_database(config)
   login_manager = create_login_manager(config, db)
   host_manager = create_host_manager(config, db)
 

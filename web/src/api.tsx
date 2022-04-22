@@ -119,6 +119,13 @@ export type GameServerConfig = {
   heavyDisabledEquipPoints?: string[]
 }
 
+export type ServerVersion = {
+  serverId: number
+  serverConfig: string,
+  numChanges: number,
+  createdAt: number
+}
+
 function removeEmptyModProperties(items: ModProperty[] | undefined): ModProperty[] | undefined {
   return items != undefined
     ? items.filter(item => item.name !== undefined && item.value !== undefined)
@@ -323,6 +330,12 @@ async function deleteServer(serverId: number): Promise<any> {
   })
 }
 
+async function getServerVersions(serverId: number): Promise<ServerVersion[]> {
+  return doRequest({
+    path: `/api/server/${serverId}/history`
+  })
+}
+
 async function verifyUser(userId: number): Promise<any> {
   return doRequest({
     method: 'POST',
@@ -375,7 +388,8 @@ export const API = {
     setServerConfig,
     startServer,
     stopServer,
-    deleteServer
+    deleteServer,
+    getServerVersions
   },
   Data: {
     getRegions

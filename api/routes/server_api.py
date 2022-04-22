@@ -3,6 +3,7 @@
 Methods for managing servers & server configs
 Endpoints in the Server API require user authentication.
 """
+import time
 from typing import List
 from fastapi import Depends, status as http_status
 from fastapi.exceptions import HTTPException
@@ -15,7 +16,7 @@ from lua import to_lua
 import database.queries as db_queries
 from database import models
 from schema import requests, responses
-from schema.game_server_config import GameServerConfig
+from schema.game_server_config import GameServerConfig, diff_game_server_config
 from dependencies import dependencies as deps
 from loguru import logger
 import permissions
@@ -97,15 +98,28 @@ async def create_server(
       status_code=http_status.HTTP_429_TOO_MANY_REQUESTS,
       detail="Server limit reached for user")
   else:
+    now = int(time.time())
     new_server = models.Server(
       user=user.id,
       region=request.server_settings.region,
       name=request.server_config.display_name,
       game_mode='Custom',
-      server_config=request.server_config.serialize()
+      server_config=request.server_config.serialize(),
+      updated_at=now
     )
+
     db.add(new_server)
     db.commit()
+
+    history_entry = models.ServerVersion(
+      server_id = new_server.id,
+      server_config = new_server.server_config,
+      num_changes = -1,
+      created_at = new_server.updated_at
+    )
+    db.add(history_entry)
+    db.commit()
+
     return responses.ServerStatus(
       id=new_server.id,
       owner=user.username,
@@ -126,8 +140,25 @@ async def set_server_config(
   server: models.Server = Depends(get_server),
   db: Session = Depends(deps.db)):
 
+  now = int(time.time())
+  config_diff = diff_game_server_config(
+    GameServerConfig.parse(server.server_config), # old
+    game_server_config # new
+  )
+
+  history_entry = models.ServerVersion(
+    server_id = server.id,
+    server_config = game_server_config.serialize(),
+    num_changes = len(config_diff.keys()),
+    created_at = now
+  )
+
+  db.add(history_entry)
+
   server.name = game_server_config.display_name
   server.server_config = game_server_config.serialize()
+  server.updated_at = now
+
   db.commit()
   deps.host_manager().sync()
 
@@ -153,9 +184,25 @@ async def delete_server(user: models.User = Depends(deps.login), server: models.
       status_code=http_status.HTTP_403_FORBIDDEN
     )
 
+  versions = db_queries.get_server_versions(db, server.id)
+  for version in versions:
+    db.delete(version)
   db.delete(server)
   db.commit()
   deps.host_manager().sync()
+
+
+@router.get('/server/{server_id}/history')
+async def get_server_history(user: models.User = Depends(deps.login), server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
+  history = db_queries.get_server_versions(db, server.id)
+  return [
+    responses.ServerVersion(
+      server_id=s.server_id,
+      server_config=s.server_config,
+      num_changes=s.num_changes,
+      created_at=s.created_at
+    ) for s in history
+  ]
 
 
 @router.get('/servers/all')
@@ -166,7 +213,7 @@ async def list_servers_all(admin: models.User = Depends(deps.login_admin), db: S
 
 # TODO
 # users should get cleaned-up lua without admin settings/passwords
-@router.get('/server/{server_id}/lua', response_class=PlainTextResponse)
-async def get_server_lua(server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
-  lua_settings = LuaSettings(include_admin=True, site_admins=db_queries.get_admin_tribes_usernames(db))
-  return to_lua(GameServerConfig.parse(server.server_config), lua_settings)
+# @router.get('/server/{server_id}/lua', response_class=PlainTextResponse)
+# async def get_server_lua(server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
+#   lua_settings = LuaSettings(include_admin=True, site_admins=db_queries.get_admin_tribes_usernames(db))
+#   return to_lua(GameServerConfig.parse(server.server_config), lua_settings)

@@ -1,7 +1,7 @@
 from fastapi_camelcase import CamelModel as BaseModel
 from typing import List, Optional, Any
 import json
-
+from loguru import logger
 
 class ModProperty(BaseModel):
   name: str
@@ -94,4 +94,25 @@ class GameServerConfig(BaseModel):
 
   class Config:
     orm_mode = True
+
+
+def diff_game_server_config(old_game_server_config, new_game_server_config):
+  old = old_game_server_config.dict()
+  new = new_game_server_config.dict()
+
+  diff = {}
+
+  all_keys = set(old.keys()).union(set(new.keys()))
+
+  for key in all_keys:
+    old_val = old.get(key)
+    new_val = new.get(key)
+    if old_val != new_val:
+      diff[key] = {
+        'old': old_val,
+        'new': new_val
+      }
+  js = json.dumps(diff, indent=2)
+  logger.info(js)
+  return diff
 

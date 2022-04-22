@@ -34,5 +34,15 @@ class Server(Base):
   status = Column(String, default='stopped')
   game_mode = Column(String, default='CTF')
   server_config = Column(String)
-
   owner = relationship("User", back_populates="servers")
+  updated_at = Column(Integer, nullable=False)
+
+
+class ServerVersion(Base):
+  __tablename__ = 'server_versions'
+  id = Column(Integer, primary_key=True, autoincrement=True)
+  server_id = Column(Integer, ForeignKey('servers.id'), nullable=False)
+  server_config = Column(String, nullable=False)
+  num_changes = Column(Integer, nullable=False)
+  created_at = Column(Integer, nullable=False)
+
