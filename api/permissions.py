@@ -43,7 +43,7 @@ def is_super(user: models.User) -> bool:
 def can_create_server(db: Session, user: models.User) -> bool:
   count = queries.count_servers(db, user)
   limit = queries.user_by_id(db, user.id).limits.server_limit
-  logger.error(f'user={user.id} count={count} limit={limit}')
+  logger.info(f'user={user.id} count={count} limit={limit}')
   return limit is None or count < limit
 
 

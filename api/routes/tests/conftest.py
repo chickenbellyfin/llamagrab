@@ -25,7 +25,28 @@ def server1(user: models.User):
     game_mode='CTF',
     server_config=GameServerConfig(
       display_name='TestServer1Config'
-    ).serialize()
+    ).serialize(),
+    updated_at=0
+  )
+
+@pytest.fixture
+def server1_version(server1: models.Server):
+  return models.ServerVersion(
+    id=0,
+    server_id=server1.id,
+    server_config='server1version1',
+    num_changes=-1,
+    created_at=0
+  )
+
+@pytest.fixture
+def server1_version2(server1: models.Server):
+  return models.ServerVersion(
+    id=2,
+    server_id=server1.id,
+    server_config='server1version2',
+    num_changes=1,
+    created_at=1
   )
 
 
@@ -38,14 +59,28 @@ def server2(admin_user: models.User):
     region='region2',
     status='stopped',
     game_mode='CTF',
-    server_config=GameServerConfig().serialize()
+    server_config=GameServerConfig().serialize(),
+    updated_at=0
+  )
+
+@pytest.fixture
+def server2_version(server2: models.Server):
+  return models.ServerVersion(
+    id=1,
+    server_id=server2.id,
+    server_config=server2.server_config,
+    num_changes=-1,
+    created_at=0
   )
 
 
 @pytest.fixture
-def add_servers(db_session: Session, server1, server2):
+def add_servers(db_session: Session, server1, server2, server1_version, server1_version2, server2_version):
   db_session.add(server1)
   db_session.add(server2)
+  db_session.add(server1_version)
+  db_session.add(server1_version2)
+  db_session.add(server2_version)
   db_session.commit()
 
 

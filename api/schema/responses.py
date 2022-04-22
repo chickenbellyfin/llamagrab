@@ -37,3 +37,9 @@ class ServerSettings(BaseModel):
 
   class Config:
     orm_mode = True
+
+class ServerVersion(BaseModel):
+  server_id: int
+  server_config: str
+  num_changes: int
+  created_at: int

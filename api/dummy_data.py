@@ -4,6 +4,7 @@ from schema.game_server_config import GameServerConfig
 from database import models, queries
 from schema import requests, responses
 from schema.game_server_config import GameServerConfig
+import time
 
 
 with open('../common/default.json') as default_file:
@@ -59,7 +60,8 @@ def populate(db: Session):
       user=user1.id,
       name=server.server_config.display_name,
       region=server.server_settings.region,
-      server_config=server.server_config.serialize()
+      server_config=server.server_config.serialize(),
+      updated_at=int(time.time())
     )
     db.add(db_server)
 
