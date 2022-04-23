@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from fastapi_camelcase import CamelModel as BaseModel
 from .game_server_config import GameServerConfig
 
@@ -7,7 +7,8 @@ class UserLimits(BaseModel):
   active_limit: Optional[int]
   server_count: int
 
-class User(BaseModel):
+# User for admin panel user list
+class UserAccount(BaseModel):
   id: int
   username: str
   tier: str
@@ -17,6 +18,10 @@ class User(BaseModel):
 
   class Config:
     orm_mode = True
+
+class User(BaseModel):
+  id: int
+  username: str
 
 # Used for server list
 class ServerStatus(BaseModel):
@@ -34,6 +39,7 @@ class ServerStatus(BaseModel):
 # Return editable settings which are not part of the gameserverconfig
 class ServerSettings(BaseModel):
   region: Optional[str]
+  editors: Optional[List[int]]
 
   class Config:
     orm_mode = True
@@ -43,3 +49,4 @@ class ServerVersion(BaseModel):
   server_config: str
   num_changes: int
   created_at: int
+  created_by: str

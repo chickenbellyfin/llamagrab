@@ -3,24 +3,24 @@
  * actual permissions should be enforced in the API
  */
 
-import { ServerStatus, User } from "./api";
+import { ServerStatus, UserAccount } from "./api";
 
-function isUserSuper(user: User | undefined): boolean {
+function isUserSuper(user: UserAccount | undefined): boolean {
   return user?.tier === 'super'
 }
 
-function isUserAdmin(user: User | undefined): boolean {
+function isUserAdmin(user: UserAccount | undefined): boolean {
   return isUserSuper(user) || user?.tier === 'admin'
 }
 
-function isUserVerified(user: User | undefined): boolean {
+function isUserVerified(user: UserAccount | undefined): boolean {
   return isUserAdmin(user) || user?.tier === 'verified'
 }
 
 export class AuthPermissions {
-  readonly user: User | undefined
+  readonly user: UserAccount | undefined
 
-  constructor(user: User | undefined) {
+  constructor(user: UserAccount | undefined) {
     this.user = user
   }
   
@@ -37,24 +37,24 @@ export class AuthPermissions {
     return isUserVerified(this.user)
   }
 
-  canVerifyUser(other: User): boolean {    
+  canVerifyUser(other: UserAccount): boolean {    
     return this.isAdmin() && other.tier === 'unverified'
   }
 
-  canDeleteUser(other: User): boolean {
+  canDeleteUser(other: UserAccount): boolean {
     return this.isSuper() && this.user?.id !== other.id
   }
 
-  canResetPassword(other: User): boolean {
+  canResetPassword(other: UserAccount): boolean {
 
     return this.isSuper() || !isUserAdmin(other)
   }
 
-  canMakeAdmin(other: User): boolean {
+  canMakeAdmin(other: UserAccount): boolean {
     return this.isSuper() && other.tier === 'verified'
   }
   
-  canRemoveAdmin(other: User): boolean {
+  canRemoveAdmin(other: UserAccount): boolean {
     return this.isSuper() && other.tier === 'admin'
   }
 
@@ -73,6 +73,6 @@ export class AuthPermissions {
 //   canRemoveAdmin: (other: User) => boolean
 // }
 
-export function getPermissions(user: User | undefined): AuthPermissions {
+export function getPermissions(user: UserAccount | undefined): AuthPermissions {
   return new AuthPermissions(user);
 }

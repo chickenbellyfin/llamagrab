@@ -7,12 +7,17 @@ export type UserLimits = {
   serverCount: number
 }
 
-export type User = {
+export type UserAccount = {
   id: number,
   username: string,
   tier: string,
   limits: UserLimits,
   tribesUsername?: string
+}
+
+export type User = {
+  id: number,
+  username: string
 }
 
 export type ServerStatus = {
@@ -28,6 +33,7 @@ export type ServerStatus = {
 
 export type ServerSettings = {
   region?: string
+  editors?: number[]
 }
 
 export type ModProperty = {
@@ -123,10 +129,12 @@ export type ServerVersion = {
   serverId: number
   serverConfig: string,
   numChanges: number,
-  createdAt: number
+  createdAt: number,
+  createdBy: string
 }
 
 function removeEmptyModProperties(items: ModProperty[] | undefined): ModProperty[] | undefined {
+  // NOTE: do not change to `!=`, needs to also check for null
   return items != undefined
     ? items.filter(item => item.name !== undefined && item.value !== undefined)
     : undefined;
@@ -213,15 +221,21 @@ async function doRequest<T>({path, method, headers, body, includeAuthToken = tru
     })
 };
 
-async function getUser(): Promise<User> {
+async function getUser(): Promise<UserAccount> {
   return doRequest({
     path: '/api/account/user'
   })
 }
 
-async function getAllUsers(): Promise<Array<User>> {
+async function getAllUserAccounts(): Promise<Array<UserAccount>> {
   return doRequest({
     path: '/api/accounts'
+  })
+}
+
+async function getAllUsers(): Promise<User[]> {
+  return doRequest({
+    path: '/api/users'
   })
 }
 
@@ -260,6 +274,12 @@ async function setTribesUsername(name: string): Promise<any> {
 async function getUserServerList(): Promise<Array<ServerStatus>> {
   return doRequest({
     path: '/api/servers/user'
+  })
+}
+
+async function getSharedServerList(): Promise<Array<ServerStatus>> {
+  return doRequest({
+    path: '/api/servers/shared'
   })
 }
 
@@ -370,6 +390,7 @@ export const API = {
     createUser,
     changePassword,
     setTribesUsername,
+    getAllUserAccounts,
     getAllUsers,
     deleteUser,
   },
@@ -380,6 +401,7 @@ export const API = {
   },
   Server: {
     getUserServerList,
+    getSharedServerList,
     getAllServerList,
     createServer,
     getServerSettings,

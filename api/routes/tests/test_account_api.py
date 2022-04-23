@@ -226,3 +226,21 @@ def test_list_accounts(test_client: TestClient, logged_in_admin, db_session: Ses
     },
   ]
 
+def test_list_users(test_client: TestClient, logged_in_user, db_session: Session, user, super_user):
+  db_session.add(user)
+  db_session.add(super_user)
+  db_session.commit()
+
+  response = test_client.get('/api/users')
+  assert response.status_code == status.HTTP_200_OK
+  assert response.json() == [
+    {
+      'id': 0,
+      'username': 'testuser'
+    },
+    {
+      'id': 2,
+      'username': 'testsuper'
+    },
+  ]
+

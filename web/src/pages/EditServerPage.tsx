@@ -24,6 +24,7 @@ function ServerVersionList({ history, onRestoreVersion }: ServerVersionListProps
       if (item.numChanges == -1) {
         changes = 'Created'
       }
+      changes += ` by ${item.createdBy}`
       const dateString = new Date(item.createdAt * 1000).toLocaleDateString('en-US', DATE_FORMAT);
       const isCurrentVersion = item == history[0];
 

@@ -1,4 +1,4 @@
-import { PoweroffOutlined, EditOutlined, DeleteOutlined, PlayCircleOutlined } from "@ant-design/icons"
+import { PoweroffOutlined, EditOutlined, DeleteOutlined, PlayCircleOutlined, LinkOutlined } from "@ant-design/icons"
 import { List, Card, Divider, Descriptions, Badge, Popconfirm, message, Spin } from "antd"
 import { useState } from "react"
 import { Link } from "react-router-dom"
@@ -14,6 +14,7 @@ export default function ServerListItem({ server, invalidate }: ServerListItemPro
 
   const auth = useAuth()
   const [actionInProgress, setActionInProgress] = useState(false)
+  const isOwner = server.owner == auth.user?.username;
 
   const makeAction = (
     apiCall: (serverId: number) => Promise<any>,
@@ -64,23 +65,26 @@ export default function ServerListItem({ server, invalidate }: ServerListItemPro
 
   const startAction = ( <div onClick={onStart}><PlayCircleOutlined/> START</div>)
   const stopAction = (<div onClick={onStop}><PoweroffOutlined/> STOP</div>);
-  // const restartAction = (<div><ReloadOutlined/> RESTART</div>);
-  const deleteAction = (
-    <Popconfirm 
-      title={<span>Are you sure you want to delete <b>{server.name}</b>?</span>}
-      onConfirm={onDelete}
-      okText='Yes, Delete'
-      >
-        <div className='action-delete'><DeleteOutlined/> DELETE</div>
-    </Popconfirm>
-  );
-
+  
+  let deleteAction: JSX.Element = <></>;
+  if (isOwner) {
+    deleteAction = (
+      <Popconfirm 
+        title={<span>Are you sure you want to delete <b>{server.name}</b>?</span>}
+        onConfirm={onDelete}
+        okText='Yes, Delete'
+        >
+          <div className='action-delete'><DeleteOutlined/> DELETE</div>
+      </Popconfirm>
+    );
+  }
+ 
   const actions: { [key: string]: any[]} = {
     'running': [          
       stopAction,
-      //restartAction,
       editAction,
-      deleteAction],
+      deleteAction
+    ],
     'stopped': [
       startAction,
       editAction,
@@ -93,12 +97,18 @@ export default function ServerListItem({ server, invalidate }: ServerListItemPro
     <List.Item>
       <Spin spinning={actionInProgress}>
       <Card bordered
-        style={{width: '100%'}}
+        style={{
+          width: '100%',
+          ... !isOwner ? { borderColor: '#556474'} : {}
+        }}
         actions={actions[server.status]}>
 
         <h3>
           <b>{server.name}</b><Divider type='vertical'/>
           <span style={{opacity: '80%'}}>{server.gameMode}</span>
+          { !isOwner &&
+            <span style={{opacity: '80%', float: 'right'}}><LinkOutlined />&nbsp;{server.owner}</span>
+          }
         </h3>
         <Divider/>
         

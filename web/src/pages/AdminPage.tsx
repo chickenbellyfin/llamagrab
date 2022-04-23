@@ -1,6 +1,6 @@
 import { Button, message, PageHeader, Popconfirm, Space, Table, Tag, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
-import { API, ServerStatus, User, UserLimits } from "../api";
+import { API, ServerStatus, UserAccount, UserLimits } from "../api";
 import Loader from "../components/Loader";
 import { useAuth } from "../auth";
 import ServerStatusLabel from "../components/ServerStatusLabel";
@@ -16,14 +16,14 @@ const tierColors: {[key: string]: any} = {
 }
 
 type UserListProps = {
-  users: Array<User>,
+  users: Array<UserAccount>,
   invalidate: () => void,
   invalidateParent: () => void
 }
 function UserList ({ users, invalidate, invalidateParent }: UserListProps) {
 
   async function updateUser(
-    user: User,
+    user: UserAccount,
     action: (id: number) => void,
     invalidateFunc: () => void = invalidate
   ): Promise<any> {
@@ -60,7 +60,7 @@ function UserList ({ users, invalidate, invalidateParent }: UserListProps) {
     {
       title: 'Actions',
       dataIndex: 'id',
-      render: (id: number, user: User) => (
+      render: (id: number, user: UserAccount) => (
         <Space>
           {auth.permissions.canVerifyUser(user) && <Button size='small' onClick={() => updateUser(user, API.Admin.verifyUser)}>Verify</Button>}
           {auth.permissions.canMakeAdmin(user) && <Button size='small' onClick={() => updateUser(user, API.Admin.makeAdmin)}>Make Admin</Button>}
@@ -80,13 +80,13 @@ function UserList ({ users, invalidate, invalidateParent }: UserListProps) {
   ];
 
   return (
-    <Table<User> pagination={false} columns={columns} dataSource={users} size='small'/>
+    <Table<UserAccount> pagination={false} columns={columns} dataSource={users} size='small'/>
   );
 }
 
 interface UserListLoaderProps {invalidateParent: () => void}
-const UserListLoader = Loader<UserListLoaderProps, User[]>({
-  loaderFunc: API.Account.getAllUsers,
+const UserListLoader = Loader<UserListLoaderProps, UserAccount[]>({
+  loaderFunc: API.Account.getAllUserAccounts,
   componentBuilder:(users, props, invalidate) => <UserList users={users} invalidate={invalidate} invalidateParent={props.invalidateParent}/>
 });
 
