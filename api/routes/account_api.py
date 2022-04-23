@@ -22,8 +22,11 @@ from loguru import logger
 router = APIRouter()
 
 
-def _to_user_response(user: models.User, db: Session):
-  return responses.User(
+def _to_account_response(user: models.User, db: Session):
+  """
+  Response for admin view of accounts
+  """
+  return responses.UserAccount(
     id=user.id,
     username=user.username,
     tier=user.tier,
@@ -58,16 +61,29 @@ async def get_user(
   user: models.User = Depends(deps.login),
   db: Session = Depends(deps.db)):
   db_user = db.query(models.User).filter_by(id=user.id).first()
-  return _to_user_response(db_user, db)
+  return _to_account_response(db_user, db)
 
 
 @router.get('/accounts')
 async def list_accounts(
   user: models.User = Depends(deps.login_admin),
-  db: Session = Depends(deps.db)) -> List[models.User]:
+  db: Session = Depends(deps.db)) -> List[responses.UserAccount]:
+  """Get all user accounts with roles & limits. For admin panel use"""
   all_users = db.query(models.User).all()
   return [
-    _to_user_response(u, db)
+    _to_account_response(u, db)
+    for u in all_users
+  ]
+
+@router.get('/users')
+async def list_users(
+  user: models.User = Depends(deps.login),
+  db: Session = Depends(deps.db)
+) -> List[responses.User]:
+  """Get all usernames & ids"""
+  all_users = db.query(models.User).all()
+  return [
+    responses.User(id=u.id, username=u.username)
     for u in all_users
   ]
 
@@ -143,6 +159,7 @@ async def delete_user(user_id: int, admin: models.User = Depends(deps.login_supe
     servers_to_delete = db_queries.get_servers(db, user_to_delete)
     for server in servers_to_delete:
       db.delete(server)
+    db.query(models.ServerEditor).filter(models.ServerEditor.user_id == user_to_delete.id).delete()
     db.delete(user_to_delete)
     db.commit()
   deps.host_manager().sync()

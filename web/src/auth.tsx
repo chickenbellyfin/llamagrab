@@ -2,13 +2,13 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react"
 import { Navigate } from "react-router-dom";
-import { API, User } from "./api";
+import { API, UserAccount } from "./api";
 import { AuthPermissions, getPermissions } from "./permissions";
 
 type AuthContext = {
   firstLoad: boolean,
-  user?: User,
-  login: (user: User) => void
+  user?: UserAccount,
+  login: (user: UserAccount) => void
   logout: () => void,
   refresh: () => void,
   permissions: AuthPermissions
@@ -30,7 +30,7 @@ function useAuth() {
 
 type ProvideAuthState = {
   firstLoad: boolean,
-  user?: User
+  user?: UserAccount
 }
 
 function useProvideAuth(): AuthContext {
@@ -39,7 +39,7 @@ function useProvideAuth(): AuthContext {
     user: undefined
   })
 
-  const login = (user: User) => {
+  const login = (user: UserAccount) => {
     setState({
       firstLoad: false,
       user: user

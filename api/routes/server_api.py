@@ -35,7 +35,7 @@ def get_server(
   server = db_queries.get_server(db, server_id)
   if server is None:
     raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND)
-  elif server.user != user.id and not permissions.is_admin(user):
+  elif not permissions.can_read_server(db, user, server):
     raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN)
   
   return server
@@ -61,28 +61,37 @@ async def list_servers(
   user: models.User = Depends(deps.login),
   db: Session = Depends(deps.db)
 ):
-  servers = db_queries.get_servers(db, user)
-  return server_status_list(servers, db)
+  servers = db_queries.get_servers(db, user)  
+  shared_servers = permissions.get_shared_servers(db, user)
+  return server_status_list(servers + shared_servers, db)
 
 @router.get('/server/{server_id}/settings')
 async def get_server_settings(
-  server: models.Server = Depends(get_server)
+  server: models.Server = Depends(get_server),
+  db: Session = Depends(deps.db)
 ):
+  editors = permissions.get_server_editors(db, server)
   return responses.ServerSettings(
-    region=server.region
+    region=server.region,
+    editors=[user.id for user in editors]
   )
 
 @router.post('/server/{server_id}/settings')
 async def set_server_settings(
   request: responses.ServerSettings,
+  user: models.User = Depends(deps.login),
   server: models.Server = Depends(get_server),
   db: Session = Depends(deps.db)
 ):
+  if not permissions.can_write_server(db, user, server):
+    raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN)
+
   if request.region not in deps.regions:
     raise HTTPException(
       status_code=http_status.HTTP_400_BAD_REQUEST,
       detail='Region does not exist'
     )
+  permissions.set_server_editors(db, server, request.editors or [])
   server.region = request.region
   db.commit()
   deps.host_manager().sync()
@@ -105,7 +114,8 @@ async def create_server(
       name=request.server_config.display_name,
       game_mode='Custom',
       server_config=request.server_config.serialize(),
-      updated_at=now
+      updated_at=now,
+      updated_by=user.id
     )
 
     db.add(new_server)
@@ -115,7 +125,8 @@ async def create_server(
       server_id = new_server.id,
       server_config = new_server.server_config,
       num_changes = -1,
-      created_at = new_server.updated_at
+      created_at = new_server.updated_at,
+      created_by = user.id
     )
     db.add(history_entry)
     db.commit()
@@ -137,8 +148,12 @@ async def get_server_config(server: models.Server = Depends(get_server)) -> Game
 @router.post('/server/{server_id}/config')
 async def set_server_config(
   game_server_config: GameServerConfig,
+  user: models.User = Depends(deps.login),
   server: models.Server = Depends(get_server),
   db: Session = Depends(deps.db)):
+
+  if not permissions.can_write_server(db, user, server):
+    raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN)
 
   now = int(time.time())
   config_diff = diff_game_server_config(
@@ -150,7 +165,8 @@ async def set_server_config(
     server_id = server.id,
     server_config = game_server_config.serialize(),
     num_changes = len(config_diff.keys()),
-    created_at = now
+    created_at = now,
+    created_by = user.id
   )
 
   db.add(history_entry)
@@ -187,6 +203,7 @@ async def delete_server(user: models.User = Depends(deps.login), server: models.
   versions = db_queries.get_server_versions(db, server.id)
   for version in versions:
     db.delete(version)
+  db.query(models.ServerEditor).filter(models.ServerEditor.server_id == server.id).delete()
   db.delete(server)
   db.commit()
   deps.host_manager().sync()
@@ -200,7 +217,8 @@ async def get_server_history(user: models.User = Depends(deps.login), server: mo
       server_id=s.server_id,
       server_config=s.server_config,
       num_changes=s.num_changes,
-      created_at=s.created_at
+      created_at=s.created_at,
+      created_by=s.creator.username if s.creator else 'deleted user'
     ) for s in history
   ]
 

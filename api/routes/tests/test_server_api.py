@@ -32,10 +32,12 @@ def test_list_servers_empty(test_client: TestClient, db_session: Session, logged
   assert response.status_code == status.HTTP_200_OK
   assert response.json() == []
 
-def test_get_server_settings(test_client: TestClient, db_session: Session, logged_in_user, add_servers):
+def test_get_server_settings(test_client: TestClient, db_session: Session, logged_in_user, add_servers, admin_user):
+  db_session.add(admin_user)
+  db_session.commit()
   response = test_client.get('/api/server/0/settings')  
   assert response.status_code == status.HTTP_200_OK
-  assert response.json() == {'region': 'region1'}
+  assert response.json() == {'region': 'region1', 'editors': [1]}
 
 def test_get_server_settings_other_user(test_client: TestClient, db_session: Session, logged_in_user, add_servers):
   # server 1 belongs to admin_user
@@ -59,7 +61,10 @@ def test_set_server_settings(test_client: TestClient, db_session: Session, logge
   assert response.status_code == status.HTTP_200_OK
   get_response = test_client.get('/api/server/0/settings')  
   assert get_response.status_code == status.HTTP_200_OK
-  assert get_response.json() == {'region': 'region2'}
+  assert get_response.json() == {
+    'region': 'region2',
+    'editors': []
+  }
 
 
 def test_set_server_settings_bad_region(test_client: TestClient, db_session: Session, logged_in_user, add_servers):
@@ -83,7 +88,7 @@ def test_create_server(test_client: TestClient, db_session: Session, logged_in_u
   db_session.add(logged_in_user)
   db_session.commit()
   response = test_client.put('/api/servers', json={
-    'serverSettings': { 'region': 'region2' },
+    'serverSettings': { 'region': 'region2'},
     'serverConfig': {'displayName': 'CreateTestServer1Config'}
   })
 
@@ -95,7 +100,7 @@ def test_create_server(test_client: TestClient, db_session: Session, logged_in_u
   assert _remove_nones(get_response.json()) == {'displayName': 'CreateTestServer1Config'}
   get_response = test_client.get(f'/api/server/{server_id}/settings')  
   assert get_response.status_code == status.HTTP_200_OK
-  assert _remove_nones(get_response.json()) == {'region': 'region2'}
+  assert _remove_nones(get_response.json()) == {'region': 'region2', 'editors': []}
 
   versions = db_session.query(ServerVersion).filter(ServerVersion.server_id == server_id).all()
   assert len(versions) == 1
@@ -168,19 +173,23 @@ def test_list_all_servers(test_client: TestClient, db_session: Session, add_serv
     }
   ]
 
-def test_get_server_versions(test_client: TestClient, add_servers, user, logged_in_admin):
+def test_get_server_versions(test_client: TestClient, add_servers, logged_in_user, db_session):
+  db_session.add(logged_in_user)
+  db_session.commit()
   response = test_client.get('/api/server/0/history')
   assert response.json() == [
     {
       'serverId': 0,
       'serverConfig': 'server1version1',
       'numChanges': -1,
-      'createdAt': 0
+      'createdAt': 0,
+      'createdBy': 'testuser'
     },
     {
       'serverId': 0,
       'serverConfig': 'server1version2',
       'numChanges': 1,
-      'createdAt': 1
+      'createdAt': 1,
+      'createdBy': 'testuser'
     }
   ]

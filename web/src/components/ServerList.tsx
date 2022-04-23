@@ -9,13 +9,16 @@ type ServerListProps = {
   invalidate: () => void
 }
 
+
 export function ServerList({ serverList, invalidate }: ServerListProps) {
   return (
+    <>
     <List 
       locale={{emptyText: (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description='No Servers'/>)}}
       split={false}
       dataSource={serverList}
       renderItem={item => (<ServerListItem server={item} invalidate={invalidate}/>)}/>
+    </>
   )
 }
 

@@ -21,7 +21,7 @@ export default function AppHeader() {
       <a href='/'>
         <h1 style={{display: 'inline', float:'left'}}>
           <Icon component={logo}/>
-          &nbsp;Server Manager (alpha)
+          &nbsp;Llamagrab Servers
         </h1>
       </a>
     <Menu 
