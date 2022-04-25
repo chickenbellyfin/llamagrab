@@ -150,5 +150,49 @@
   ],
   "lightDisabledEquipPoints": ["LaserTarget"],
   "mediumDisabledEquipPoints": ["Primary", "Pack"],
-  "heavyDisabledEquipPoints": ["Melee", "Primary", "Secondary", "Tertiary", "Pack", "Belt", "Deployable"]
+  "heavyDisabledEquipPoints": ["Melee", "Primary", "Secondary", "Tertiary", "Pack", "Belt", "Deployable"],
+  "lightValueMods": [
+    {
+      "name": "MeleeDamageReduction",
+      "value": 9
+    }
+  ],
+  "mediumValueMods": [
+    {
+      "name": "BackstabMeleeBuff",
+      "value": 10
+    }
+  ],
+  "heavyValueMods": [
+    {
+      "name": "SelfDamageReduction",
+      "value": 11
+    }
+  ],
+  "itemValueMods": [
+    {
+      "playerClass": "Medium",
+      "weapon": "medium_arx_buster",
+      "properties": [
+        {
+          "name": "SonicPunch",
+          "value": true
+        },
+        {
+          "name": "SonicPunchRange",
+          "value": 13
+        }
+      ]
+    },
+    {
+      "playerClass": "Light",
+      "weapon": "light_stealth_pack",
+      "properties": [
+        {
+          "name": "MaxSkiSpeed",
+          "value": 100.00
+        }
+      ]
+    }
+  ]
 }

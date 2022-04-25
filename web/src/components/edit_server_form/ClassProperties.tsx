@@ -1,28 +1,46 @@
 import { Card } from "antd";
 import { ModProperty } from "../../api"
-import { ClassPropertiesSpecSet } from "../../data";
+import { ClassPropertiesSpecSet, ModPropertySpecSet, ValueModsSpecSet } from "../../data";
 import ModPropertyList from "./ModPropertyList";
+
+type ClassPropertiesBuilderProps = {
+  title: string
+  specSet: ModPropertySpecSet
+}
 
 type ClassPropertiesProps = {
   classLabel: string,
   classProperties?: ModProperty[]
   onChange: (value: ModProperty[]) => void
 }
-export default function ClassProperties({ classLabel, classProperties, onChange}: ClassPropertiesProps) {
 
-  const setProperties = (value: ModProperty[]) => {
-    onChange(value)
+function ClassPropertiesBuilder({title, specSet}: ClassPropertiesBuilderProps) {
+  return function ClassPropertiesComponent({ classLabel, classProperties, onChange}: ClassPropertiesProps) {
+
+    const setProperties = (value: ModProperty[]) => {
+      onChange(value)
+    }
+  
+    return (
+      <Card 
+        headStyle={{backgroundColor: 'rgba(0,0,0,.1)'}}
+        className='form-card' 
+        title={`${classLabel} ${title}`}
+        >
+        <ModPropertyList
+          properties={classProperties}
+          specSet={specSet}
+          onChange={setProperties}/>
+    </Card>);
   }
-
-  return (
-    <Card 
-      headStyle={{backgroundColor: 'rgba(0,0,0,.1)'}}
-      className='form-card' 
-      title={`${classLabel} Class Properties`}
-      >
-      <ModPropertyList
-        properties={classProperties}
-        specSet={ClassPropertiesSpecSet}
-        onChange={setProperties}/>
-  </Card>);
 }
+
+export const ClassProperties = ClassPropertiesBuilder({
+  title: 'Class Properties',
+  specSet: ClassPropertiesSpecSet
+});
+
+export const ClassValueMods = ClassPropertiesBuilder({
+  title: 'Class Value Mods',
+  specSet: ValueModsSpecSet
+});

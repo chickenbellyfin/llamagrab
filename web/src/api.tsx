@@ -123,6 +123,11 @@ export type GameServerConfig = {
   lightDisabledEquipPoints?: string[]
   mediumDisabledEquipPoints?: string[]
   heavyDisabledEquipPoints?: string[]
+
+  lightValueMods?: ModProperty[]
+  mediumValueMods?: ModProperty[]
+  heavyValueMods?: ModProperty[]
+  itemValueMods?: ItemProperties[]
 }
 
 export type ServerVersion = {
@@ -153,9 +158,22 @@ function sanitizeGameServerConfig(config: GameServerConfig): GameServerConfig {
       .filter(item =>item.properties !== undefined && item.properties.length > 0)
   }
 
+  if (sanitized.itemValueMods) {
+    sanitized.itemValueMods = sanitized.itemValueMods
+      // filter out any weapons where the class/weapon are not set
+      .filter(item => (item.playerClass !== undefined && item.weapon !== undefined))
+      // remove any item properties which are incomplete (name or value not set)
+      .map(item =>  Object.assign(item, {properties: removeEmptyModProperties(item.properties)}))
+      // remove any weapons which have no completed item properties
+      .filter(item =>item.properties !== undefined && item.properties.length > 0)
+  }
+
   sanitized.lightClassProperties = removeEmptyModProperties(sanitized.lightClassProperties)
   sanitized.mediumClassProperties = removeEmptyModProperties(sanitized.mediumClassProperties)
   sanitized.heavyClassProperties = removeEmptyModProperties(sanitized.heavyClassProperties)
+  sanitized.lightValueMods = removeEmptyModProperties(sanitized.lightValueMods)
+  sanitized.mediumValueMods = removeEmptyModProperties(sanitized.mediumValueMods)
+  sanitized.heavyValueMods = removeEmptyModProperties(sanitized.heavyValueMods)
   return sanitized;
 }
 

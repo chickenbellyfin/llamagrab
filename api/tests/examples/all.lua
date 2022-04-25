@@ -68,6 +68,22 @@ Classes.setProperty("Light", Classes.Properties.EnergyPool, 110.00)
 Classes.setProperty("Light", Classes.Properties.MomentumDampeningEnabled, true)
 Classes.setProperty("Medium", Classes.Properties.Mass, 5.00)
 Classes.setProperty("Heavy", Classes.Properties.RegenTime, 15.00)
+Items.setValueMods("Medium", "Arx Buster", {
+  {ValueMods.SonicPunch, true},
+  {ValueMods.SonicPunchRange, 13.00},
+})
+Items.setValueMods("Light", "Stealth Pack", {
+  {ValueMods.MaxSkiSpeed, 100.00},
+})
+Classes.setValueMods("Light", {
+  {ValueMods.MeleeDamageReduction, 9.00},
+})
+Classes.setValueMods("Medium", {
+  {ValueMods.BackstabMeleeBuff, 10.00},
+})
+Classes.setValueMods("Heavy", {
+  {ValueMods.SelfDamageReduction, 11.00},
+})
 ServerSettings.DisabledEquipPoints.add("Light", Loadouts.EquipPoints.LaserTarget)
 ServerSettings.DisabledEquipPoints.add("Medium", Loadouts.EquipPoints.Primary)
 ServerSettings.DisabledEquipPoints.add("Medium", Loadouts.EquipPoints.Pack)

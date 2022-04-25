@@ -12,6 +12,7 @@ import WeaponsSettingsTab from "./WeaponsSettingsTab";
 import VehicleSettingsTab from "./VehicleSettingsTab";
 import TeamSettingsTab from "./TeamSettingsTab";
 import PlayerSettingsTab from "./PlayerSettingsTab";
+import ValueModsTab from "./ValueModsTab";
 
 const { TabPane } = Tabs;
 
@@ -78,6 +79,10 @@ export class GameServerConfigForm extends React.Component<EditorProps, EditorSta
 
           <TabPane tab="Vehicles" key='vehicles'>
             <VehicleSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
+          </TabPane>
+
+          <TabPane tab="Value Mods" key='value_mods'>
+            <ValueModsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
           </TabPane>
         </Tabs>
       </>
