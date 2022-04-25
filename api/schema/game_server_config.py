@@ -86,6 +86,11 @@ class GameServerConfig(BaseModel):
   medium_disabled_equip_points: Optional[List[str]]
   heavy_disabled_equip_points: Optional[List[str]]
 
+  light_value_mods: Optional[List[ModProperty]]
+  medium_value_mods: Optional[List[ModProperty]]
+  heavy_value_mods: Optional[List[ModProperty]]
+  item_value_mods: Optional[List[ItemProperties]]
+
   def serialize(self):
     return json.dumps(self.dict())
 

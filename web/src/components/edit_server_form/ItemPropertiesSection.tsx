@@ -1,8 +1,8 @@
 import { DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { Button, Card, List, Select, Space} from "antd";
-import { useState } from "react";
+import { Component, useState } from "react";
 import { GameServerConfig, ItemProperties, ModProperty } from "../../api";
-import { ItemPropertiesSpecSet, PlayerClass, weaponOptions } from "../../data";
+import { ItemPropertiesSpecSet, ModPropertySpecSet, PlayerClass, ValueModsSpecSet, weaponOptions } from "../../data";
 import { Hint } from "./Inputs";
 import ModPropertyList from "./ModPropertyList";
 import { UpdateCallbacks } from "./tabHelpers";
@@ -12,10 +12,11 @@ const weaponSelected = (w: ItemProperties) => (w.playerClass && w.weapon)
 
 type ItemPropertiesWeaponProps = {
   itemProperties: ItemProperties
+  specSet: ModPropertySpecSet
   onChange: (value: ItemProperties) => void
   onDelete: () => void
 }
-function ItemPropertiesWeapon({ itemProperties, onChange, onDelete }: ItemPropertiesWeaponProps) {
+function ItemPropertiesWeapon({ itemProperties, specSet, onChange, onDelete }: ItemPropertiesWeaponProps) {
   const setClazz = (clazz: PlayerClass) => {
     onChange(Object.assign(itemProperties, {playerClass: clazz, weapon: undefined}))
   }
@@ -69,7 +70,7 @@ function ItemPropertiesWeapon({ itemProperties, onChange, onDelete }: ItemProper
     { weaponSelected(itemProperties)  &&
       <ModPropertyList
         properties={itemProperties.properties}
-        specSet={ItemPropertiesSpecSet}
+        specSet={specSet}
         onChange={setProperties}/>
     }
 
@@ -77,50 +78,63 @@ function ItemPropertiesWeapon({ itemProperties, onChange, onDelete }: ItemProper
   </Card>);
 }
 
-
+type ItemPropertiesListBuilderProps = {
+  specSet: ModPropertySpecSet
+}
 type ItemPropertiesListProps = {
   configItemProperties?: ItemProperties[]
-  updateCallbacks: UpdateCallbacks
+  onChange: (value: ItemProperties[]) => void
 }
 
-export function ItemPropertiesList(props: ItemPropertiesListProps) {
+function ItemPropertiesListBuilder ({specSet}: ItemPropertiesListBuilderProps) {
+  return function ItemPropertiesListComponent(props: ItemPropertiesListProps) {
 
-  const [itemProperties, setItemProperties] = useState(props.configItemProperties || [])
-
-  const updateConfig = (updated: ItemProperties[]) => {
-    setItemProperties(updated)
-    props.updateCallbacks.update('itemProperties')(updated)
+    const [itemProperties, setItemProperties] = useState(props.configItemProperties || [])
+  
+    const updateConfig = (updated: ItemProperties[]) => {
+      setItemProperties(updated)
+      props.onChange(updated)
+    }
+  
+    const addWeapon = () => {
+      const updated = itemProperties.concat([{}])
+      updateConfig(updated)
+    }
+  
+    const removeWeapon = (idx: number) => {
+      itemProperties.splice(idx, 1)
+      updateConfig(itemProperties)
+    }
+  
+    const updateWeapon = (idx: number, value: ItemProperties) => {
+      itemProperties[idx] = value;
+      updateConfig(itemProperties)
+    }
+  
+    return (
+      <div>
+        <List split={false}>
+          { itemProperties.map((item, idx) => {
+            return (
+              <List.Item key={idx}>
+                <ItemPropertiesWeapon 
+                  itemProperties={item}
+                  specSet={specSet}
+                  onChange={(value) => updateWeapon(idx, value)}
+                  onDelete={() => removeWeapon(idx)}/>
+              </List.Item>);
+          })}
+        </List>
+        <Button onClick={addWeapon}><PlusCircleOutlined /> Add Weapon to Modify</Button>
+      </div>
+    );
   }
-
-  const addWeapon = () => {
-    const updated = itemProperties.concat([{}])
-    updateConfig(updated)
-  }
-
-  const removeWeapon = (idx: number) => {
-    itemProperties.splice(idx, 1)
-    updateConfig(itemProperties)
-  }
-
-  const updateWeapon = (idx: number, value: ItemProperties) => {
-    itemProperties[idx] = value;
-    updateConfig(itemProperties)
-  }
-
-  return (
-    <div>
-      <List split={false}>
-        { itemProperties.map((item, idx) => {
-          return (
-            <List.Item key={idx}>
-              <ItemPropertiesWeapon 
-                itemProperties={item}
-                onChange={(value) => updateWeapon(idx, value)}
-                onDelete={() => removeWeapon(idx)}/>
-            </List.Item>);
-        })}
-      </List>
-      <Button onClick={addWeapon}><PlusCircleOutlined /> Add Weapon to Modify</Button>
-    </div>
-  );
 }
+
+export const ItemPropertiesList = ItemPropertiesListBuilder({
+  specSet: ItemPropertiesSpecSet
+});
+
+export const ItemValueModsList = ItemPropertiesListBuilder({
+  specSet: ValueModsSpecSet
+})

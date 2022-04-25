@@ -1,0 +1,540 @@
+{
+    "Close Combat": [
+        {
+            "name": "MeleeDamageReduction",
+            "type": "float",
+            "restrictions": "0<=x<=1",
+            "unit": "% decrease",
+            "description": "Decrease in melee damage taken"
+        },
+        {
+            "name": "BackstabMeleeBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase in melee damage given when done from behind"
+        }
+    ],
+    "Determination": [
+        {
+            "name": "Determination",
+            "type": "boolean",
+            "description": "If true, when you die without killing anyone, you get 100 extra health, up to a maximum of 300 bonus health"
+        }
+    ],
+    "Egocentric": [
+        {
+            "name": "SelfDamageReduction",
+            "type": "float",
+            "restrictions": "0<=x<=1",
+            "unit": "% decrease",
+            "description": "Decrease in proportion of self-damage taken"
+        },
+        {
+            "name": "IgnoreGrenadeEffectsOnSelf",
+            "type": "boolean",
+            "description": "If true, grenade effects (e.g. whiteout, EMP) will not apply to self-damage"
+        }
+    ],
+    "Lightweight": [
+        {
+            "name": "MassBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase in player mass (negative value gives decrease)"
+        },
+        {
+            "name": "RegenTimeBuff",
+            "type": "float",
+            "unit": "Seconds",
+            "description": "Decrease in time to regen (negative value gives increase)"
+        }
+    ],
+    "Looter": [
+        {
+            "name": "AmmoPickupBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase in ammo gained from a pickup"
+        },
+        {
+            "name": "BeltPickupBuff",
+            "type": "integer",
+            "restrictions": ">=0",
+            "unit": "ammo",
+            "description": "Absolute increase in belt ammo gained from a pickup"
+        }
+    ],
+    "Mechanic": [
+        {
+            "name": "RepairToolDamagesEnemyObjectives",
+            "type": "boolean",
+            "description": "If true, the repair tool damages enemy base assets and disables turrets"
+        },        
+        {
+            "name": "RepairRateBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase in repair rate"
+        },
+        {
+            "name": "VehiclePassengerDamageReductionBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% decrease",
+            "description": "Decrease in damage done to passengers of a vehicle you pilot when it explodes"
+        }
+    ],
+    "Pilot": [
+        {
+            "name": "VehicleHealthBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Percentage increase in vehicle health"
+        },        
+        {
+            "name": "EjectionSeat",
+            "type": "boolean",
+            "description": "If true, you eject from vehicles on explosion rather than dying"
+        }
+    ],
+    "Potential Energy": [
+        {
+            "name": "PotentialEnergy",
+            "type": "boolean",
+            "description": "If true, you gain energy when you take damage"
+        },
+        {
+            "name": "PotentialEnergyDamageTransferBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase in proportion of damage gained as energy"
+        },
+        {
+            "name": "PotentialEnergyOnFallDamage",
+            "type": "boolean",
+            "description": "Whether Potential Energy applies to fall damage"
+        }
+    ],
+    "Quick Draw": [
+        {
+            "name": "QuickDraw",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% decrease",
+            "description": "Decrease in time taken to switch weapons"
+        },        
+        {
+            "name": "QuickDrawBelt",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% decrease",
+            "description": "Decrease in time taken to throw a grenade"
+        }
+    ],
+    "Rage": [
+        {
+            "name": "Rage",
+            "type": "boolean",
+            "description": "Whether Rage is enabled"
+        },
+        {
+            "name": "RageTime",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "Seconds",
+            "description": "How long Rage lasts"
+        },
+        {
+            "name": "RageEnergyRegen",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "Energy",
+            "description": "Amount of energy restored by Rage"
+        },
+        {
+            "name": "RageHealthRestoration",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% health",
+            "description": "Proportion of health restored by Rage"
+        },
+        {
+            "name": "RageMassChange",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Change in mass while Rage is active"
+        }
+    ],
+    "Reach": [
+        {
+            "name": "Reach",
+            "type": "boolean",
+            "description": "Whether Reach is enabled"
+        },
+        {
+            "name": "ReachTier",
+            "type": "integer",
+            "description": "'Level' of Reach applied; should be 1, 2 or 3"
+        },        
+        {
+            "name": "ReachOnPickups",
+            "type": "boolean",
+            "description": "Whether Reach also applies to ammo pickups"
+        }
+    ],
+    "Safe Fall": [
+        {
+            "name": "FallDamageReduction",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% decrease",
+            "description": "Decrease in proportion of fall damage taken"
+        },
+        {
+            "name": "RunoverDamageReduction",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% decrease",
+            "description": "Decrease to damage caused by being runover by a vehicle"
+        }
+    ],
+    "Safety Third": [
+        {
+            "name": "ExtraBeltAmmo",
+            "type": "integer",
+            "restrictions": ">=0",
+            "unit": "ammo",
+            "description": "Number of additional belt items granted"
+        },
+        {
+            "name": "BeltDamageRadiusBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase in explosive radius of belt items"
+        },
+        {
+            "name": "ExtraMines",
+            "type": "integer",
+            "restrictions": ">=0",
+            "unit": "mines",
+            "description": "Number of additional mines which you may have out at once"
+        }
+    ],
+    "Sonic Punch": [
+        {
+            "name": "SonicPunch",
+            "type": "boolean",
+            "description": "Whether Sonic Punch is enabled"
+        },
+        {
+            "name": "SonicPunchRange",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "UU",
+            "description": "Range for the Sonic Punch effect"
+        },
+        {
+            "name": "SonicPunchKnockback",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "Momentum",
+            "description": "Knockback done by Sonic Punch"
+        },
+        {
+            "name": "SonicPunchFlagDrop",
+            "type": "boolean",
+            "description": "Whether Sonic Punch causes enemies to drop the flag"
+        }
+    ],
+    "Stealthy": [
+        {
+            "name": "SensorDetectionReduction",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% decrease",
+            "description": "Decrease in range at which you are detected by sensors"
+        },
+        {
+            "name": "AcquisitionTimeByEnemyTurretsBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase in time taken for enemy turrets to target you"
+        }
+    ],
+    "Super Capacitor": [
+        {
+            "name": "EnergyBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "Energy",
+            "description": "Absolute increase to player energy pool"
+        }
+    ],
+    "Super Heavy": [
+        {
+            "name": "SuperHeavy",
+            "type": "boolean",
+            "description": "Whether enemies are damage by contact with you at high speed"
+        },
+        {
+            "name": "MassBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase in mass"
+        }
+    ],
+    "Survivalist": [
+        {
+            "name": "SurvivalistHealth",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% health",
+            "description": "Proportion of health restored by ammo pickups"
+        },
+        {
+            "name": "SurvivalistEnergy",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% energy",
+            "description": "Proportion of energy restored by ammo pickups"
+        }
+    ],
+    "Wheel Deal": [
+        {
+            "name": "VehicleEnergyBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Percentage increase in vehicle energy"
+        }
+    ],
+    "Miscellaneous": [
+        {
+            "name": "HealthBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "Health",
+            "description": "Absolute increase to the player's health pool"
+        },
+        {
+            "name": "HealthRegenTimeBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% decrease",
+            "description": "Decrease in time before health regen starts"
+        },
+        {
+            "name": "HealthRegenRateBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase in rate at which health regenerates"
+        },
+        {
+            "name": "EnergyRegenTimeBuff",
+            "type": "float",
+            "unit": "% decrease",
+            "description": "Decrease in time before energy regen starts (default is 0, so only negative values will have effect)"
+        },
+        {
+            "name": "EnergyRegenRateBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase in rate at which energy regenerates"
+        },
+        {
+            "name": "WalkSpeedBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase to walking speed"
+        },
+        {
+            "name": "RadarLink",
+            "type": "boolean",
+            "description": "If true, sensors always show enemy markers at full visibility when in range"
+        },
+        {
+            "name": "BuildTimeBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% decrease",
+            "description": "Decrease in time taken to set up deployables"
+        },
+        {
+            "name": "DeployableRepairRateBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase in the rate of repairing deployables"
+        },
+        {
+            "name": "StickyHands",
+            "type": "boolean",
+            "description": "If true, player is immune to concussive effects that would cause them to drop the flag"
+        },
+        {
+            "name": "EnergyDrainBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase to energy drain effect of an item"
+        },
+        {
+            "name": "TrapDetection",
+            "type": "boolean",
+            "description": "If true, the player can see markers for enemy mines"
+        },
+        {
+            "name": "ThrustPackCostReduction",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% decrease",
+            "description": "Decrease in energy cost for the thrust pack"
+        },
+        {
+            "name": "ThrustPackPowerBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase in the power of the thrust pack"
+        },
+        {
+            "name": "ShieldPackBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase in effictiveness for the shield pack"
+        },
+        {
+            "name": "JammerPackRadiusBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase in range for the jammer pack"
+        },
+        {
+            "name": "DeployableHealthBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "Health",
+            "description": "Additional health for deployable items"
+        },
+        {
+            "name": "DeployableRangeBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase in range for deployable sensors and turrets"
+        },
+        {
+            "name": "ExtraDeployables",
+            "type": "integer",
+            "restrictions": ">=0",
+            "unit": "Deployables",
+            "description": "Increase in the number of deployables allowed out at once"
+        },
+        {
+            "name": "ShocklanceEnergyCost",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "Energy",
+            "description": "Energy cost to use the Shocklance"
+        },
+        {
+            "name": "StealthPackEntryTimeReduction",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% decrease",
+            "description": "Decrease in time taken to go invisible, including after damage or jamming"
+        },
+        {
+            "name": "StealthPackPulseIgnoreTime",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "Seconds",
+            "description": "Time after going in stealth that you won't be uncloaked by damage"
+        },
+        {
+            "name": "BlackoutLengthReduction",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% decrease",
+            "description": "Decrease in the length of the effect of Blackout grenades"
+        },
+        {
+            "name": "ExtraAmmoSpawnBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase in amount of spawning ammo"
+        },
+        {
+            "name": "MaxSkiSpeed",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "Speed",
+            "description": "Absolute increase in the maximum speed achievable by skiing alone"
+        },
+        {
+            "name": "TerminalSkiSpeed",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "Speed",
+            "description": "Absolute increase in the maximum possible skiing speed"
+        },
+        {
+            "name": "MaxJetSpeed",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "Speed",
+            "description": "Absolute increase in maximum speed achievable by jetting alone"
+        },
+        {
+            "name": "TerminalJetSpeed",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "Speed",
+            "description": "Absolute increase in the maximum possible jetting speed"
+        },
+        {
+            "name": "MaxSkiControl",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase in maximum amount of turning control while skiing"
+        },
+        {
+            "name": "PeakSkiControlSpeed",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "Speed",
+            "description": "Change in the speed value at which maximum ski control is reached"
+        },
+        {
+            "name": "SkiControlVariance",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "Variance",
+            "description": "Change in variance of the normal distribution for ski control around the peak"
+        },
+        {
+            "name": "StoppingDistanceBuff",
+            "type": "float",
+            "restrictions": ">=0",
+            "unit": "% increase",
+            "description": "Increase to stopping distance when skiing is stopped"
+        }
+    ]
+}

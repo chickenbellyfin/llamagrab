@@ -19,21 +19,19 @@ weapons = {
   } for clazz in weapons_raw
 }
 
-with open('../common/item_properties.json') as item_props_json:
-  item_props_by_group = json.load(item_props_json)
+def load_mod_properties(file_path):
+  with open(file_path) as properties_json:
+    by_group = json.load(properties_json)
+  
+  mod_properties = {}
+  for group in by_group:
+    for mod_property in by_group[group]:
+      mod_properties[mod_property['name']] = mod_property
+  return mod_properties
 
-item_props = {}
-for group in item_props_by_group:
-  for item_prop in item_props_by_group[group]:
-    item_props[item_prop['name']] = item_prop
-
-with open('../common/class_properties.json') as class_props_json:
-  class_props_by_group = json.load(class_props_json)
-
-class_props = {}
-for group in class_props_by_group:
-  for class_prop in class_props_by_group[group]:
-    class_props[class_prop['name']] = class_prop
+item_props = load_mod_properties('../common/item_properties.json')
+class_props = load_mod_properties('../common/class_properties.json')
+value_mod_props = load_mod_properties('../common/value_mods.json')
 
 
 team_assign_types = {
@@ -108,6 +106,9 @@ def _item_property_value(p: ModProperty) -> str:
 
 def _class_property_value(p: ModProperty) -> str:
   return _mod_property_value(p, class_props)
+
+def _value_mod_value(p: ModProperty) -> str:
+  return _mod_property_value(p, value_mod_props)
 
 def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
   lua = LuaConfig()
@@ -208,6 +209,26 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
           'Classes.setProperty("%s", Classes.Properties.%s, %s)',
           clazz, property.name, _class_property_value(property)
         )
+
+  # Value Mods
+  if config.item_value_mods:
+    for weapon in config.item_value_mods:
+      weapon_name = weapons[weapon.player_class][weapon.weapon]['name']
+      lua('Items.setValueMods("%s", "%s", {', weapon.player_class, weapon_name)
+      for value_mod in weapon.properties:
+        lua('  {ValueMods.%s, %s},', value_mod.name, _value_mod_value(value_mod))
+      lua('})')
+  
+  for clazz, value_mods in [
+    ('Light', config.light_value_mods),
+    ('Medium', config.medium_value_mods),
+    ('Heavy', config.heavy_value_mods),
+  ]:
+    if value_mods:
+      lua('Classes.setValueMods("%s", {', clazz)
+      for value_mod in value_mods:
+        lua('  {ValueMods.%s, %s},', value_mod.name, _value_mod_value(value_mod))
+      lua('})')
   
   # Disabled Equip Points
   for clazz, equip_points in [
