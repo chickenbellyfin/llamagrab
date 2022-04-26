@@ -26,9 +26,36 @@ Agent compares the incoming server list and config hashes with the previous save
 ### ping
 Empty payload, used for testing/status, has no effect.
 
-## Run
+## Build
 ```
-python3 -m src.main <config.yaml>
+$ docker build . -t llamagrab-agent
+```
+
+## Run
+Run locally
+```
+$ python3 -m src.main <config.yaml>
+```
+
+Run docker container
+```
+$ docker run -v /var/run/docker.sock:/var/run/docker.sock -v /home/ubuntu/llamagrab_agent:/data -p 8999:8999 llamagrab-agent
+```
+
+Run with docker-compose
+```
+version: '3.6'
+
+services:
+  llamagrab-agent:
+    image: public.ecr.aws/i2q9d4v7/llamagrab-agent
+    container_name: llamagrab-agent
+    volumes:
+      - './llamagrab_agent:/data'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    ports:
+      - 8999:8999
+    restart: unless-stopped
 ```
 
 #### Run unit tests
@@ -40,40 +67,31 @@ python3 -m pytest
 For local testing without running actual taserver containers, make sure to add `testing: true` to config.yaml. This will disable the docker implementation with `NullDocker`
 
 ## Deployment
-Copy agent/ dir to the host
+
+Run `setup.sh`. This will install docker and download the latest taserver/agent docker image.
+
+Create a data dir:
 ```
-$ rsync -vr agent $hostname:~
+$ mkdir llamagrab_agent
 ```
 
-Run `setup.sh`. This will install docker, python+deps, and download the latest taserver docker image.
+Create config.yaml in the data dir
 ```
-$ ssh $hostname
-$ sudo agent/scripts/setup.sh
+$ nano llamagrab_agent/config.yaml
+
+# Something like:
+  host_abs_data_dir: /home/azureuser/llamagrab_agent
+  port: 8999
+  image: 'public.ecr.aws/i2q9d4v7/taserver'
 ```
 
-Setup and configure agent systemd service on the host:
+Create a docker-compose config and run it
 ```
-$ cp agent/config.yaml .
-$ nano config.yaml # add auth_key and disable testing mode
+$ nano ~/docker-compose.yaml
+# (see example config above)
 
-# Add systemd service
-$ cp agent/scripts/smagent.service .
-$ nano smagent.service # edit paths if needed
-$ ln -f smagent.service /etc/systemd/system
-$ sudo systemctl enable smagent && sudo systemctl start smagent
-
-# Watch logs
-$ journalctl -u smagent -f
+$ docker-compose up -d
 ```
 
 ### Configuration
-port and auth_key must match on the taservermanager API config. Default port is 8999
-config.yaml:
-```
-# all state / serverconfig lua will be stored here
-gamesettings_dir: <path: str>
-# auth key must match ServerManager API's auth_key
-auth_key: <str>
-port: <port: int>
-```
-Auth keys can be generated with `python3 -c 'import os; print(os.urandom(10).hex())'`
+See config.yaml for explanation of available settings.

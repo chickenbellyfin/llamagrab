@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 
+import docker as docker_lib
 from fastapi.exceptions import HTTPException
 from fastapi import FastAPI, Request, status
 from typing import List
@@ -13,14 +14,6 @@ from .lib.hashing import md5
 from .lib.agent import Agent
 from .lib.docker import Docker, NullDocker
 
-logging.basicConfig(
-  level=logging.INFO,
-  format='%(asctime)s :: %(levelname)s :: %(name)s :: %(message)s',
-  handlers=[
-    logging.FileHandler("agent.log"),
-    logging.StreamHandler()
-  ]
-)
 logger = logging.getLogger()
 
 
@@ -45,15 +38,26 @@ def create_app(agent: Agent):
 def main(argv: List[str]):
   logger.info('Starting...')
 
-  config_path = 'config.yaml'
+  data_dir = ''
   if len(argv) > 1:
-    config_path = argv[1]
+    data_dir = argv[1]
+
+  logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s :: %(levelname)s :: %(name)s :: %(message)s',
+    handlers=[
+      logging.FileHandler(os.path.join(data_dir, 'agent.log')),
+      logging.StreamHandler()
+    ]
+  )
+  
+  config_path = os.path.join(data_dir, 'config.yaml')
 
   logger.info(f'Reading config from {config_path}')
   with open(config_path) as config_file:
     config = yaml.safe_load(config_file)
 
-  gamesettings_dir = os.path.abspath(config['gamesettings_dir'])
+  host_abs_data_dir = config.get('host_abs_data_dir')
   port = int(config['port'])
   testing = config.get('testing', False)
   loginserver = config.get('loginserver', None)
@@ -61,14 +65,16 @@ def main(argv: List[str]):
   image = config.get('image', 'taserver')
 
   docker = NullDocker() if testing else Docker(
+    docker_lib.from_env(),
     use_host_networking=use_host_networking,
     loginserver=loginserver,
     image=image
   )
 
   agent = Agent(
-    gamesettings_dir=gamesettings_dir,
-    docker=docker
+    data_dir=data_dir,
+    docker=docker,
+    host_abs_data_dir=host_abs_data_dir,
   )
 
   active_servers = agent.get_current_active_servers()
