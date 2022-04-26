@@ -1,6 +1,4 @@
-import json
 import logging
-import subprocess
 from typing import Mapping
 
 logger = logging.getLogger(__name__)
@@ -8,45 +6,24 @@ logger = logging.getLogger(__name__)
 
 class Docker:
 
-  def __init__(self, use_host_networking: bool = False, loginserver: str = None, image = 'taserver'):
+  def __init__(self, docker_client, use_host_networking: bool = False, loginserver: str = None, image = 'taserver'):
     self.use_host_networking = use_host_networking
     self.loginserver = loginserver
     self.image = image
+    self.client = docker_client
   
   def _container_name(self, server_id):
     return f'taserver_{server_id}'
 
   def status(self) -> Mapping[int, int]:
-    try:
-      ps_result = subprocess.check_output(['docker', 'ps', '-q']).decode()
-      if len(ps_result):
-        output = subprocess.check_output('docker inspect $(docker ps -q)', shell=True)
-      else:
-        return {}
-    except subprocess.CalledProcessError as e:
-      logger.error(e, exc_info=True)
-      return {}
-  
-    docker_inspect = json.loads(output)
+    containers = self.client.containers.list()
+    taservers = filter(lambda c: 'llamagrab' in c.labels, containers)
     running_containers = {}
 
-    for container in docker_inspect:
-      # Name is /taserver_$id
-      if not container['Name'].startswith('/taserver_'):
-        continue
-      
-      server_id = int(container['Name'].split('_')[1])
-      
-      bindings = container['HostConfig']['PortBindings']
-      # binding is "PORT/proto": [{"HostIp": "", "HostPort": "PORT"}]
-      offset = None
-      for binding in bindings:
-        port = int(binding.split('/')[0])
-        if port > 9000: # if its the launcher port
-          offset = port - 9002
-          break
-      if offset is not None:
-        running_containers[server_id] = offset
+    for container in taservers:      
+      server_id = int(container.labels['server_id'])
+      port_offset = int(container.labels['port_offset'])
+      running_containers[server_id] = port_offset
 
     return running_containers
 
@@ -57,41 +34,52 @@ class Docker:
     gameserver2_port = 7778 + offset
     control_port = 9002 + offset
 
-    self.stop_server(server_id)
-
-    options = [
-      '--name', name,
-      '-v', f'{abs_gamesettings}:/gamesettings',
-      '-d', '--restart', 'unless-stopped',
-      '--cap-add', 'NET_ADMIN',
-      '-p', f'{gameserver1_port}:{gameserver1_port}/tcp',
-      '-p', f'{gameserver1_port}:{gameserver1_port}/udp',
-      '-p', f'{gameserver2_port}:{gameserver2_port}/tcp',
-      '-p', f'{gameserver2_port}:{gameserver2_port}/udp',
-      '-p', f'{control_port}:{control_port}/tcp',
-      '-p', f'{control_port}:{control_port}/udp',
-    ]
-
-    # If the login server is on the same host as the container, use host networking so that 
-    # the ip address is detected correctly
     if self.use_host_networking:
-      options += ['--network', 'host']
-    
-    # set environment var for login server host
-    if self.loginserver:
-      options += ['-e', f'LOGINSERVER={self.loginserver}']
+      port_mappings = None
+      network_mode = 'host'
+    else:
+      port_mappings = {
+        f'{gameserver1_port}/tcp': gameserver1_port,
+        f'{gameserver1_port}/udp': gameserver1_port,
+        f'{gameserver2_port}/tcp': gameserver2_port,
+        f'{gameserver2_port}/udp': gameserver2_port,
+        f'{control_port}/tcp': control_port,
+        f'{control_port}/udp': control_port,
+      }
+      network_mode = None
 
-    args = ['docker', 'run'] + options + [self.image, f'--port-offset={offset}']
-    command = ' '.join(args)
-    logger.info(f'Running {command}')
-    subprocess.call(args)
+    self.stop_server(server_id)    
+    logging.info(f'Running container {name} offset={offset} ports={gameserver1_port},{gameserver2_port},{control_port} path={abs_gamesettings}')
+    self.client.containers.run(
+      self.image,
+      command = [f'--port-offset={offset}'],
+      name = name,
+      labels = {
+        'llamagrab': '', # makes it easy to filter containers to get status
+        'server_id': f'{server_id}',
+        'port_offset': f'{offset}'
+      },
+      volumes = [f'{abs_gamesettings}:/gamesettings'],
+      detach = True,
+      restart_policy = {'Name': 'unless-stopped'},
+      cap_add = ['NET_ADMIN'],
+      ports = port_mappings,      
+      environment = [f'LOGINSERVER={self.loginserver}'] if self.loginserver else None,
+      # If the login server is on the same host as the container, use host networking so that 
+      # the ip address is detected correctly
+      network_mode = network_mode
+    )
 
   def stop_server(self, server_id: int) -> None:
     name = self._container_name(server_id)
-    args = ['docker', 'rm', '-f', name]
-    command = ' '.join(args)
-    logger.info(f'Running {command}')
-    subprocess.call(args)
+
+    try:
+      server = self.client.containers.get(name)
+      server.remove(force=True)
+      logger.info(f'Removed {name}')
+    except Exception as e:
+      # Not found, ignore
+      pass
 
 
 class NullDocker:

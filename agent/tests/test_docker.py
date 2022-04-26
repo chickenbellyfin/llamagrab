@@ -1,156 +1,259 @@
 import pytest
-from unittest.mock import patch, call
-from subprocess import CalledProcessError
+from docker.errors import NotFound
+from unittest.mock import Mock, call
 from src.lib.docker import Docker, NullDocker
 
-# Sample inspect output from a live server w/ 3 taservers
-# $ docker inspect $(docker ps -q) > out.json
-with open('tests/sample_inspect.json') as f:
-  sample_inspect = f.read().encode()
-sample_inspect_ps_q = "fc7561ad6fc2\n7e567f6b7777\n63c3da5c16b3".encode()
+def make_object(**kwargs):
+  return type('obj', (object,), kwargs)
 
-# class DocketTest(unittest.TestCase):
 @pytest.fixture
-def mock_subprocess():
-  with patch('src.lib.docker.subprocess') as mock:
-    yield mock
+def mock_client():
+  return Mock()
 
-def test_status_empty(mock_subprocess):
-  mock_subprocess.check_output.return_value = b''
-  docker = Docker()
+def test_status_empty(mock_client):
+  mock_client.containers.list.return_value = []
+  docker = Docker(mock_client)
   result = docker.status()
   assert {} == result
-  mock_subprocess.check_output.assert_called_once_with([
-    'docker', 'ps', '-q'
-  ])
-
-def test_status_error(mock_subprocess):
-  def problem(args):
-    raise CalledProcessError(1, args)
-  mock_subprocess.check_output.side_effect = problem
-  mock_subprocess.CalledProcessError = CalledProcessError
-  docker = Docker()
-  result = docker.status()
-  assert {} == result
-  mock_subprocess.check_output.assert_called_once_with([
-    'docker', 'ps', '-q'
-  ])
 
 
-def test_status(mock_subprocess):
-  mock_subprocess.check_output.side_effect = [
-    sample_inspect_ps_q,
-    sample_inspect
+def test_status(mock_client):
+  test1 = make_object(
+    labels = {
+      'llamagrab': '',
+      'server_id': '111',
+      'port_offset': '6'
+    }  
+  )
+  test2 = make_object(
+    labels = {
+      'llamagrab': '',
+      'server_id': '222',
+      'port_offset': '2'
+    }  
+  )
+  test3 = make_object( # not a taserver
+    labels = {
+      'server_id': '333',
+      'port_offset': '0'
+    }  
+  )
+  mock_client.containers.list.return_value = [
+    test1, test2, test3
   ]
-  docker = Docker()
+  docker = Docker(mock_client)
   result = docker.status()
   assert {
     111: 6,
-    222: 2,
-    333: 0
+    222: 2
   } == result
-  mock_subprocess.check_output.assert_has_calls([
-    call(['docker', 'ps', '-q']),
-    call('docker inspect $(docker ps -q)', shell=True)
-  ])
 
 
-def test_start_server(mock_subprocess):
-  docker = Docker()
+def test_start_server(mock_client):
+  docker = Docker(mock_client)
+
   docker.start_server(56, 0, '/test/gamesettings/path')
+  
+  mock_client.assert_has_calls([
+    call.containers.get('taserver_56'),
+    call.containers.get().remove(force=True),
+    call.containers.run(
+      'taserver',
+      command = ['--port-offset=0'],
+      name = 'taserver_56',
+      labels = {
+        'llamagrab': '',
+        'server_id': '56',
+        'port_offset': '0'
+      },
+      volumes = ['/test/gamesettings/path:/gamesettings'],
+      detach = True,
+      restart_policy = {'Name': 'unless-stopped'},
+      cap_add = ['NET_ADMIN'],
+      ports = {
+        '7777/tcp':7777,
+        '7777/udp':7777,
+        '7778/tcp':7778,
+        '7778/udp':7778,
+        '9002/tcp':9002,
+        '9002/udp':9002,
+      },      
+      environment = None,
+      network_mode = None
+    )
+  ])
 
-  mock_subprocess.call.assert_has_calls([
-    call(['docker', 'rm', '-f', 'taserver_56']),
-    call([
-      'docker', 'run', '--name', 'taserver_56', 
-      '-v', '/test/gamesettings/path:/gamesettings', 
-      '-d', '--restart', 'unless-stopped', '--cap-add', 'NET_ADMIN',
-      '-p', '7777:7777/tcp', '-p', '7777:7777/udp',
-      '-p', '7778:7778/tcp', '-p', '7778:7778/udp',
-      '-p', '9002:9002/tcp', '-p', '9002:9002/udp',
-      'taserver', '--port-offset=0'
-    ])
+def test_start_server_no_existing(mock_client):
+  """
+  Attempting to stop existing server raises NotFound
+  """
+  mock_client.containers.get.side_effect = NotFound('test not found')
+  docker = Docker(mock_client)
+  docker.start_server(56, 0, '/test/gamesettings/path')
+  
+  mock_client.assert_has_calls([
+    call.containers.get('taserver_56'),
+    # remove() not called
+    call.containers.run(
+      'taserver',
+      command = ['--port-offset=0'],
+      name = 'taserver_56',
+      labels = {
+        'llamagrab': '',
+        'server_id': '56',
+        'port_offset': '0'
+      },
+      volumes = ['/test/gamesettings/path:/gamesettings'],
+      detach = True,
+      restart_policy = {'Name': 'unless-stopped'},
+      cap_add = ['NET_ADMIN'],
+      ports = {
+        '7777/tcp':7777,
+        '7777/udp':7777,
+        '7778/tcp':7778,
+        '7778/udp':7778,
+        '9002/tcp':9002,
+        '9002/udp':9002,
+      },      
+      environment = None,
+      network_mode = None
+    )
   ])
 
 
-def test_start_server_offset(mock_subprocess):
-  docker = Docker()
+def test_start_server_offset(mock_client):
+  docker = Docker(mock_client)
   docker.start_server(1234, 10, '/test/gamesettings/path')
 
-  mock_subprocess.call.assert_has_calls([
-    call(['docker', 'rm', '-f', 'taserver_1234']),
-    call([
-      'docker', 'run', '--name', 'taserver_1234', 
-      '-v', '/test/gamesettings/path:/gamesettings', 
-      '-d', '--restart', 'unless-stopped', '--cap-add', 'NET_ADMIN',
-      '-p', '7787:7787/tcp', '-p', '7787:7787/udp',
-      '-p', '7788:7788/tcp', '-p', '7788:7788/udp',
-      '-p', '9012:9012/tcp', '-p', '9012:9012/udp',
-      'taserver', '--port-offset=10'
-    ])
+  mock_client.assert_has_calls([
+    call.containers.get('taserver_1234'),
+    call.containers.get().remove(force=True),
+    call.containers.run(
+      'taserver',
+      command = ['--port-offset=10'],
+      name = 'taserver_1234',
+      labels = {
+        'llamagrab': '',
+        'server_id': '1234',
+        'port_offset': '10'
+      },
+      volumes = ['/test/gamesettings/path:/gamesettings'],
+      detach = True,
+      restart_policy = {'Name': 'unless-stopped'},
+      cap_add = ['NET_ADMIN'],
+      ports = {
+        '7787/tcp':7787,
+        '7787/udp':7787,
+        '7788/tcp':7788,
+        '7788/udp':7788,
+        '9012/tcp':9012,
+        '9012/udp':9012,
+      },      
+      environment = None,
+      network_mode = None
+    )
   ])
 
-def test_start_server_host_network(mock_subprocess):
-  docker = Docker(use_host_networking=True)
+def test_start_server_host_network(mock_client):
+  docker = Docker(mock_client, use_host_networking=True)
+  docker.start_server(56, 0, '/test/gamesettings/path')  
+  mock_client.assert_has_calls([
+    call.containers.get('taserver_56'),
+    call.containers.get().remove(force=True),
+    call.containers.run(
+      'taserver',
+      command = ['--port-offset=0'],
+      name = 'taserver_56',
+      labels = {
+        'llamagrab': '',
+        'server_id': '56',
+        'port_offset': '0'
+      },
+      volumes = ['/test/gamesettings/path:/gamesettings'],
+      detach = True,
+      restart_policy = {'Name': 'unless-stopped'},
+      cap_add = ['NET_ADMIN'],
+      ports = None,
+      environment = None,
+      network_mode = 'host'
+    )
+  ])
+
+def test_start_server_custom_login(mock_client):
+  docker = Docker(mock_client, loginserver='loginserver.test.local')
+  docker.start_server(56, 0, '/test/gamesettings/path')
+  mock_client.assert_has_calls([
+    call.containers.get('taserver_56'),
+    call.containers.get().remove(force=True),
+    call.containers.run(
+      'taserver',
+      command = ['--port-offset=0'],
+      name = 'taserver_56',
+      labels = {
+        'llamagrab': '',
+        'server_id': '56',
+        'port_offset': '0'
+      },
+      volumes = ['/test/gamesettings/path:/gamesettings'],
+      detach = True,
+      restart_policy = {'Name': 'unless-stopped'},
+      cap_add = ['NET_ADMIN'],
+      ports = {
+        '7777/tcp':7777,
+        '7777/udp':7777,
+        '7778/tcp':7778,
+        '7778/udp':7778,
+        '9002/tcp':9002,
+        '9002/udp':9002,
+      },      
+      environment = ['LOGINSERVER=loginserver.test.local'],
+      network_mode = None
+    )
+  ])
+
+def test_start_server_custom_image(mock_client):
+  docker = Docker(mock_client, image='some.registry/taseZZrver')
   docker.start_server(56, 0, '/test/gamesettings/path')
 
-  mock_subprocess.call.assert_has_calls([
-    call(['docker', 'rm', '-f', 'taserver_56']),
-    call([
-      'docker', 'run', '--name', 'taserver_56', 
-      '-v', '/test/gamesettings/path:/gamesettings', 
-      '-d', '--restart', 'unless-stopped', '--cap-add', 'NET_ADMIN',
-      '-p', '7777:7777/tcp', '-p', '7777:7777/udp',
-      '-p', '7778:7778/tcp', '-p', '7778:7778/udp',
-      '-p', '9002:9002/tcp', '-p', '9002:9002/udp',
-      '--network', 'host',
-      'taserver', '--port-offset=0'
-    ])
+  mock_client.assert_has_calls([
+    call.containers.get('taserver_56'),
+    call.containers.get().remove(force=True),
+    call.containers.run(
+      'some.registry/taseZZrver',
+      command = ['--port-offset=0'],
+      name = 'taserver_56',
+      labels = {
+        'llamagrab': '',
+        'server_id': '56',
+        'port_offset': '0'
+      },
+      volumes = ['/test/gamesettings/path:/gamesettings'],
+      detach = True,
+      restart_policy = {'Name': 'unless-stopped'},
+      cap_add = ['NET_ADMIN'],
+      ports = {
+        '7777/tcp':7777,
+        '7777/udp':7777,
+        '7778/tcp':7778,
+        '7778/udp':7778,
+        '9002/tcp':9002,
+        '9002/udp':9002,
+      },      
+      environment = None,
+      network_mode = None
+    )
   ])
 
-def test_start_server_custom_login(mock_subprocess):
-  docker = Docker(loginserver='loginserver.test.local')
-  docker.start_server(56, 0, '/test/gamesettings/path')
-
-  mock_subprocess.call.assert_has_calls([
-    call(['docker', 'rm', '-f', 'taserver_56']),
-    call([
-      'docker', 'run', '--name', 'taserver_56', 
-      '-v', '/test/gamesettings/path:/gamesettings', 
-      '-d', '--restart', 'unless-stopped', '--cap-add', 'NET_ADMIN',
-      '-p', '7777:7777/tcp', '-p', '7777:7777/udp',
-      '-p', '7778:7778/tcp', '-p', '7778:7778/udp',
-      '-p', '9002:9002/tcp', '-p', '9002:9002/udp',
-      '-e', 'LOGINSERVER="loginserver.test.local"',
-      'taserver', '--port-offset=0'
-    ])
-  ])
-
-def test_start_server_custom_image(mock_subprocess):
-  docker = Docker(image='some.registry/taseZZrver')
-  docker.start_server(56, 0, '/test/gamesettings/path')
-
-  mock_subprocess.call.assert_has_calls([
-    call(['docker', 'rm', '-f', 'taserver_56']),
-    call([
-      'docker', 'run', '--name', 'taserver_56', 
-      '-v', '/test/gamesettings/path:/gamesettings', 
-      '-d', '--restart', 'unless-stopped', '--cap-add', 'NET_ADMIN',
-      '-p', '7777:7777/tcp', '-p', '7777:7777/udp',
-      '-p', '7778:7778/tcp', '-p', '7778:7778/udp',
-      '-p', '9002:9002/tcp', '-p', '9002:9002/udp',
-      'some.registry/taseZZrver', '--port-offset=0'
-    ])
-  ])
-
-
-def test_stop_server(mock_subprocess):
-  docker = Docker()
+def test_stop_server(mock_client):
+  docker = Docker(mock_client)
   docker.stop_server(1234)
-  mock_subprocess.call.assert_called_once_with(['docker', 'rm', '-f', 'taserver_1234'])
+  mock_client.assert_has_calls([
+    call.containers.get('taserver_1234'),
+    call.containers.get().remove(force=True)
+  ])
 
 # test all the functionality of NullDocker
-def test_null_docker(mock_subprocess):
+def test_null_docker():
   nd = NullDocker()
   assert {} == nd.status()
   nd.start_server(5, 0, "test")
@@ -161,5 +264,3 @@ def test_null_docker(mock_subprocess):
 
   nd.stop_server(5)
   assert {} == nd.status()
-
-  assert [] == mock_subprocess.method_calls

@@ -1,0 +1,9 @@
+**/__pycache__
+active_servers.json
+.pytest_cache
+*.log
+.coverage
+managed_gamesettings/
+htmlcov/
+scripts/
+tests/

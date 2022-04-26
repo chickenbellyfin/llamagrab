@@ -15,17 +15,31 @@ class Agent:
 
   def __init__(
     self, 
-    gamesettings_dir: str,
+    data_dir: str,
     docker: Docker,
+    host_abs_data_dir: str = None,
     logger: Logger = logging.getLogger()
   ):
-    self.gamesettings_dir = gamesettings_dir
-    self.active_servers_file = os.path.join(gamesettings_dir, 'active_servers.json')
+    self.gamesettings_dir = os.path.join(data_dir, 'managed_gamesettings')
+    self.active_servers_file = os.path.join(data_dir, 'active_servers.json')
+    
+    # If agent is running inside a container, the gamesettings mount path for taserver must be 
+    # relative to the host machine
+    if host_abs_data_dir:
+      self.host_gamesettings_dir = os.path.join(host_abs_data_dir, 'managed_gamesettings')
+    else:
+      self.host_gamesettings_dir = self.gamesettings_dir
+
     self.docker = docker
     self.logger = logger
 
+
+  def host_path_for(self, server_id: int) -> str:
+    return os.path.join(self.host_gamesettings_dir, f'server_{server_id}')
+
   def path_for(self, server_id: int) -> str:
     return os.path.join(self.gamesettings_dir, f'server_{server_id}')
+
 
   def get_current_active_servers(self):
     if os.path.exists(self.active_servers_file):
@@ -38,6 +52,7 @@ class Agent:
     else:
       return {}
 
+
   def write_active_servers(self, active_servers):
     for server_id in active_servers:
       server_dir = self.path_for(server_id)
@@ -47,6 +62,7 @@ class Agent:
     
     with open(self.active_servers_file, 'w') as config_file:
       json.dump(active_servers, config_file, indent=2)
+
 
   def handle_sync(self, active_servers):
     active_servers = {
@@ -90,7 +106,7 @@ class Agent:
     new_port_offset = 0
 
     for server_id in changed:
-      server_path = self.path_for(server_id)
+      server_path = self.host_path_for(server_id)
 
       # If the server exists, use the same port offest
       # for new servers, find an open port offset

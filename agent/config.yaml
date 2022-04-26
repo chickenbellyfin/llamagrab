@@ -1,11 +1,18 @@
-gamesettings_dir: managed_gamesettings
+# Must match agent port setting in server manager 
 port: 8999
+
+# Disables launching actual game servers and uses dummy implementation
 testing: true
 
+# Override game server docker image
 image: taserver
+
+# if running agent in docker, uncomment and set to data_dir path on the host
+# host_abs_data_dir: /home/ubuntu/llamagrab_agent
+
 
 # Set to true if loginserver is on the same host as taserver & is detecting the docker bridged IP (172...)
 # use_host_networking: false # default false
 
-# Use to override the loginserver host
+# Use to override the loginserver (default is ta.kfk4ever.com)
 # loginserver: localost
