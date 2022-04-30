@@ -99,7 +99,7 @@ export default function ServerListItem({ server, invalidate }: ServerListItemPro
       <Card bordered
         style={{
           width: '100%',
-          ... !isOwner ? { borderColor: '#556474'} : {}
+          ...!isOwner ? { borderColor: '#556474'} : {}
         }}
         actions={actions[server.status]}>
 

@@ -10,15 +10,56 @@ from unittest.mock import MagicMock
 
 import app
 from database.database import Database
-from database import database, models
+from database import database
+from database.models import User, UserLimits, Server, ServerEditor, ServerVersion
 from schema.game_server_config import GameServerConfig
+
+@pytest.fixture
+def user_1():
+  return User(
+    id=0,
+    username='testuser',
+    password=argon2.hash('testpassword'),
+    tier='verified',
+    limits=UserLimits(server_limit=1, active_limit=1)
+  )
+
+@pytest.fixture
+def user_2():
+  return User(
+    id=1,
+    username='testuser2',
+    password=argon2.hash('testpassword2'),
+    tier='unverified',
+    limits=UserLimits(server_limit=1, active_limit=1)
+  )
 
 
 @pytest.fixture
-def server1(user: models.User):
-  return models.Server(
+def user_admin():
+  return User(
+    id=2,
+    username='testadmin',
+    password=argon2.hash('testadminpassword'),
+    tier='admin',    
+    limits=UserLimits(server_limit=-1, active_limit=-1)
+  )
+
+@pytest.fixture
+def user_super():
+  return User(
+    id=3,
+    username='testsuper',
+    password=argon2.hash('testsuperpassword'),
+    tier='super',    
+    limits=UserLimits(server_limit=-1, active_limit=-1)
+  )
+
+@pytest.fixture
+def server1(user_1: User):
+  return Server(
     id=0,
-    user=user.id,
+    user=user_1.id,
     name='Test Server 1',
     region='region1',
     status='stopped',
@@ -27,50 +68,51 @@ def server1(user: models.User):
       display_name='TestServer1Config'
     ).serialize(),
     updated_at=0,
-    updated_by=user.id
+    updated_by=user_1.id
   )
 
 @pytest.fixture
-def server1_version(server1: models.Server):
-  return models.ServerVersion(
-    id=0,
-    server_id=server1.id,
-    server_config='server1version1',
-    num_changes=-1,
-    created_at=0,
-    created_by=0
-  )
-
-@pytest.fixture
-def server1_version2(server1: models.Server):
-  return models.ServerVersion(
-    id=2,
-    server_id=server1.id,
-    server_config='server1version2',
-    num_changes=1,
-    created_at=1,
-    created_by=0
-  )
-
-
-@pytest.fixture
-def server2(admin_user: models.User):
-  return models.Server(
+def server2(user_admin: User):
+  return Server(
     id=1,
-    user=admin_user.id,
+    user=user_admin.id,
     name='Test Server 2',
     region='region2',
     status='stopped',
     game_mode='CTF',
     server_config=GameServerConfig().serialize(),
     updated_at=0,
-    updated_by=admin_user.id
+    updated_by=user_admin.id
   )
 
 @pytest.fixture
-def server2_version(server2: models.Server):
-  return models.ServerVersion(
+def server1_version1(server1: Server, user_1):
+  return ServerVersion(
+    id=0,
+    server_id=server1.id,
+    server_config='{"displayName": "server1Version0"}',
+    num_changes=-1,
+    created_at=0,
+    created_by=user_1.id
+  )
+
+@pytest.fixture
+def server1_version2(server1: Server, user_1):
+  return ServerVersion(
     id=1,
+    server_id=server1.id,
+    server_config='{"displayName": "server1Version2"}',
+    num_changes=1,
+    created_at=1,
+    created_by=user_1.id
+  )
+
+
+
+@pytest.fixture
+def server2_version1(server2: Server):
+  return ServerVersion(
+    id=2,
     server_id=server2.id,
     server_config=server2.server_config,
     num_changes=-1,
@@ -79,78 +121,56 @@ def server2_version(server2: models.Server):
   )
 
 
-@pytest.fixture
-def add_servers(db_session: Session, server1, server2, server1_version, server1_version2, server2_version):
-  db_session.add(server1)
-  db_session.add(server2)
-  db_session.add(server1_version)
-  db_session.add(server1_version2)
-  db_session.add(server2_version)
-  db_session.add(models.ServerEditor(server_id=0, user_id=1))
-  db_session.commit()
+@pytest.fixture(autouse=True)
+def populate_db(
+  inmemory_db, 
+  user_1,
+  user_2,
+  user_admin,
+  user_super,
+  server1, 
+  server2, 
+  server1_version1, 
+  server1_version2, 
+  server2_version1):
+  with inmemory_db.SessionFactory() as session:
+    session.merge(user_1)
+    session.merge(user_2)
+    session.merge(user_admin)
+    session.merge(user_super)
+    session.merge(server1)
+    session.merge(server2)
+    session.merge(server1_version1)
+    session.merge(server1_version2)
+    session.merge(server2_version1)
+    session.merge(ServerEditor(server_id=0, user_id=1))
+    session.commit()
 
 
-@pytest.fixture
-def user():
-  return models.User(
-    id=0,
-    username='testuser',
-    password=argon2.hash('testpassword'),
-    tier='verified',
-    limits=models.UserLimits(server_limit=1, active_limit=1)
-  )
-
-
-@pytest.fixture
-def admin_user():
-  return models.User(
-    id=1,
-    username='testadmin',
-    password=argon2.hash('testadminpassword'),
-    tier='admin',    
-    limits=models.UserLimits(server_limit=-1, active_limit=-1)
-  )
-
-@pytest.fixture
-def super_user():
-  return models.User(
-    id=2,
-    username='testsuper',
-    password=argon2.hash('testsuperpassword'),
-    tier='super',    
-    limits=models.UserLimits(server_limit=-1, active_limit=-1)
-  )
-
-
-@pytest.fixture
-def logged_in_user(mock_login_manager, user):
-  """
-  Sets up the LoginManager with a user(role=user) and return the user object
-  """
+def login(mock_login_manager, user):
   f = asyncio.Future()
   f.set_result(user)
   mock_login_manager.return_value = f
   return user
 
 @pytest.fixture
-def logged_in_admin(mock_login_manager, admin_user):
-  """
-  Sets up the LoginManager with a user(role=admin) and return the user object
-  """
-  f = asyncio.Future()
-  f.set_result(admin_user)
-  mock_login_manager.return_value = f
-  return admin_user
+def login_user_1(mock_login_manager, user_1):
+  return login(mock_login_manager, user_1)
 
 @pytest.fixture
-def logged_in_super(mock_login_manager, super_user):
-  """
-  Sets up the LoginManager with a user(role=admin) and return the user object
-  """
+def login_user_2(mock_login_manager, user_2):
+  return login(mock_login_manager, user_2)
+
+@pytest.fixture
+def login_user_admin(mock_login_manager, user_admin):
+  return login(mock_login_manager, user_admin)
+
+@pytest.fixture
+def login_user_super(mock_login_manager, user_super):
   f = asyncio.Future()
-  f.set_result(super_user)
+  f.set_result(user_super)
   mock_login_manager.return_value = f
-  return super_user
+  return user_super
   
 
 @pytest.fixture
@@ -204,3 +224,4 @@ def test_app(
 @pytest.fixture
 def test_client(test_app):
   return TestClient(test_app)
+  
