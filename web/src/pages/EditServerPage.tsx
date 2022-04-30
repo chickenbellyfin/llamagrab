@@ -1,4 +1,4 @@
-import { Button, Card, List, message, Modal, PageHeader, Popconfirm, Row, Spin, Tag, Typography } from "antd";
+import { Button, Card, List, message, Modal, PageHeader, Popconfirm, Row, Spin, Tag } from "antd";
 import { EditGameServerConfigForm } from "../components/edit_server_form/GameServerConfigForm";
 import { useNavigate, useParams } from 'react-router-dom'
 import { API, GameServerConfig, ServerVersion, ServerSettings } from "../api";

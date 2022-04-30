@@ -1,15 +1,14 @@
-import { Divider, Form, Input, Select, Space } from "antd";
+import { Divider, Form, Space } from "antd";
 import {ClassValueMods} from "./ClassProperties";
 import { ItemValueModsList } from "./ItemPropertiesSection";
 import { GameServerConfigTabProps } from "./tabHelpers";
-import Rules from "./validation";
 
 
 export default function ValueModsTab (
   { config, updateCallbacks }: GameServerConfigTabProps
 ) {
 
-  const { updateInput, update } = updateCallbacks;
+  const { update } = updateCallbacks;
 
 
   return (

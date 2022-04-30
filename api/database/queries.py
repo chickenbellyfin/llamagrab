@@ -36,10 +36,6 @@ def get_active_servers(db: Session, region: str = None, user: models.User = None
   servers = query.all()
   return list(servers)
 
-def get_server_versions(db: Session, server_id: int) -> List[models.ServerVersion]:
-  versions = db.query(models.ServerVersion).filter(models.ServerVersion.server_id == server_id).all()
-  return list(versions)
-
 def get_admin_tribes_usernames(db: Session) -> List[str]:
   query = db.query(models.User.tribes_username)
   query = query.filter(or_(models.User.tier == 'admin', models.User.tier == 'super'))

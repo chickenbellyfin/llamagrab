@@ -4,9 +4,8 @@ import { API, ServerStatus, UserAccount, UserLimits } from "../api";
 import Loader from "../components/Loader";
 import { useAuth } from "../auth";
 import ServerStatusLabel from "../components/ServerStatusLabel";
-import { CaretRightFilled, CloseCircleFilled, CloseSquareOutlined, DeleteOutlined, PlayCircleFilled } from "@ant-design/icons";
+import { CaretRightFilled, CloseSquareOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useState } from "react";
-import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 
 const tierColors: {[key: string]: any} = {
   'super': 'red',

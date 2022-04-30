@@ -1,11 +1,10 @@
 import { DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { Button, Card, List, Select, Space} from "antd";
-import { Component, useState } from "react";
-import { GameServerConfig, ItemProperties, ModProperty } from "../../api";
+import { useState } from "react";
+import {  ItemProperties, ModProperty } from "../../api";
 import { ItemPropertiesSpecSet, ModPropertySpecSet, PlayerClass, ValueModsSpecSet, weaponOptions } from "../../data";
 import { Hint } from "./Inputs";
 import ModPropertyList from "./ModPropertyList";
-import { UpdateCallbacks } from "./tabHelpers";
 
 
 const weaponSelected = (w: ItemProperties) => (w.playerClass && w.weapon)

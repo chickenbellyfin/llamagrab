@@ -97,7 +97,7 @@ async def change_password(
     raise InvalidCredentialsException
   
   user.password = argon2.hash(request.new_password)
-  db.add(user) # user is from different db session and needs to be added to this one
+  db.merge(user) # user is from different db session and needs to be added to this one
   db.commit()
 
 
@@ -107,7 +107,7 @@ async def set_tribes_name(
   user: models.User = Depends(deps.login),
   db: Session = Depends(deps.db)):
   user.tribes_username = request.tribes_username
-  db.add(user)
+  db.merge(user)
   db.commit()
 
 

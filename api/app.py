@@ -18,7 +18,7 @@ from fastapi.staticfiles import StaticFiles
 from loguru import logger
 import os
 
-from routes import account_api, admin_api, data_api, server_api 
+from routes import account_api, admin_api, data_api, server_api, server_list_api
 
 DEFAULT_CONFIG_PATH = 'config.yaml'
 
@@ -114,6 +114,7 @@ def create_app(
   app.include_router(admin_api.router)
   app.include_router(data_api.router)
   app.include_router(server_api.router)
+  app.include_router(server_list_api.router)
 
   return app
 
@@ -151,7 +152,14 @@ def main(argv: List[str]):
   if config.get('serve_static'):
     app.mount('/', SPAStaticFiles(directory=config['serve_static'], html=True), name='webapp')
 
-  uvicorn.run(app, host='0.0.0.0', port=config.get('port', 8000), debug=True, log_config=None, proxy_headers=True)
+  uvicorn.run(
+    app, 
+    host='0.0.0.0', 
+    port=config.get('port', 8000), 
+    debug=True, 
+    log_config=None, 
+    proxy_headers=True
+  )
 
 
 if __name__ == '__main__':

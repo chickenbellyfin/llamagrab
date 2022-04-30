@@ -307,6 +307,13 @@ async function getAllServerList(): Promise<Array<ServerStatus>> {
   })
 }
 
+
+async function getServerStatus(serverId: number): Promise<ServerStatus> {
+  return doRequest({
+    path: `/api/server/${ serverId }/status`
+  });
+}
+
 async function getServerSettings(serverId: number): Promise<ServerSettings> {
   return doRequest({
     path: `/api/server/${ serverId }/settings`
@@ -418,6 +425,7 @@ export const API = {
     removeAdmin,
   },
   Server: {
+    getServerStatus,
     getUserServerList,
     getSharedServerList,
     getAllServerList,

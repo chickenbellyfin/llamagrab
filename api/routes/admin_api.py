@@ -7,7 +7,6 @@ from fastapi import Depends, Response, status as http_status
 from fastapi.exceptions import HTTPException
 from fastapi.routing import APIRouter
 from sqlalchemy.orm.session import Session
-import os
 from database import models
 from dependencies import dependencies as deps
 from loguru import logger

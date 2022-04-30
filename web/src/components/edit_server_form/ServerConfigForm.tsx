@@ -1,9 +1,8 @@
 import { Form, Select } from "antd";
-import { valueType } from "antd/lib/statistic/utils";
 import { useState } from "react";
-import { API, ServerSettings, User } from "../../api";
+import { API, ServerSettings, ServerStatus, User } from "../../api";
+import { useAuth } from "../../auth";
 import Loader from "../Loader";
-import { OptionData, OptionGroupData } from "rc-select/lib/interface"
 
 
 const { Option } = Select;
@@ -11,13 +10,15 @@ const { Option } = Select;
 type ServerConfigFormProps = {
   settings: ServerSettings
   regions: {[key: string]: string}
+  status?: ServerStatus
   users: User[]
   onChange?: (settings: ServerSettings) => void
 }
 
-function ServerConfigForm({ regions, settings, users, onChange }: ServerConfigFormProps) {
+function ServerConfigForm({ regions, settings, users, status, onChange }: ServerConfigFormProps) {
   
   const [updatedSettings, setSettings] = useState(settings)
+  const auth = useAuth()
 
   const onRegionChange = (value: string) => {
     const newState = Object.assign(updatedSettings, {region: value})
@@ -34,6 +35,8 @@ function ServerConfigForm({ regions, settings, users, onChange }: ServerConfigFo
       onChange(updatedSettings)
     }
   }
+
+  const isOwner = (status?.owner === auth.user?.username)
 
   return (
     <Form 
@@ -57,6 +60,7 @@ function ServerConfigForm({ regions, settings, users, onChange }: ServerConfigFo
       label="Editors"
       extra="Other llamagrab users that can edit this server's settings">
       <Select
+        disabled={!isOwner}
         showSearch
         onChange={onEditorsChange}
         defaultValue={updatedSettings.editors || []}
@@ -64,8 +68,6 @@ function ServerConfigForm({ regions, settings, users, onChange }: ServerConfigFo
         placeholder="Search for llamagrab users..."
         optionFilterProp="label"
         options={users.map(user => { return {label: user.username, value: user.id}})}>
-
-
       </Select>
     </Form.Item>
 
@@ -79,9 +81,10 @@ async function getServerSettings(serverId: number, settings?: ServerSettings): P
     if (!settings) {
       settings = await API.Server.getServerSettings(serverId)
     }
+    const status = await API.Server.getServerStatus(serverId)
     const regions = await API.Data.getRegions()
     const users = await API.Account.getAllUsers()
-    return { settings, regions, users }
+    return { settings, regions, users, status }
   } catch(error: any) {
     throw Error('Failed to get settings')
   }

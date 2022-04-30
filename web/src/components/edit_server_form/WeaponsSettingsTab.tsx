@@ -1,4 +1,4 @@
-import {  Divider, Form,  Select, Switch, Table } from "antd";
+import {  Divider, Form,  Select } from "antd";
 
 import { PlayerClass, weaponOptions } from "../../data";
 import HardcodedLoadoutsForm from "./HardcodedLoadouts";
