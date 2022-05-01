@@ -194,5 +194,27 @@
         }
       ]
     }
+  ],
+  "mutualExclusions": [
+    {
+      "playerClass": "Light",
+      "item1": "light_stealth_pack",
+      "item2": "light_falcon"
+    },
+    {
+      "playerClass": "Medium",
+      "item1": "medium_assault_rifle",
+      "item2": "medium_spinfusor"
+    },
+    {
+      "playerClass": "Light",
+      "item1": "light_energy_pack",
+      "item2": "light_impact_nitron"
+    },
+    {
+      "playerClass": "Heavy",
+      "item1": "heavy_shield_pack",
+      "item2": "heavy_plasma_cannon"
+    }
   ]
 }

@@ -12,6 +12,11 @@ class ItemProperties(BaseModel):
   weapon: str
   properties: List[ModProperty]
 
+class MutualExclusion(BaseModel):
+  player_class: str
+  item1: str
+  item2: str
+
 class HardcodedLoadout(BaseModel):
   primary: Optional[str]
   secondary: Optional[str]
@@ -90,6 +95,8 @@ class GameServerConfig(BaseModel):
   medium_value_mods: Optional[List[ModProperty]]
   heavy_value_mods: Optional[List[ModProperty]]
   item_value_mods: Optional[List[ItemProperties]]
+
+  mutual_exclusions: Optional[List[MutualExclusion]]
 
   def serialize(self):
     return json.dumps(self.dict())

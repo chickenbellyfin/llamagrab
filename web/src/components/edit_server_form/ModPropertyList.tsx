@@ -117,7 +117,7 @@ export default function ModPropertyList(props: ModPropertyListProps) {
     props.onChange(properties);
   }
 
-  // if the properties are empty or all propertis have a name set, show a new one
+  // if the properties are empty or all properties have a name set, show a new one
   if (
     properties.length === 0 ||
     properties?.every(p => p.name !== undefined)
