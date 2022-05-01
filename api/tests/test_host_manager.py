@@ -1,14 +1,16 @@
-from unittest.mock import MagicMock, Mock, call, patch
-
-from host_manager import HostManager
-from database.models import Server
 import pytest
-import database.queries
-import lua
+
 import requests
 import time
 from typing import Callable, Tuple
+from unittest.mock import MagicMock, Mock, call, patch
+
 from loguru import logger
+
+from src.host_manager import HostManager
+from src.database.models import Server
+from src.database import queries as db_queries
+from src import lua
 
 TEST_PORT=23456;
 
@@ -56,12 +58,12 @@ def wait_for(assertion: Callable[[], bool], wait_time=1, interval=0.001) -> Tupl
 
 @pytest.fixture
 def mock_requests():
-  with patch('host_manager.requests') as mock:
+  with patch('src.host_manager.requests') as mock:
     yield mock
 
 def test_sync_empty(monkeypatch, mock_requests: Mock):
-  monkeypatch.setattr(database.queries, "get_active_servers", lambda db,region: [])
-  monkeypatch.setattr(database.queries, "get_admin_tribes_usernames", lambda db: [])
+  monkeypatch.setattr(db_queries, "get_active_servers", lambda db,region: [])
+  monkeypatch.setattr(db_queries, "get_admin_tribes_usernames", lambda db: [])
 
   mock = MagicMock()
   monkeypatch.setattr(requests, 'post', lambda *a, **k: mock)
@@ -97,8 +99,8 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
   def mocked_active_servers(db, region):
     return active[region]
   
-  monkeypatch.setattr(database.queries, 'get_active_servers', mocked_active_servers)
-  monkeypatch.setattr(database.queries, "get_admin_tribes_usernames", lambda db: [])
+  monkeypatch.setattr(db_queries, 'get_active_servers', mocked_active_servers)
+  monkeypatch.setattr(db_queries, "get_admin_tribes_usernames", lambda db: [])
 
   def mocked_lua(config, lua_settings):
     return name_to_test_lua[config.display_name]
@@ -120,8 +122,8 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
 
 
 def test_sync_rate_limit(monkeypatch, mock_requests: Mock):
-  monkeypatch.setattr(database.queries, 'get_active_servers', lambda db,region: [])
-  monkeypatch.setattr(database.queries, "get_admin_tribes_usernames", lambda db: [])
+  monkeypatch.setattr(db_queries, 'get_active_servers', lambda db,region: [])
+  monkeypatch.setattr(db_queries, "get_admin_tribes_usernames", lambda db: [])
 
   host_manager = HostManager(
     nodes=TEST_NODES,

@@ -1,5 +1,5 @@
-from api.lua import LuaSettings, to_lua
-from schema.game_server_config import GameServerConfig
+from src.lua import LuaSettings, to_lua
+from src.schema.game_server_config import GameServerConfig
 
 TEST_LUA_SETTINGS = LuaSettings(
   include_admin=True,
