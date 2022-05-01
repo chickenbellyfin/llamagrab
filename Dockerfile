@@ -23,5 +23,5 @@ COPY common common
 COPY --from=build_web /app/web/build /app/api/static
 
 WORKDIR /app/api
-ENTRYPOINT ["python3", "app.py"]
+ENTRYPOINT ["python3", "-m", "src.app"]
 EXPOSE 8000/tcp
