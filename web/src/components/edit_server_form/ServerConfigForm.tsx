@@ -4,7 +4,6 @@ import { API, ServerSettings, ServerStatus, User } from "../../api";
 import { useAuth } from "../../auth";
 import Loader from "../Loader";
 
-
 const { Option } = Select;
 
 type ServerConfigFormProps = {
@@ -36,7 +35,7 @@ function ServerConfigForm({ regions, settings, users, status, onChange }: Server
     }
   }
 
-  const isOwner = (status?.owner === auth.user?.username)
+  const isOwner = status != null ? (status?.owner === auth.user?.username) : true;
 
   return (
     <Form 

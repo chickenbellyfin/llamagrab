@@ -3,6 +3,7 @@ import {  Divider, Form,  Select } from "antd";
 import { PlayerClass, weaponOptions } from "../../data";
 import HardcodedLoadoutsForm from "./HardcodedLoadouts";
 import { ItemPropertiesList } from "./ItemPropertiesSection";
+import MutualExclusionList from "./MutualExclusions";
 import { GameServerConfigTabProps } from "./tabHelpers";
 
 
@@ -51,6 +52,10 @@ export default function WeaponsSettingsTab ({ config, updateCallbacks }: GameSer
       <Form.Item wrapperCol={{offset: 2}}>
         <ItemPropertiesList configItemProperties={config.itemProperties} onChange={update('itemProperties')}/>
       </Form.Item>
+
+      
+      <Divider orientation='left'>Mutual Exclusions​</Divider>
+      <MutualExclusionList mutualExclusions={config.mutualExclusions} onChange={update('mutualExclusions')}/>
 
       <Divider orientation='left'>Hardcoded Loadouts</Divider>
       <HardcodedLoadoutsForm

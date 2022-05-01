@@ -47,6 +47,12 @@ export type ItemProperties = {
   properties?: ModProperty[]
 }
 
+export type MutualExclusion = {
+  playerClass?: string,
+  item1?: string,
+  item2?: string
+}
+
 export type HardcodedLoadout = {
   primary?: string
   secondary?: string
@@ -128,6 +134,8 @@ export type GameServerConfig = {
   mediumValueMods?: ModProperty[]
   heavyValueMods?: ModProperty[]
   itemValueMods?: ItemProperties[]
+
+  mutualExclusions?: MutualExclusion[]
 }
 
 export type ServerVersion = {
@@ -174,6 +182,15 @@ function sanitizeGameServerConfig(config: GameServerConfig): GameServerConfig {
   sanitized.lightValueMods = removeEmptyModProperties(sanitized.lightValueMods)
   sanitized.mediumValueMods = removeEmptyModProperties(sanitized.mediumValueMods)
   sanitized.heavyValueMods = removeEmptyModProperties(sanitized.heavyValueMods)
+
+  if (sanitized.mutualExclusions) {
+    sanitized.mutualExclusions = sanitized.mutualExclusions.filter(item => {
+      return item.playerClass !== undefined && 
+        item.item1 !== undefined && 
+        item.item2 !== undefined && 
+        item.item1 != item.item2
+    });
+  }
   return sanitized;
 }
 

@@ -187,6 +187,15 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
   if lua_settings.include_hitscan_ban:
     lua.require('hitscan.lua')
 
+  # Mutual Exclusions
+  if config.mutual_exclusions:
+    for m in config.mutual_exclusions:
+      lua(
+        'ServerSettings.MutuallyExclusiveItems.add("%s", "%s", "%s", "%s")',
+        m.player_class, weapons[m.player_class][m.item1]['name'], 
+        m.player_class, weapons[m.player_class][m.item2]['name']
+      )
+
   # Item Properties
   if config.item_properties:
     for weapon in config.item_properties:

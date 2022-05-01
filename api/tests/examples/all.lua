@@ -60,6 +60,10 @@ ServerSettings.BannedItems.add("Heavy", "Nova Colt")
 ServerSettings.BannedItems.add("Heavy", "Automatic Shotgun")
 
 --------------------------------------------------------------------------------
+ServerSettings.MutuallyExclusiveItems.add("Light", "Stealth Pack", "Light", "Falcon")
+ServerSettings.MutuallyExclusiveItems.add("Medium", "Assault Rifle", "Medium", "Spinfusor")
+ServerSettings.MutuallyExclusiveItems.add("Light", "Light Energy Pack", "Light", "Impact Nitron")
+ServerSettings.MutuallyExclusiveItems.add("Heavy", "Heavy Shield Pack", "Heavy", "Plasma Cannon")
 Items.setProperty("Light", "Light Spinfusor", Items.Properties.Damage, 800.00)
 Items.setProperty("Light", "Light Spinfusor", Items.Properties.CanZoom, true)
 Items.setProperty("Heavy", "Heavy Bolt Launcher", Items.Properties.ShotEnergyCost, 10.00)
