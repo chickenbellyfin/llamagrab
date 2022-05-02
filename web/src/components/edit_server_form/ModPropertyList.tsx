@@ -70,9 +70,9 @@ function ModPropertyListItem({property, specSet, onChange, onDelete}: ModPropert
   }
 
   return (
-    <Row gutter={[10, 10]} style={{width:'100%'}}>
+    <Row gutter={[10, 10]} style={{width: '100%'}} >
       <Col span={1}>{icon}</Col>
-      <Col flex='none'>
+      <Col>
         <Select
           onChange={updateName}
           defaultValue={undefined}
@@ -84,7 +84,7 @@ function ModPropertyListItem({property, specSet, onChange, onDelete}: ModPropert
       </Col>
       <Col flex='auto'>{input}</Col>
       { onDelete &&
-        <Col span={2} flex='none'>
+        <Col >
           <Button onClick={onDelete} style={{float:'right'}}>
             <DeleteOutlined />
           </Button>
