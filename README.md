@@ -93,18 +93,37 @@ touch ~/data/config.yaml # Must add config here before continuing
 
 # download/update image
 docker pull public.ecr.aws/i2q9d4v7/taservermanager:latest
-docker tag public.ecr.aws/i2q9d4v7/taservermanager:latest taservermanager
 
 # kill existing container and start new one
-docker rm -f taservermanager
-docker run --name taservermanager -d --restart unless-stopped -p 8000:8000 -v "$data_path:/data" taservermanager "/data/config.yaml" 
+docker rm -f llamagrab-app
+docker run --name llamagrab-app -d --restart unless-stopped -p 8000:8000 -v "$data_path:/data" public.ecr.aws/i2q9d4v7/taservermanager:latest "/data/config.yaml" 
+
+# or
+
+docker-compose pull && docker-compose up -d
+```
+
+#### docker-compose.yaml
+```
+version: '3.6'
+
+services:
+  llamagrab:
+    image: public.ecr.aws/i2q9d4v7/taservermanager:latest
+    container_name: llamagrab-app
+    volumes:
+      - './data/llamagrab:/data'
+    ports:
+      - 8000:8000
+    command: /data/config.yaml
+    restart: unless-stopped
 ```
 
 Caddy is used as a reverse proxy and for automatically provisioning TLS certificates.
 
-/etc/caddy/Caddyfile:
+#### /etc/caddy/Caddyfile:
 ```
-servers.llamagrab.net {
+llamagrab.net {
   reverse_proxy localhost:8000
 }
 ```
