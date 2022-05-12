@@ -191,6 +191,10 @@ function sanitizeGameServerConfig(config: GameServerConfig): GameServerConfig {
         item.item1 != item.item2
     });
   }
+
+  if (sanitized.password === '') {
+    sanitized.password = undefined;
+  }
   return sanitized;
 }
 

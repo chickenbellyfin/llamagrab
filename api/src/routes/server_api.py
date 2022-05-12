@@ -141,6 +141,7 @@ async def set_server_config(
   server.name = game_server_config.display_name
   server.server_config = game_server_config.serialize()
   server.updated_at = int(time.time())
+  server.updated_by = user.id
   db.commit()
 
   server_history.add_version(db, server)

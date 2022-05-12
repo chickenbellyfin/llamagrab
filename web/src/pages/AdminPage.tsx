@@ -1,11 +1,12 @@
-import { Button, message, PageHeader, Popconfirm, Space, Table, Tag, Typography } from "antd";
+import { Button, Dropdown, Menu, message, PageHeader, Popconfirm, Space, Table, Tag, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 import { API, ServerStatus, UserAccount, UserLimits } from "../api";
 import Loader from "../components/Loader";
 import { useAuth } from "../auth";
 import ServerStatusLabel from "../components/ServerStatusLabel";
-import { CaretRightFilled, CloseSquareOutlined, DeleteOutlined, LockOutlined } from "@ant-design/icons";
+import { CaretRightFilled, CloseSquareOutlined, DeleteOutlined, DownOutlined, EditOutlined, LockOutlined } from "@ant-design/icons";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const tierColors: {[key: string]: any} = {
   'super': 'red',
@@ -100,6 +101,7 @@ function AllServersList({serverList, invalidate, invalidateParent}: AllServersLi
 
   const [inProgress, setInProgress] = useState(false);
   const auth = useAuth()
+  const navigate = useNavigate()
 
   const doAction = async (
     serverId: number,
@@ -126,6 +128,34 @@ function AllServersList({serverList, invalidate, invalidateParent}: AllServersLi
   const onDelete = (server: ServerStatus) => doAction(
     server.id, API.Server.deleteServer, `Deleted ${server.name}`, `Failed to delete ${server.name}`, invalidateParent)
 
+  const menu =  (server: ServerStatus) => <Menu items={[
+    {
+      label: (
+         auth.user?.username == server.owner ?
+          <Link to={`/edit/${server.id}`}>Edit</Link>
+         :
+          <Popconfirm
+          title={<span>Admins should only edit servers for emergencies.</span>}
+          onConfirm={() => navigate(`/edit/${server.id}`)}
+          okText='Yes, Edit'><a>Edit</a></Popconfirm>
+
+      ),
+      key:'edit',
+      icon: <EditOutlined />
+    },
+    ... auth.permissions.canDeleteServer(server) ? [{
+      label: (
+        <Popconfirm
+          title={<span>Are you sure you want to delete <b>{server.name}</b>?</span>}
+          onConfirm={() => onDelete(server)}
+          okText='Yes, Delete'><a>Delete</a></Popconfirm>
+      ),
+      key:'delete',
+      danger: true,
+      icon: <DeleteOutlined />
+    }] : []
+  ]} />
+
   const serverColumns = [
     {title: 'id', dataIndex: 'id'},
     {title: () => <LockOutlined />, dataIndex: 'id', render: (id: number, server: ServerStatus) =>  <>{server.isPrivate && <LockOutlined />}</>},
@@ -143,13 +173,13 @@ function AllServersList({serverList, invalidate, invalidateParent}: AllServersLi
               <Button size='small' loading={inProgress} onClick={() => onStop(server)}><CloseSquareOutlined/> Stop</Button> }
             { server.status == 'stopped' &&
               <Button size='small' loading={inProgress} onClick={() => onStart(server)}><CaretRightFilled/> Start</Button> }
-            { auth.permissions.canDeleteServer(server) &&
-              <Popconfirm
-                title={<span>Are you sure you want to delete <b>{server.name}</b>?</span>}
-                onConfirm={() => onDelete(server)}
-                okText='Yes, Delete'>
-              <Button size='small' danger loading={inProgress}><DeleteOutlined /> Delete</Button>
-            </Popconfirm> }
+            <Dropdown overlay={menu(server)}>
+            <a onClick={e => e.preventDefault()}>
+              <Button size='small' loading={inProgress}>
+                  Actions<DownOutlined />
+              </Button>
+            </a>
+          </Dropdown>
           </Space>
         );
       }
