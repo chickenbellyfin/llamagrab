@@ -1,5 +1,5 @@
-# ServerManager Agent
-ServerManager Agent - Service that runs on each host server. It listens for commands from ServerManager API and runs taserver docker containers on the host accordingly.
+# llamagrab Agent
+LLamagrab Agent - Service that runs on each host server. It listens for commands from the API and runs taserver docker containers on the host accordingly.
 
 ## Commands:
 Commands are of the form:

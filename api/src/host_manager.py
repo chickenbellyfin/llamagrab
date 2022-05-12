@@ -25,7 +25,7 @@ def get_lua_settings(db: Session) -> LuaSettings:
 
 class HostManager:
   """
-  Handles syncing of server configs to ServerManager Agent instances on region hosts.
+  Handles syncing of server configs to Agent instances on region hosts.
   When sync() is called (by the API or some other process), will return immediately and all of the
   running server's Lua's will be regenerated and sent to the nodes where they are supposed to be
   running.
@@ -63,7 +63,7 @@ class HostManager:
           'type': 'sync',
           'payload': payload
         }
-        
+
         message_hashed = { k: md5(payload[k]) for k in payload }
         logger.info(f'Syncing configs to {region}@{self.nodes[region]}:{self.port} {message_hashed}')
 
@@ -94,7 +94,7 @@ class HostManager:
           self._do_sync()
       except Exception as e:
         logger.opt(exception=True).error('Error while syncing')
-  
+
   def sync(self):
     self.sync_requested = True
     self.event.set()

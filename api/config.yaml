@@ -19,7 +19,7 @@ regions:
 
 host_manager:
   port: 8999
-  
+
   # mapping from region key to hostname
   # host_manager iterates over this list so missing or extra regions wont cause errors
   nodes:

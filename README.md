@@ -19,22 +19,22 @@ Service which runs on each host server. Receives sync commands from API and sche
 See [agent](/agent/README.md) for more details.
 
 ### Architecture Diagram
-![diagram](taservermanager.drawio.png)
+![diagram](architecture.drawio.png)
 
 ## Build
 ```
-docker build . -t taservermanager
+docker build . -t llamagrab
 ```
 
 ## Run
 Minimal run command:
 ```
-docker run -P taservermanager
+docker run -P llamagrab
 ```
 The minimal command will store data inside the container, won't be able to keep host servers in sync, and only good for trying out the UI locally.
 
 ```
-docker run -p 8000:8000 -v $(pwd)/data:/data taservermanager /data/config.yaml 
+docker run -p 8000:8000 -v $(pwd)/data:/data llamagrab /data/config.yaml
 ```
 
 ## Development
@@ -96,7 +96,7 @@ docker pull public.ecr.aws/i2q9d4v7/taservermanager:latest
 
 # kill existing container and start new one
 docker rm -f llamagrab-app
-docker run --name llamagrab-app -d --restart unless-stopped -p 8000:8000 -v "$data_path:/data" public.ecr.aws/i2q9d4v7/taservermanager:latest "/data/config.yaml" 
+docker run --name llamagrab-app -d --restart unless-stopped -p 8000:8000 -v "$data_path:/data" public.ecr.aws/i2q9d4v7/taservermanager:latest "/data/config.yaml"
 
 # or
 
@@ -128,5 +128,3 @@ llamagrab.net {
 }
 ```
 Open :80 and :443 in network security group/firewall
-
-
