@@ -15,7 +15,8 @@ def test_list_servers(test_client: TestClient, db_session: Session, server1, log
       'region': 'region1',
       'regionName': 'TestRegion1',
       'status': 'stopped',
-      'gameMode': 'CTF'
+      'gameMode': 'CTF',
+      'isPrivate': True
     }
   ]
 
@@ -37,7 +38,8 @@ def test_list_all_servers(test_client: TestClient, login_user_admin):
       'region': 'region1',
       'regionName': 'TestRegion1',
       'status': 'stopped',
-      'gameMode': 'CTF'
+      'gameMode': 'CTF',
+      'isPrivate': True
     },
     {
       'id': 1,
@@ -46,6 +48,7 @@ def test_list_all_servers(test_client: TestClient, login_user_admin):
       'region': 'region2',
       'regionName': 'TestRegion2',
       'status': 'stopped',
-      'gameMode': 'CTF'
+      'gameMode': 'CTF',
+      'isPrivate': False
     }
   ]

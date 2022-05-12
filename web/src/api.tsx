@@ -1,4 +1,4 @@
-import { getToken } from './auth' 
+import { getToken } from './auth'
 
 
 export type UserLimits = {
@@ -28,7 +28,7 @@ export type ServerStatus = {
   regionName: string,
   status: string,
   gameMode: string,
-  serverconfig: any
+  isPrivate: boolean
 }
 
 export type ServerSettings = {
@@ -91,7 +91,7 @@ export type GameServerConfig = {
   flagDragMedium?: number
   flagDragHeavy?: number
   flagDragDeceleration?: number
-  
+
   maxPlayers?: number
   nakedSpawn?: boolean
   lightCountLimit?: number
@@ -185,9 +185,9 @@ function sanitizeGameServerConfig(config: GameServerConfig): GameServerConfig {
 
   if (sanitized.mutualExclusions) {
     sanitized.mutualExclusions = sanitized.mutualExclusions.filter(item => {
-      return item.playerClass !== undefined && 
-        item.item1 !== undefined && 
-        item.item2 !== undefined && 
+      return item.playerClass !== undefined &&
+        item.item1 !== undefined &&
+        item.item2 !== undefined &&
         item.item1 != item.item2
     });
   }
@@ -229,7 +229,7 @@ function handleApiError<T>(response: Response): Promise<T> {
       throw Error('Unknown Error')
     }
   })
-  
+
 }
 
 async function doRequest<T>({path, method, headers, body, includeAuthToken = true}: RequestArgs): Promise<T> {

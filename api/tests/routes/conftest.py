@@ -41,7 +41,7 @@ def user_admin():
     id=2,
     username='testadmin',
     password=argon2.hash('testadminpassword'),
-    tier='admin',    
+    tier='admin',
     limits=UserLimits(server_limit=-1, active_limit=-1)
   )
 
@@ -51,7 +51,7 @@ def user_super():
     id=3,
     username='testsuper',
     password=argon2.hash('testsuperpassword'),
-    tier='super',    
+    tier='super',
     limits=UserLimits(server_limit=-1, active_limit=-1)
   )
 
@@ -65,6 +65,7 @@ def server1(user_1: User):
     status='stopped',
     game_mode='CTF',
     server_config=GameServerConfig(
+      password='testserverpassword',
       display_name='TestServer1Config'
     ).serialize(),
     updated_at=0,
@@ -123,15 +124,15 @@ def server2_version1(server2: Server):
 
 @pytest.fixture(autouse=True)
 def populate_db(
-  inmemory_db, 
+  inmemory_db,
   user_1,
   user_2,
   user_admin,
   user_super,
-  server1, 
-  server2, 
-  server1_version1, 
-  server1_version2, 
+  server1,
+  server2,
+  server1_version1,
+  server1_version2,
   server2_version1):
   with inmemory_db.SessionFactory() as session:
     session.merge(user_1)
@@ -171,7 +172,7 @@ def login_user_super(mock_login_manager, user_super):
   f.set_result(user_super)
   mock_login_manager.return_value = f
   return user_super
-  
+
 
 @pytest.fixture
 def mock_login_manager():
@@ -196,7 +197,7 @@ def inmemory_db():
   # sqlite will be inmemory if path is empty
   return database.Database('', '', poolclass=StaticPool)
 
-@pytest.fixture 
+@pytest.fixture
 def should_sync(host_manager):
   yield host_manager
   host_manager.sync.assert_called_once()
@@ -224,4 +225,3 @@ def test_app(
 @pytest.fixture
 def test_client(test_app):
   return TestClient(test_app)
-  

@@ -4,7 +4,7 @@ import { API, ServerStatus, UserAccount, UserLimits } from "../api";
 import Loader from "../components/Loader";
 import { useAuth } from "../auth";
 import ServerStatusLabel from "../components/ServerStatusLabel";
-import { CaretRightFilled, CloseSquareOutlined, DeleteOutlined } from "@ant-design/icons";
+import { CaretRightFilled, CloseSquareOutlined, DeleteOutlined, LockOutlined } from "@ant-design/icons";
 import { useState } from "react";
 
 const tierColors: {[key: string]: any} = {
@@ -30,7 +30,7 @@ function UserList ({ users, invalidate, invalidateParent }: UserListProps) {
       await action(user.id);
       message.success(`Updated ${user.username}`)
     } catch (e) {
-      message.error(`Failed to update ${user.username}: ${e}`)    
+      message.error(`Failed to update ${user.username}: ${e}`)
     } finally {
       invalidateFunc()
     }
@@ -41,7 +41,7 @@ function UserList ({ users, invalidate, invalidateParent }: UserListProps) {
   const columns = [
     { title: 'id', dataIndex:'id' },
     { title: 'Name', dataIndex: 'username'},
-    { 
+    {
       title: 'Tier',
       dataIndex: 'tier',
       render: (tier: string) => <Tag color={tierColors[tier]}>{tier.toUpperCase()}</Tag>
@@ -65,7 +65,7 @@ function UserList ({ users, invalidate, invalidateParent }: UserListProps) {
           {auth.permissions.canMakeAdmin(user) && <Button size='small' onClick={() => updateUser(user, API.Admin.makeAdmin)}>Make Admin</Button>}
           {auth.permissions.canRemoveAdmin(user) && <Button size='small' onClick={() => updateUser(user, API.Admin.removeAdmin)}>Remove Admin</Button>}
           {/* TODO {auth.permissions.canResetPassword(user) && <Button size='small'>Reset Password</Button>} */}
-          {auth.permissions.canDeleteUser(user) && 
+          {auth.permissions.canDeleteUser(user) &&
             <Popconfirm
               title={<span>Are you sure you want to delete <b>{user.username}</b>?</span>}
               onConfirm={() => updateUser(user, API.Account.deleteUser, invalidateParent)}
@@ -100,7 +100,7 @@ function AllServersList({serverList, invalidate, invalidateParent}: AllServersLi
 
   const [inProgress, setInProgress] = useState(false);
   const auth = useAuth()
- 
+
   const doAction = async (
     serverId: number,
     apiCall: (serverId: number ) => Promise<any>,
@@ -118,16 +118,17 @@ function AllServersList({serverList, invalidate, invalidateParent}: AllServersLi
       invalidateFunc()
     }
   }
-  
+
   const onStart = (server: ServerStatus) => doAction(
     server.id, API.Server.startServer, `Started ${server.name}`, `Failed to start ${server.name}`)
   const onStop = (server: ServerStatus) => doAction(
     server.id, API.Server.stopServer, `Stopped ${server.name}`, `Failed to stop ${server.name}`)
   const onDelete = (server: ServerStatus) => doAction(
     server.id, API.Server.deleteServer, `Deleted ${server.name}`, `Failed to delete ${server.name}`, invalidateParent)
-  
+
   const serverColumns = [
     {title: 'id', dataIndex: 'id'},
+    {title: () => <LockOutlined />, dataIndex: 'id', render: (id: number, server: ServerStatus) =>  <>{server.isPrivate && <LockOutlined />}</>},
     {title: 'Name', dataIndex: 'name'},
     {title: 'Status', dataIndex: 'status', render: (status: string) => <ServerStatusLabel status={status}/>},
     {title: 'Region', dataIndex: 'regionName'},
@@ -138,9 +139,9 @@ function AllServersList({serverList, invalidate, invalidateParent}: AllServersLi
       render: (id: number, server: ServerStatus) => {
         return (
           <Space wrap>
-            { server.status == 'running' && 
+            { server.status == 'running' &&
               <Button size='small' loading={inProgress} onClick={() => onStop(server)}><CloseSquareOutlined/> Stop</Button> }
-            { server.status == 'stopped' && 
+            { server.status == 'stopped' &&
               <Button size='small' loading={inProgress} onClick={() => onStart(server)}><CaretRightFilled/> Start</Button> }
             { auth.permissions.canDeleteServer(server) &&
               <Popconfirm
@@ -153,7 +154,7 @@ function AllServersList({serverList, invalidate, invalidateParent}: AllServersLi
         );
       }
     }
-  ] 
+  ]
   return (
     <Table<ServerStatus> pagination={false} columns={serverColumns} dataSource={serverList} size='small'/>
   );
@@ -170,7 +171,7 @@ export default function AdminPage() {
 
   const refresh = () => setRefresh(refreshKey + 1)
 
-  const navigate = useNavigate()  
+  const navigate = useNavigate()
   return (
     <>
       <PageHeader title='Admin Panel' onBack={() => navigate('/')}/>

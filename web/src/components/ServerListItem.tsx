@@ -1,4 +1,4 @@
-import { PoweroffOutlined, EditOutlined, DeleteOutlined, PlayCircleOutlined, LinkOutlined } from "@ant-design/icons"
+import { PoweroffOutlined, EditOutlined, DeleteOutlined, PlayCircleOutlined, LinkOutlined, LockOutlined } from "@ant-design/icons"
 import { List, Card, Divider, Descriptions, Badge, Popconfirm, message, Spin } from "antd"
 import { useState } from "react"
 import { Link } from "react-router-dom"
@@ -65,11 +65,11 @@ export default function ServerListItem({ server, invalidate }: ServerListItemPro
 
   const startAction = ( <div onClick={onStart}><PlayCircleOutlined/> START</div>)
   const stopAction = (<div onClick={onStop}><PoweroffOutlined/> STOP</div>);
-  
+
   let deleteAction: JSX.Element = <></>;
   if (isOwner) {
     deleteAction = (
-      <Popconfirm 
+      <Popconfirm
         title={<span>Are you sure you want to delete <b>{server.name}</b>?</span>}
         onConfirm={onDelete}
         okText='Yes, Delete'
@@ -78,9 +78,9 @@ export default function ServerListItem({ server, invalidate }: ServerListItemPro
       </Popconfirm>
     );
   }
- 
+
   const actions: { [key: string]: any[]} = {
-    'running': [          
+    'running': [
       stopAction,
       editAction,
       deleteAction
@@ -104,21 +104,21 @@ export default function ServerListItem({ server, invalidate }: ServerListItemPro
         actions={actions[server.status]}>
 
         <h3>
-          <b>{server.name}</b><Divider type='vertical'/>
+          <b>{ server.isPrivate && <LockOutlined/>} {server.name}</b><Divider type='vertical'/>
           <span style={{opacity: '80%'}}>{server.gameMode}</span>
           { !isOwner &&
             <span style={{opacity: '80%', float: 'right'}}><LinkOutlined />&nbsp;{server.owner}</span>
           }
         </h3>
         <Divider/>
-        
+
         <Descriptions
-          colon={false} 
+          colon={false}
           layout='vertical'
           size='small'
           labelStyle={{opacity:'85%'}}>
           <Descriptions.Item label="Status">
-            <Badge 
+            <Badge
               status={server.status === 'running' ? 'success' : 'error'}
               text={server.status}/>
           </Descriptions.Item>

@@ -30,7 +30,7 @@ class GameServerConfig(BaseModel):
   description: Optional[str]
   password: Optional[str] # this is a non-secure game server password
   admins: Optional[List[str]]
-  
+
   team_assign_type: Optional[str]
   auto_balance: Optional[bool]
   time_limit: Optional[int]

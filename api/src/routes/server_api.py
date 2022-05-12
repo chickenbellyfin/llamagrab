@@ -20,7 +20,7 @@ from src import  permissions, server_history, server_sharing
 router = APIRouter()
 
 def get_server(
-  server_id: int, 
+  server_id: int,
   user: models.User = Depends(deps.login),
   db: Session = Depends(deps.db)) -> models.Server:
   """
@@ -33,7 +33,7 @@ def get_server(
     raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND)
   elif not permissions.can_read_server(db, user, server):
     raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN)
-  
+
   return server
 
 @router.put('/servers', status_code=http_status.HTTP_201_CREATED)
@@ -41,7 +41,7 @@ async def create_server(
   request: requests.ServerCreateRequest,
   user: models.User = Depends(deps.login),
   db: Session = Depends(deps.db)):
-  
+
   if not permissions.can_create_server(db, user):
     raise HTTPException(status_code=http_status.HTTP_429_TOO_MANY_REQUESTS, detail="Server limit reached for user")
 
@@ -67,18 +67,21 @@ async def create_server(
     name=new_server.name,
     region=new_server.region,
     status=new_server.status,
-    game_mode=new_server.game_mode
+    game_mode=new_server.game_mode,
+    is_private=request.server_config.password is not None
   )
 
 @router.get('/server/{server_id}/status')
 async def get_server_status(server: models.Server = Depends(get_server)):
+  config = GameServerConfig.parse(server.server_config)
   return responses.ServerStatus(
     id=server.id,
     owner=server.owner.username,
     name=server.name,
     region=server.region,
     status=server.status,
-    game_mode=server.game_mode
+    game_mode=server.game_mode,
+    is_private=config.password is not None
   )
 
 @router.get('/server/{server_id}/settings')
@@ -88,7 +91,7 @@ async def get_server_settings(
 ):
   editors = server_sharing.get_server_editors(db, server)
   return responses.ServerSettings(
-    region=server.region, 
+    region=server.region,
     editors=[user.id for user in editors]
   )
 
@@ -109,7 +112,7 @@ async def set_server_settings(
       status_code=http_status.HTTP_403_FORBIDDEN,
       detail='User cannot modify editors of server'
     )
-  
+
   if request.region not in deps.regions:
     raise HTTPException(
       status_code=http_status.HTTP_400_BAD_REQUEST,
@@ -160,8 +163,8 @@ async def stop_server(server: models.Server = Depends(get_server), db: Session =
 
 @router.delete('/server/{server_id}')
 async def delete_server(
-  user: models.User = Depends(deps.login), 
-  server: models.Server = Depends(get_server), 
+  user: models.User = Depends(deps.login),
+  server: models.Server = Depends(get_server),
   db: Session = Depends(deps.db)
 ):
   if server.user != user.id and user.tier != 'super':

@@ -8,6 +8,7 @@ from sqlalchemy.orm.session import Session
 from src.database import models, queries as db_queries
 from src.dependencies import dependencies as deps
 from src.schema import responses
+from src.schema.game_server_config import GameServerConfig
 from src import server_sharing
 
 router = APIRouter()
@@ -22,7 +23,8 @@ def server_status_list(servers: List[models.Server], db: Session) -> List[respon
       region=s.region,
       region_name=deps.regions.get(s.region, s.region),
       status=s.status,
-      game_mode=s.game_mode
+      game_mode=s.game_mode,
+      is_private=GameServerConfig.parse(s.server_config).password is not None
     )
     for s in servers
   ]
@@ -35,7 +37,7 @@ async def get_servers_for_user(
   """
   Get all servers which the requesting user owns or is an editor of
   """
-  servers = db_queries.get_servers(db, user)  
+  servers = db_queries.get_servers(db, user)
   shared_servers = server_sharing.get_shared_servers(db, user)
   return server_status_list(servers + shared_servers, db)
 
