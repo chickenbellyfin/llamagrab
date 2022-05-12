@@ -21,7 +21,7 @@ export default function BasicSettingsTab (
     labelCol={{span: 6}}
     wrapperCol={{span: 12}}
     >
-    <Form.Item 
+    <Form.Item
       label='Name'
       name='name'
       rules={[Rules.required, Rules.allowedCharacters]}>
@@ -31,28 +31,29 @@ export default function BasicSettingsTab (
     </Form.Item>
 
     <Form.Item name='description' label='Description' rules={[Rules.allowedCharacters]}>
-      <Input 
+      <Input
         defaultValue={config['description']}
         onChange={updateInput('description')}/>
     </Form.Item>
 
-    <Form.Item name='password' label='Server Password' rules={[Rules.allowedCharacters]}>
+    <Form.Item name='tribes_server_password' label='Server Password' rules={[Rules.allowedCharacters]}>
       <Input.Password
         defaultValue={config['password']}
-        onChange={updateInput('password')}/>
+        onChange={updateInput('password')}
+        autoComplete='off'/>
     </Form.Item>
-    <Form.Item 
+    <Form.Item
       label='Server Admins'
       extra="These players can start, end, and switch maps using TAMods">
-      <Select 
+      <Select
         placeholder="Enter community server usernames..."
-        mode='tags' 
+        mode='tags'
         value={config.admins || []}
-        onChange={handleAdminListChange} 
+        onChange={handleAdminListChange}
         tokenSeparators={[',']}
         dropdownClassName='not-visible'/>
     </Form.Item>
-    
+
   </Form>
 
   );

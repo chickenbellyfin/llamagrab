@@ -21,20 +21,22 @@ export default function CredentialsForm({ submitLabel, onSubmit, disabled, signU
       onSubmit(username, password)
     }
   }
-  
+
   return (
     <Form  onFinish={handleSubmit} style={{maxWidth: '400px', margin: '0 auto'}}>
       <Form.Item name="username" rules={[{ required: true, message: 'Required' }]}>
-        <Input 
+        <Input
           prefix={<UserOutlined style={{opacity: '40%'}}/>}
-          onChange={(e) => setUsername(e.target.value)} 
-          placeholder='Username'/>
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder='Username'
+          autoComplete="username"/>
       </Form.Item>
       <Form.Item name="password" rules={[{ required: true, message: 'Required' }]}>
         <Input.Password
           prefix={<LockOutlined style={{opacity: '40%'}}/>}
-          onChange={e => setPassword(e.target.value)} 
-          placeholder='Password'/>
+          onChange={e => setPassword(e.target.value)}
+          placeholder='Password'
+          autoComplete={signUp ? 'new-password' : 'current-password'}/>
       </Form.Item>
       <Form.Item>
         <Button
