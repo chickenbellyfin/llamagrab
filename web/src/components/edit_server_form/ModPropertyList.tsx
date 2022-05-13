@@ -33,6 +33,11 @@ function ModPropertyListItem({property, specSet, onChange, onDelete}: ModPropert
     }
 
     if (spec.type === 'boolean') {
+      // default booleans to false
+      if (!property.value) {
+        property.value = false;
+      }
+
       input = (
         <>
           {/* padding from .ant-input-number-group-addon to match input fields' help icon*/}
@@ -105,7 +110,7 @@ export default function ModPropertyList(props: ModPropertyListProps) {
   //const propertyList = props.properties || []
   const [properties, setProperties] = useState(props.properties || [])
 
-  const updateProperty = (idx: number, value: ModProperty) => { 
+  const updateProperty = (idx: number, value: ModProperty) => {
     properties[idx] = value;
     setProperties(properties)
     props.onChange(properties)
