@@ -2,7 +2,6 @@
 import { Link, Navigate, Route, Routes, useLocation, useNavigate} from 'react-router-dom'
 import { Col, Layout, Menu, Row, Spin } from 'antd'
 import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
 import { ProtectedRoute, useAuth } from './auth'
 
 import './App.less'
@@ -19,10 +18,12 @@ import { ReactComponent as adminLogo } from '../public/admin.svg'
 const { Header, Content, Sider } = Layout;
 
 function App () {
-  
+
   const auth = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const isLanding = location.pathname === '/login';
 
   const sidebarVisible = Boolean(auth.user)
 
@@ -36,22 +37,23 @@ function App () {
       </Spin>
     );
   }
-  
+
   return (
     <>
     <Layout style={{height: '100vh'}}>
       <Header style={{zIndex: 1, width: '100%', padding: '0px' }}>
-        <AppHeader/>
+        <AppHeader showLogo={!isLanding}/>
       </Header>
       <Layout style={{height: '100%'}}>
         {sidebarVisible &&
-          <Sider 
+          <Sider
+            width={240}
             breakpoint='md'
             collapsedWidth={0}
              style={{
                height: '100vh',
                position: 'sticky',
-               zIndex: 2
+               zIndex: 2,
             }}
           >
           <Menu theme="dark" selectedKeys={[location.pathname]} mode="inline">
@@ -59,13 +61,13 @@ function App () {
               <Link to='/'><DatabaseFilled/>&nbsp;&nbsp;Servers</Link>
               </Menu.Item>
 
-              
+
               <Menu.Item key="/regions" disabled>
                 <Link to='/regions'><GlobalOutlined/>&nbsp;&nbsp;Regions</Link>
               </Menu.Item>
 
               {auth.permissions.isAdmin() &&
-                <Menu.Item 
+                <Menu.Item
                   key="/admin"
                   onClick={() => navigate('/admin')}>
                   <Link to='/admin'><Icon style={{fontSize:'18px'}} component={adminLogo}/>&nbsp;&nbsp;Admin</Link>
@@ -75,21 +77,25 @@ function App () {
           </Sider>
         }
         <Content style={{padding: '20px', overflowX: 'hidden'}}>
-          <Row justify='center'><Col lg={24} xl={18} xxl={16}>
+          <Row justify='center'><Col  lg={24} xl={20} xxl={20}>
           <Routes>
 
             {/* Login & Signup pages disabled for logged in users, will redirect to '/' */}
-            { !auth.user && <Route path='/login' element={<LoginPage/>}/>}
             { !auth.user && <Route path='/signup' element={<SignupPage/>}/>}
-            
+
             {/* Logged in pages should be wrapped in <ProtectedRoute> so that logged out users
                 get redirected to /login */}
-            <Route path='/' element={<ProtectedRoute><HomePage/></ProtectedRoute>}/>
+            <Route path='/' element={
+              auth.user ?
+              <ProtectedRoute><HomePage/></ProtectedRoute>
+              :
+              <></>
+            }/>
             <Route path='/edit/:serverId' element={<ProtectedRoute><EditServerPage/></ProtectedRoute>}/>
             <Route path='/new' element={<ProtectedRoute><NewServerPage/></ProtectedRoute>}/>
             <Route path='/admin' element={<ProtectedRoute><AdminPage/></ProtectedRoute>}/>
             <Route path='/settings' element={<ProtectedRoute><SettingsPage/></ProtectedRoute>}/>
-            
+
             {/* Any paths not defined redirect to '/' */}
             <Route path='*' element={<Navigate replace to='/'/>}/>
           </Routes>

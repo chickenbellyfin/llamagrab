@@ -1,8 +1,6 @@
 import { Button, Form, Input } from "antd";
 import { ReactNode, useState } from "react";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { Link } from "react-router-dom";
-
 
 
 type CredentialsFormProps = {
@@ -47,11 +45,6 @@ export default function CredentialsForm({ submitLabel, onSubmit, disabled, signU
             { submitLabel }
         </Button>
       </Form.Item>
-      {!signUp &&
-      <Link to='/signup' >
-        New? Sign Up
-      </Link>
-      }
     </Form>
   );
 

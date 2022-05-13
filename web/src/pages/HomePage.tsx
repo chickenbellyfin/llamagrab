@@ -19,7 +19,7 @@ export default function HomePage(props: HomeProps) {
   }
 
   let buttonComponent = (
-    <Button 
+    <Button
       size='large'
       type="primary"
       icon={<PlusCircleOutlined/>}
@@ -40,10 +40,10 @@ export default function HomePage(props: HomeProps) {
 
   return (
     <>
-    <PageHeader 
-        title='Server List'/>
+    <PageHeader
+        title='Server List'
+        extra={[buttonComponent]}/>
       <Space direction='vertical' style={{width: '100%'}}>
-        {buttonComponent}
         <ServerList/>
       </Space>
     </>

@@ -37,8 +37,8 @@ function ServerVersionList({ history, onRestoreVersion }: ServerVersionListProps
             onConfirm={() => {
               onRestoreVersion(item)
             }}>
-            <Button 
-              size='small' 
+            <Button
+              size='small'
               >
               <RollbackOutlined />Restore
             </Button>
@@ -52,7 +52,7 @@ function ServerVersionList({ history, onRestoreVersion }: ServerVersionListProps
             title={
               <>
                 {changes}&nbsp;&nbsp;&nbsp;
-                { isCurrentVersion && 
+                { isCurrentVersion &&
                   <Tag color='green'>Current Version</Tag>
                 }
               </>
@@ -65,7 +65,7 @@ function ServerVersionList({ history, onRestoreVersion }: ServerVersionListProps
 }
 
 interface ServerHistoryListLoaderProps {
-  serverId: number,  
+  serverId: number,
   onRestoreVersion: (version: ServerVersion) => void
 }
 const ServerHistoryListLoader = Loader<ServerHistoryListLoaderProps, ServerVersion[]>({
@@ -85,7 +85,7 @@ export default function EditServerPage() {
   const [isHistoryVisible, setHistoryVisible] = useState(false)
   const [historyRefreshKey, setHistoryRefreshKey] = useState(0)
   const [formRefreshKey, setFormRefreshKey] = useState(0)
-  
+
   const showHistory = () => {
     setHistoryRefreshKey(historyRefreshKey + 1)
     setHistoryVisible(true)
@@ -130,20 +130,22 @@ export default function EditServerPage() {
         title='Settings History'>
           <ServerHistoryListLoader key={`${historyRefreshKey}`} onRestoreVersion={revertToVersion} serverId={serverId}/>
       </Modal>
-      <PageHeader 
+      <PageHeader
         title={`Edit ${config?.displayName || 'Server'}`}
-        onBack={() => navigate('/')}/>
-      <Row justify='end' style={{marginBottom: '10px'}}>
-        <Button
+        onBack={() => navigate('/')}
+        extra={[
+          <Button
           icon={<HistoryOutlined />}
           onClick={showHistory}
-          style={{marginRight: '10px'}}>History</Button>
+          style={{marginRight: '10px'}}>History</Button>,
         <Button
           type='primary'
-          icon={<SaveOutlined/>} 
+          icon={<SaveOutlined/>}
           onClick={() => saveConfig()}
           disabled={!isConfigChanged}
           loading={isSaving}>Save</Button>
+        ]}/>
+      <Row justify='end' style={{marginBottom: '10px'}}>
       </Row>
       <Spin spinning={isSaving}>
         <Card title='Server Settings' style={{marginBottom: '20px'}}>

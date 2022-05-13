@@ -3,7 +3,8 @@ import { setToken, useAuth } from '../auth'
 import { Typography, Card, Layout } from 'antd'
 import { Navigate, useNavigate } from 'react-router';
 import { API } from '../api';
-import CredentialsForm from '../components/CredentialsForm';
+import CredentialsForm from './CredentialsForm';
+import { Link } from 'react-router-dom';
 
 const { Content } = Layout;
 const { Text } = Typography;
@@ -25,7 +26,7 @@ async function doLogin(
     body: JSON.stringify({
       'username': username,
       'password': password,
-      
+
     })
   }).then(response => {
     if (!response.ok) {
@@ -36,11 +37,14 @@ async function doLogin(
 
 };
 
-export default function LoginPage() {
+type LoginFormProps = {
+  finish: () => void
+}
+export default function LoginForm(props: LoginFormProps) {
 
   const [errorMessage, setErrorMessage] = useState<string>();
 
-  const auth = useAuth();  
+  const auth = useAuth();
   const navigate = useNavigate()
 
   const onSuccess = (token: LoginResponse) => {
@@ -49,6 +53,7 @@ export default function LoginPage() {
       .then(user => {
         auth.login(user)
         navigate('/')
+        props.finish()
       })
       .catch((error: Error) => {
         setErrorMessage(error.message)
@@ -82,17 +87,15 @@ export default function LoginPage() {
       .catch(onFailure)
   }
 
-  if (auth.user) {
-    return <Navigate to='/'/>
-  } else {
-    return   (
-      <Card title='Login'>
-        <Content>
-          <CredentialsForm submitLabel={ 'Login' } onSubmit={onSubmit}/>
-          { errorMessage && <Text type="danger">{errorMessage}</Text> }
-          { !errorMessage && <br/> }
-        </Content>
-      </Card>
-    );
-  }
+  return   (
+    <>
+      <CredentialsForm submitLabel={ 'Login' } onSubmit={onSubmit}/>
+      { errorMessage && <Text type="danger">{errorMessage}</Text> }
+      { !errorMessage && <br/> }
+      <Link to='/signup' onClick={props.finish} >
+        New? Sign Up
+      </Link>
+    </>
+  );
+
 }
