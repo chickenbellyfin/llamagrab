@@ -1,12 +1,11 @@
 @import 'antd/lib/style/themes/dark.less';
 @import 'antd/dist/antd.dark.less';
 
-
 // list of vars
 // https://github.com/ant-design/ant-design/blob/master/components/style/themes/default.less
 //@body-background: #141414;
-@body-background: #000000;
-@component-background: #191c24;
+@body-background: #2f343c;
+@component-background: #383e47;
 //@input-bg: #2c3139;
 
 @card-head-background: @component-background;
@@ -15,20 +14,18 @@
 @border-color-split: @border-color-base;
 
 // header inherits this
-@popover-background: #191c24;
+@popover-background: #404854;
 
 @table-header-bg: rgba(0,0,0,.3);
 
-@logo-color: #dddddd;
+@logo-color: #aab0b9;
 
 body, #root {
  overflow: hidden;
 }
 
-
-
 .ant-layout-header h1 {
-  color: #dddddd;
+  color: #aab0b9;
 }
 
 .ant-list .ant-card {
@@ -56,6 +53,10 @@ body, #root {
 
 .form-card  {
   width: 100%;
+}
+
+.landing-logo {
+  background-color: @popover-background;
 }
 
 

@@ -9,7 +9,7 @@ import { SaveOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { NewServerConfigForm } from "../components/edit_server_form/ServerConfigForm";
 import { useAuth } from "../auth";
-
+import ContentWrapper from "../components/ContentWrapper";
 
 const defaultServerSettings: ServerSettings = {}
 
@@ -37,9 +37,8 @@ export default function NewServerPage() {
     auth.refresh()
   }
 
-
   return (
-    <>
+    <ContentWrapper>
       <PageHeader
         title={'Create New Server'}
         onBack={() => navigate('/')}
@@ -60,6 +59,6 @@ export default function NewServerPage() {
         <GameServerConfigForm  config={defaultConfig} onChange={setConfig}/>
         </Card>
       </Spin>
-    </>
+    </ContentWrapper>
   )
 }

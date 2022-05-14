@@ -6,6 +6,7 @@ import { useState } from "react";
 import { HistoryOutlined, RollbackOutlined, SaveOutlined } from "@ant-design/icons";
 import ServerConfigForm from "../components/edit_server_form/ServerConfigForm";
 import Loader from "../components/Loader";
+import ContentWrapper from "../components/ContentWrapper";
 
 const DATE_FORMAT: Intl.DateTimeFormatOptions = {
   weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric'
@@ -122,7 +123,7 @@ export default function EditServerPage() {
   const isConfigChanged = Boolean(config) || Boolean(settings);
 
   return (
-    <>
+    <ContentWrapper>
       <Modal
         visible={isHistoryVisible}
         footer={null}
@@ -157,6 +158,6 @@ export default function EditServerPage() {
           <EditGameServerConfigForm key={`gameSettings${formRefreshKey}`} serverId={serverId} onChange={setConfig}/>
         </Card>
       </Spin>
-    </>
+    </ContentWrapper>
   )
 }

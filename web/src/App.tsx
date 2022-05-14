@@ -1,6 +1,6 @@
 
 import { Link, Navigate, Route, Routes, useLocation, useNavigate} from 'react-router-dom'
-import { Col, Layout, Menu, Row, Spin } from 'antd'
+import { Layout, Menu, Spin } from 'antd'
 import HomePage from './pages/HomePage';
 import { ProtectedRoute, useAuth } from './auth'
 
@@ -14,6 +14,7 @@ import AppHeader from './components/AppHeader';
 import Icon, { DatabaseFilled, GlobalOutlined } from '@ant-design/icons';
 
 import { ReactComponent as adminLogo } from '../public/admin.svg'
+import LandingPage from './pages/LandingPage';
 
 const { Header, Content, Sider } = Layout;
 
@@ -76,8 +77,7 @@ function App () {
             </Menu>
           </Sider>
         }
-        <Content style={{padding: '20px', overflowX: 'hidden'}}>
-          <Row justify='center'><Col  lg={24} xl={20} xxl={20}>
+        <Content style={{overflowX: 'hidden'}}>
           <Routes>
 
             {/* Login & Signup pages disabled for logged in users, will redirect to '/' */}
@@ -89,7 +89,7 @@ function App () {
               auth.user ?
               <ProtectedRoute><HomePage/></ProtectedRoute>
               :
-              <></>
+              <LandingPage/>
             }/>
             <Route path='/edit/:serverId' element={<ProtectedRoute><EditServerPage/></ProtectedRoute>}/>
             <Route path='/new' element={<ProtectedRoute><NewServerPage/></ProtectedRoute>}/>
@@ -99,7 +99,6 @@ function App () {
             {/* Any paths not defined redirect to '/' */}
             <Route path='*' element={<Navigate replace to='/'/>}/>
           </Routes>
-          </Col></Row>
         </Content>
       </Layout>
     </Layout>

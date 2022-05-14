@@ -31,7 +31,7 @@ export default function AppHeader(props: AppHeaderProps) {
         <a href='/'>
           <h1 style={{display: 'inline', float:'left'}}>
             <Icon component={logo}/>
-            &nbsp;Llamagrab Servers
+            &nbsp;<span style={{letterSpacing: '1.9px'}}>LLAMAGRAB</span>
           </h1>
         </a>
       }

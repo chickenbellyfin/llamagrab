@@ -3,11 +3,9 @@ import ServerList from '../components/ServerList';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth';
+import ContentWrapper from '../components/ContentWrapper';
 
-type HomeProps = {
-}
-
-export default function HomePage(props: HomeProps) {
+export default function HomePage() {
 
   const navigation = useNavigate();
   const auth = useAuth();
@@ -39,13 +37,11 @@ export default function HomePage(props: HomeProps) {
   }
 
   return (
-    <>
-    <PageHeader
-        title='Server List'
-        extra={[buttonComponent]}/>
-      <Space direction='vertical' style={{width: '100%'}}>
-        <ServerList/>
-      </Space>
-    </>
+    <ContentWrapper>
+      <PageHeader
+          title='Server List'
+          extra={[buttonComponent]}/>
+      <ServerList/>
+    </ContentWrapper>
   );
 };

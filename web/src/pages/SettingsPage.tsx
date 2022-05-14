@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../api";
 import { deleteToken, useAuth } from "../auth";
+import ContentWrapper from "../components/ContentWrapper";
 
 
 function ChangePasswordForm() {
@@ -13,7 +14,7 @@ function ChangePasswordForm() {
   const [errorMessage, setErrorMessage] = useState<string>();
   const [form] = Form.useForm()
 
-  const onSubmit = () => {    
+  const onSubmit = () => {
     API.Account.changePassword({
       currentPassword, newPassword
     })
@@ -65,7 +66,7 @@ function ProfileForm() {
   const [errorMessage, setErrorMessage] = useState<string>();
   const [form] = Form.useForm()
 
-  const onSubmit = () => {    
+  const onSubmit = () => {
     if (tribesUsername) {
       API.Account.setTribesUsername(tribesUsername)
       .then(() => {
@@ -92,7 +93,7 @@ function ProfileForm() {
           label="Tribes Username"
           extra="Your username on the Tribes Ascend Community Servers (ta.kfk4ever.com). This is used to set up automatic admin access to servers"
           name="tribes_username"
-          
+
           rules={[{ required: true, message: 'Required' }]}>
           <Input defaultValue={tribesUsername} onChange={(e) => setTribesUsername(e.target.value)}/>
         </Form.Item>
@@ -119,20 +120,20 @@ export default function SettingsPage() {
     navigate('/')
     //document.location.href = '/' // back to the home page
   }
-  
+
   return (
-  <>
-  <PageHeader 
-        title='Account Settings'
-        onBack={() => navigate('/')}/>
-  <Row style={{paddingBottom: '10px'}} justify='end'>
-      <Button onClick={onLogout} size='large' danger><LogoutOutlined/> Log Out</Button>
-  </Row>
+  <ContentWrapper>
+    <PageHeader
+          title='Account Settings'
+          onBack={() => navigate('/')}/>
+    <Row style={{paddingBottom: '10px'}} justify='end'>
+        <Button onClick={onLogout} size='large' danger><LogoutOutlined/> Log Out</Button>
+    </Row>
     <Card title="Tribes Username" style={{marginBottom: '10px'}}>
       <ProfileForm/>
     </Card>
     <Card title="Change Password">
       <ChangePasswordForm/>
     </Card>
-  </>);
+  </ContentWrapper>);
 }
