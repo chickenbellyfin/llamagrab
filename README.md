@@ -1,4 +1,7 @@
-# Tribes Server Manager
+# LLamagrab
+## Tribes Ascend Community Server Manager
+
+![](/docs/banner.png)
 
 ## Components
 ### Web
@@ -19,7 +22,7 @@ Service which runs on each host server. Receives sync commands from API and sche
 See [agent](/agent/README.md) for more details.
 
 ### Architecture Diagram
-![diagram](architecture.drawio.png)
+![diagram](/docs/architecture.drawio.png)
 
 ## Build
 ```

@@ -1,7 +1,7 @@
 
 
 import React, { createContext, useContext, useEffect, useState } from "react"
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { API, UserAccount } from "./api";
 import { AuthPermissions, getPermissions } from "./permissions";
 
@@ -24,7 +24,7 @@ const authContext = createContext<AuthContext>({
 
 // https://usehooks.com/useAuth/
 function useAuth() {
-  return useContext(authContext);  
+  return useContext(authContext);
 }
 
 
@@ -80,7 +80,7 @@ function ProvideAuth({ children }: any) {
         .catch(auth.logout);
     }
   }, []);
-  
+
   return (
     <authContext.Provider value={auth}>
       { children }
@@ -90,16 +90,18 @@ function ProvideAuth({ children }: any) {
 
 const ProtectedRoute: React.FC<{}> = props => {
   const auth = useAuth()
+  const location = useLocation();
+  console.log(location.pathname)
   if (auth.user) {
     return <>{props.children}</>
   } else {
-    return <Navigate to='/login'/>
+    return <Navigate to='/'/>
   }
 }
 
 
 function setToken(token: string): void {
-  localStorage.setItem('token', JSON.stringify(token))  
+  localStorage.setItem('token', JSON.stringify(token))
 }
 
 function deleteToken(): void {
@@ -114,7 +116,7 @@ function getToken(): string | null {
   return null
 }
 
-export { 
+export {
   useAuth,
   ProtectedRoute,
   ProvideAuth,

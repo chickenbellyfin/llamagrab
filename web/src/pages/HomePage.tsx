@@ -1,13 +1,11 @@
-import { Button, PageHeader, Popover, Space } from 'antd'
+import { Button, PageHeader, Popover } from 'antd'
 import ServerList from '../components/ServerList';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth';
+import ContentWrapper from '../components/ContentWrapper';
 
-type HomeProps = {
-}
-
-export default function HomePage(props: HomeProps) {
+export default function HomePage() {
 
   const navigation = useNavigate();
   const auth = useAuth();
@@ -19,7 +17,7 @@ export default function HomePage(props: HomeProps) {
   }
 
   let buttonComponent = (
-    <Button 
+    <Button
       size='large'
       type="primary"
       icon={<PlusCircleOutlined/>}
@@ -39,13 +37,11 @@ export default function HomePage(props: HomeProps) {
   }
 
   return (
-    <>
-    <PageHeader 
-        title='Server List'/>
-      <Space direction='vertical' style={{width: '100%'}}>
-        {buttonComponent}
-        <ServerList/>
-      </Space>
-    </>
+    <ContentWrapper>
+      <PageHeader
+          title={<span className="ui-title">Server List</span>}
+          extra={[buttonComponent]}/>
+      <ServerList/>
+    </ContentWrapper>
   );
 };

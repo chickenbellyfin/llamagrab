@@ -52,9 +52,18 @@ async def get_all_servers_for_admin(
   return server_status_list(servers, db)
 
 
-@router.get('/servers/active')
-async def get_all_active_servers():
+@router.get('/servers/region_status')
+async def get_region_status(
+  db: Session = Depends(deps.db)
+):
   """
   Get all currently running servers for status page
   """
-  pass
+  region_status = [
+    {
+      'region': deps.regions[region],
+      'servers': server_status_list(db_queries.get_active_servers(db, region), db)
+    }
+    for region in deps.regions
+  ]
+  return region_status

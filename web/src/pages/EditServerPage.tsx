@@ -6,6 +6,7 @@ import { useState } from "react";
 import { HistoryOutlined, RollbackOutlined, SaveOutlined } from "@ant-design/icons";
 import ServerConfigForm from "../components/edit_server_form/ServerConfigForm";
 import Loader from "../components/Loader";
+import ContentWrapper from "../components/ContentWrapper";
 
 const DATE_FORMAT: Intl.DateTimeFormatOptions = {
   weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric'
@@ -37,8 +38,8 @@ function ServerVersionList({ history, onRestoreVersion }: ServerVersionListProps
             onConfirm={() => {
               onRestoreVersion(item)
             }}>
-            <Button 
-              size='small' 
+            <Button
+              size='small'
               >
               <RollbackOutlined />Restore
             </Button>
@@ -52,7 +53,7 @@ function ServerVersionList({ history, onRestoreVersion }: ServerVersionListProps
             title={
               <>
                 {changes}&nbsp;&nbsp;&nbsp;
-                { isCurrentVersion && 
+                { isCurrentVersion &&
                   <Tag color='green'>Current Version</Tag>
                 }
               </>
@@ -65,7 +66,7 @@ function ServerVersionList({ history, onRestoreVersion }: ServerVersionListProps
 }
 
 interface ServerHistoryListLoaderProps {
-  serverId: number,  
+  serverId: number,
   onRestoreVersion: (version: ServerVersion) => void
 }
 const ServerHistoryListLoader = Loader<ServerHistoryListLoaderProps, ServerVersion[]>({
@@ -85,7 +86,7 @@ export default function EditServerPage() {
   const [isHistoryVisible, setHistoryVisible] = useState(false)
   const [historyRefreshKey, setHistoryRefreshKey] = useState(0)
   const [formRefreshKey, setFormRefreshKey] = useState(0)
-  
+
   const showHistory = () => {
     setHistoryRefreshKey(historyRefreshKey + 1)
     setHistoryVisible(true)
@@ -122,7 +123,7 @@ export default function EditServerPage() {
   const isConfigChanged = Boolean(config) || Boolean(settings);
 
   return (
-    <>
+    <ContentWrapper>
       <Modal
         visible={isHistoryVisible}
         footer={null}
@@ -130,20 +131,22 @@ export default function EditServerPage() {
         title='Settings History'>
           <ServerHistoryListLoader key={`${historyRefreshKey}`} onRestoreVersion={revertToVersion} serverId={serverId}/>
       </Modal>
-      <PageHeader 
-        title={`Edit ${config?.displayName || 'Server'}`}
-        onBack={() => navigate('/')}/>
-      <Row justify='end' style={{marginBottom: '10px'}}>
-        <Button
+      <PageHeader
+        title={<span className="ui-title">{`Edit ${config?.displayName || 'Server'}`}</span>}
+        onBack={() => navigate('/')}
+        extra={[
+          <Button
           icon={<HistoryOutlined />}
           onClick={showHistory}
-          style={{marginRight: '10px'}}>History</Button>
+          style={{marginRight: '10px'}}>History</Button>,
         <Button
           type='primary'
-          icon={<SaveOutlined/>} 
+          icon={<SaveOutlined/>}
           onClick={() => saveConfig()}
           disabled={!isConfigChanged}
           loading={isSaving}>Save</Button>
+        ]}/>
+      <Row justify='end' style={{marginBottom: '10px'}}>
       </Row>
       <Spin spinning={isSaving}>
         <Card title='Server Settings' style={{marginBottom: '20px'}}>
@@ -155,6 +158,6 @@ export default function EditServerPage() {
           <EditGameServerConfigForm key={`gameSettings${formRefreshKey}`} serverId={serverId} onChange={setConfig}/>
         </Card>
       </Spin>
-    </>
+    </ContentWrapper>
   )
 }

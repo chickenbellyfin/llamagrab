@@ -7,6 +7,7 @@ import ServerStatusLabel from "../components/ServerStatusLabel";
 import { CaretRightFilled, CloseSquareOutlined, DeleteOutlined, DownOutlined, EditOutlined, LockOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import ContentWrapper from "../components/ContentWrapper";
 
 const tierColors: {[key: string]: any} = {
   'super': 'red',
@@ -203,13 +204,13 @@ export default function AdminPage() {
 
   const navigate = useNavigate()
   return (
-    <>
-      <PageHeader title='Admin Panel' onBack={() => navigate('/')}/>
+    <ContentWrapper>
+      <PageHeader title={<span className="ui-title">Admin Panel</span>} onBack={() => navigate('/')}/>
       <Typography.Title level={4}>User Management</Typography.Title>
       <UserListLoader key={`users${refreshKey}`} invalidateParent={refresh}/>
       <br/><br/>
       <Typography.Title level={4}>Server Management</Typography.Title>
       <ServerListLoader key={`servers${refreshKey}`} invalidateParent={refresh}/>
-    </>
+    </ContentWrapper>
   );
 }

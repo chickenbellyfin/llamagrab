@@ -1,4 +1,4 @@
-import { Button, Card, message, PageHeader, Row, Spin } from "antd";
+import { Button, Card, message, PageHeader, Spin } from "antd";
 import { GameServerConfigForm } from "../components/edit_server_form/GameServerConfigForm";
 
 import { useNavigate } from 'react-router-dom'
@@ -9,7 +9,7 @@ import { SaveOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { NewServerConfigForm } from "../components/edit_server_form/ServerConfigForm";
 import { useAuth } from "../auth";
-
+import ContentWrapper from "../components/ContentWrapper";
 
 const defaultServerSettings: ServerSettings = {}
 
@@ -19,9 +19,9 @@ export default function NewServerPage() {
   const auth = useAuth()
   const [config, setConfig] = useState<GameServerConfig>(defaultConfig)
   const [settings, setSettings] = useState<ServerSettings>(defaultServerSettings)
-  
+
   const [isSaving, setIsSaving] = useState(false)
-  
+
   const saveConfig = async () => {
     setIsSaving(true);
     try {
@@ -37,19 +37,18 @@ export default function NewServerPage() {
     auth.refresh()
   }
 
-
   return (
-    <>
-      <PageHeader 
-        title={'Create New Server'}
-        onBack={() => navigate('/')}/>
-      <Row justify='end' style={{paddingBottom: '10px'}}>
-        <Button
+    <ContentWrapper>
+      <PageHeader
+        title={<span className="ui-title">Create New Server</span>}
+        onBack={() => navigate('/')}
+        extra={[
+          <Button
           type='primary'
-          icon={<SaveOutlined/>} 
+          icon={<SaveOutlined/>}
           onClick={() => saveConfig()}
           loading={isSaving}>Save</Button>
-      </Row>
+        ]}/>
       <Spin spinning={isSaving}>
         <Card title='Server Settings' style={{marginBottom: '20px'}}>
           <NewServerConfigForm settings={defaultServerSettings} onChange={setSettings}/>
@@ -60,6 +59,6 @@ export default function NewServerPage() {
         <GameServerConfigForm  config={defaultConfig} onChange={setConfig}/>
         </Card>
       </Spin>
-    </>
+    </ContentWrapper>
   )
 }

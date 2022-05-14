@@ -1,5 +1,5 @@
 import { PoweroffOutlined, EditOutlined, DeleteOutlined, PlayCircleOutlined, LinkOutlined, LockOutlined } from "@ant-design/icons"
-import { List, Card, Divider, Descriptions, Badge, Popconfirm, message, Spin } from "antd"
+import { Card, Divider, Descriptions, Badge, Popconfirm, message, Spin } from "antd"
 import { useState } from "react"
 import { Link } from "react-router-dom"
 import { API, ServerStatus } from "../api"
@@ -94,38 +94,36 @@ export default function ServerListItem({ server, invalidate }: ServerListItemPro
 
 
   return (
-    <List.Item>
       <Spin spinning={actionInProgress}>
-      <Card bordered
-        style={{
-          width: '100%',
-          ...!isOwner ? { borderColor: '#556474'} : {}
-        }}
-        actions={actions[server.status]}>
+        <Card bordered
+          style={{
+            maxWidth: '360px',
+            minWidth: '280px',
+            ...!isOwner ? { borderColor: '#556474'} : {}
+          }}
+          actions={actions[server.status]}>
 
-        <h3>
-          <b>{ server.isPrivate && <LockOutlined/>} {server.name}</b><Divider type='vertical'/>
-          <span style={{opacity: '80%'}}>{server.gameMode}</span>
-          { !isOwner &&
-            <span style={{opacity: '80%', float: 'right'}}><LinkOutlined />&nbsp;{server.owner}</span>
-          }
-        </h3>
-        <Divider/>
+          <h3>
+            <b>{ server.isPrivate && <LockOutlined/>} {server.name}</b>
+            { !isOwner &&
+              <span style={{opacity: '80%', float: 'right'}}><LinkOutlined />&nbsp;{server.owner}</span>
+            }
+          </h3>
+          <Divider/>
 
-        <Descriptions
-          colon={false}
-          layout='vertical'
-          size='small'
-          labelStyle={{opacity:'85%'}}>
-          <Descriptions.Item label="Status">
-            <Badge
-              status={server.status === 'running' ? 'success' : 'error'}
-              text={server.status}/>
-          </Descriptions.Item>
-          <Descriptions.Item label="Region">{server.regionName || 'not set'}</Descriptions.Item>
-        </Descriptions>
-      </Card>
+          <Descriptions
+            colon={false}
+            layout='vertical'
+            size='small'
+            labelStyle={{opacity:'85%'}}>
+            <Descriptions.Item label="Status">
+              <Badge
+                status={server.status === 'running' ? 'success' : 'error'}
+                text={server.status}/>
+            </Descriptions.Item>
+            <Descriptions.Item label="Region">{server.regionName || 'not set'}</Descriptions.Item>
+          </Descriptions>
+        </Card>
       </Spin>
-    </List.Item>
   )
 }

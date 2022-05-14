@@ -31,6 +31,11 @@ export type ServerStatus = {
   isPrivate: boolean
 }
 
+export type RegionStatus = {
+  region: string,
+  servers: ServerStatus[]
+}
+
 export type ServerSettings = {
   region?: string
   editors?: number[]
@@ -328,6 +333,12 @@ async function getAllServerList(): Promise<Array<ServerStatus>> {
   })
 }
 
+async function getRegionStatus(): Promise<RegionStatus[]> {
+  return doRequest({
+    path: '/api/servers/region_status'
+  })
+}
+
 
 async function getServerStatus(serverId: number): Promise<ServerStatus> {
   return doRequest({
@@ -450,6 +461,7 @@ export const API = {
     getUserServerList,
     getSharedServerList,
     getAllServerList,
+    getRegionStatus,
     createServer,
     getServerSettings,
     setServerSettings,
