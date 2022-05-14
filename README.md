@@ -85,7 +85,7 @@ coverage run --source=. -m pytest && coverage html && xdg-open htmlcov/index.htm
 ## Release
 Build for amd64 & arm64 & push to ECR
 ```
-docker buildx build --platform linux/amd64,linux/arm64 --tag public.ecr.aws/i2q9d4v7/taservermanager:latest --push .
+docker buildx build --platform linux/amd64,linux/arm64 --tag public.ecr.aws/i2q9d4v7/llamagrab:latest --push .
 ```
 
 ## Production Deployment Setup
@@ -95,11 +95,11 @@ mkdir -p ~/data
 touch ~/data/config.yaml # Must add config here before continuing
 
 # download/update image
-docker pull public.ecr.aws/i2q9d4v7/taservermanager:latest
+docker pull public.ecr.aws/i2q9d4v7/llamagrab:latest
 
 # kill existing container and start new one
 docker rm -f llamagrab-app
-docker run --name llamagrab-app -d --restart unless-stopped -p 8000:8000 -v "$data_path:/data" public.ecr.aws/i2q9d4v7/taservermanager:latest "/data/config.yaml"
+docker run --name llamagrab-app -d --restart unless-stopped -p 8000:8000 -v "$data_path:/data" public.ecr.aws/i2q9d4v7/llamagrab:latest "/data/config.yaml"
 
 # or
 
@@ -112,7 +112,7 @@ version: '3.6'
 
 services:
   llamagrab:
-    image: public.ecr.aws/i2q9d4v7/taservermanager:latest
+    image: public.ecr.aws/i2q9d4v7/llamagrab
     container_name: llamagrab-app
     volumes:
       - './data/llamagrab:/data'
