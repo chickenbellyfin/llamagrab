@@ -205,7 +205,7 @@ export default function AdminPage() {
   const navigate = useNavigate()
   return (
     <ContentWrapper>
-      <PageHeader title='Admin Panel' onBack={() => navigate('/')}/>
+      <PageHeader title={<span className="ui-title">Admin Panel</span>} onBack={() => navigate('/')}/>
       <Typography.Title level={4}>User Management</Typography.Title>
       <UserListLoader key={`users${refreshKey}`} invalidateParent={refresh}/>
       <br/><br/>

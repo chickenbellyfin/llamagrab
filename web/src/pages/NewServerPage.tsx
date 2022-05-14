@@ -40,7 +40,7 @@ export default function NewServerPage() {
   return (
     <ContentWrapper>
       <PageHeader
-        title={'Create New Server'}
+        title={<span className="ui-title">Create New Server</span>}
         onBack={() => navigate('/')}
         extra={[
           <Button

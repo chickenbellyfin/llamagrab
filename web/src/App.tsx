@@ -15,6 +15,7 @@ import Icon, { DatabaseFilled, GlobalOutlined } from '@ant-design/icons';
 
 import { ReactComponent as adminLogo } from '../public/admin.svg'
 import LandingPage from './pages/LandingPage';
+import RegionsPage from './pages/RegionsPage';
 
 const { Header, Content, Sider } = Layout;
 
@@ -59,19 +60,24 @@ function App () {
           >
           <Menu theme="dark" selectedKeys={[location.pathname]} mode="inline">
               <Menu.Item key='/'>
-              <Link to='/'><DatabaseFilled/>&nbsp;&nbsp;Servers</Link>
+              <Link to='/'>
+                <DatabaseFilled/>&nbsp;&nbsp;Servers</Link>
               </Menu.Item>
 
 
-              <Menu.Item key="/regions" disabled>
-                <Link to='/regions'><GlobalOutlined/>&nbsp;&nbsp;Regions</Link>
+              <Menu.Item key="/regions">
+                <Link to='/regions'>
+                    <GlobalOutlined/>&nbsp;&nbsp;Regions
+                </Link>
               </Menu.Item>
 
               {auth.permissions.isAdmin() &&
                 <Menu.Item
                   key="/admin"
                   onClick={() => navigate('/admin')}>
-                  <Link to='/admin'><Icon style={{fontSize:'18px'}} component={adminLogo}/>&nbsp;&nbsp;Admin</Link>
+                  <Link to='/admin'>
+                      <Icon style={{fontSize:'18px'}} component={adminLogo}/>&nbsp;&nbsp;Admin
+                  </Link>
                 </Menu.Item>
               }
             </Menu>
@@ -94,6 +100,7 @@ function App () {
             <Route path='/edit/:serverId' element={<ProtectedRoute><EditServerPage/></ProtectedRoute>}/>
             <Route path='/new' element={<ProtectedRoute><NewServerPage/></ProtectedRoute>}/>
             <Route path='/admin' element={<ProtectedRoute><AdminPage/></ProtectedRoute>}/>
+            <Route path='/regions' element={<ProtectedRoute><RegionsPage/></ProtectedRoute>}/>
             <Route path='/settings' element={<ProtectedRoute><SettingsPage/></ProtectedRoute>}/>
 
             {/* Any paths not defined redirect to '/' */}

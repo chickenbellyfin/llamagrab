@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { setToken, useAuth } from '../auth'
-import { Typography, Card, Layout } from 'antd'
-import { Navigate, useNavigate } from 'react-router';
+import { Typography } from 'antd'
+import { useNavigate } from 'react-router';
 import { API } from '../api';
 import CredentialsForm from './CredentialsForm';
 import { Link } from 'react-router-dom';
 
-const { Content } = Layout;
 const { Text } = Typography;
 
 type LoginResponse = {

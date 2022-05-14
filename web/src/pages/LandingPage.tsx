@@ -1,17 +1,13 @@
-import { useAuth } from '../auth';
 import { ReactComponent as logo } from '../../public/gen.svg'
 import Icon, { CloudServerOutlined, ControlOutlined, CrownOutlined, SafetyCertificateOutlined, ThunderboltOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import { Col, Divider, Row, Space, Typography } from 'antd';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
+import RegionStatusSection from '../components/RegionStatusSection';
+
 
 const { Title } = Typography;
 
-type LandingPageProps = {
-}
-
-export default function LandingPage(props: LandingPageProps) {
-
-  const auth = useAuth();
+export default function LandingPage() {
   const breakpoint = useBreakpoint();
 
   const content = [
@@ -56,6 +52,14 @@ export default function LandingPage(props: LandingPageProps) {
     lineHeight: '100%'
   };
 
+  const dividerStyle: React.CSSProperties = {
+    textAlign: 'center',
+    opacity: '70%',
+    fontWeight: 600,
+    filter: 'drop-shadow(0px 0px 8px #ffffff22)',
+    margin: '20px 0px 20px 0px'
+  };
+
   return (
     <>
       <div
@@ -66,7 +70,7 @@ export default function LandingPage(props: LandingPageProps) {
       }}>
         <Icon
           style={{
-            color: '#1d84e3',
+            color: '#1d84e3', //primary blue
             fontSize:breakpoint.md ? '128px' : '96px',
             filter: 'drop-shadow(0px 0px 10px #1d84e355'
           }}
@@ -78,20 +82,12 @@ export default function LandingPage(props: LandingPageProps) {
           SERVERS
         </Title>
       </div>
-      <Divider
-        style={{
-          textAlign: 'center',
-          opacity: '70%',
-          fontWeight: 600,
-          filter: 'drop-shadow(0px 0px 8px #ffffff22)',
-          margin: '20px 0px 20px 0px'
-
-        }}>
+      <Divider style={dividerStyle}>
         TRIBES: ASCEND COMMUNITY SERVER HOSTING
       </Divider>
-      <Row justify='center' gutter={[16, 16]} style={{padding: '0px 20px'}} wrap>
+      <Row justify='center' gutter={[16, 16]} style={{padding: '0px 20px', marginBottom:'40px'}} wrap>
         { content.map(item =>
-          <Col>
+          <Col key={item.short}>
 
             <Space
               align='center'
@@ -116,6 +112,15 @@ export default function LandingPage(props: LandingPageProps) {
           )
         }
       </Row>
+      <div style={{
+        //backgroundColor:'#22272d88',
+        padding: ' 10px 0px 40px 0px',
+      }}>
+      <Divider style={dividerStyle}>
+        STATUS
+      </Divider>
+      <RegionStatusSection/>
+      </div>
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { Button, PageHeader, Popover, Space } from 'antd'
+import { Button, PageHeader, Popover } from 'antd'
 import ServerList from '../components/ServerList';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
@@ -39,7 +39,7 @@ export default function HomePage() {
   return (
     <ContentWrapper>
       <PageHeader
-          title='Server List'
+          title={<span className="ui-title">Server List</span>}
           extra={[buttonComponent]}/>
       <ServerList/>
     </ContentWrapper>

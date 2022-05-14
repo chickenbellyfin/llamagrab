@@ -132,7 +132,7 @@ export default function EditServerPage() {
           <ServerHistoryListLoader key={`${historyRefreshKey}`} onRestoreVersion={revertToVersion} serverId={serverId}/>
       </Modal>
       <PageHeader
-        title={`Edit ${config?.displayName || 'Server'}`}
+        title={<span className="ui-title">{`Edit ${config?.displayName || 'Server'}`}</span>}
         onBack={() => navigate('/')}
         extra={[
           <Button

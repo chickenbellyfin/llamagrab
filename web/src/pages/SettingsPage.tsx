@@ -124,7 +124,7 @@ export default function SettingsPage() {
   return (
   <ContentWrapper>
     <PageHeader
-          title='Account Settings'
+          title={<span className="ui-title">Account Settings</span>}
           onBack={() => navigate('/')}/>
     <Row style={{paddingBottom: '10px'}} justify='end'>
         <Button onClick={onLogout} size='large' danger><LogoutOutlined/> Log Out</Button>
