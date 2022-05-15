@@ -1,5 +1,5 @@
-import { CheckCircleFilled, CheckCircleOutlined } from '@ant-design/icons';
-import { Col,List, Row, Spin, Typography } from 'antd';
+import { CheckCircleFilled, CheckCircleOutlined, LockOutlined } from '@ant-design/icons';
+import { Col,List, Row, Spin, Tooltip, Typography } from 'antd';
 import { API, RegionStatus } from '../api';
 import { useEffect, useRef, useState } from 'react';
 
@@ -31,6 +31,7 @@ interface RegionStatusListProps {
         renderItem={(item) =>
           <List.Item key={`${item.id}`}>
             <CheckCircleOutlined style={{marginRight:'10px', color: '#52c41a'}}/>
+            {item.isPrivate && <Tooltip title='Private Server'><LockOutlined/></Tooltip>}&nbsp;
             {item.name}
           </List.Item>
         }
