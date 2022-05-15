@@ -1,4 +1,4 @@
-# LLamagrab
+# Llamagrab
 ## Tribes Ascend Community Server Manager
 
 ![](/docs/banner.png)
