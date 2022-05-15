@@ -13,7 +13,7 @@ interface RegionStatusListProps {
     return (
       <List
         split={false}
-        style={{width: '300px', margin:'0px 10px', padding:'20px', background:'#0000001a'}}
+        style={{width: '300px', height: '100%', margin:'0px 10px', padding:'20px', background:'#0000001a'}}
         header={
           <Row align='middle'>
           <Col style={{alignItems: 'middle'}}>
