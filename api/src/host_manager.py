@@ -65,10 +65,14 @@ class HostManager:
         }
 
         message_hashed = { k: md5(payload[k]) for k in payload }
-        logger.info(f'Syncing configs to {region}@{self.nodes[region]}:{self.port} {message_hashed}')
+        logger.info(f'Syncing configs to {region}@{self.nodes[region]["host"]}:{self.port} {message_hashed}')
 
         try:
-          requests.post(f'http://{self.nodes[region]}:{self.port}/message', json=message)
+          requests.post(
+            f'{self.nodes[region]["host"]}:{self.port}/message',
+            json=message,
+            headers={'Token': self.nodes[region]['token']}
+          )
         except Exception as e:
           logger.error(f'Error while syncing to {region} - {type(e)}: {e}')
 

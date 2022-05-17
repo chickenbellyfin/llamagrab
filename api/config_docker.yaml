@@ -20,7 +20,9 @@ regions:
 host_manager:
   port: 8999
 
-  # mapping from region key to hostname
+  # mapping from region key to host (including http[s]://) & token
   # host_manager iterates over this list so missing or extra regions wont cause errors
   nodes:
-    local: 'localhost'
+    local:
+      host: 'http://localhost'
+      token: 'test_token'

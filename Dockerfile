@@ -1,5 +1,5 @@
 # Build Web App
-# yarn build takes a long time on arm, so this step is only run in buildarch/amd64, then the 
+# yarn build takes a long time on arm, so this step is only run in buildarch/amd64, then the
 # static output is copied
 FROM --platform=$BUILDPLATFORM node:lts as build_web
 WORKDIR /app

@@ -1,4 +1,4 @@
-# Must match agent port setting in server manager 
+# Must match agent port setting in server manager
 port: 8999
 
 # Disables launching actual game servers and uses dummy implementation
@@ -16,3 +16,10 @@ image: taserver
 
 # Use to override the loginserver (default is ta.kfk4ever.com)
 # loginserver: localost
+
+# list of client access tokens
+# token must be set in the 'Token' header of every request
+# It is recommended to generate the token randomly
+#  python3 -c "import os; print(os.urandom(16).hex())"
+tokens:
+  - test_token

@@ -53,9 +53,23 @@ services:
     volumes:
       - './llamagrab_agent:/data'
       - '/var/run/docker.sock:/var/run/docker.sock'
-    ports:
-      - 8999:8999
     restart: unless-stopped
+
+  caddy:
+    image: caddy
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+      - 8999:8999
+    volumes:
+      - certs-volume:/data
+    command: caddy reverse-proxy --from llamagrab.$REGION.cloudapp.azure.com:8999 --to llamagrab-agent:8999
+
+volumes:
+  certs-volume:
+
 ```
 
 #### Run unit tests
@@ -83,6 +97,8 @@ $ nano llamagrab_agent/config.yaml
   host_abs_data_dir: /home/azureuser/llamagrab_agent
   port: 8999
   image: 'public.ecr.aws/i2q9d4v7/taserver'
+  tokens:
+    - <token> # generate a random token & add to llamagrab api's config
 ```
 
 Create a docker-compose config and run it
