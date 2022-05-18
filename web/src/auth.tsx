@@ -91,7 +91,6 @@ function ProvideAuth({ children }: any) {
 const ProtectedRoute: React.FC<{}> = props => {
   const auth = useAuth()
   const location = useLocation();
-  console.log(location.pathname)
   if (auth.user) {
     return <>{props.children}</>
   } else {
