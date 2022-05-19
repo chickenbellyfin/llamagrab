@@ -1,5 +1,5 @@
 """
-ServerManager Agent - Service runs on each region's host server and listens for commands from 
+ServerManager Agent - Service runs on each region's host server and listens for commands from
 ServerManager API and runs taserver docker containers on the host accordingly.
 """
 import json
@@ -14,7 +14,7 @@ from .docker import Docker
 class Agent:
 
   def __init__(
-    self, 
+    self,
     data_dir: str,
     docker: Docker,
     host_abs_data_dir: str = None,
@@ -22,8 +22,8 @@ class Agent:
   ):
     self.gamesettings_dir = os.path.join(data_dir, 'managed_gamesettings')
     self.active_servers_file = os.path.join(data_dir, 'active_servers.json')
-    
-    # If agent is running inside a container, the gamesettings mount path for taserver must be 
+
+    # If agent is running inside a container, the gamesettings mount path for taserver must be
     # relative to the host machine
     if host_abs_data_dir:
       self.host_gamesettings_dir = os.path.join(host_abs_data_dir, 'managed_gamesettings')
@@ -59,10 +59,9 @@ class Agent:
       os.makedirs(server_dir, exist_ok=True)
       with open(os.path.join(server_dir, 'serverconfig.lua'), 'w') as lua_file:
         lua_file.write(active_servers[server_id])
-    
+
     with open(self.active_servers_file, 'w') as config_file:
       json.dump(active_servers, config_file, indent=2)
-
 
   def handle_sync(self, active_servers):
     active_servers = {
@@ -72,11 +71,11 @@ class Agent:
       k: md5(active_servers[k]) for k in active_servers
     }
     self.logger.info(f'Received sync message: {active_hashes}')
-    
+
     # load the previous config and write the new one
     old_active_servers = self.get_current_active_servers()
     self.write_active_servers(active_servers)
-    
+
     # Detect changes
     changed = set()
     for server_id in active_servers:
@@ -122,15 +121,21 @@ class Agent:
 
       self.docker.start_server(server_id, server_offset, server_path)
 
-  def handle_message(self, message) -> bool:
+  def handle_status(self):
+    """ Return a list of server ids which are running"""
+    return list(self.docker.status())
+
+
+  def handle_message(self, message):
     message_type = message['type']
     if message_type == 'sync':
       # payload is map of server_id -> lua config
       self.handle_sync(message['payload'])
       return True
+    elif message_type == 'status':
+      return self.handle_status()
     elif message_type == 'ping':
       self.logger.info(f'Got ping message')
       return True
     else:
-      self.logger.error(f'Message type "{message_type}" not recognized')
-      return False
+      raise Exception(f'Message type "{message_type}" not recognized')

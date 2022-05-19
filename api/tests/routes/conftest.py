@@ -207,15 +207,24 @@ def host_manager():
   return MagicMock()
 
 @pytest.fixture
+def status_manager():
+  mock = MagicMock()
+  mock.get_server_status.return_value = 'offline'
+  mock.get_region_status = False
+  return mock
+
+@pytest.fixture
 def test_app(
   mock_login_manager,
   inmemory_db,
   test_regions,
-  host_manager):
+  host_manager,
+  status_manager):
   api = app.create_app(
     db_instance=inmemory_db,
     login_manager=mock_login_manager,
     host_manager=host_manager,
+    status_manager=status_manager,
     regions=test_regions
   )
   top_level = FastAPI()

@@ -26,6 +26,7 @@ export type ServerStatus = {
   name: string,
   region: string,
   regionName: string,
+  enabled: boolean,
   status: string,
   gameMode: string,
   isPrivate: boolean
@@ -33,6 +34,7 @@ export type ServerStatus = {
 
 export type RegionStatus = {
   region: string,
+  online: boolean,
   servers: ServerStatus[]
 }
 

@@ -40,7 +40,12 @@ test_server2 = Server(
   server_config=test_server_config2
 )
 
-TEST_NODES = { 'test_host': 'localhost' }
+TEST_NODES = {
+  'test_host': {
+    'host': 'localhost',
+    'token': 'test_token'
+  }
+}
 EMPTY_SYNC_MESSAGE = {'type': 'sync', 'payload': {}}
 
 
@@ -70,20 +75,24 @@ def test_sync_empty(monkeypatch, mock_requests: Mock):
 
 
   host_manager = HostManager(
-    nodes={ 'test_host': 'localhost' },
+    nodes={ 'test_host': {'host':'http://localhost','token': 'test_token'}},
     port=TEST_PORT,
     db_session=MagicMock()
   )
   host_manager.sync()
 
   wait_for(lambda: mock_requests.called)
-  mock_requests.post.assert_called_once_with('http://localhost:23456/message', json=EMPTY_SYNC_MESSAGE)
+  mock_requests.post.assert_called_once_with(
+    'http://localhost:23456/message',
+    json=EMPTY_SYNC_MESSAGE,
+    headers={'Token': 'test_token'}
+  )
 
 
 def test_sync_multiple(monkeypatch, mock_requests: Mock):
   test_nodes = {
-    'region1': 'hostname1',
-    'region2': 'hostname2'
+    'region1': {'host': 'hostname1', 'token': 'r1token'},
+    'region2': {'host': 'hostname2', 'token': 'r2token'}
   }
 
   active = {
@@ -98,7 +107,7 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
 
   def mocked_active_servers(db, region):
     return active[region]
-  
+
   monkeypatch.setattr(db_queries, 'get_active_servers', mocked_active_servers)
   monkeypatch.setattr(db_queries, "get_admin_tribes_usernames", lambda db: [])
 
@@ -106,18 +115,28 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
     return name_to_test_lua[config.display_name]
 
   monkeypatch.setattr(lua, 'to_lua', mocked_lua)
-  
+
   host_manager = HostManager(
     nodes=test_nodes,
-    port=TEST_PORT, 
+    port=TEST_PORT,
     db_session=MagicMock
   )
   host_manager.sync()
 
   wait_for(lambda: mock_requests.call_count == 2)
   mock_requests.assert_has_calls([
-    call.post('http://hostname1:23456/message', json={'type': 'sync', 'payload': {1: 'TEST_LUA_1'}}),
-    call.post('http://hostname2:23456/message', json= {'type': 'sync', 'payload': {2: 'TEST_LUA_2'}})
+    call.post(
+      'hostname1:23456/message',
+      json={'type': 'sync', 'payload': {1: 'TEST_LUA_1'}},
+      headers={'Token': 'r1token'}
+    ),
+    call.post().json(),
+    call.post(
+      'hostname2:23456/message',
+      json= {'type': 'sync', 'payload': {2: 'TEST_LUA_2'}},
+      headers={'Token': 'r2token'}
+    ),
+    call.post().json()
   ])
 
 
@@ -131,7 +150,7 @@ def test_sync_rate_limit(monkeypatch, mock_requests: Mock):
     db_session=MagicMock(),
     rate_limit_secs=0 # don't rate limit syncs
   )
-  
+
   calls = []
   def add_syncs(*args, **kwargs):
     # server manager is blocked, request 100 syncs
@@ -139,13 +158,13 @@ def test_sync_rate_limit(monkeypatch, mock_requests: Mock):
       for i in range(100):
         host_manager.sync()
     calls.append(call(*args, **kwargs))
-    
+
   mock_requests.post.side_effect = add_syncs
-  
+
   host_manager.sync()
 
   wait_for(lambda: len(calls) > 2, wait_time=2)
   assert calls == [
-    call('http://localhost:23456/message', json=EMPTY_SYNC_MESSAGE),
-    call('http://localhost:23456/message', json=EMPTY_SYNC_MESSAGE)
+    call('localhost:23456/message', json=EMPTY_SYNC_MESSAGE, headers={'Token': 'test_token'}),
+    call('localhost:23456/message', json=EMPTY_SYNC_MESSAGE, headers={'Token': 'test_token'})
   ]

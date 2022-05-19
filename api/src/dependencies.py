@@ -7,8 +7,10 @@ from fastapi.security.oauth2 import SecurityScopes
 from fastapi_login.fastapi_login import LoginManager
 from sqlalchemy.orm.session import Session, sessionmaker
 
+
 from .database.models import User
 from .host_manager import HostManager
+from .server_status import ServerStatusManager
 from . import permissions
 
 class Dependencies:
@@ -16,14 +18,16 @@ class Dependencies:
     self._db_session = None
     self.login_manager = None
 
-  def set(self, 
+  def set(self,
     db_session: sessionmaker ,
     login_manager: LoginManager,
     host_manager: HostManager,
+    status_manager: ServerStatusManager,
     regions: Mapping[str, str]):
     self._db_session = db_session
     self.login_manager = login_manager
     self._host_manager = host_manager
+    self.status_manager = status_manager
     self.regions = regions
 
     # set of IPs which created an account
@@ -47,7 +51,7 @@ class Dependencies:
     if not permissions.is_admin(user):
       raise HTTPException(status.HTTP_403_FORBIDDEN)
     return user
-  
+
   async def login_super(self, request: Request, security_scopes: SecurityScopes = None) -> User:
     user = await self.login_manager(request, security_scopes)
     if not permissions.is_super(user):

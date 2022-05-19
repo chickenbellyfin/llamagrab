@@ -9,9 +9,8 @@ Commands are of the form:
   'payload': Optional[str]
 }
 ```
-Agent responds to every command with `0` (int).
 
-### sync
+### sync command
 Sync message payloads contain the entire set of taserver configs which are suppost to run on the host.
 ```
 {
@@ -23,7 +22,10 @@ Sync message payloads contain the entire set of taserver configs which are suppo
 ```
 Agent compares the incoming server list and config hashes with the previous saved active servers and running docker containers. It then kills, starts, and restarts containers to match the new configuration.
 
-### ping
+### status command
+Returns a list of server ids of containers which are currently running on the host.
+
+### ping command
 Empty payload, used for testing/status, has no effect.
 
 ## Build

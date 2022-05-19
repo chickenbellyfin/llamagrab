@@ -1,9 +1,9 @@
+from collections import namedtuple
 import hashlib
 import requests
 import threading
 from threading import Event
 import time
-from typing import Mapping
 
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.session import sessionmaker
@@ -15,6 +15,8 @@ from .lua import LuaSettings
 from .schema.game_server_config import GameServerConfig
 
 from loguru import logger
+
+Node = namedtuple('Node', 'name, host, token')
 
 def md5(data: str) -> str:
   return hashlib.md5(data.encode('utf-8')).hexdigest()
@@ -32,25 +34,45 @@ class HostManager:
   """
 
   def __init__(self,
-    nodes: Mapping[str, str],
+    nodes: dict,
     port: int,
     db_session: sessionmaker,
     rate_limit_secs=30):
-    self.nodes = nodes
     self.port = port
     self.session = db_session
     self.rate_limit_secs = rate_limit_secs
     self.event = Event()
     self.sync_requested = False
     self.last_sync_time = 0
+
+    self.nodes = [
+      Node(k, nodes[k]['host'], nodes[k]['token'])
+      for k in nodes
+    ]
+
     threading.Thread(target=self._worker, daemon=True).start()
+
+  def _post(self, node: Node, command: str, payload=None):
+    json = { 'type': command }
+    if payload is not None:
+      json['payload'] = payload
+    try:
+      return requests.post(
+        f'{node.host}:{self.port}/message',
+        json=json,
+        headers={'Token': node.token}
+      ).json()
+    except Exception as e:
+      logger.error(f'Error while sending {command} command to {node.name}- {type(e)}: {e}')
+      return None
+
 
   def _do_sync(self):
     with self.session() as db:
       logger.info(f'Running sync')
       lua_settings = get_lua_settings(db)
-      for region in self.nodes:
-        active_for_region = database.queries.get_active_servers(db, region)
+      for node in self.nodes:
+        active_for_region = database.queries.get_active_servers(db, node.name)
         # Note: even if a region has no active servers, we should still sync so that newly stopped
         # servers are killed on the host
         payload = {}
@@ -59,22 +81,11 @@ class HostManager:
           server_lua = lua.to_lua(server_config, lua_settings)
           payload[server.id] = server_lua
 
-        message = {
-          'type': 'sync',
-          'payload': payload
-        }
-
         message_hashed = { k: md5(payload[k]) for k in payload }
-        logger.info(f'Syncing configs to {region}@{self.nodes[region]["host"]}:{self.port} {message_hashed}')
+        logger.info(f'Syncing configs to {node.name}@{node.host}:{self.port} {message_hashed}')
+        self._post(node, 'sync', payload)
 
-        try:
-          requests.post(
-            f'{self.nodes[region]["host"]}:{self.port}/message',
-            json=message,
-            headers={'Token': self.nodes[region]['token']}
-          )
-        except Exception as e:
-          logger.error(f'Error while syncing to {region} - {type(e)}: {e}')
+
 
   def _wait_for_sync(self) -> bool:
     secs_since_last_sync = time.time() - self.last_sync_time
@@ -102,3 +113,9 @@ class HostManager:
   def sync(self):
     self.sync_requested = True
     self.event.set()
+
+  def status(self):
+    return {
+      node.name: self._post(node, 'status')
+      for node in self.nodes
+    }

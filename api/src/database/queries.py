@@ -31,8 +31,8 @@ def get_active_servers(db: Session, region: str = None, user: models.User = None
 
   if user:
     query = query.filter(models.Server.owner == user.id)
-    
-  query = query.filter(models.Server.status == 'running')
+
+  query = query.filter(models.Server.enabled)
   servers = query.all()
   return list(servers)
 
@@ -42,4 +42,3 @@ def get_admin_tribes_usernames(db: Session) -> List[str]:
   query = query.filter(models.User.tribes_username.isnot(None))
   result = query.all()
   return list(map(lambda t: t[0], result))
-

@@ -31,7 +31,8 @@ class Server(Base):
   user = Column(Integer, ForeignKey('users.id'))
   name = Column(String, nullable=False)
   region = Column(String)
-  status = Column(String, default='stopped')
+  status = Column(String, default='stopped') # deprecated
+  enabled = Column(Boolean, default=False, nullable=False)
   game_mode = Column(String, default='CTF')
   server_config = Column(String)
   updated_at = Column(Integer, nullable=False)
@@ -53,11 +54,10 @@ class ServerVersion(Base):
   creator = relationship('User', foreign_keys=[created_by])
 
 class ServerEditor(Base):
-  __tablename__ = 'server_editors'  
+  __tablename__ = 'server_editors'
   id = Column(Integer, primary_key=True, autoincrement=True) # not used, required by sqlalchemy
   server_id = Column(Integer, ForeignKey('servers.id'), nullable=False)
   user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
 
   server = relationship('Server', foreign_keys=[server_id])
   user = relationship('User', foreign_keys=[user_id])
-
