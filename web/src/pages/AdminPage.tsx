@@ -1,13 +1,15 @@
 import { Button, Dropdown, Menu, message, PageHeader, Popconfirm, Space, Table, Tag, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
-import { API, ServerStatus, UserAccount, UserLimits } from "../api";
+import { API, ServerStatus, Status, UserAccount, UserLimits } from "../api";
 import Loader from "../components/Loader";
 import { useAuth } from "../auth";
-import ServerStatusLabel from "../components/ServerStatusLabel";
-import { CaretRightFilled, CloseSquareOutlined, DeleteOutlined, DownOutlined, EditOutlined, LockOutlined } from "@ant-design/icons";
+import { CaretRightFilled, CloseSquareOutlined, DeleteOutlined, DownOutlined, EditOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import ContentWrapper from "../components/ContentWrapper";
+import StatusIcon from "../components/ServerStatusIcon";
+import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
+import ServerName from "../components/ServerName";
 
 const tierColors: {[key: string]: any} = {
   'super': 'red',
@@ -22,7 +24,7 @@ type UserListProps = {
   invalidateParent: () => void
 }
 function UserList ({ users, invalidate, invalidateParent }: UserListProps) {
-
+  const breakpoint = useBreakpoint();
   async function updateUser(
     user: UserAccount,
     action: (id: number) => void,
@@ -41,7 +43,7 @@ function UserList ({ users, invalidate, invalidateParent }: UserListProps) {
   const auth = useAuth();
 
   const columns = [
-    { title: 'id', dataIndex:'id' },
+    ... breakpoint.md ? [{ title: 'id', dataIndex:'id' }] : [],
     { title: 'Name', dataIndex: 'username'},
     {
       title: 'Tier',
@@ -81,7 +83,7 @@ function UserList ({ users, invalidate, invalidateParent }: UserListProps) {
   ];
 
   return (
-    <Table<UserAccount> pagination={false} columns={columns} dataSource={users} size='small'/>
+    <Table<UserAccount> rowKey='id' pagination={false} columns={columns} dataSource={users} size='small'/>
   );
 }
 
@@ -103,6 +105,7 @@ function AllServersList({serverList, invalidate, invalidateParent}: AllServersLi
   const [inProgress, setInProgress] = useState(false);
   const auth = useAuth()
   const navigate = useNavigate()
+  const breakpoint = useBreakpoint()
 
   const doAction = async (
     serverId: number,
@@ -158,10 +161,9 @@ function AllServersList({serverList, invalidate, invalidateParent}: AllServersLi
   ]} />
 
   const serverColumns = [
-    {title: 'id', dataIndex: 'id'},
-    {title: () => <LockOutlined />, dataIndex: 'id', render: (id: number, server: ServerStatus) =>  <>{server.isPrivate && <LockOutlined />}</>},
-    {title: 'Name', dataIndex: 'name'},
-    {title: 'Status', dataIndex: 'status', render: (status: string) => <ServerStatusLabel status={status}/>},
+    ... breakpoint.md ? [{title: 'id', dataIndex: 'id'}] : [],
+    {title: 'Name', dataIndex: 'name', render: (name: string, item: ServerStatus) => <ServerName status={item}/>},
+    {title: 'Status', dataIndex: 'status', render: (status: Status) => <StatusIcon status={status} showLabel={breakpoint.lg}/>},
     {title: 'Region', dataIndex: 'regionName'},
     {title: 'Owner', dataIndex: 'owner'},
     {
@@ -170,9 +172,9 @@ function AllServersList({serverList, invalidate, invalidateParent}: AllServersLi
       render: (id: number, server: ServerStatus) => {
         return (
           <Space wrap>
-            { server.status == 'running' &&
+            { server.enabled &&
               <Button size='small' loading={inProgress} onClick={() => onStop(server)}><CloseSquareOutlined/> Stop</Button> }
-            { server.status == 'stopped' &&
+            { !server.enabled &&
               <Button size='small' loading={inProgress} onClick={() => onStart(server)}><CaretRightFilled/> Start</Button> }
             <Dropdown overlay={menu(server)}>
             <a onClick={e => e.preventDefault()}>
@@ -187,7 +189,7 @@ function AllServersList({serverList, invalidate, invalidateParent}: AllServersLi
     }
   ]
   return (
-    <Table<ServerStatus> pagination={false} columns={serverColumns} dataSource={serverList} size='small'/>
+    <Table<ServerStatus> rowKey='id' pagination={false} columns={serverColumns} dataSource={serverList} size='small'/>
   );
 }
 

@@ -1,7 +1,8 @@
-import { CheckCircleFilled, CheckCircleOutlined, ClockCircleOutlined, CloseCircleFilled, CloseCircleOutlined, LockOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Col,List, Row, Spin, Tooltip, Typography } from 'antd';
+import { Col,List, Row, Spin, Typography } from 'antd';
 import { API, RegionStatus, ServerStatus } from '../api';
 import { useEffect, useRef, useState } from 'react';
+import StatusIcon from './ServerStatusIcon';
+import ServerName from './ServerName';
 
 const { Title, Text } = Typography;
 
@@ -9,33 +10,12 @@ interface ServerStatusListItemProps {
   serverStatus: ServerStatus
 }
 function ServerStatusListItem({serverStatus}: ServerStatusListItemProps) {
-  let icon = <QuestionCircleOutlined style={{color: '#bfbfbf'}}/>
-  let label = 'unknown status';
-  switch(serverStatus.status) {
-    case 'running':
-      label = 'Running';
-      icon = <CheckCircleOutlined style={{color: '#52c41a' }} />
-      break;
-    case 'starting':
-      label = 'Starting';
-      icon = <ClockCircleOutlined style={{color: '#faad14'}}/>;
-      break;
-    case 'stopping':
-      label = 'Stopping';
-      icon = <ClockCircleOutlined style={{color: '#faad14'}}/>;
-      break;
-    case 'offline':
-      label = 'Offline';
-      icon = <CloseCircleOutlined style={{color: '#ff4d4f'}}/>
-  }
-
   return (
     <List.Item key={`${serverStatus.id}`}>
-      <Tooltip title={label}>
-        <span style={{marginRight: '10px'}}>{icon}</span>
-      </Tooltip>
-      {serverStatus.isPrivate && <Tooltip title='Private Server'><LockOutlined /></Tooltip>}&nbsp;
-      {serverStatus.name}
+      <span>
+        <span style={{marginRight: '10px'}}><StatusIcon status={serverStatus.status}/></span>
+        <ServerName status={serverStatus}/>
+      </span>
     </List.Item>
   );
 }
@@ -45,16 +25,6 @@ interface RegionStatusListProps {
   }
 
   function RegionStatusList(props: RegionStatusListProps) {
-
-    let icon, label;
-    if (props.status.online) {
-      label = 'Online';
-      icon = <CheckCircleFilled style={{color: '#52c41a'}}/>
-    } else {
-      label = 'Offline';
-      icon = <CloseCircleFilled style={{color: '#ff4d4f'}}/>;
-    }
-
     return (
       <List
         split={false}
@@ -62,11 +32,9 @@ interface RegionStatusListProps {
         header={
           <Row align='middle'>
           <Col style={{alignItems: 'middle'}}>
-            <Tooltip title={label}>
-              <span style={{fontSize: '20px', margin: '0px 10px 0px 0px'}}>
-                {icon}
-              </span>
-            </Tooltip>
+            <span style={{fontSize: '20px', margin: '0px 10px 0px 0px'}}>
+              <StatusIcon status={props.status.online} filled/>
+            </span>
           </Col>
           <Col>
             <Title level={5} style={{margin: '0px', lineHeight: '100%'}}>{props.status.region}</Title>

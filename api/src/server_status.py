@@ -37,16 +37,20 @@ class ServerStatusManager:
 
 
   def get_server_status(self, server: models.Server) -> str:
-    if server.region is None or self.host_statuses.get(server.region) is None:
-      return 'offline'
+    enabled = server.enabled
+    region = server.region is not None and self.host_statuses.get(server.region) is not None
+    running = server.id in self.host_statuses.get(server.region, [])
 
-    if server.enabled:
-      if server.id in self.host_statuses[server.region]:
-        return 'running'
+    if not enabled:
+      if not running:
+        return 'disabled'
       else:
-        return 'starting'
-    else:
-      if server.id in self.host_statuses[server.region]:
         return 'stopping'
-      else:
+    else:
+      if not region:
         return 'offline'
+      else:
+        if not running:
+          return 'starting'
+        else:
+          return 'running'

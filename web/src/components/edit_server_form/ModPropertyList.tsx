@@ -1,7 +1,8 @@
 import { CheckCircleOutlined, DeleteOutlined, ExclamationCircleOutlined, QuestionCircleOutlined } from "@ant-design/icons";
-import { Button, Col, Popover, Row, Select, Space, Switch} from "antd";
+import { Button, Col, Popover, Row, Select, Space, Switch, Tooltip} from "antd";
 import { useState } from "react";
 import {  ModProperty } from "../../api";
+import colors from "../../colors";
 import { ModPropertySpecSet } from "../../data";
 import { InputFloat, InputInteger } from "./Inputs";
 
@@ -64,12 +65,12 @@ function ModPropertyListItem({property, specSet, onChange, onDelete}: ModPropert
 
   if (property.name != undefined) {
     if (property.value != undefined) {
-      icon = <CheckCircleOutlined style={{color:'#73d13d'}} />;
+      icon = <CheckCircleOutlined style={colors.success.style} />;
     } else {
       icon = (
-        <Popover content='Value not set - will be ignored'>
-          <ExclamationCircleOutlined style={{color:'#fa8c16'}} />
-        </Popover>
+        <Tooltip title='Value not set - will be ignored'>
+          <ExclamationCircleOutlined style={colors.warning.style} />
+        </Tooltip>
       );
     }
   }
