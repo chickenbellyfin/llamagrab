@@ -88,7 +88,6 @@ class NullDocker:
     self.running = {}
 
   def status(self) -> Mapping[int, int]:
-    logger.info(f'{self.running}')
     return self.running.copy()
 
   def start_server(self, server_id: int, offset: int, abs_gamesettings: str) -> None:
