@@ -16,18 +16,18 @@ class ServerStatusManager:
   def __init__(
     self, host_manager:
     HostManager,
-    db_session: sessionmaker,
     polling_rate: int = 60
   ):
     self.host_manager = host_manager
-    self.db_session = db_session
     self.polling_rate = polling_rate
     self.host_statuses = {}
-    threading.Thread(target=self._poller, daemon=True).start()
+    self._thread = threading.Thread(target=self._poller, daemon=True)
+    self._polling = True
+    self._thread.start()
 
 
   def _poller(self):
-    while True:
+    while self._polling:
         self.host_statuses = self.host_manager.status()
         time.sleep(self.polling_rate)
 
