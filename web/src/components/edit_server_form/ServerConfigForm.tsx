@@ -79,7 +79,7 @@ async function getServerSettings(serverId: number, settings?: ServerSettings): P
   let settingsPromise;
   try {
     if (!settings) {
-      settingsPromise = await API.Server.getServerSettings(serverId)
+      settingsPromise = API.Server.getServerSettings(serverId)
     } else {
       settingsPromise = Promise.resolve(settings);
     }
