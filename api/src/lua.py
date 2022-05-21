@@ -2,6 +2,7 @@ import os
 import json
 from typing import Any, List, Mapping
 
+from .database import models
 from .schema.game_server_config import GameServerConfig, ModProperty
 
 with open('../common/maps.json') as maps_json:
@@ -21,7 +22,7 @@ weapons = {
 def load_mod_properties(file_path):
   with open(file_path) as properties_json:
     by_group = json.load(properties_json)
-  
+
   mod_properties = {}
   for group in by_group:
     for mod_property in by_group[group]:
@@ -42,7 +43,7 @@ team_assign_types = {
 
 class LuaSettings():
   def __init__(
-    self, 
+    self,
     include_admin = True,
     site_admins: List[str] = [],
     include_hitscan_ban = True
@@ -75,7 +76,7 @@ class LuaConfig:
     self('-' * 80)
     self(lib_str)
     self('-' * 80)
-  
+
   def get(self):
     return self.lua
 
@@ -109,7 +110,7 @@ def _class_property_value(p: ModProperty) -> str:
 def _value_mod_value(p: ModProperty) -> str:
   return _mod_property_value(p, value_mod_props)
 
-def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
+def to_lua(server: models.Server, config: GameServerConfig, lua_settings: LuaSettings) -> str:
   lua = LuaConfig()
 
   lua('ServerSettings.Description = "%s"', config.display_name)
@@ -160,7 +161,7 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
   lua('ServerSettings.FlagDragHeavy = %d', config.flag_drag_heavy)
   lua('ServerSettings.FlagDragDeceleration = %d', config.flag_drag_deceleration)
 
-  # Map Rotation  
+  # Map Rotation
   lua('ServerSettings.MapRotation.VotingEnabled = %s', _bool(config.map_voting))
   if config.maps:
     for map_key in config.maps:
@@ -181,7 +182,7 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
       for weapon_key in ban_list:
         weapon = weapons[clazz][weapon_key]
         lua('ServerSettings.BannedItems.add("%s", "%s")', clazz, weapon['name'])
-  
+
   # Global Hitscan Ban
   if lua_settings.include_hitscan_ban:
     lua.require('hitscan.lua')
@@ -191,7 +192,7 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
     for m in config.mutual_exclusions:
       lua(
         'ServerSettings.MutuallyExclusiveItems.add("%s", "%s", "%s", "%s")',
-        m.player_class, weapons[m.player_class][m.item1]['name'], 
+        m.player_class, weapons[m.player_class][m.item1]['name'],
         m.player_class, weapons[m.player_class][m.item2]['name']
       )
 
@@ -201,10 +202,10 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
       weapon_name = weapons[weapon.player_class][weapon.weapon]['name']
       for property in weapon.properties:
         lua(
-          'Items.setProperty("%s", "%s", Items.Properties.%s, %s)', 
+          'Items.setProperty("%s", "%s", Items.Properties.%s, %s)',
           weapon.player_class,  weapon_name, property.name, _item_property_value(property)
         )
-  
+
   # Class Properties
   for clazz, class_props in [
     ('Light', config.light_class_properties),
@@ -226,7 +227,7 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
       for value_mod in weapon.properties:
         lua('  {ValueMods.%s, %s},', value_mod.name, _value_mod_value(value_mod))
       lua('})')
-  
+
   for clazz, value_mods in [
     ('Light', config.light_value_mods),
     ('Medium', config.medium_value_mods),
@@ -237,7 +238,7 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
       for value_mod in value_mods:
         lua('  {ValueMods.%s, %s},', value_mod.name, _value_mod_value(value_mod))
       lua('})')
-  
+
   # Disabled Equip Points
   for clazz, equip_points in [
     ('Light', config.light_disabled_equip_points),
@@ -247,7 +248,7 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
     if equip_points:
       for equip_point in equip_points:
         lua('ServerSettings.DisabledEquipPoints.add("%s", Loadouts.EquipPoints.%s)', clazz, equip_point)
-  
+
   # Hardcoded Loadouts
   lua('ServerSettings.ForceHardcodedLoadouts = %s', _bool(config.force_hardcoded_loadouts))
   for clazz, hardcoded_loadouts in [
@@ -271,8 +272,13 @@ def to_lua(config: GameServerConfig, lua_settings: LuaSettings) -> str:
     for site_admin in lua_settings.site_admins:
       lua('Admin.Roles.addMember("admin", "%s")', site_admin)
 
+    owner_user = server.owner.tribes_username
+    if owner_user and owner_user not in lua_settings.site_admins:
+      lua('Admin.Roles.addMember("mod", "%s")', server.owner.tribes_username)
+
     if config.admins:
       for admin in config.admins:
-        lua('Admin.Roles.addMember("mod", "%s")', admin)
+        if admin not in lua_settings.site_admins:
+          lua('Admin.Roles.addMember("mod", "%s")', admin)
 
   return lua.get()

@@ -78,7 +78,7 @@ class HostManager:
         payload = {}
         for server in active_for_region:
           server_config = GameServerConfig.parse(server.server_config)
-          server_lua = lua.to_lua(server_config, lua_settings)
+          server_lua = lua.to_lua(server, server_config, lua_settings)
           payload[server.id] = server_lua
 
         message_hashed = { k: md5(payload[k]) for k in payload }

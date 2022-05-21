@@ -111,7 +111,7 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
   monkeypatch.setattr(db_queries, 'get_active_servers', mocked_active_servers)
   monkeypatch.setattr(db_queries, "get_admin_tribes_usernames", lambda db: [])
 
-  def mocked_lua(config, lua_settings):
+  def mocked_lua(server, config, lua_settings):
     return name_to_test_lua[config.display_name]
 
   monkeypatch.setattr(lua, 'to_lua', mocked_lua)

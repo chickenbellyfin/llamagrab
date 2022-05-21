@@ -38,7 +38,7 @@ class Server(Base):
   updated_at = Column(Integer, nullable=False)
   updated_by = Column(Integer, ForeignKey('users.id'), nullable=False)
 
-  owner = relationship("User", back_populates="servers", foreign_keys=[user])
+  owner: User = relationship("User", back_populates="servers", foreign_keys=[user])
 
 
 class ServerVersion(Base):

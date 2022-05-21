@@ -10,7 +10,7 @@ local commands = {
           else
               Admin.SendConsoleMessageToPlayer(player, "Failed to set next map to " .. MapId)
           end
-          
+
       end,
   },
   {
@@ -24,7 +24,7 @@ local commands = {
           else
               Admin.SendConsoleMessageToPlayer(player, "Failed to set next map to " .. MapName)
           end
-          
+
       end,
   },
   {
@@ -49,7 +49,7 @@ function doSetupRoles(roles)
   for cmdIdx, command in pairs(commands) do
       Admin.Command.define(command.name, command.arguments, command.func)
   end
-  
+
   for roleIdx, role in pairs(roles) do
       Admin.Roles.addLoginlessRole(role.name, role.canLua)
       for cmdIdx, cmdName in pairs(role.commands) do
