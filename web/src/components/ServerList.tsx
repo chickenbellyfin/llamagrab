@@ -1,31 +1,22 @@
-import { Col, Row } from 'antd'
+import { Col, Row, Spin } from 'antd'
 
 import ServerListItem from './ServerListItem'
-import { API, ServerStatus } from '../api'
-import Loader from './Loader'
+import { API } from '../api'
+import useLoader from '../useLoader'
 
-
-type ServerListProps = {
-  serverList: Array<ServerStatus>
-  invalidate: () => void
-}
-
-
-export function ServerList({ serverList, invalidate }: ServerListProps) {
+export default function ServerList() {
+  const loader = useLoader(API.Server.getUserServerList, [], 60);
   return (
-    <Row gutter={[16, 16]}>
-      {
-        serverList.map((item) => (
-          <Col key={`${item.id}`}>
-            <ServerListItem server={item} invalidate={invalidate}/>
-          </Col>
-        ))
-      }
-    </Row>
+    <Spin spinning={loader.initialLoad}>
+      <Row gutter={[16, 16]}>
+        {
+          loader.value?.map((item) => (
+            <Col key={`${item.id}`}>
+              <ServerListItem server={item} invalidate={loader.invalidate}/>
+            </Col>
+          ))
+        }
+      </Row>
+    </Spin>
   )
 }
-
-export default Loader({
-  loaderFunc: API.Server.getUserServerList,
-  componentBuilder: ((result, props, invalidate) => <ServerList serverList={result} invalidate={invalidate}/>)
-})

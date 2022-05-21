@@ -1,13 +1,15 @@
-import { Button, Dropdown, Menu, message, PageHeader, Popconfirm, Space, Table, Tag, Typography } from "antd";
+import { Button, Dropdown, Menu, message, PageHeader, Popconfirm, Space, Spin, Table, Tag, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
-import { API, ServerStatus, UserAccount, UserLimits } from "../api";
-import Loader from "../components/Loader";
+import { API, ServerStatus, Status, UserAccount, UserLimits } from "../api";
 import { useAuth } from "../auth";
-import ServerStatusLabel from "../components/ServerStatusLabel";
-import { CaretRightFilled, CloseSquareOutlined, DeleteOutlined, DownOutlined, EditOutlined, LockOutlined } from "@ant-design/icons";
+import { CaretRightFilled, CloseSquareOutlined, DeleteOutlined, DownOutlined, EditOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import ContentWrapper from "../components/ContentWrapper";
+import StatusIcon from "../components/ServerStatusIcon";
+import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
+import ServerName from "../components/ServerName";
+import useLoader from "../useLoader";
 
 const tierColors: {[key: string]: any} = {
   'super': 'red',
@@ -17,16 +19,15 @@ const tierColors: {[key: string]: any} = {
 }
 
 type UserListProps = {
-  users: Array<UserAccount>,
-  invalidate: () => void,
   invalidateParent: () => void
 }
-function UserList ({ users, invalidate, invalidateParent }: UserListProps) {
-
+function UserList ({ invalidateParent }: UserListProps) {
+  const loader = useLoader(API.Account.getAllUserAccounts, []);
+  const breakpoint = useBreakpoint();
   async function updateUser(
     user: UserAccount,
     action: (id: number) => void,
-    invalidateFunc: () => void = invalidate
+    invalidateFunc: () => void = loader.invalidate
   ): Promise<any> {
     try {
       await action(user.id);
@@ -41,7 +42,7 @@ function UserList ({ users, invalidate, invalidateParent }: UserListProps) {
   const auth = useAuth();
 
   const columns = [
-    { title: 'id', dataIndex:'id' },
+    ... breakpoint.md ? [{ title: 'id', dataIndex:'id' }] : [],
     { title: 'Name', dataIndex: 'username'},
     {
       title: 'Tier',
@@ -81,35 +82,30 @@ function UserList ({ users, invalidate, invalidateParent }: UserListProps) {
   ];
 
   return (
-    <Table<UserAccount> pagination={false} columns={columns} dataSource={users} size='small'/>
+    <Spin spinning={loader.initialLoad}>
+      <Table<UserAccount> rowKey='id' pagination={false} columns={columns} dataSource={loader.value} size='small'/>
+    </Spin>
   );
 }
 
-interface UserListLoaderProps {invalidateParent: () => void}
-const UserListLoader = Loader<UserListLoaderProps, UserAccount[]>({
-  loaderFunc: API.Account.getAllUserAccounts,
-  componentBuilder:(users, props, invalidate) => <UserList users={users} invalidate={invalidate} invalidateParent={props.invalidateParent}/>
-});
-
-
 type AllServersListProps = {
-  serverList: Array<ServerStatus>
-  invalidate: () => void,
   invalidateParent: () => void
 }
+function AllServersList({invalidateParent}: AllServersListProps) {
 
-function AllServersList({serverList, invalidate, invalidateParent}: AllServersListProps) {
-
+  const loader = useLoader(API.Server.getAllServerList, [], 60)
   const [inProgress, setInProgress] = useState(false);
   const auth = useAuth()
   const navigate = useNavigate()
+  const breakpoint = useBreakpoint()
 
   const doAction = async (
     serverId: number,
     apiCall: (serverId: number ) => Promise<any>,
     success: string,
     error: string,
-    invalidateFunc: () => void = invalidate) => {
+    invalidateFunc: () => void = loader.invalidate
+  ) => {
     setInProgress(true)
     try {
       await apiCall(serverId)
@@ -158,10 +154,9 @@ function AllServersList({serverList, invalidate, invalidateParent}: AllServersLi
   ]} />
 
   const serverColumns = [
-    {title: 'id', dataIndex: 'id'},
-    {title: () => <LockOutlined />, dataIndex: 'id', render: (id: number, server: ServerStatus) =>  <>{server.isPrivate && <LockOutlined />}</>},
-    {title: 'Name', dataIndex: 'name'},
-    {title: 'Status', dataIndex: 'status', render: (status: string) => <ServerStatusLabel status={status}/>},
+    ... breakpoint.md ? [{title: 'id', dataIndex: 'id'}] : [],
+    {title: 'Name', dataIndex: 'name', render: (name: string, item: ServerStatus) => <ServerName status={item}/>},
+    {title: 'Status', dataIndex: 'status', render: (status: Status) => <StatusIcon status={status} showLabel={breakpoint.lg}/>},
     {title: 'Region', dataIndex: 'regionName'},
     {title: 'Owner', dataIndex: 'owner'},
     {
@@ -170,9 +165,9 @@ function AllServersList({serverList, invalidate, invalidateParent}: AllServersLi
       render: (id: number, server: ServerStatus) => {
         return (
           <Space wrap>
-            { server.status == 'running' &&
+            { server.enabled &&
               <Button size='small' loading={inProgress} onClick={() => onStop(server)}><CloseSquareOutlined/> Stop</Button> }
-            { server.status == 'stopped' &&
+            { !server.enabled &&
               <Button size='small' loading={inProgress} onClick={() => onStart(server)}><CaretRightFilled/> Start</Button> }
             <Dropdown overlay={menu(server)}>
             <a onClick={e => e.preventDefault()}>
@@ -187,30 +182,27 @@ function AllServersList({serverList, invalidate, invalidateParent}: AllServersLi
     }
   ]
   return (
-    <Table<ServerStatus> pagination={false} columns={serverColumns} dataSource={serverList} size='small'/>
+    <Spin spinning={loader.initialLoad}>
+      <Table<ServerStatus> rowKey='id' pagination={false} columns={serverColumns} dataSource={loader.value} size='small'/>
+    </Spin>
   );
 }
 
-interface ServerListLoaderProps { invalidateParent: () => void }
-const ServerListLoader = Loader<ServerListLoaderProps, ServerStatus[]>({
-  loaderFunc: API.Server.getAllServerList,
-  componentBuilder:(servers, props, invalidate) => <AllServersList serverList={servers} invalidate={invalidate} invalidateParent={props.invalidateParent}/>
-});
 
 export default function AdminPage() {
   const [refreshKey, setRefresh] = useState(0);
+  const navigate = useNavigate()
 
   const refresh = () => setRefresh(refreshKey + 1)
-
-  const navigate = useNavigate()
   return (
     <ContentWrapper>
       <PageHeader title={<span className="ui-title">Admin Panel</span>} onBack={() => navigate('/')}/>
       <Typography.Title level={4}>User Management</Typography.Title>
-      <UserListLoader key={`users${refreshKey}`} invalidateParent={refresh}/>
+      <UserList key={`users${refreshKey}`} invalidateParent={refresh}/>
       <br/><br/>
       <Typography.Title level={4}>Server Management</Typography.Title>
-      <ServerListLoader key={`servers${refreshKey}`} invalidateParent={refresh}/>
+      <AllServersList key={`servers${refreshKey}`} invalidateParent={refresh}/>
+      <br/>
     </ContentWrapper>
   );
 }

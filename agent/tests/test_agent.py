@@ -11,6 +11,7 @@ import shutil
 from fastapi.testclient import TestClient
 from src.main import create_app
 
+HEADER = {'Token': 'thetoken'}
 
 @pytest.fixture
 def mock_docker():
@@ -32,26 +33,26 @@ def agent(temp_dir, mock_docker) -> Agent:
 
 @pytest.fixture
 def test_client(agent):
-  return TestClient(create_app(agent))
+  return TestClient(create_app(agent, 'thetoken'))
 
 
 def test_start(test_client: TestClient):
-  response = test_client.post('/message', json={'type': 'ping'})
+  response = test_client.post('/message', json={'type': 'ping'}, headers=HEADER)
   assert response.ok
 
 def test_sync_empty(test_client: TestClient, mock_docker: Docker):
-  
+
   mock_docker.status.return_value = {}
   response = test_client.post('/message', json={
     'type': 'sync',
     'payload': {}
-  })
+  }, headers=HEADER)
 
   assert response.ok
   mock_docker.status.assert_called()
   mock_docker.start_server.assert_not_called()
   mock_docker.stop_server.assert_not_called()
-  
+
 def test_sync_new_server(test_client: TestClient, mock_docker: Docker, temp_dir):
 
   mock_docker.status.return_value = {}
@@ -61,7 +62,7 @@ def test_sync_new_server(test_client: TestClient, mock_docker: Docker, temp_dir)
       1: 'Test Lua 1',
       5: 'Test Lua 5'
     }
-  })
+  }, headers=HEADER)
 
   assert response.ok
 
@@ -80,7 +81,7 @@ def test_host_abs_path(temp_dir, mock_docker):
     docker=mock_docker,
     host_abs_data_dir='/some/host/dir'
   )
-  test_client = TestClient(create_app(agent))
+  test_client = TestClient(create_app(agent, 'thetoken'))
 
   mock_docker.status.return_value = {}
   response = test_client.post('/message', json={
@@ -89,7 +90,7 @@ def test_host_abs_path(temp_dir, mock_docker):
       1: 'Test Lua 1',
       5: 'Test Lua 5'
     }
-  })
+  }, headers=HEADER)
 
   assert response.ok
 
@@ -103,7 +104,7 @@ def test_host_abs_path(temp_dir, mock_docker):
   # lua is still written to the correct data_dir path
   with open(os.path.join(temp_dir, 'managed_gamesettings', 'server_1', 'serverconfig.lua')) as f:
     assert 'Test Lua 1' == f.read()
-  
+
   with open(os.path.join(temp_dir, 'managed_gamesettings', 'server_5', 'serverconfig.lua')) as f:
     assert 'Test Lua 5' == f.read()
 
@@ -116,7 +117,7 @@ def test_sync_stop_server(test_client: TestClient, mock_docker: Docker):
       1: 'Test Lua 1',
       5: 'Test Lua 5'
     }
-  })
+  }, headers=HEADER)
 
   assert response1.ok
 
@@ -132,7 +133,7 @@ def test_sync_stop_server(test_client: TestClient, mock_docker: Docker):
     'payload': {
       5: 'Test Lua 5'
     }
-  })
+  }, headers=HEADER)
   assert response2.ok
   mock_docker.status.assert_called()
   mock_docker.start_server.assert_not_called()
@@ -147,7 +148,7 @@ def test_sync_update_server(test_client: TestClient, mock_docker: Docker, temp_d
       1: 'Test Lua 1',
       5: 'Test Lua 5'
     }
-  })
+  }, headers=HEADER)
   assert response1.ok
 
   mock_docker.reset_mock()
@@ -163,10 +164,10 @@ def test_sync_update_server(test_client: TestClient, mock_docker: Docker, temp_d
       1: 'Test Lua 1 updated',
       5: 'Test Lua 5'
     }
-  })
+  }, headers=HEADER)
   assert response2.ok
-  
-  mock_docker.status.assert_called()    
+
+  mock_docker.status.assert_called()
   mock_docker.stop_server.assert_not_called()
   mock_docker.start_server.assert_called_once_with(
     1, 0, os.path.join(temp_dir, 'managed_gamesettings', 'server_1'))
@@ -180,16 +181,16 @@ def test_sync_lua_written(test_client: TestClient, mock_docker: Docker, temp_dir
       1: 'Test Lua 1',
       5: 'Test Lua 5'
     }
-  })
+  }, headers=HEADER)
 
   assert response.ok
-  
+
   with open(os.path.join(temp_dir, 'active_servers.json')) as f:
     assert {'1':'Test Lua 1', '5': 'Test Lua 5'} == json.load(f)
-    
+
   with open(os.path.join(temp_dir, 'managed_gamesettings', 'server_1', 'serverconfig.lua')) as f:
     assert 'Test Lua 1' == f.read()
-  
+
   with open(os.path.join(temp_dir, 'managed_gamesettings', 'server_5', 'serverconfig.lua')) as f:
     assert 'Test Lua 5' == f.read()
 
@@ -199,15 +200,15 @@ def test_bad_message_type(test_client: TestClient, mock_docker: Docker):
   response = test_client.post('/message', json={
     'type': 'invalid_type',
     'payload': {}
-  })
+  }, headers=HEADER)
 
-  assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+  assert response.status_code == status.HTTP_400_BAD_REQUEST
 
   # still running
   # still running
   response2 = test_client.post('/message', json={
     'type': 'ping'
-  })
+  }, headers=HEADER)
   assert response2.ok
 
   mock_docker.status.assert_not_called()
@@ -219,14 +220,14 @@ def test_bad_message_payload(test_client: TestClient, mock_docker: Docker):
   response1 = test_client.post('/message', json={
     'type': 'sync',
     'payload': 0
-  })
+  }, headers=HEADER)
 
   assert response1.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
 
   # still running
   response2 = test_client.post('/message', json={
     'type': 'ping'
-  })
+  }, headers=HEADER)
   assert response2.ok
 
   mock_docker.status.assert_not_called()

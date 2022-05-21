@@ -66,6 +66,7 @@ async def create_server(
     owner=user.username,
     name=new_server.name,
     region=new_server.region,
+    enabled=new_server.enabled,
     status=new_server.status,
     game_mode=new_server.game_mode,
     is_private=request.server_config.password is not None
@@ -79,6 +80,7 @@ async def get_server_status(server: models.Server = Depends(get_server)):
     owner=server.owner.username,
     name=server.name,
     region=server.region,
+    enabled=server.enabled,
     status=server.status,
     game_mode=server.game_mode,
     is_private=config.password is not None
@@ -151,6 +153,7 @@ async def set_server_config(
 
 @router.post('/server/{server_id}/start')
 async def start_server( server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
+  server.enabled = True
   server.status = 'running'
   db.commit()
   deps.host_manager().sync()
@@ -158,6 +161,7 @@ async def start_server( server: models.Server = Depends(get_server), db: Session
 
 @router.post('/server/{server_id}/stop')
 async def stop_server(server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
+  server.enabled = False
   server.status = 'stopped'
   db.commit()
   deps.host_manager().sync()

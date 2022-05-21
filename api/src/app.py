@@ -12,11 +12,13 @@ from loguru import logger
 import uvicorn
 import uvicorn.config
 
+
 from .host_manager import HostManager
 from .database import models, queries
 from .database.database import Database, run_migrations
 from . import dependencies
 from .routes import account_api, admin_api, data_api, server_api, server_list_api
+from .server_status import ServerStatusManager
 
 
 DEFAULT_CONFIG_PATH = 'config.yaml'
@@ -57,7 +59,7 @@ def load_config(argv: List[str]):
   logger.info(f'Reading config from {config_path}')
   with open(config_path) as config_file:
     config = yaml.safe_load(config_file)
-  
+
   if not config.get('base_path'):
     config['base_path'] = ''
   return config
@@ -99,6 +101,7 @@ def create_app(
   db_instance: Database,
   login_manager: LoginManager,
   host_manager: HostManager,
+  status_manager: ServerStatusManager,
   regions: Mapping[str, str]
 ) -> FastAPI:
 
@@ -106,6 +109,7 @@ def create_app(
     db_session=db_instance.SessionFactory,
     login_manager=login_manager,
     host_manager=host_manager,
+    status_manager=status_manager,
     regions=regions
   )
   app = FastAPI()
@@ -127,6 +131,7 @@ def main(argv: List[str]):
   base_path = os.path.abspath(config.get('base_path', ''))
   logger.info(f'base_path={base_path}')
   logger.add(os.path.join(base_path, 'app.log'), rotation='10 MB')
+  logger.disable('urllib3')
 
   db = create_database(config)
   # run DB migrations
@@ -134,29 +139,31 @@ def main(argv: List[str]):
 
   login_manager = create_login_manager(config, db)
   host_manager = create_host_manager(config, db)
+  server_status_manager = ServerStatusManager(host_manager)
 
   # Make sure the admin user exists
   ensure_admin_user(db)
-  
+
   api = create_app(
     db_instance=db,
     login_manager=login_manager,
     host_manager=host_manager,
+    status_manager=server_status_manager,
     regions=config['regions']
   )
-  
+
   app = FastAPI()
-  app.mount('/api', api)  
+  app.mount('/api', api)
   # For deployment, the API serve also serves the static web app
   if config.get('serve_static'):
     app.mount('/', SPAStaticFiles(directory=config['serve_static'], html=True), name='webapp')
 
   uvicorn.run(
-    app, 
-    host='0.0.0.0', 
-    port=config.get('port', 8000), 
-    debug=True, 
-    log_config=None, 
+    app,
+    host='0.0.0.0',
+    port=config.get('port', 8000),
+    debug=True,
+    log_config=None,
     proxy_headers=True
   )
 

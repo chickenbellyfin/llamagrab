@@ -24,8 +24,5 @@ host_manager:
   # host_manager iterates over this list so missing or extra regions wont cause errors
   nodes:
     central_us:
-      host: 'https://localhost'
-      token: 'test_token'
-    east_us:
-      host: 'https://localhost'
+      host: 'http://localhost'
       token: 'test_token'

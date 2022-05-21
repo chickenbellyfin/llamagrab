@@ -18,6 +18,7 @@ export default function HomePage() {
 
   let buttonComponent = (
     <Button
+      key="create_server_button"
       size='large'
       type="primary"
       icon={<PlusCircleOutlined/>}

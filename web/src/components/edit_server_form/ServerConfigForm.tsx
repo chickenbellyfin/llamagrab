@@ -15,7 +15,7 @@ type ServerConfigFormProps = {
 }
 
 function ServerConfigForm({ regions, settings, users, status, onChange }: ServerConfigFormProps) {
-  
+
   const [updatedSettings, setSettings] = useState(settings)
   const auth = useAuth()
 
@@ -38,7 +38,7 @@ function ServerConfigForm({ regions, settings, users, status, onChange }: Server
   const isOwner = status != null ? (status?.owner === auth.user?.username) : true;
 
   return (
-    <Form 
+    <Form
     labelCol={{span: 6}}
     wrapperCol={{span: 12}} onFinish={() => {}}>
     <Form.Item label="Region" name="region" rules={[{ required: true, message: 'Required' }]}>
@@ -47,7 +47,7 @@ function ServerConfigForm({ regions, settings, users, status, onChange }: Server
       defaultValue={updatedSettings.region}
       onChange={onRegionChange}
       >
-      { 
+      {
         Object.keys(regions).map(key => {
           return <Option key={key} value={key}>{regions[key]}</Option>
         })
@@ -55,7 +55,7 @@ function ServerConfigForm({ regions, settings, users, status, onChange }: Server
     </Select>
     </Form.Item>
 
-    <Form.Item 
+    <Form.Item
       label="Editors"
       extra="Other llamagrab users that can edit this server's settings">
       <Select
@@ -76,14 +76,22 @@ function ServerConfigForm({ regions, settings, users, status, onChange }: Server
 
 
 async function getServerSettings(serverId: number, settings?: ServerSettings): Promise<ServerConfigFormProps> {
+  let settingsPromise;
   try {
     if (!settings) {
-      settings = await API.Server.getServerSettings(serverId)
+      settingsPromise = await API.Server.getServerSettings(serverId)
+    } else {
+      settingsPromise = Promise.resolve(settings);
     }
-    const status = await API.Server.getServerStatus(serverId)
-    const regions = await API.Data.getRegions()
-    const users = await API.Account.getAllUsers()
-    return { settings, regions, users, status }
+    const status = API.Server.getServerStatus(serverId)
+    const regions = API.Data.getRegions()
+    const users = API.Account.getAllUsers()
+    return {
+      settings: await settingsPromise,
+      regions: await regions,
+      users: await users,
+      status: await status
+    }
   } catch(error: any) {
     throw Error('Failed to get settings')
   }
@@ -105,9 +113,12 @@ type NewLoaderProps = {
 }
 export const NewServerConfigForm = Loader<NewLoaderProps, any>({
   loaderFunc: async (props) => {
-    const regions = await API.Data.getRegions()
-    const users = await API.Account.getAllUsers()
-    return {regions, users}
+    const regions = API.Data.getRegions()
+    const users = API.Account.getAllUsers()
+    return {
+      regions: await regions,
+      users: await users
+    }
   },
   componentBuilder: (result, props) => <ServerConfigForm {...result} {...props}/>
 })

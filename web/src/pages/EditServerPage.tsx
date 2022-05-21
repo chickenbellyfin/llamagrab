@@ -135,11 +135,13 @@ export default function EditServerPage() {
         title={<span className="ui-title">{`Edit ${config?.displayName || 'Server'}`}</span>}
         onBack={() => navigate('/')}
         extra={[
-          <Button
+        <Button
+          key='history'
           icon={<HistoryOutlined />}
           onClick={showHistory}
           style={{marginRight: '10px'}}>History</Button>,
         <Button
+          key='save'
           type='primary'
           icon={<SaveOutlined/>}
           onClick={() => saveConfig()}

@@ -114,7 +114,7 @@ def test_create_server_limit(test_client: TestClient, db_session: Session, login
 def test_start_server(test_client: TestClient, db_session: Session, login_user_1: User, should_sync):
   response = test_client.post('/api/server/0/start')
   assert response.status_code == status.HTTP_200_OK
-  assert db_session.query(Server).filter_by(id=0).first().status == 'running'
+  assert db_session.query(Server).filter_by(id=0).first().enabled
 
 def test_stop_server(test_client: TestClient, db_session: Session, login_user_1: User, should_sync):
   server = db_session.query(Server).filter_by(id=0).first()
@@ -123,7 +123,7 @@ def test_stop_server(test_client: TestClient, db_session: Session, login_user_1:
 
   response = test_client.post('/api/server/0/stop')
   assert response.status_code == status.HTTP_200_OK
-  assert db_session.query(Server).filter_by(id=0).first().status == 'stopped'
+  assert not db_session.query(Server).filter_by(id=0).first().enabled
 
 def test_delete_server(test_client: TestClient, db_session: Session, login_user_1: User, should_sync):
   response = test_client.delete('/api/server/0')

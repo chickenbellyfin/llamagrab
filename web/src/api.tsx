@@ -20,19 +20,23 @@ export type User = {
   username: string
 }
 
+export type Status = 'running' | 'starting' | 'stopping' | 'offline' | 'unknown';
+
 export type ServerStatus = {
   id: number,
   owner: string,
   name: string,
   region: string,
   regionName: string,
-  status: string,
+  enabled: boolean,
+  status: Status,
   gameMode: string,
   isPrivate: boolean
 }
 
 export type RegionStatus = {
   region: string,
+  online: boolean,
   servers: ServerStatus[]
 }
 

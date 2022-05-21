@@ -35,9 +35,9 @@ servers = [
       overtime_limit=10,
       friendly_fire=True,
       maps=['ctf_katabatic', 'ctf_dangerous_crossing']
-    )  
+    )
   ),
-  requests.ServerCreateRequest(    
+  requests.ServerCreateRequest(
     server_settings=responses.ServerSettings(
       region='west_us',
     ),
@@ -49,13 +49,13 @@ def populate(db: Session):
   for user in users:
     db.add(user)
     db.commit()
-  
+
   db.add(models.UserLimits(user_id=user.id))
 
 
   db.commit()
   user1 = queries.get_user(db, user.username)
-  
+
   for server in servers:
     db_server = models.Server(
       user=user1.id,
@@ -70,5 +70,5 @@ def populate(db: Session):
   db.commit()
 
   tdm = db.query(models.Server).filter(models.Server.name == 'Custom CTF').first()
-  tdm.status = 'running'
+  tdm.enabled = True
   db.commit()

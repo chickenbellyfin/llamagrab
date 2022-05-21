@@ -16,6 +16,9 @@ from .lib.docker import Docker, NullDocker
 
 logger = logging.getLogger()
 
+MESSAGE_TYPES = {
+  'sync', 'status', 'ping'
+}
 
 def create_app(agent: Agent, tokens: Set[str]):
   app = FastAPI()
@@ -28,8 +31,13 @@ def create_app(agent: Agent, tokens: Set[str]):
 
     try:
       json = await request.json()
+      if not json.get('type') or json.get('type') not in MESSAGE_TYPES:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
       result = agent.handle_message(json)
-    except:
+      return result
+    except HTTPException as he:
+      raise he
+    except Exception as e:
       logger.exception(f'Exception while handling request')
       raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

@@ -11,7 +11,7 @@ class Docker:
     self.loginserver = loginserver
     self.image = image
     self.client = docker_client
-  
+
   def _container_name(self, server_id):
     return f'taserver_{server_id}'
 
@@ -20,7 +20,7 @@ class Docker:
     taservers = filter(lambda c: 'llamagrab' in c.labels, containers)
     running_containers = {}
 
-    for container in taservers:      
+    for container in taservers:
       server_id = int(container.labels['server_id'])
       port_offset = int(container.labels['port_offset'])
       running_containers[server_id] = port_offset
@@ -29,7 +29,7 @@ class Docker:
 
   def start_server(self, server_id: int, offset: int, abs_gamesettings: str) -> None:
     name = self._container_name(server_id)
-    
+
     gameserver1_port = 7777 + offset
     gameserver2_port = 7778 + offset
     control_port = 9002 + offset
@@ -48,7 +48,7 @@ class Docker:
       }
       network_mode = None
 
-    self.stop_server(server_id)    
+    self.stop_server(server_id)
     logging.info(f'Running container {name} offset={offset} ports={gameserver1_port},{gameserver2_port},{control_port} path={abs_gamesettings}')
     self.client.containers.run(
       self.image,
@@ -63,9 +63,9 @@ class Docker:
       detach = True,
       restart_policy = {'Name': 'unless-stopped'},
       cap_add = ['NET_ADMIN'],
-      ports = port_mappings,      
+      ports = port_mappings,
       environment = [f'LOGINSERVER={self.loginserver}'] if self.loginserver else None,
-      # If the login server is on the same host as the container, use host networking so that 
+      # If the login server is on the same host as the container, use host networking so that
       # the ip address is detected correctly
       network_mode = network_mode
     )
@@ -83,7 +83,7 @@ class Docker:
 
 
 class NullDocker:
-  
+
   def __init__(self):
     self.running = {}
 

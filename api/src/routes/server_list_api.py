@@ -22,7 +22,8 @@ def server_status_list(servers: List[models.Server], db: Session) -> List[respon
       name=s.name,
       region=s.region,
       region_name=deps.regions.get(s.region, s.region),
-      status=s.status,
+      enabled=s.enabled,
+      status=deps.status_manager.get_server_status(s),
       game_mode=s.game_mode,
       is_private=GameServerConfig.parse(s.server_config).password is not None
     )
@@ -62,6 +63,7 @@ async def get_region_status(
   region_status = [
     {
       'region': deps.regions[region],
+      'online': deps.status_manager.get_region_status(region),
       'servers': server_status_list(db_queries.get_active_servers(db, region), db)
     }
     for region in deps.regions

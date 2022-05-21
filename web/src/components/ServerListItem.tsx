@@ -1,9 +1,11 @@
-import { PoweroffOutlined, EditOutlined, DeleteOutlined, PlayCircleOutlined, LinkOutlined, LockOutlined } from "@ant-design/icons"
-import { Card, Divider, Descriptions, Badge, Popconfirm, message, Spin } from "antd"
+import { PoweroffOutlined, EditOutlined, DeleteOutlined, PlayCircleOutlined, LinkOutlined } from "@ant-design/icons"
+import { Card, Divider, Descriptions, Popconfirm, message, Spin } from "antd"
 import { useState } from "react"
 import { Link } from "react-router-dom"
 import { API, ServerStatus } from "../api"
 import { useAuth } from "../auth"
+import ServerName from "./ServerName"
+import StatusIcon from "./ServerStatusIcon"
 
 type ServerListItemProps = {
   server: ServerStatus
@@ -79,19 +81,11 @@ export default function ServerListItem({ server, invalidate }: ServerListItemPro
     );
   }
 
-  const actions: { [key: string]: any[]} = {
-    'running': [
-      stopAction,
-      editAction,
-      deleteAction
-    ],
-    'stopped': [
-      startAction,
-      editAction,
-      deleteAction
-    ]
-  }
-
+  const actions = [
+    ... server.enabled ? [stopAction] : [startAction],
+    editAction,
+    deleteAction
+  ]
 
   return (
       <Spin spinning={actionInProgress}>
@@ -101,10 +95,10 @@ export default function ServerListItem({ server, invalidate }: ServerListItemPro
             minWidth: '280px',
             ...!isOwner ? { borderColor: '#556474'} : {}
           }}
-          actions={actions[server.status]}>
+          actions={actions}>
 
           <h3>
-            <b>{ server.isPrivate && <LockOutlined/>} {server.name}</b>
+            <b><ServerName status={server}/></b>
             { !isOwner &&
               <span style={{opacity: '80%', float: 'right'}}><LinkOutlined />&nbsp;{server.owner}</span>
             }
@@ -117,11 +111,11 @@ export default function ServerListItem({ server, invalidate }: ServerListItemPro
             size='small'
             labelStyle={{opacity:'85%'}}>
             <Descriptions.Item label="Status">
-              <Badge
-                status={server.status === 'running' ? 'success' : 'error'}
-                text={server.status}/>
+              <StatusIcon status={server.status} showLabel/>
             </Descriptions.Item>
-            <Descriptions.Item label="Region">{server.regionName || 'not set'}</Descriptions.Item>
+            <Descriptions.Item label="Region">
+              {server.regionName || 'not set'}
+            </Descriptions.Item>
           </Descriptions>
         </Card>
       </Spin>
