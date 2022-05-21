@@ -1,5 +1,6 @@
 # Llamagrab
-![Unit Tests - API](https://github.com/chickenbellyfin/llamagrab/actions/workflows/pytest_api.yml/badge.svg) ![Unit Tests - Agent](https://github.com/chickenbellyfin/llamagrab/actions/workflows/pytest_agent.yml/badge.svg)
+![Unit Tests - API](https://github.com/chickenbellyfin/llamagrab/actions/workflows/pytest_api.yml/badge.svg) 
+![Unit Tests - Agent](https://github.com/chickenbellyfin/llamagrab/actions/workflows/pytest_agent.yml/badge.svg)
 
 ## Tribes Ascend Community Server Manager
 
