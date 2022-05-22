@@ -7,7 +7,7 @@ import { useAuth } from "../auth"
 import ServerName from "./ServerName"
 import StatusIcon from "./ServerStatusIcon"
 
-type ServerListItemProps = {
+type ServerCardProps = {
   server: ServerStatus
   invalidate: () => void
   showOwner?: boolean
@@ -17,17 +17,17 @@ type ServerListItemProps = {
   hideShareStyles?: boolean
 }
 
-export default function ServerListItem({ server, invalidate, maxWidth, minWidth, showOwner, warnBeforeEdit, hideShareStyles }: ServerListItemProps) {
+export default function ServerCard(props: ServerCardProps) {
 
   const auth = useAuth()
   const [actionInProgress, setActionInProgress] = useState(false)
-  const isOwner = server.owner == auth.user?.username;
+  const isOwner = props.server.owner == auth.user?.username;
   const navigate = useNavigate();
 
-  maxWidth = maxWidth === undefined ? '360px' : maxWidth
-  minWidth = minWidth === undefined ? '280px' : minWidth
+  const maxWidth = props.maxWidth === undefined ? '360px' : props.maxWidth
+  const minWidth = props.minWidth === undefined ? '280px' : props.minWidth
 
-  const showAsShared = !isOwner && !hideShareStyles;
+  const showAsShared = !isOwner && !props.hideShareStyles;
 
   const makeAction = (
     apiCall: (serverId: number) => Promise<any>,
@@ -37,13 +37,13 @@ export default function ServerListItem({ server, invalidate, maxWidth, minWidth,
     return async () => {
       setActionInProgress(true)
       try {
-        await apiCall(server.id)
+        await apiCall(props.server.id)
         message.success(success)
       } catch {
         message.error(error)
       } finally {
         setActionInProgress(false)
-        invalidate()
+        props.invalidate()
         if (callback) {
           callback()
         }
@@ -53,30 +53,30 @@ export default function ServerListItem({ server, invalidate, maxWidth, minWidth,
 
   const onDelete = makeAction(
     API.Server.deleteServer,
-    `Deleted ${ server.name }`,
-    `Error deleting ${ server.name }`,
+    `Deleted ${ props.server.name }`,
+    `Error deleting ${ props.server.name }`,
     auth.refresh
   )
 
   const onStart = makeAction(
     API.Server.startServer,
-    `Started ${ server.name }`,
-    `Failed to start ${ server.name }`
+    `Started ${ props.server.name }`,
+    `Failed to start ${ props.server.name }`
   )
 
   const onStop = makeAction(
     API.Server.stopServer,
-    `Stopped ${ server.name }`,
-    `Failed to stop ${ server.name }`
+    `Stopped ${ props.server.name }`,
+    `Failed to stop ${ props.server.name }`
   )
 
-  const editAction = warnBeforeEdit ?
+  const editAction = props.warnBeforeEdit ?
     <Popconfirm
-      title={<span>{warnBeforeEdit}</span>}
-      onConfirm={() => navigate(`/edit/${server.id}`)}
+      title={<span>{props.warnBeforeEdit}</span>}
+      onConfirm={() => navigate(`/edit/${props.server.id}`)}
       okText='Yes, Edit'><EditOutlined/> EDIT</Popconfirm>
     :
-    <Link to={`/edit/${server.id}`}>
+    <Link to={`/edit/${props.server.id}`}>
       <EditOutlined/> EDIT
     </Link>
     ;
@@ -88,7 +88,7 @@ export default function ServerListItem({ server, invalidate, maxWidth, minWidth,
   if (!showAsShared) {
     deleteAction = (
       <Popconfirm
-        title={<span>Are you sure you want to delete <b>{server.name}</b>?</span>}
+        title={<span>Are you sure you want to delete <b>{props.server.name}</b>?</span>}
         onConfirm={onDelete}
         okText='Yes, Delete'
         >
@@ -98,7 +98,7 @@ export default function ServerListItem({ server, invalidate, maxWidth, minWidth,
   }
 
   const actions = [
-    ... server.enabled ? [stopAction] : [startAction],
+    ... props.server.enabled ? [stopAction] : [startAction],
     editAction,
     deleteAction
   ]
@@ -107,6 +107,7 @@ export default function ServerListItem({ server, invalidate, maxWidth, minWidth,
       <Spin spinning={actionInProgress}>
         <Card bordered
           style={{
+            backgroundColor: '#383e47',
             maxWidth: maxWidth,
             minWidth: minWidth,
             ...showAsShared ? { borderColor: '#556474'} : {}
@@ -114,9 +115,9 @@ export default function ServerListItem({ server, invalidate, maxWidth, minWidth,
           actions={actions}>
 
           <h3>
-            <b><ServerName status={server}/></b>
+            <b><ServerName status={props.server}/></b>
             { showAsShared &&
-              <span style={{opacity: '80%', float: 'right'}}><LinkOutlined />&nbsp;{server.owner}</span>
+              <span style={{opacity: '80%', float: 'right'}}><LinkOutlined />&nbsp;{props.server.owner}</span>
             }
           </h3>
           <Divider/>
@@ -127,14 +128,14 @@ export default function ServerListItem({ server, invalidate, maxWidth, minWidth,
             size='small'
             labelStyle={{opacity:'85%'}}>
             <Descriptions.Item label="Status">
-              <StatusIcon status={server.status} showLabel/>
+              <StatusIcon status={props.server.status} showLabel/>
             </Descriptions.Item>
             <Descriptions.Item label="Region">
-              {server.regionName || 'not set'}
+              {props.server.regionName || 'not set'}
             </Descriptions.Item>
-            { showOwner &&
+            { props.showOwner &&
               <Descriptions.Item label="Owner">
-                {server.owner}
+                {props.server.owner}
               </Descriptions.Item>
             }
           </Descriptions>

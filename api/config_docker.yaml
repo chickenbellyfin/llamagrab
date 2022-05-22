@@ -17,6 +17,9 @@ regions:
   west_us: 'NA West'
   east_au: 'Australia East'
 
+
+status_polling_rate_secs: 30
+
 host_manager:
   port: 8999
 

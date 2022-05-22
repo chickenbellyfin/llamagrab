@@ -1,6 +1,4 @@
 from loguru import logger
-from sqlalchemy.orm import Session
-from sqlalchemy.orm.session import sessionmaker
 import threading
 import time
 
@@ -16,11 +14,12 @@ class ServerStatusManager:
   def __init__(
     self, host_manager:
     HostManager,
-    polling_rate: int = 60
+    polling_rate: int = 10
   ):
     self.host_manager = host_manager
     self.polling_rate = polling_rate
     self.host_statuses = {}
+    logger.info(f'ServerStatusManager poll_interval = {polling_rate}s')
     self._thread = threading.Thread(target=self._poller, daemon=True)
     self._polling = True
     self._thread.start()

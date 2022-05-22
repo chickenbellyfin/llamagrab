@@ -130,7 +130,12 @@ def main(argv: List[str]):
   # path for all variable data (db, log, etc)
   base_path = os.path.abspath(config.get('base_path', ''))
   logger.info(f'base_path={base_path}')
-  logger.add(os.path.join(base_path, 'app.log'), rotation='10 MB')
+
+  # uvicorn http logs are filtered out to access.log
+  logger.add(os.path.join(base_path, 'app.log'), rotation='10 MB', filter={
+    'uvicorn.protocols.http': False
+  })
+  logger.add(os.path.join(base_path, 'access.log'), rotation='10 MB', filter='uvicorn.protocols.http')
   logger.disable('urllib3')
 
   db = create_database(config)
@@ -139,7 +144,10 @@ def main(argv: List[str]):
 
   login_manager = create_login_manager(config, db)
   host_manager = create_host_manager(config, db)
-  server_status_manager = ServerStatusManager(host_manager)
+  server_status_manager = ServerStatusManager(
+    host_manager,
+    polling_rate=config.get('status_polling_rate_secs', 60)
+  )
 
   # Make sure the admin user exists
   ensure_admin_user(db)

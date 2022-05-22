@@ -17,6 +17,9 @@ regions:
   west_us: 'NA West'
   east_au: 'Australia East'
 
+# how frequently to poll the agent for status in each region
+status_polling_rate_secs: 30
+
 host_manager:
   port: 8999
 

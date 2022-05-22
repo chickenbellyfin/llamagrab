@@ -1,11 +1,11 @@
 import { Col, Row, Spin } from 'antd'
 
-import ServerListItem from './ServerListItem'
+import ServerListItem from './ServerCard'
 import { API } from '../api'
 import useLoader from '../useLoader'
 
 export default function ServerList() {
-  const loader = useLoader(API.Server.getUserServerList, [], 60);
+  const loader = useLoader(API.Server.getUserServerList, [], 10);
   return (
     <Spin spinning={loader.initialLoad}>
       <Row gutter={[16, 16]}>

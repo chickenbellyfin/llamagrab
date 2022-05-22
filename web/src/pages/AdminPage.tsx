@@ -8,7 +8,7 @@ import StatusIcon from "../components/ServerStatusIcon";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import ServerName from "../components/ServerName";
 import useLoader from "../useLoader";
-import ServerListItem from "../components/ServerListItem";
+import ServerListItem from "../components/ServerCard";
 import { Breakpoint } from "antd/lib/_util/responsiveObserve";
 
 const tierColors: {[key: string]: any} = {
@@ -90,9 +90,10 @@ function UserList ({ invalidateParent }: UserListProps) {
 interface AllServersListProps {}
 function AllServersList(props: AllServersListProps) {
 
-  const loader = useLoader(API.Server.getAllServerList, [], 60)
+  const loader = useLoader(API.Server.getAllServerList, [], 10)
   const [modalServerId, setModalServerId] = useState<number | undefined>();
   const breakpoint = useBreakpoint()
+  const auth = useAuth();
 
   let modalServer = undefined;
   if (modalServerId !== undefined) {
@@ -138,7 +139,7 @@ function AllServersList(props: AllServersListProps) {
             server={modalServer} invalidate={loader.invalidate}
             maxWidth='unset'
             showOwner
-            warnBeforeEdit="Admins should only edit servers for emergencies."
+            warnBeforeEdit={(auth.user?.username == modalServer.owner) ? undefined : "Admins should only edit servers for emergencies."}
             hideShareStyles
           />
         </Modal>
