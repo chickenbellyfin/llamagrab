@@ -66,7 +66,7 @@ function ClassHardcodedLoadouts(props: ClassHardcodedLoadoutsProps) {
     })
   });
 
-  useEffect(() => { 
+  useEffect(() => {
     // deep copy
     const updated = state.hardcodedLoadouts.map(item => Object.assign({}, item))
     // if its not per-slot, set all values to the first loadout
@@ -97,9 +97,9 @@ function ClassHardcodedLoadouts(props: ClassHardcodedLoadoutsProps) {
       title: 'Primary',
       render: (slot: number) => {
         return (
-          <Select 
+          <Select
             allowClear
-            value={state.hardcodedLoadouts[slot].primary} 
+            value={state.hardcodedLoadouts[slot].primary}
             onChange={(value: string) => updateWeapon(slot, 'primary', value)}>
             {loadoutOptions[props.clazz].guns}
           </Select>
@@ -112,7 +112,7 @@ function ClassHardcodedLoadouts(props: ClassHardcodedLoadoutsProps) {
         return (
           <Select
             allowClear
-            value={state.hardcodedLoadouts[slot].secondary} 
+            value={state.hardcodedLoadouts[slot].secondary}
             onChange={(value: string) => updateWeapon(slot, 'secondary', value)}>
             {loadoutOptions[props.clazz].guns}
           </Select>
@@ -125,7 +125,7 @@ function ClassHardcodedLoadouts(props: ClassHardcodedLoadoutsProps) {
         return (
           <Select
             allowClear
-            value={state.hardcodedLoadouts[slot].tertiary} 
+            value={state.hardcodedLoadouts[slot].tertiary}
             onChange={(value: string) => updateWeapon(slot, 'tertiary', value)}>
             {loadoutOptions[props.clazz].guns}
           </Select>
@@ -138,7 +138,7 @@ function ClassHardcodedLoadouts(props: ClassHardcodedLoadoutsProps) {
         return (
           <Select
             allowClear
-            value={state.hardcodedLoadouts[slot].belt} 
+            value={state.hardcodedLoadouts[slot].belt}
             onChange={(value: string) => updateWeapon(slot, 'belt', value)}>
             {loadoutOptions[props.clazz].belt}
           </Select>
@@ -151,7 +151,7 @@ function ClassHardcodedLoadouts(props: ClassHardcodedLoadoutsProps) {
         return (
           <Select
             allowClear
-            value={state.hardcodedLoadouts[slot].pack} 
+            value={state.hardcodedLoadouts[slot].pack}
             onChange={(value: string) => updateWeapon(slot, 'pack', value)}>
             {loadoutOptions[props.clazz].pack}
           </Select>
@@ -175,11 +175,11 @@ function ClassHardcodedLoadouts(props: ClassHardcodedLoadoutsProps) {
       children: slotColumn.concat(weaponColumns)
     }
   ];
-  
+
 
   return (
     <>
-    <Table<any> size='small' tableLayout='fixed' pagination={false} columns={loadoutColumns} dataSource={rows}/>
+      <Table<any> className='ClassHardcodedLoadouts' size='small' tableLayout='fixed' pagination={false} columns={loadoutColumns} dataSource={rows}/>
     </>
   );
 }
@@ -192,8 +192,8 @@ export default function HardcodedLoadoutsForm ({config, updateCallbacks}: Hardco
 
   const [enabled, setEnabled] = useState<boolean>(
     config.lightHardcodedLoadouts != undefined
-    || config.mediumHardcodedLoadouts != undefined 
-    || config.heavyHardcodedLoadouts != undefined 
+    || config.mediumHardcodedLoadouts != undefined
+    || config.heavyHardcodedLoadouts != undefined
   )
 
   const onToggle = (value: boolean) => {
@@ -209,25 +209,25 @@ export default function HardcodedLoadoutsForm ({config, updateCallbacks}: Hardco
 
   return (
     <>
-    <Form.Item label='Force Hardcoded Loadouts'>
-      <Switch checked={enabled} onChange={onToggle}/>
-    </Form.Item>
-    { enabled &&
-      <Form.Item wrapperCol={{span: 24}}>
-        <ClassHardcodedLoadouts
-          clazz='Light'
-          hardcodedLoadouts={config.lightHardcodedLoadouts}
-          onChange={updateCallbacks.update('lightHardcodedLoadouts')}/>
-        <ClassHardcodedLoadouts 
-          clazz='Medium'
-          hardcodedLoadouts={config.mediumHardcodedLoadouts}
-          onChange={updateCallbacks.update('mediumHardcodedLoadouts')}/>
-        <ClassHardcodedLoadouts 
-          clazz='Heavy'
-          hardcodedLoadouts={config.heavyHardcodedLoadouts}
-          onChange={updateCallbacks.update('heavyHardcodedLoadouts')}/>
+      <Form.Item label='Force Hardcoded Loadouts'>
+        <Switch checked={enabled} onChange={onToggle}/>
       </Form.Item>
-    }
-  </>
+      { enabled &&
+        <Form.Item wrapperCol={{span: 24}}>
+          <ClassHardcodedLoadouts
+            clazz='Light'
+            hardcodedLoadouts={config.lightHardcodedLoadouts}
+            onChange={updateCallbacks.update('lightHardcodedLoadouts')}/>
+          <ClassHardcodedLoadouts
+            clazz='Medium'
+            hardcodedLoadouts={config.mediumHardcodedLoadouts}
+            onChange={updateCallbacks.update('mediumHardcodedLoadouts')}/>
+          <ClassHardcodedLoadouts
+            clazz='Heavy'
+            hardcodedLoadouts={config.heavyHardcodedLoadouts}
+            onChange={updateCallbacks.update('heavyHardcodedLoadouts')}/>
+        </Form.Item>
+      }
+    </>
   );
 }

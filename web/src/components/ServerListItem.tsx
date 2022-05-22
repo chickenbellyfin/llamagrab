@@ -1,7 +1,7 @@
 import { PoweroffOutlined, EditOutlined, DeleteOutlined, PlayCircleOutlined, LinkOutlined } from "@ant-design/icons"
 import { Card, Divider, Descriptions, Popconfirm, message, Spin } from "antd"
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { API, ServerStatus } from "../api"
 import { useAuth } from "../auth"
 import ServerName from "./ServerName"
@@ -10,13 +10,24 @@ import StatusIcon from "./ServerStatusIcon"
 type ServerListItemProps = {
   server: ServerStatus
   invalidate: () => void
+  showOwner?: boolean
+  warnBeforeEdit?: string
+  maxWidth?: string
+  minWidth?: string
+  hideShareStyles?: boolean
 }
 
-export default function ServerListItem({ server, invalidate }: ServerListItemProps) {
+export default function ServerListItem({ server, invalidate, maxWidth, minWidth, showOwner, warnBeforeEdit, hideShareStyles }: ServerListItemProps) {
 
   const auth = useAuth()
   const [actionInProgress, setActionInProgress] = useState(false)
   const isOwner = server.owner == auth.user?.username;
+  const navigate = useNavigate();
+
+  maxWidth = maxWidth === undefined ? '360px' : maxWidth
+  minWidth = minWidth === undefined ? '280px' : minWidth
+
+  const showAsShared = !isOwner && !hideShareStyles;
 
   const makeAction = (
     apiCall: (serverId: number) => Promise<any>,
@@ -59,17 +70,22 @@ export default function ServerListItem({ server, invalidate }: ServerListItemPro
     `Failed to stop ${ server.name }`
   )
 
-  const editAction = (
+  const editAction = warnBeforeEdit ?
+    <Popconfirm
+      title={<span>{warnBeforeEdit}</span>}
+      onConfirm={() => navigate(`/edit/${server.id}`)}
+      okText='Yes, Edit'><EditOutlined/> EDIT</Popconfirm>
+    :
     <Link to={`/edit/${server.id}`}>
       <EditOutlined/> EDIT
     </Link>
-  );
+    ;
 
   const startAction = ( <div onClick={onStart}><PlayCircleOutlined/> START</div>)
   const stopAction = (<div onClick={onStop}><PoweroffOutlined/> STOP</div>);
 
   let deleteAction: JSX.Element = <></>;
-  if (isOwner) {
+  if (!showAsShared) {
     deleteAction = (
       <Popconfirm
         title={<span>Are you sure you want to delete <b>{server.name}</b>?</span>}
@@ -91,15 +107,15 @@ export default function ServerListItem({ server, invalidate }: ServerListItemPro
       <Spin spinning={actionInProgress}>
         <Card bordered
           style={{
-            maxWidth: '360px',
-            minWidth: '280px',
-            ...!isOwner ? { borderColor: '#556474'} : {}
+            maxWidth: maxWidth,
+            minWidth: minWidth,
+            ...showAsShared ? { borderColor: '#556474'} : {}
           }}
           actions={actions}>
 
           <h3>
             <b><ServerName status={server}/></b>
-            { !isOwner &&
+            { showAsShared &&
               <span style={{opacity: '80%', float: 'right'}}><LinkOutlined />&nbsp;{server.owner}</span>
             }
           </h3>
@@ -116,6 +132,11 @@ export default function ServerListItem({ server, invalidate }: ServerListItemPro
             <Descriptions.Item label="Region">
               {server.regionName || 'not set'}
             </Descriptions.Item>
+            { showOwner &&
+              <Descriptions.Item label="Owner">
+                {server.owner}
+              </Descriptions.Item>
+            }
           </Descriptions>
         </Card>
       </Spin>

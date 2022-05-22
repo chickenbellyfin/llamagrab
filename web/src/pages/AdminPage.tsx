@@ -1,15 +1,15 @@
-import { Button, Dropdown, Menu, message, PageHeader, Popconfirm, Space, Spin, Table, Tag, Typography } from "antd";
+import { Button, message, Modal, PageHeader, Popconfirm, Space, Spin, Table, Tag, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 import { API, ServerStatus, Status, UserAccount, UserLimits } from "../api";
 import { useAuth } from "../auth";
-import { CaretRightFilled, CloseSquareOutlined, DeleteOutlined, DownOutlined, EditOutlined } from "@ant-design/icons";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import ContentWrapper from "../components/ContentWrapper";
 import StatusIcon from "../components/ServerStatusIcon";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import ServerName from "../components/ServerName";
 import useLoader from "../useLoader";
+import ServerListItem from "../components/ServerListItem";
+import { Breakpoint } from "antd/lib/_util/responsiveObserve";
 
 const tierColors: {[key: string]: any} = {
   'super': 'red',
@@ -42,7 +42,7 @@ function UserList ({ invalidateParent }: UserListProps) {
   const auth = useAuth();
 
   const columns = [
-    ... breakpoint.md ? [{ title: 'id', dataIndex:'id' }] : [],
+    { title: 'id', dataIndex:'id', responsive: ['md' as Breakpoint] },
     { title: 'Name', dataIndex: 'username'},
     {
       title: 'Tier',
@@ -88,102 +88,62 @@ function UserList ({ invalidateParent }: UserListProps) {
   );
 }
 
-type AllServersListProps = {
-  invalidateParent: () => void
-}
-function AllServersList({invalidateParent}: AllServersListProps) {
+interface AllServersListProps {}
+function AllServersList(props: AllServersListProps) {
 
   const loader = useLoader(API.Server.getAllServerList, [], 60)
-  const [inProgress, setInProgress] = useState(false);
-  const auth = useAuth()
-  const navigate = useNavigate()
+  const [modalServerId, setModalServerId] = useState<number | undefined>();
   const breakpoint = useBreakpoint()
 
-  const doAction = async (
-    serverId: number,
-    apiCall: (serverId: number ) => Promise<any>,
-    success: string,
-    error: string,
-    invalidateFunc: () => void = loader.invalidate
-  ) => {
-    setInProgress(true)
-    try {
-      await apiCall(serverId)
-      message.success(success)
-    } catch {
-      message.error(error)
-    } finally {
-      setInProgress(false)
-      invalidateFunc()
-    }
+  let modalServer = undefined;
+  if (modalServerId !== undefined) {
+    modalServer = loader.value?.find(s => s.id == modalServerId)
   }
 
-  const onStart = (server: ServerStatus) => doAction(
-    server.id, API.Server.startServer, `Started ${server.name}`, `Failed to start ${server.name}`)
-  const onStop = (server: ServerStatus) => doAction(
-    server.id, API.Server.stopServer, `Stopped ${server.name}`, `Failed to stop ${server.name}`)
-  const onDelete = (server: ServerStatus) => doAction(
-    server.id, API.Server.deleteServer, `Deleted ${server.name}`, `Failed to delete ${server.name}`, invalidateParent)
-
-  const menu =  (server: ServerStatus) => <Menu items={[
-    {
-      label: (
-         auth.user?.username == server.owner ?
-          <Link to={`/edit/${server.id}`}>Edit</Link>
-         :
-          <Popconfirm
-          title={<span>Admins should only edit servers for emergencies.</span>}
-          onConfirm={() => navigate(`/edit/${server.id}`)}
-          okText='Yes, Edit'><a>Edit</a></Popconfirm>
-
-      ),
-      key:'edit',
-      icon: <EditOutlined />
-    },
-    ... auth.permissions.canDeleteServer(server) ? [{
-      label: (
-        <Popconfirm
-          title={<span>Are you sure you want to delete <b>{server.name}</b>?</span>}
-          onConfirm={() => onDelete(server)}
-          okText='Yes, Delete'><a>Delete</a></Popconfirm>
-      ),
-      key:'delete',
-      danger: true,
-      icon: <DeleteOutlined />
-    }] : []
-  ]} />
-
   const serverColumns = [
-    ... breakpoint.md ? [{title: 'id', dataIndex: 'id'}] : [],
+    {title: 'id', dataIndex: 'id', responsive: ['md' as Breakpoint]},
     {title: 'Name', dataIndex: 'name', render: (name: string, item: ServerStatus) => <ServerName status={item}/>},
     {title: 'Status', dataIndex: 'status', render: (status: Status) => <StatusIcon status={status} showLabel={breakpoint.lg}/>},
     {title: 'Region', dataIndex: 'regionName'},
-    {title: 'Owner', dataIndex: 'owner'},
-    {
-      title: 'Actions',
-      dataIndex: 'id',
-      render: (id: number, server: ServerStatus) => {
-        return (
-          <Space wrap>
-            { server.enabled &&
-              <Button size='small' loading={inProgress} onClick={() => onStop(server)}><CloseSquareOutlined/> Stop</Button> }
-            { !server.enabled &&
-              <Button size='small' loading={inProgress} onClick={() => onStart(server)}><CaretRightFilled/> Start</Button> }
-            <Dropdown overlay={menu(server)}>
-            <a onClick={e => e.preventDefault()}>
-              <Button size='small' loading={inProgress}>
-                  Actions<DownOutlined />
-              </Button>
-            </a>
-          </Dropdown>
-          </Space>
-        );
-      }
-    }
+    {title: 'Owner', dataIndex: 'owner'}
   ]
   return (
     <Spin spinning={loader.initialLoad}>
-      <Table<ServerStatus> rowKey='id' pagination={false} columns={serverColumns} dataSource={loader.value} size='small'/>
+      <Table<ServerStatus>
+        rowKey='id'
+        pagination={false}
+        columns={serverColumns}
+        dataSource={loader.value}
+        size='small'
+        onRow={(record, rowIndex) => {
+          return {
+            onClick: () => {
+              setModalServerId(
+                (rowIndex !== undefined && loader.value !== undefined) ?
+                  loader.value[rowIndex].id : undefined)
+            }
+          };
+        }}
+      />
+      {modalServer &&
+        <Modal
+          visible={modalServer !== undefined}
+          onCancel={() => setModalServerId(undefined)}
+          title={null}
+          footer={null}
+          bodyStyle={{
+            padding: '0px'
+          }}
+        >
+          <ServerListItem
+            server={modalServer} invalidate={loader.invalidate}
+            maxWidth='unset'
+            showOwner
+            warnBeforeEdit="Admins should only edit servers for emergencies."
+            hideShareStyles
+          />
+        </Modal>
+    }
     </Spin>
   );
 }
@@ -201,7 +161,7 @@ export default function AdminPage() {
       <UserList key={`users${refreshKey}`} invalidateParent={refresh}/>
       <br/><br/>
       <Typography.Title level={4}>Server Management</Typography.Title>
-      <AllServersList key={`servers${refreshKey}`} invalidateParent={refresh}/>
+      <AllServersList key={`servers${refreshKey}`}/>
       <br/>
     </ContentWrapper>
   );
