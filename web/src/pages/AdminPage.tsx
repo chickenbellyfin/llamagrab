@@ -23,7 +23,6 @@ type UserListProps = {
 }
 function UserList ({ invalidateParent }: UserListProps) {
   const loader = useLoader(API.Account.getAllUserAccounts, []);
-  const breakpoint = useBreakpoint();
   async function updateUser(
     user: UserAccount,
     action: (id: number) => void,

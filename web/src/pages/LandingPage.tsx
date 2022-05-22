@@ -3,9 +3,10 @@ import Icon, { CloudServerOutlined, ControlOutlined, CrownOutlined, SafetyCertif
 import { Col, Divider, Row, Space, Typography } from 'antd';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
 import RegionStatusSection from '../components/RegionStatusSection';
+import { getBreakpoint } from '../util';
 
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 export default function LandingPage() {
   const breakpoint = useBreakpoint();
@@ -13,41 +14,33 @@ export default function LandingPage() {
   const content = [
     {
       icon: ThunderboltOutlined,
-      text: "High Performance for Big Matches",
-      short: "High Performance"
+      title: 'Performant',
+      text: "Run full 28-player matches without lag or jankiness. Servers launch and update in < 1 minute. Move regions instantly to minimize latency.",
     },
     {
       icon: ControlOutlined,
-      text: "100% Customizable. Community Maps Included",
-      short: "100% Customizable"
+      title: 'Customizable',
+      text:
+        <p>Easy-to-use interface backed by the full power of&nbsp;
+          <a style={{color: 'white', textDecoration: 'underline'}} target='_blank' href='https://www.tamods.org/'>TAMods</a>. No coding/lua required. Brand New community maps already installed</p>,
     },
     {
       icon: CloudServerOutlined,
-      text: "24/7 Cloud Hosting. Move Regions Instantly",
-      short: "24/7 Cloud Hosting"
+      title: 'Reliable',
+      text: "Servers stay up as long as you want with 24/7 Cloud Hosting. Server history lets you expirement easily and rollback to a good config,",
     },
     {
       icon: SafetyCertificateOutlined,
-      text: "Secure Against Cheaters and Abuse",
-      short: "Secure & Cheat-Free"
-    },
-    {
-      icon: CrownOutlined,
-      text: "Full Control With Automatic Admin Access",
-      short: "Admin Access"
-    },
-    {
-      icon: UsergroupAddOutlined,
-      text: "Shared Editing & Admin Rights",
-      short: "Shared Editing"
-    },
+      title: 'Secure',
+      text: "Secure Against Cheaters and Abuse. Automatic admin access for your own servers. Easily share editing and admin rights with your community."
+    }
   ];
 
   const titleStyle = {
     letterSpacing: '3.5px',
     marginTop: '0',
     marginBottom: '0',
-    filter: 'drop-shadow(0px 0px 10px #1d84e366',
+    filter: 'drop-shadow(0px 0px 10px #1d84e355',
     opacity: '95%',
     lineHeight: '100%'
   };
@@ -72,7 +65,7 @@ export default function LandingPage() {
           style={{
             color: '#1d84e3', //primary blue
             fontSize:breakpoint.md ? '128px' : '96px',
-            filter: 'drop-shadow(0px 0px 10px #1d84e355'
+            filter: 'drop-shadow(0px 0px 10px #1d84e344'
           }}
           component={logo}/>
         <Title style={titleStyle}>
@@ -85,35 +78,26 @@ export default function LandingPage() {
       <Divider style={dividerStyle}>
         TRIBES: ASCEND COMMUNITY SERVER HOSTING
       </Divider>
-      <Row justify='center' gutter={[16, 16]} style={{padding: '0px 20px', marginBottom:'40px'}} wrap>
+      <div style={{maxWidth:'1000px', margin: '0 auto 40px auto', padding: '0px 20px'}}>
+      <Row justify='center' gutter={[16, 16]}>
         { content.map(item =>
-          <Col key={item.short}>
-
-            <Space
-              align='center'
-              direction='vertical'
-              style={{
-                width: breakpoint.md? '280px': '100px',
-                textAlign: 'center'
-              }}>
+          <Col key={item.title} style={{textAlign: 'center'}} xs={24} sm={12}>
               <item.icon
                     style={{
-                    opacity: '80%',
-                    padding: breakpoint.md ? '20px' : '0px 10px',
-                    //color: '#73d13d',
-                    filter: 'drop-shadow(0px 0px 8px #ffffff22)',
-                    fontSize: breakpoint.md ? '48px': '48px'}}
+                    opacity: '70%',
+                    padding: breakpoint.md ? '10px' : '5px 10px',
+                    fontSize: '48px'}}
                   />
-              <Title level={5} style={{opacity: '85%', filter: 'drop-shadow(0px 0px 8px #ffffff22)'}}>
-                {breakpoint.md? item.text : item.short}
+              <Title level={5} style={{opacity: '70%', textTransform: 'uppercase', letterSpacing: '1px'}}>
+                {item.title}
               </Title>
-            </Space>
+             <Text style={{opacity: '70%'}}>{item.text}</Text>
           </Col>
           )
         }
       </Row>
+      </div>
       <div style={{
-        //backgroundColor:'#22272d88',
         padding: ' 10px 0px 40px 0px',
       }}>
       <Divider style={dividerStyle}>
