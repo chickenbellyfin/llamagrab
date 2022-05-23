@@ -1,12 +1,36 @@
 import { ReactComponent as logo } from '../../public/gen.svg'
 import Icon, { CloudServerOutlined, ControlOutlined, CrownOutlined, SafetyCertificateOutlined, ThunderboltOutlined, UsergroupAddOutlined } from '@ant-design/icons';
-import { Col, Divider, Row, Space, Typography } from 'antd';
+import { Button, Col, Divider, Row, Space, Typography } from 'antd';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
 import RegionStatusSection from '../components/RegionStatusSection';
 import { getBreakpoint } from '../util';
+import { ReactComponent as HonorLogo } from '../../public/honor.svg'
+import colors from '../colors';
+import DiscordButton from '../components/DiscordButton';
 
 
 const { Title, Text } = Typography;
+
+function WilderzoneButton() {
+  return (
+    <a target='_blank' href='https://wilderzone.live'>
+      <Button
+        className='discord-button'
+        type='primary'
+        size='large'
+        style={{
+          backgroundColor: colors.popoverBackground.hex,
+          border: 'none',
+          fontWeight: 500
+        }}
+      >
+        {/* <Icon component={HonorLogo}/> */}
+        WILDERZONE.LIVE
+      </Button>
+    </a>
+  );
+}
+
 
 export default function LandingPage() {
   const breakpoint = useBreakpoint();
@@ -100,9 +124,19 @@ export default function LandingPage() {
       <div style={{
         padding: ' 10px 0px 40px 0px',
       }}>
-      <Divider style={dividerStyle}>
-        STATUS
-      </Divider>
+      <Divider style={dividerStyle}>JOIN US ON</Divider>
+      <Row justify='center' gutter={[16, 16]} wrap>
+        {/* <Col style={{textAlign:'center'}}>
+          <span className='secondary-label'>get the scoop</span><br/>
+          <WilderzoneButton/>
+        </Col> */}
+        <Col style={{textAlign:'center'}}>
+          {/* <span className='secondary-label'>join us on</span><br/> */}
+          <DiscordButton/>
+        </Col>
+      </Row>
+
+      <Divider style={dividerStyle}>STATUS</Divider>
       <RegionStatusSection/>
       </div>
     </>

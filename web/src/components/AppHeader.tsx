@@ -1,11 +1,12 @@
 import Icon, { SettingFilled } from "@ant-design/icons";
 import { Menu, Tooltip, Layout, Modal, Button } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth";
 import { ReactComponent as logo } from '../../public/gen.svg'
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import LoginForm from './LoginForm'
 import { useState } from "react";
+import DiscordButton from "./DiscordButton";
 
 const { Header } = Layout;
 
@@ -17,6 +18,7 @@ export default function AppHeader(props: AppHeaderProps) {
   const [isLoginVisible, setLoginVisible] = useState(false);
   const auth = useAuth()
   const breakpoint = useBreakpoint();
+  const location = useLocation();
 
   const showLogin = () => setLoginVisible(true);
   const hideLogin = () => setLoginVisible(false);
@@ -35,12 +37,14 @@ export default function AppHeader(props: AppHeaderProps) {
             </h1>
           </a>
         }
+
         <Menu
           style={{ float: 'right' }}
           theme='dark'
           mode='horizontal'
           selectedKeys={[]}
           disabledOverflow>
+         { (auth.user || location.pathname !== '/') && <DiscordButton size='middle' responsive/>}
           {auth.user &&
             <Menu.Item key='settings'>
               <Tooltip title='Settings'>

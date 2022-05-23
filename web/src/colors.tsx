@@ -28,5 +28,11 @@ export default {
     hex: '#bfbfbf',
     style: { color: '#bfbfbf' } as CSSProperties
   },
+  componentBackground: {
+    hex: '#383e47'
+  },
+  popoverBackground: {
+    hex: '#404854'
+  },
   tiers: tierColors
 }
