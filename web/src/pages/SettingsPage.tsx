@@ -95,7 +95,7 @@ function ProfileForm() {
           name="tribes_username"
 
           rules={[{ required: true, message: 'Required' }]}>
-          <Input defaultValue={tribesUsername} onChange={(e) => setTribesUsername(e.target.value)}/>
+          <Input placeholder="Without [Clan] Tag" defaultValue={tribesUsername} onChange={(e) => setTribesUsername(e.target.value)}/>
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 6, span: 14 }}>

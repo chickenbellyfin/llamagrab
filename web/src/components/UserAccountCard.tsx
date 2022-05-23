@@ -85,6 +85,9 @@ export default function UserAccountCard(props: UserAccountCardProps) {
             <Descriptions.Item label="Servers / Max">
               {`${props.user.limits.serverCount} / ${props.user.limits.serverLimit || '∞'}`}
             </Descriptions.Item>
+            <Descriptions.Item label="Tribes Username">
+              {props.user.tribesUsername || '(not set)'}
+            </Descriptions.Item>
           </Descriptions>
         </Card>
       </Spin>
