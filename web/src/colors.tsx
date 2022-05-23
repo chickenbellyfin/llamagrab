@@ -3,6 +3,14 @@ import { CSSProperties } from 'react';
 
 const colors = presetDarkPalettes;
 
+// colors for user tier badges
+const tierColors: {[key: string]: any} = {
+  'super': 'red',
+  'admin': 'purple',
+  'verified': 'green',
+  'unverified': ''
+}
+
 export default {
   success: {
     hex: colors.green[6],
@@ -19,5 +27,6 @@ export default {
   disabled: {
     hex: '#bfbfbf',
     style: { color: '#bfbfbf' } as CSSProperties
-  }
+  },
+  tiers: tierColors
 }

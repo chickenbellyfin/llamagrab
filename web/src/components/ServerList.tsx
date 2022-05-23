@@ -1,6 +1,6 @@
 import { Col, Row, Spin } from 'antd'
 
-import ServerListItem from './ServerCard'
+import ServerCard from './ServerCard'
 import { API } from '../api'
 import useLoader from '../useLoader'
 
@@ -12,7 +12,7 @@ export default function ServerList() {
         {
           loader.value?.map((item) => (
             <Col key={`${item.id}`}>
-              <ServerListItem server={item} invalidate={loader.invalidate}/>
+              <ServerCard server={item} invalidate={loader.invalidate}/>
             </Col>
           ))
         }

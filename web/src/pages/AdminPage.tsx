@@ -1,4 +1,4 @@
-import { Button, message, Modal, PageHeader, Popconfirm, Space, Spin, Table, Tag, Typography } from "antd";
+import { message, Modal, PageHeader, Spin, Table, Tag, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 import { API, ServerStatus, Status, UserAccount, UserLimits } from "../api";
 import { useAuth } from "../auth";
@@ -8,21 +8,24 @@ import StatusIcon from "../components/ServerStatusIcon";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import ServerName from "../components/ServerName";
 import useLoader from "../useLoader";
-import ServerListItem from "../components/ServerCard";
+import ServerCard from "../components/ServerCard";
 import { Breakpoint } from "antd/lib/_util/responsiveObserve";
+import UserAccountCard from "../components/UserAccountCard";
+import colors from "../colors";
 
-const tierColors: {[key: string]: any} = {
-  'super': 'red',
-  'admin': 'purple',
-  'verified': 'green',
-  'unverified': ''
-}
 
 type UserListProps = {
   invalidateParent: () => void
 }
 function UserList ({ invalidateParent }: UserListProps) {
   const loader = useLoader(API.Account.getAllUserAccounts, []);
+
+  const [modalUserId, setModalUserId] = useState<number | undefined>();
+  let modalUser = undefined;
+  if (modalUserId !== undefined) {
+    modalUser = loader.value?.find(u => u.id == modalUserId)
+  }
+
   async function updateUser(
     user: UserAccount,
     action: (id: number) => void,
@@ -38,15 +41,13 @@ function UserList ({ invalidateParent }: UserListProps) {
     }
   }
 
-  const auth = useAuth();
-
   const columns = [
     { title: 'id', dataIndex:'id', responsive: ['md' as Breakpoint] },
     { title: 'Name', dataIndex: 'username'},
     {
       title: 'Tier',
       dataIndex: 'tier',
-      render: (tier: string) => <Tag color={tierColors[tier]}>{tier.toUpperCase()}</Tag>
+      render: (tier: string) => <Tag color={colors.tiers[tier]}>{tier.toUpperCase()}</Tag>
     },
     {
       title: 'Servers / Max',
@@ -57,32 +58,41 @@ function UserList ({ invalidateParent }: UserListProps) {
         {`${limits.serverCount} / ${limits.serverLimit || '∞'}`}
         </>)
       }
-    },
-    {
-      title: 'Actions',
-      dataIndex: 'id',
-      render: (id: number, user: UserAccount) => (
-        <Space>
-          {auth.permissions.canVerifyUser(user) && <Button size='small' onClick={() => updateUser(user, API.Admin.verifyUser)}>Verify</Button>}
-          {auth.permissions.canMakeAdmin(user) && <Button size='small' onClick={() => updateUser(user, API.Admin.makeAdmin)}>Make Admin</Button>}
-          {auth.permissions.canRemoveAdmin(user) && <Button size='small' onClick={() => updateUser(user, API.Admin.removeAdmin)}>Remove Admin</Button>}
-          {/* TODO {auth.permissions.canResetPassword(user) && <Button size='small'>Reset Password</Button>} */}
-          {auth.permissions.canDeleteUser(user) &&
-            <Popconfirm
-              title={<span>Are you sure you want to delete <b>{user.username}</b>?</span>}
-              onConfirm={() => updateUser(user, API.Account.deleteUser, invalidateParent)}
-              okText='Yes, Delete'>
-              <Button danger size='small'>Delete</Button>
-            </Popconfirm>
-          }
-        </Space>
-      )
     }
   ];
 
   return (
     <Spin spinning={loader.initialLoad}>
-      <Table<UserAccount> rowKey='id' pagination={false} columns={columns} dataSource={loader.value} size='small'/>
+      <Table<UserAccount>
+        rowKey='id'
+        pagination={false}
+        columns={columns}
+        dataSource={loader.value}
+        size='small'
+        onRow={(record, rowIndex) => {
+          return {
+            onClick: () => {
+              setModalUserId(
+                (rowIndex !== undefined && loader.value !== undefined) ?
+                  loader.value[rowIndex].id : undefined)
+            }
+          };
+        }}/>
+      {modalUser &&
+        <Modal
+          visible={modalUser !== undefined}
+          onCancel={() => setModalUserId(undefined)}
+          title={null}
+          footer={null}
+          bodyStyle={{
+            padding: '0px'
+          }}
+        >
+          <UserAccountCard
+            user={modalUser} invalidate={loader.invalidate} onDelete={invalidateParent}
+          />
+        </Modal>
+    }
     </Spin>
   );
 }
@@ -135,7 +145,7 @@ function AllServersList(props: AllServersListProps) {
             padding: '0px'
           }}
         >
-          <ServerListItem
+          <ServerCard
             server={modalServer} invalidate={loader.invalidate}
             maxWidth='unset'
             showOwner
