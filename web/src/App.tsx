@@ -16,6 +16,7 @@ import Icon, { DatabaseFilled, GlobalOutlined } from '@ant-design/icons';
 import { ReactComponent as adminLogo } from '../public/admin.svg'
 import LandingPage from './pages/LandingPage';
 import RegionsPage from './pages/RegionsPage';
+import { Footer } from 'antd/lib/layout/layout';
 
 const { Header, Content, Sider } = Layout;
 
@@ -83,7 +84,8 @@ function App () {
             </Menu>
           </Sider>
         }
-        <Content style={{overflowX: 'hidden'}}>
+        <Content style={{overflowX: 'hidden', display: 'flex', flexDirection: 'column'}}>
+          <div style={{flexGrow: 1}}>
           <Routes>
 
             {/* Login & Signup pages disabled for logged in users, will redirect to '/' */}
@@ -106,6 +108,10 @@ function App () {
             {/* Any paths not defined redirect to '/' */}
             <Route path='*' element={<Navigate replace to='/'/>}/>
           </Routes>
+          </div>
+          <Footer style={{textAlign:'center', whiteSpace:'nowrap', opacity: .7}}>
+            © 2021-{new Date().getFullYear()} <a href='mailto:admin@llamagrab.net' style={{color:'unset', textDecoration: 'underline'}}>admin@llamagrab.net</a>
+          </Footer>
         </Content>
       </Layout>
     </Layout>

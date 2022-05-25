@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { setToken, useAuth } from '../auth'
-import { Typography } from 'antd'
+import { Button, Typography } from 'antd'
 import { useNavigate } from 'react-router';
 import { API } from '../api';
 import CredentialsForm from './CredentialsForm';
@@ -89,10 +89,12 @@ export default function LoginForm(props: LoginFormProps) {
   return   (
     <>
       <CredentialsForm submitLabel={ 'Login' } onSubmit={onSubmit}/>
-      { errorMessage && <Text type="danger">{errorMessage}</Text> }
-      { !errorMessage && <br/> }
+      { errorMessage && <><Text type="danger">{errorMessage}</Text><br/></> }
+      <br/>
       <Link to='/signup' onClick={props.finish} >
-        New? Sign Up
+        <Button >
+          New? Sign Up
+        </Button>
       </Link>
     </>
   );

@@ -29,7 +29,13 @@ function RegionStatusList(props: RegionStatusListProps) {
   return (
     <List
       split={false}
-      style={{width: '300px', height: '100%', margin:'0px 10px', padding:'20px', background:'#0000001a'}}
+      style={{
+        width: '300px',
+        height: '100%',
+        padding:'20px',
+        background:'#0000001a',
+        borderRadius: '5px'
+      }}
       header={
         <Row align='middle'>
           <Col style={{alignItems: 'middle'}}>

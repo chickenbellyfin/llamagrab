@@ -30,9 +30,11 @@ export default function SignupPage() {
 
   return (
     <ContentWrapper>
-      <Card title='Sign Up' style={{margin: '1em'}}>
+      <Card
+        title='Create a New Account'
+      >
         <Content>
-          <CredentialsForm submitLabel={ 'Create Account' } onSubmit={onSubmit} signUp/>
+          <CredentialsForm submitLabel={ 'Create Account' } onSubmit={onSubmit} signUp confirmPassword/>
           { errorMessage && <Text type="danger">{errorMessage}</Text> }
           { !errorMessage && <br/> }
         </Content>

@@ -7,9 +7,20 @@ import { getBreakpoint } from '../util';
 import { ReactComponent as HonorLogo } from '../../public/honor.svg'
 import colors from '../colors';
 import DiscordButton from '../components/DiscordButton';
+import { PropsWithChildren } from 'react';
 
 
 const { Title, Text } = Typography;
+
+
+const dividerStyle: React.CSSProperties = {
+  textAlign: 'center',
+  textTransform: 'uppercase',
+  opacity: '70%',
+  fontWeight: 600,
+  filter: 'drop-shadow(0px 0px 8px #ffffff22)',
+  margin: '20px 0px 20px 0px'
+};
 
 function WilderzoneButton() {
   return (
@@ -31,6 +42,27 @@ function WilderzoneButton() {
   );
 }
 
+interface LandingSectionProps {
+  title: string
+}
+function LandingSection(props: PropsWithChildren<LandingSectionProps>) {
+  return (
+    <>
+      <Divider style={dividerStyle}>
+        {props.title}
+      </Divider>
+      <div style={{
+        maxWidth: '1000px',
+        margin: '0 auto 25px auto',
+        paddingLeft: '10px',
+        paddingRight: '10px'
+      }}>
+        {props.children}
+      </div>
+  </>
+  );
+
+}
 
 export default function LandingPage() {
   const breakpoint = useBreakpoint();
@@ -69,14 +101,6 @@ export default function LandingPage() {
     lineHeight: '100%'
   };
 
-  const dividerStyle: React.CSSProperties = {
-    textAlign: 'center',
-    opacity: '70%',
-    fontWeight: 600,
-    filter: 'drop-shadow(0px 0px 8px #ffffff22)',
-    margin: '20px 0px 20px 0px'
-  };
-
   return (
     <>
       <div
@@ -99,46 +123,41 @@ export default function LandingPage() {
           SERVERS
         </Title>
       </div>
-      <Divider style={dividerStyle}>
-        TRIBES: ASCEND COMMUNITY SERVER HOSTING
-      </Divider>
-      <div style={{maxWidth:'1000px', margin: '0 auto 40px auto', padding: '0px 20px'}}>
-      <Row justify='center' gutter={[16, 16]}>
-        { content.map(item =>
-          <Col key={item.title} style={{textAlign: 'center'}} xs={24} sm={12}>
-              <item.icon
-                    style={{
-                    opacity: '70%',
-                    padding: breakpoint.md ? '10px' : '5px 10px',
-                    fontSize: '48px'}}
-                  />
-              <Title level={5} style={{opacity: '70%', textTransform: 'uppercase', letterSpacing: '1px'}}>
-                {item.title}
-              </Title>
-             <Text style={{opacity: '70%'}}>{item.text}</Text>
+      <LandingSection title='Tribes Community Server Hosting'>
+        <Row justify='center' gutter={[16, 16]}>
+          { content.map(item =>
+            <Col key={item.title} style={{textAlign: 'center'}} xs={24} sm={12}>
+                <item.icon
+                      style={{
+                      opacity: '70%',
+                      padding: breakpoint.md ? '10px' : '5px 10px',
+                      fontSize: '48px'}}
+                    />
+                <Title level={5} style={{opacity: '70%', textTransform: 'uppercase', letterSpacing: '1px'}}>
+                  {item.title}
+                </Title>
+              <Text style={{opacity: '70%'}}>{item.text}</Text>
+            </Col>
+            )
+          }
+        </Row>
+      </LandingSection>
+      <LandingSection title='join us on'>
+        <Row justify='center' gutter={[16, 16]} wrap>
+          {/* <Col style={{textAlign:'center'}}>
+            <span className='secondary-label'>get the scoop</span><br/>
+            <WilderzoneButton/>
+          </Col> */}
+          <Col style={{textAlign:'center'}}>
+            {/* <span className='secondary-label'>join us on</span><br/> */}
+            <DiscordButton/>
           </Col>
-          )
-        }
-      </Row>
-      </div>
-      <div style={{
-        padding: ' 10px 0px 40px 0px',
-      }}>
-      <Divider style={dividerStyle}>JOIN US ON</Divider>
-      <Row justify='center' gutter={[16, 16]} wrap>
-        {/* <Col style={{textAlign:'center'}}>
-          <span className='secondary-label'>get the scoop</span><br/>
-          <WilderzoneButton/>
-        </Col> */}
-        <Col style={{textAlign:'center'}}>
-          {/* <span className='secondary-label'>join us on</span><br/> */}
-          <DiscordButton/>
-        </Col>
-      </Row>
+        </Row>
+      </LandingSection>
 
-      <Divider style={dividerStyle}>STATUS</Divider>
-      <RegionStatusSection/>
-      </div>
+      <LandingSection title='Status'>
+        <RegionStatusSection/>
+      </LandingSection>
     </>
   );
 };
