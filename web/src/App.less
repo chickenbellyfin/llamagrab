@@ -71,6 +71,30 @@ body, #root {
   font-weight: 500;
 }
 
+// border-raduis for all components
+@lg-border-radius: 5px;
+
+.lg-rounded {
+  border-radius: @lg-border-radius;
+}
+
+.ant-card,
+.ant-modal-content,
+.ant-tag,
+.ant-select-multiple .ant-select-selection-item {
+  border-radius: @lg-border-radius;
+}
+
+.ant-card-head,.ant-modal-header {
+  // only on top
+  border-radius: @lg-border-radius @lg-border-radius 0 0;
+}
+
+.ant-card-actions {
+  // only on bottom
+  border-radius: 0 0 @lg-border-radius @lg-border-radius;
+}
+
 
 // @import 'antd/lib/style/themes/default.less';
 // @import 'antd/dist/antd.less';

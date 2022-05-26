@@ -29,12 +29,12 @@ function RegionStatusList(props: RegionStatusListProps) {
   return (
     <List
       split={false}
+      className='lg-rounded'
       style={{
         width: '300px',
         height: '100%',
         padding:'20px',
-        background:'#0000001a',
-        borderRadius: '5px'
+        background:'#0000001a'
       }}
       header={
         <Row align='middle'>

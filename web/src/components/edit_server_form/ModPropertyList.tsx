@@ -76,7 +76,7 @@ function ModPropertyListItem({property, specSet, onChange, onDelete}: ModPropert
   }
 
   return (
-    <Row gutter={[10, 10]} style={{width: '100%'}} >
+    <Row gutter={[10, 10]} style={{display: 'flex', alignItems:'center', width: '100%'}}>
       <Col span={1}>{icon}</Col>
       <Col>
         <Select

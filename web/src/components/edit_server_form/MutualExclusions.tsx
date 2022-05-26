@@ -36,8 +36,8 @@ function MutualExclusionItem(props: MutualExclusionItemProps) {
 
 
   return (
-    <Row gutter={[10, 10]}>
-      <Col span={1}>{icon}</Col>
+    <Row gutter={[8, 8]}>
+      <Col span={1} style={{display: 'flex', alignItems:'center'}}>{icon}</Col>
       <Col>
         <Select
           style={{width: '100px'}}
