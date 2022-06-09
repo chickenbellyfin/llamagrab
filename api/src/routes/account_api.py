@@ -40,8 +40,12 @@ def _to_account_response(user: models.User, db: Session):
   )
 
 
-@router.post('/account/login')
+@router.post('/account/login', tags=['account'])
 async def login(login: requests.LoginRequest, db: Session = Depends(deps.db)):
+  """ Login to an account. Returns an access_token which must be included in the authorization
+      header for most requests.
+      Header is 'Authorization': 'Bearer $access_token'
+  """
   user = db_queries.get_user(db, login.username)
 
   if not user:
@@ -57,15 +61,16 @@ async def login(login: requests.LoginRequest, db: Session = Depends(deps.db)):
   }
 
 
-@router.get('/account/user')
+@router.get('/account/user', tags=['account'])
 async def get_user(
   user: models.User = Depends(deps.login),
   db: Session = Depends(deps.db)):
+  """ Get the currently logged in user"""
   db_user = db.query(models.User).filter_by(id=user.id).first()
   return _to_account_response(db_user, db)
 
 
-@router.get('/accounts')
+@router.get('/accounts', include_in_schema=False)
 async def list_accounts(
   user: models.User = Depends(deps.login_admin),
   db: Session = Depends(deps.db)) -> List[responses.UserAccount]:
@@ -76,7 +81,7 @@ async def list_accounts(
     for u in all_users
   ]
 
-@router.get('/users')
+@router.get('/users', tags=['account'])
 async def list_users(
   user: models.User = Depends(deps.login),
   db: Session = Depends(deps.db)
@@ -88,21 +93,21 @@ async def list_users(
     for u in all_users
   ]
 
-@router.post('/account/change_password')
+@router.post('/account/change_password', tags=['account'])
 async def change_password(
   request: UpdatePasswordRequest,
   user: models.User = Depends(deps.login),
   db: Session = Depends(deps.db)):
-
+  """ Changes the account password. Must be logged in"""
   if not argon2.verify(request.current_password, user.password):
     raise InvalidCredentialsException
-  
+
   user.password = argon2.hash(request.new_password)
   db.merge(user) # user is from different db session and needs to be added to this one
   db.commit()
 
 
-@router.post('/account/set_tribes_name')
+@router.post('/account/set_tribes_name', tags=['account'])
 async def set_tribes_name(
   request: requests.SetTribesUsernameRequest,
   user: models.User = Depends(deps.login),
@@ -118,7 +123,7 @@ def _get_ip(request: Request):
       return forwarded.split(",")[0]
   return request.client.host
 
-@router.post('/account/create')
+@router.post('/account/create', include_in_schema=False)
 async def create_account(create_req: requests.AccountCreateRequest, request: Request, db: Session = Depends(deps.db)):
   client_host = _get_ip(request)
   # only allow 1 account to be created from a client address
@@ -134,7 +139,7 @@ async def create_account(create_req: requests.AccountCreateRequest, request: Req
       status_code=http_status.HTTP_400_BAD_REQUEST,
       detail="User already exists"
     )
-  
+
   logger.info(f"Creating new user {create_req.username}")
   new_user = models.User(
     username=create_req.username,
@@ -148,7 +153,7 @@ async def create_account(create_req: requests.AccountCreateRequest, request: Req
   # record client created an account
   deps.created_account.add(client_host)
 
-@router.delete('/account/{user_id}')
+@router.delete('/account/{user_id}', include_in_schema=False)
 async def delete_user(user_id: int, admin: models.User = Depends(deps.login_super), db: Session = Depends(deps.db)):
   user_to_delete = db_queries.user_by_id(db, user_id)
 

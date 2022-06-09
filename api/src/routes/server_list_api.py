@@ -30,7 +30,7 @@ def server_status_list(servers: List[models.Server], db: Session) -> List[respon
     for s in servers
   ]
 
-@router.get('/servers/user')
+@router.get('/servers/user', tags=['server-list'])
 async def get_servers_for_user(
   user: models.User = Depends(deps.login),
   db: Session = Depends(deps.db)
@@ -42,7 +42,7 @@ async def get_servers_for_user(
   shared_servers = server_sharing.get_shared_servers(db, user)
   return server_status_list(servers + shared_servers, db)
 
-@router.get('/servers/all')
+@router.get('/servers/all', include_in_schema=False)
 async def get_all_servers_for_admin(
   admin: models.User = Depends(deps.login_admin),
   db: Session = Depends(deps.db)
@@ -53,7 +53,7 @@ async def get_all_servers_for_admin(
   return server_status_list(servers, db)
 
 
-@router.get('/servers/region_status')
+@router.get('/servers/region_status', tags=['server-list'])
 async def get_region_status(
   db: Session = Depends(deps.db)
 ):

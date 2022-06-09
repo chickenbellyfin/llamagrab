@@ -23,6 +23,26 @@ from .server_status import ServerStatusManager
 
 DEFAULT_CONFIG_PATH = 'config.yaml'
 
+DESCRIPTION = 'API for llamagrab servers. All paths should be prefixed with /api.'
+TAGS_METADATA = [
+  {
+    'name': 'server',
+    'description': 'Manage your own servers. Create, edit, start, stop, status.'
+  },
+  {
+    'name': 'server-list',
+    'description': 'Fetch lists of servers and their statuses'
+  },
+  {
+    'name': 'account',
+    'description': 'User operations, including login.'
+  },
+  {
+    'name': 'data',
+    'description': 'Get general info about llamagrab infrastructure.'
+  },
+]
+
 # https://loguru.readthedocs.io/en/stable/overview.html#entirely-compatible-with-standard-logging
 class InterceptHandler(logging.Handler):
     def emit(self, record):
@@ -112,7 +132,12 @@ def create_app(
     status_manager=status_manager,
     regions=regions
   )
-  app = FastAPI()
+  app = FastAPI(
+    title="Llamagrab",
+    description=DESCRIPTION,
+    openapi_tags=TAGS_METADATA,
+    redoc_url=None
+  )
   app.include_router(account_api.router)
   app.include_router(admin_api.router)
   app.include_router(data_api.router)
@@ -160,7 +185,7 @@ def main(argv: List[str]):
     regions=config['regions']
   )
 
-  app = FastAPI()
+  app = FastAPI(docs_url=None, redoc_url=None)
   app.mount('/api', api)
   # For deployment, the API serve also serves the static web app
   if config.get('serve_static'):

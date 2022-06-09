@@ -36,11 +36,12 @@ def get_server(
 
   return server
 
-@router.put('/servers', status_code=http_status.HTTP_201_CREATED)
+@router.put('/servers', status_code=http_status.HTTP_201_CREATED, tags=['server'])
 async def create_server(
   request: requests.ServerCreateRequest,
   user: models.User = Depends(deps.login),
   db: Session = Depends(deps.db)):
+  """ Create a new server"""
 
   if not permissions.can_create_server(db, user):
     raise HTTPException(status_code=http_status.HTTP_429_TOO_MANY_REQUESTS, detail="Server limit reached for user")
@@ -72,8 +73,9 @@ async def create_server(
     is_private=request.server_config.password is not None
   )
 
-@router.get('/server/{server_id}/status')
+@router.get('/server/{server_id}/status', tags=['server'])
 async def get_server_status(server: models.Server = Depends(get_server)):
+  """ Get the current status of a server"""
   config = GameServerConfig.parse(server.server_config)
   return responses.ServerStatus(
     id=server.id,
@@ -86,24 +88,30 @@ async def get_server_status(server: models.Server = Depends(get_server)):
     is_private=config.password is not None
   )
 
-@router.get('/server/{server_id}/settings')
+@router.get('/server/{server_id}/settings', tags=['server'])
 async def get_server_settings(
   server: models.Server = Depends(get_server),
   db: Session = Depends(deps.db)
 ):
+  """ Get the settings for a server. These are high-level/infrastructure related settings.
+      See /server/{server_id}/config for game settings
+  """
   editors = server_sharing.get_server_editors(db, server)
   return responses.ServerSettings(
     region=server.region,
     editors=[user.id for user in editors]
   )
 
-@router.post('/server/{server_id}/settings')
+@router.post('/server/{server_id}/settings', tags=['server'])
 async def set_server_settings(
   request: responses.ServerSettings,
   user: models.User = Depends(deps.login),
   server: models.Server = Depends(get_server),
   db: Session = Depends(deps.db)
 ):
+  """ Set the settings for a server. These are high-level/infrastructure related settings.
+      See /server/{server_id}/config for game settings
+  """
   if not permissions.can_write_server(db, user, server):
     raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN)
 
@@ -126,17 +134,18 @@ async def set_server_settings(
   db.commit()
   deps.host_manager().sync()
 
-@router.get('/server/{server_id}/config')
+@router.get('/server/{server_id}/config', tags=['server'])
 async def get_server_config(server: models.Server = Depends(get_server)) -> GameServerConfig:
+  """ Get the game server configuration (Tribes settings) for a server"""
   return responses.GameServerConfig.parse(server.server_config)
 
-@router.post('/server/{server_id}/config')
+@router.post('/server/{server_id}/config', tags=['server'])
 async def set_server_config(
   game_server_config: GameServerConfig,
   user: models.User = Depends(deps.login),
   server: models.Server = Depends(get_server),
   db: Session = Depends(deps.db)):
-
+  """ Set the game server configuration (Tribes settings) for a server"""
   if not permissions.can_write_server(db, user, server):
     raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN)
 
@@ -151,22 +160,26 @@ async def set_server_config(
   deps.host_manager().sync()
 
 
-@router.post('/server/{server_id}/start')
+@router.post('/server/{server_id}/start', tags=['server'])
 async def start_server( server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
+  """ Request to start a server. Status will be enabled=True immediatley, but the server may not be started immediatley.
+      You should poll /api/server/{server_id}/status status to wait for the server to actually start."""
   server.enabled = True
   server.status = 'running'
   db.commit()
   deps.host_manager().sync()
 
 
-@router.post('/server/{server_id}/stop')
+@router.post('/server/{server_id}/stop', tags=['server'])
 async def stop_server(server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
+  """ Request to stop a server. Status will be enabled=False immediatley, but the server may not stop immediately.
+      You should poll /api/server/{server_id}/status status to wait for the server to actually stop."""
   server.enabled = False
   server.status = 'stopped'
   db.commit()
   deps.host_manager().sync()
 
-@router.delete('/server/{server_id}')
+@router.delete('/server/{server_id}', tags=['server'])
 async def delete_server(
   user: models.User = Depends(deps.login),
   server: models.Server = Depends(get_server),
@@ -184,12 +197,13 @@ async def delete_server(
   deps.host_manager().sync()
 
 
-@router.get('/server/{server_id}/history')
+@router.get('/server/{server_id}/history', tags=['server'])
 async def get_server_history(
   user: models.User = Depends(deps.login),
   server: models.Server = Depends(get_server),
   db: Session = Depends(deps.db)
 ):
+  """ Get all past versions of a server's settings"""
   return [
     responses.ServerVersion(
       server_id=s.server_id,
