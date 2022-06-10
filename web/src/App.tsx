@@ -17,6 +17,8 @@ import { ReactComponent as adminLogo } from '../public/admin.svg'
 import LandingPage from './pages/LandingPage';
 import RegionsPage from './pages/RegionsPage';
 import { Footer } from 'antd/lib/layout/layout';
+import { useState } from 'react';
+import { CollapseType } from 'antd/lib/layout/Sider';
 
 const { Header, Content, Sider } = Layout;
 
@@ -29,7 +31,8 @@ function App () {
   const isLanding = location.pathname === '/login';
 
   const sidebarVisible = Boolean(auth.user)
-
+  const [isSidebarCollapsible, setSidebarCollapsible] = useState(false)
+  const [isSidebarCollapsed, setSidebarCollapsed] = useState(false)
   // Show a loading screen on first load while we confirm login status
   // if the user is logged in, they will end up at the URL page
   // if not, ProtectedRoute will take them to the login screen
@@ -40,7 +43,6 @@ function App () {
       </Spin>
     );
   }
-
   return (
     <>
     <Layout style={{height: '100vh'}}>
@@ -52,36 +54,44 @@ function App () {
           <Sider
             width={240}
             breakpoint='md'
+            collapsed={isSidebarCollapsed}
             collapsedWidth={0}
-             style={{
-               height: '100vh',
-               position: 'sticky',
-               zIndex: 2,
+            // track the sidebar collapse state so we can auto-close on click in mobile layouts
+            onCollapse={(collapsed, type) => setSidebarCollapsed(collapsed)}
+            onBreakpoint={(broken) =>  setSidebarCollapsible(broken)}
+            style={{
+              height: '100vh',
+              position: 'sticky',
+              zIndex: 2,
             }}
           >
-          <Menu theme="dark" selectedKeys={[location.pathname]} mode="inline">
-              <Menu.Item key='/'>
-              <Link to='/'>
-                <DatabaseFilled/>&nbsp;&nbsp;Servers</Link>
-              </Menu.Item>
-
-
-              <Menu.Item key="/regions">
-                <Link to='/regions'>
-                    <GlobalOutlined/>&nbsp;&nbsp;Regions
-                </Link>
-              </Menu.Item>
-
-              {auth.permissions.isAdmin() &&
-                <Menu.Item
-                  key="/admin"
-                  onClick={() => navigate('/admin')}>
-                  <Link to='/admin'>
-                      <Icon style={{fontSize:'18px'}} component={adminLogo}/>&nbsp;&nbsp;Admin
-                  </Link>
-                </Menu.Item>
+          <Menu
+            theme="dark"
+            selectedKeys={[location.pathname]}
+            mode="inline"
+            onClick={(e) => {
+              if (isSidebarCollapsible) {
+                setSidebarCollapsed(true)
               }
-            </Menu>
+              navigate(e.key)
+            }}
+            items={[
+              {
+                key: '/',
+                icon: <DatabaseFilled/>,
+                label: 'Servers'
+              },
+              {
+                key: '/regions',
+                icon: <GlobalOutlined/>,
+                label: 'Regions'
+              },
+              ... auth.permissions.isAdmin() ? [{
+                key: '/admin',
+                icon: <Icon style={{fontSize:'18px'}} component={adminLogo}/>,
+                label: 'Admin'
+              }] : []
+            ]}/>
           </Sider>
         }
         <Content style={{overflowX: 'hidden', display: 'flex', flexDirection: 'column'}}>

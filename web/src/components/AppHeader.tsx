@@ -1,5 +1,5 @@
 import Icon, { SettingFilled } from "@ant-design/icons";
-import { Menu, Tooltip, Layout, Modal, Button } from "antd";
+import { Menu, Tooltip, Layout, Modal, Button, Space } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth";
 import { ReactComponent as logo } from '../../public/gen.svg'
@@ -19,9 +19,11 @@ export default function AppHeader(props: AppHeaderProps) {
   const auth = useAuth()
   const breakpoint = useBreakpoint();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const showLogin = () => setLoginVisible(true);
   const hideLogin = () => setLoginVisible(false);
+
 
   return (
     <>
@@ -38,30 +40,28 @@ export default function AppHeader(props: AppHeaderProps) {
           </a>
         }
 
-        <Menu
-          style={{ float: 'right' }}
-          theme='dark'
-          mode='horizontal'
-          selectedKeys={[]}
-          disabledOverflow>
-         { (auth.user || location.pathname !== '/') && <DiscordButton size='middle' responsive/>}
+        <Space direction="horizontal" size='middle' style={{float:'right'}}>
+
+          { (auth.user || location.pathname !== '/') &&
+            // Discord button is only shown in header if the user is not on the landing page
+            <DiscordButton size='middle' responsive/>
+          }
+
           {auth.user &&
-            <Menu.Item key='settings'>
-              <Tooltip title='Settings'>
-                <Link to='/settings'>
-                  <SettingFilled style={{ fontSize: '18px' }} />
-                  <span style={{ opacity: '65%' }}> {breakpoint.md && auth.user.username.toUpperCase()}</span>
-                </Link>
-              </Tooltip>
-            </Menu.Item>
+            // user settings only shown if user is logged in
+            <Tooltip title='Settings'>
+              <Button type='text' onClick={() => navigate('/settings')}>
+                <span style={{opacity: '.7'}}><SettingFilled/> {breakpoint.md && auth.user.username.toUpperCase()}</span>
+              </Button>
+            </Tooltip>
           }
-          {
-            !auth.user &&
-            <Menu.Item key='login' onClick={showLogin}>
-              LOG IN
-            </Menu.Item>
+
+          { !auth.user &&
+            // login button only shown if user is not logged in
+            <Button type='text' onClick={showLogin}>LOG IN</Button>
           }
-        </Menu>
+        </Space>
+
         <Modal
           title="Login"
           visible={isLoginVisible}
