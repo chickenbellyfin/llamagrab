@@ -1,4 +1,4 @@
-from typing import Mapping
+from typing import Dict, Mapping
 
 from fastapi import Request, status
 from fastapi.exceptions import HTTPException
@@ -23,7 +23,7 @@ class Dependencies:
     login_manager: LoginManager,
     host_manager: HostManager,
     status_manager: ServerStatusManager,
-    regions: Mapping[str, str]):
+    regions: Dict[str, str]):
     self._db_session = db_session
     self.login_manager = login_manager
     self._host_manager = host_manager
