@@ -49,6 +49,7 @@ export default function NewServerPage() {
         onBack={() => navigate('/')}
         extra={[
           <Button
+          key='save'
           disabled={!isValid}
           type='primary'
           icon={<SaveOutlined/>}
