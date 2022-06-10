@@ -47,7 +47,7 @@ class ServerStatusManager:
         return 'stopping'
     else:
       if not region:
-        return 'offline'
+        return 'unknown'
       else:
         if not running:
           return 'starting'
