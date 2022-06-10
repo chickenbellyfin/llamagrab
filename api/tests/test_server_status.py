@@ -85,7 +85,7 @@ def test_server_enabled_region_down(host_manager: HostManager):
   host_manager.status.return_value = {'test_region': None, 'other_region': []}
   status_manager = ServerStatusManager(host_manager)
   wait_for(lambda: host_manager.status.called)
-  assert status_manager.get_server_status(server_with(enabled=True)) == 'offline'
+  assert status_manager.get_server_status(server_with(enabled=True)) == 'unknown'
 
 def test_server_enabled_not_running(host_manager: HostManager):
   host_manager.status.return_value = {'test_region': [], 'other_region': []}
