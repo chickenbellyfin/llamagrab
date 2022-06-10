@@ -79,17 +79,20 @@ function App () {
               {
                 key: '/',
                 icon: <DatabaseFilled/>,
-                label: 'Servers'
+                label: 'Servers',
+                title: '', // disables tooltip on mobile
               },
               {
                 key: '/regions',
                 icon: <GlobalOutlined/>,
-                label: 'Regions'
+                label: 'Regions',
+                title: '' // disables tooltip on mobile
               },
               ... auth.permissions.isAdmin() ? [{
                 key: '/admin',
                 icon: <Icon style={{fontSize:'18px'}} component={adminLogo}/>,
-                label: 'Admin'
+                label: 'Admin',
+                title: '' // disables tooltip on mobile
               }] : []
             ]}/>
           </Sider>
