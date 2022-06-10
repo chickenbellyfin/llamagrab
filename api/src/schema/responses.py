@@ -40,7 +40,7 @@ class ServerStatus(BaseModel):
 
 # Return editable settings which are not part of the gameserverconfig
 class ServerSettings(BaseModel):
-  region: Optional[str]
+  region: str
   editors: Optional[List[int]]
 
   class Config:

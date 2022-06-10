@@ -11,16 +11,19 @@ import { NewServerConfigForm } from "../components/edit_server_form/ServerConfig
 import { useAuth } from "../auth";
 import ContentWrapper from "../components/ContentWrapper";
 
-const defaultServerSettings: ServerSettings = {}
-
 export default function NewServerPage() {
 
   const navigate = useNavigate()
   const auth = useAuth()
   const [config, setConfig] = useState<GameServerConfig>(defaultConfig)
-  const [settings, setSettings] = useState<ServerSettings>(defaultServerSettings)
+  const [settings, setSettings] = useState<ServerSettings>({})
 
   const [isSaving, setIsSaving] = useState(false)
+
+
+  const onSettingsChange = (newSettings: ServerSettings) => {
+    setSettings(Object.assign({}, newSettings));
+  }
 
   const saveConfig = async () => {
     setIsSaving(true);
@@ -37,6 +40,8 @@ export default function NewServerPage() {
     auth.refresh()
   }
 
+  const isValid = (settings.region !== undefined)
+
   return (
     <ContentWrapper>
       <PageHeader
@@ -44,6 +49,7 @@ export default function NewServerPage() {
         onBack={() => navigate('/')}
         extra={[
           <Button
+          disabled={!isValid}
           type='primary'
           icon={<SaveOutlined/>}
           onClick={() => saveConfig()}
@@ -51,7 +57,7 @@ export default function NewServerPage() {
         ]}/>
       <Spin spinning={isSaving}>
         <Card title='Server Settings' style={{marginBottom: '20px'}}>
-          <NewServerConfigForm settings={defaultServerSettings} onChange={setSettings}/>
+          <NewServerConfigForm settings={{}} onChange={onSettingsChange}/>
         </Card>
       </Spin>
       <Spin spinning={isSaving}>
