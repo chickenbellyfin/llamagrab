@@ -8,6 +8,7 @@ import TribesAscendGOTYEditorForm from "./tribes_ascend/TribesAscendGOTYEditorFo
 
 type GameSpec = {
   title: string
+  short: string
   editor: React.ComponentType<EditorProps>
   defaultConfig: GameServerConfig
 }
@@ -17,11 +18,13 @@ type GameSpecMap = { [key in GameType]: GameSpec }
 const games: GameSpecMap = {
   'tribes_ascend_ootb': {
     title: 'Tribes Ascend',
+    short: 'OOTB',
     editor: TribesAscendEditorForm,
     defaultConfig: defaultOOTBConfig as GameServerConfig
   },
   'tribes_ascend_goty': {
     title: 'Tribes Ascend GOTY',
+    short: 'GOTY',
     editor: TribesAscendGOTYEditorForm,
     defaultConfig: defaultGOTYConfig as GameServerConfig
   }

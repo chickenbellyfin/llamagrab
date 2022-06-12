@@ -4,6 +4,7 @@
   "teamAssignType": "balanced",
   "autoBalance": true,
   "friendlyFire": true,
+  "mapVoting": true,
   "maps": [
     "ctf_katabatic",
     "ctf_arx_novena",

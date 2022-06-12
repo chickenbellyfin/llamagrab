@@ -31,6 +31,7 @@ export type ServerStatus = {
   enabled: boolean,
   status: Status,
   gameMode: string,
+  game: GameType
   isPrivate: boolean
 }
 

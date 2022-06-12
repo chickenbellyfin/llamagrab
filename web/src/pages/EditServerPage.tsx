@@ -202,7 +202,7 @@ export default function EditServerPage() {
             </Card>
           </Spin>
           <Spin spinning={isSaving}>
-            <Card title='Tribes Settings'>
+            <Card title={`${gameSpec.title} Settings`}>
               <gameSpec.editor
                 key={`gameSettings${formRefreshKey}`}
                 config={loader.value.config}

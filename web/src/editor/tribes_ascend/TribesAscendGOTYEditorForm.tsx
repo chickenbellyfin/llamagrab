@@ -63,9 +63,6 @@ export default class TribesAscendGOTYEditorForm extends React.Component<EditorPr
             <VehicleSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
           </TabPane>
 
-          <TabPane tab="Value Mods" key='value_mods'>
-            <ValueModsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
-          </TabPane>
         </Tabs>
       </>
     )

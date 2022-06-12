@@ -23,7 +23,7 @@ ServerSettings.GravCycleEjectionSeat = false
 ServerSettings.BeowulfEjectionSeat = false
 ServerSettings.ShrikeEjectionSeat = false
 -- Inventory call-in
-ServerSettings.EnableInventoryCallIn = true,
+ServerSettings.EnableInventoryCallIn = true
 ServerSettings.InventoryStationsRestoreEnergy = true
 ServerSettings.InventoryCallInBlocksPlayers = true
 ServerSettings.InventoryCallInCost = 2000
@@ -527,7 +527,7 @@ for modIdx, modDef in pairs(itemChangeDefs.mods) do
     -- Apply each valuemod
     if modDef.valueMods ~= nil then
         for itemIdx, item in pairs(itemsToApplyTo) do
-            Items.setValueMods(item.class, item.name, utils:valueModsListDefConverter(modDef.valueMods))
+            Items.setValueMods(item.class, item.name, valueModsListDefConverter(modDef.valueMods))
         end
     end
 
@@ -590,7 +590,7 @@ pathfinderClassDef =  {
         -- MassBuff = -0.1,
     }
 }
-pathfinderItemsDef = {
+pathfinderItemDefs = {
     {
         name="Light Spinfusor",
         changes={
@@ -2149,8 +2149,7 @@ bruteItemDefs = {
 -- gotylike/classes.lua
 ----------------------------------------
 
-local function applyCustomClass(className, class)
-    local classDef = class.class
+local function applyCustomClass(className, classDef)
     addClass(className, classDef.ootbClass, classDef.armorClass,
                    classDef.weapons, classDef.beltItems, classDef.packs,
                    classDef.skins)
@@ -2181,31 +2180,33 @@ local function applyClassItemDefs(class)
 end
 
 applyCustomClass("Pathfinder", pathfinderClassDef)
-applyClassItemDefs(pathfinderItemsDef)
+applyClassItemDefs({items=pathfinderItemDefs, class=pathfinderClassDef})
 
 applyCustomClass("Infiltrator", infiltratorClassDef)
-applyClassItemDefs(infiltratorItemDefs)
+applyClassItemDefs({items=infiltratorItemDefs, class=infiltratorClassDef})
 
 applyCustomClass("Sentinel", sentinelClassDef)
-applyClassItemDefs(sentinelItemDefs)
+applyClassItemDefs({items=sentinelItemDefs, class=sentinelClassDef})
 
 applyCustomClass("Soldier", soldierClassDef)
-applyClassItemDefs(soldierItemDefs)
+applyClassItemDefs({items=soldierItemDefs, class=soldierClassDef})
 
 applyCustomClass("Raider", raiderClassDef)
-applyClassItemDefs(raiderItemDefs)
+applyClassItemDefs({items=raiderItemDefs, class=raiderClassDef})
 
 applyCustomClass("Technician", technicianClassDef)
-applyClassItemDefs(technicianItemDefs)
+applyClassItemDefs({items=technicianItemDefs, class=technicianClassDef})
 
 applyCustomClass("Juggernaut", juggernautClassDef)
-applyClassItemDefs(juggernautItemDefs)
+applyClassItemDefs({items=juggernautItemDefs, class=juggernautClassDef})
 
 applyCustomClass("Doombringer", doombringerClassDef)
-applyClassItemDefs(doombringerItemDefs)
+applyClassItemDefs({items=doombringerItemDefs, class=doombringerClassDef})
 
 applyCustomClass("Brute", bruteClassDef)
-applyClassItemDefs(bruteItemDefs)
+applyClassItemDefs({items=bruteItemDefs, class=bruteClassDef})
+
+
 
 -- gotylike/definitions/GravCycle.lua
 ----------------------------------------
@@ -2372,15 +2373,14 @@ shrikeVehicleWeaponsDef = {
 
 -- gotylike/vehicles.lua
 ----------------------------------------
-local function applyVehicleDefs(vehName, vehicle)
-    local vehDef = vehicle.vehicle
-    for propName, propVal in pairs(vehDef.properties) do
+local function applyVehicleDefs(vehName, vehicleDef)
+    for propName, propVal in pairs(vehicleDef.properties) do
         Vehicles.setProperty(vehName, Vehicles.Properties[propName], propVal)
     end
 end
 
-local function applyVehicleWeaponDefs(vehicle)
-    for idx, vehicleWep in pairs(vehicle.weapons) do
+local function applyVehicleWeaponDefs(vehicleWeapons)
+    for idx, vehicleWep in pairs(vehicleWeapons) do
         for propName, propVal in pairs(vehicleWep.changes) do
             VehicleWeapons.setProperty(vehicleWep.name, VehicleWeapons.Properties[propName], propVal)
         end

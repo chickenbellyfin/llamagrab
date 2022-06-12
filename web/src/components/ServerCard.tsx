@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { API, ServerStatus } from "../api"
 import { useAuth } from "../auth"
+import games from "../editor/games"
 import ServerName from "./ServerName"
 import StatusIcon from "./ServerStatusIcon"
 
@@ -132,6 +133,9 @@ export default function ServerCard(props: ServerCardProps) {
             </Descriptions.Item>
             <Descriptions.Item label="Region">
               {props.server.regionName || 'not set'}
+            </Descriptions.Item>
+            <Descriptions.Item label="Game Type">
+              {games[props.server.game].short}
             </Descriptions.Item>
             { props.showOwner &&
               <Descriptions.Item label="Owner">

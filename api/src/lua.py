@@ -42,7 +42,12 @@ team_assign_types = {
 
 lua_base = {
   'tribes_ascend_ootb': 'tribes_ascend_ootb_base.lua',
-  'tribes_ascend_goty': 'tribes_ascend_goty_base.lua',
+  'tribes_ascend_goty': 'tribes_ascend_goty_base.lua'
+}
+
+hitscan_bans = {
+  'tribes_ascend_ootb': 'hitscan_ootb.lua',
+  'tribes_ascend_goty': 'hitscan_goty.lua'
 }
 
 class LuaSettings(NamedTuple):
@@ -183,7 +188,7 @@ def to_lua(server: models.Server, config: GameServerConfig, lua_settings: LuaSet
 
   # Global Hitscan Ban
   if lua_settings.include_hitscan_ban:
-    lua.require('hitscan.lua')
+    lua.require(hitscan_bans[server.game])
 
   # Mutual Exclusions
   if config.mutual_exclusions:

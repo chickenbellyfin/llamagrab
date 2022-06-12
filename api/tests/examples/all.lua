@@ -50,7 +50,7 @@ ServerSettings.BannedItems.add("Medium", "NJ5-B SMG")
 ServerSettings.BannedItems.add("Medium", "Cluster Grenade")
 ServerSettings.BannedItems.add("Heavy", "Heavy Spinfusor")
 ServerSettings.BannedItems.add("Heavy", "Fusion Mortar")
--- [hitscan.lua]
+-- [hitscan_ootb.lua]
 ServerSettings.BannedItems.add("Light", "Sparrow")
 ServerSettings.BannedItems.add("Light", "Phase Rifle")
 ServerSettings.BannedItems.add("Light", "BXT1 Rifle")

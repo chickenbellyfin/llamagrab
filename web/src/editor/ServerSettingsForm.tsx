@@ -29,7 +29,6 @@ export default function ServerSettingsForm({ regions, settings, users, status, o
   }
 
   const isOwner = status != null ? (status?.owner === auth.user?.username) : true;
-  console.log('ServerSettingsForm render', JSON.stringify(settings))
   return (
     <Form
     labelCol={{span: 6}}
