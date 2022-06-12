@@ -34,6 +34,7 @@ class Server(Base):
   status = Column(String, default='stopped') # deprecated
   enabled = Column(Boolean, default=False, nullable=False)
   game_mode = Column(String, default='CTF')
+  game = Column(String, nullable=False)
   server_config = Column(String)
   updated_at = Column(Integer, nullable=False)
   updated_by = Column(Integer, ForeignKey('users.id'), nullable=False)

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { GameServerConfig, HardcodedLoadout } from "../../api";
 import { PlayerClass, weaponOptions } from "../../data";
 import './HardcodedLoadouts.less'
-import { UpdateCallbacks } from "./tabHelpers";
+import { UpdateCallbacks } from "../../editor/tabHelpers";
 
 const allSlots = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
@@ -81,15 +81,12 @@ function ClassHardcodedLoadouts(props: ClassHardcodedLoadoutsProps) {
   }
 
   const updateWeapon = (slot: number, equipPoint: keyof HardcodedLoadout, weapon?: string) => {
-    console.log(`${weapon}`)
     weapon = (weapon == 'none') ? undefined : weapon;
     // deep copy
     const updatedLoadouts = state.hardcodedLoadouts.map(item => Object.assign({}, item))
     updatedLoadouts[slot][equipPoint] = weapon;
     setState(Object.assign({}, state, {hardcodedLoadouts: updatedLoadouts}))
   }
-
-  console.log(JSON.stringify(state.hardcodedLoadouts))
 
   const slotColumn: ColumnsType<any> = state.perSlot ? [{title: '#', width: '5%'}] : [];
   const weaponColumns: ColumnsType<any> = [

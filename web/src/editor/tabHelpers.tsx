@@ -1,8 +1,8 @@
 import { ChangeEvent } from "react";
-import { 
-  RadioChangeEvent, 
+import {
+  RadioChangeEvent,
 } from "antd";
-import { GameServerConfig } from "../../api";
+import { GameServerConfig } from "../api";
 
 type ChangeEventHandler = (e: ChangeEvent<HTMLInputElement>) => void
 type RadioChangeEventHandler = (e: RadioChangeEvent) => void
@@ -21,7 +21,7 @@ export type UpdateCallbacks = {
 };
 
 /*
-This is a helper for creating onChange callbacks for form fields. 
+This is a helper for creating onChange callbacks for form fields.
 UpdateCallbacks is a set of helper functions which takes a config key and returns a callback function
 which takes the onChange arg for that input and calls updateHandler with the value
 */

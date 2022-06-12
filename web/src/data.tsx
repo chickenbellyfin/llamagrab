@@ -8,13 +8,6 @@ import { Select } from 'antd';
 
 const { Option, OptGroup } = Select;
 
-type Map = {
-  key: string,
-  name: string,
-  lua: string,
-  isCustom?: boolean
-}
-
 export type Weapon = {
   key: string,
   name: string,

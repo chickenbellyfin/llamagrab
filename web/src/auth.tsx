@@ -1,7 +1,7 @@
 
 
 import React, { createContext, useContext, useEffect, useState } from "react"
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate} from "react-router-dom";
 import { API, UserAccount } from "./api";
 import { AuthPermissions, getPermissions } from "./permissions";
 
@@ -88,9 +88,10 @@ function ProvideAuth({ children }: any) {
   );
 }
 
-const ProtectedRoute: React.FC<{}> = props => {
+
+
+function ProtectedRoute(props: React.PropsWithChildren) {
   const auth = useAuth()
-  const location = useLocation();
   if (auth.user) {
     return <>{props.children}</>
   } else {
@@ -119,4 +120,5 @@ export {
   useAuth,
   ProtectedRoute,
   ProvideAuth,
-  setToken, deleteToken, getToken }
+  setToken, deleteToken, getToken
+}

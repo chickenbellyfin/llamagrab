@@ -4,7 +4,7 @@ import { PlayerClass, weaponOptions } from "../../data";
 import HardcodedLoadoutsForm from "./HardcodedLoadouts";
 import { ItemPropertiesList } from "./ItemPropertiesSection";
 import MutualExclusionList from "./MutualExclusions";
-import { GameServerConfigTabProps } from "./tabHelpers";
+import { GameServerConfigTabProps } from "../../editor/tabHelpers";
 
 
 type ClassSettingsProps = {
@@ -13,11 +13,11 @@ type ClassSettingsProps = {
   onChange: (selected: Array<string>) => void
 }
 
-function ClassSettings ({selected, clazz, onChange}: ClassSettingsProps) { 
+function ClassSettings ({selected, clazz, onChange}: ClassSettingsProps) {
 
   return (
     <Form.Item label={`${clazz} Weapon Bans`}>
-      <Select 
+      <Select
           size='large'
           mode='multiple'
           allowClear
@@ -47,13 +47,13 @@ export default function WeaponsSettingsTab ({ config, updateCallbacks }: GameSer
         selected={config.heavyWeaponBans}
         clazz={'Heavy' as PlayerClass}
         onChange={update('heavyWeaponBans')}/>
-      
+
       <Divider orientation='left'>Item Properties</Divider>
       <Form.Item wrapperCol={{offset: 2}}>
         <ItemPropertiesList configItemProperties={config.itemProperties} onChange={update('itemProperties')}/>
       </Form.Item>
 
-      
+
       <Divider orientation='left'>Mutual Exclusions​</Divider>
       <MutualExclusionList mutualExclusions={config.mutualExclusions} onChange={update('mutualExclusions')}/>
 

@@ -1,8 +1,8 @@
 import { Checkbox, Divider, Form, Space } from "antd";
 import { PlayerClass } from "../../data";
 import {ClassProperties} from "./ClassProperties";
-import { InputFloat, InputInteger } from "./Inputs";
-import { GameServerConfigTabProps } from "./tabHelpers";
+import { InputFloat, InputInteger } from "../../editor/Inputs";
+import { GameServerConfigTabProps } from "../../editor/tabHelpers";
 
 interface DisabledEquipPointsProps {
   clazz: PlayerClass
@@ -26,7 +26,7 @@ export default function PlayerSettingsTab (
 
   const { updateInputNumber, update } = updateCallbacks;
 
-  
+
 
   return (
     <Form
@@ -74,8 +74,8 @@ export default function PlayerSettingsTab (
       <DisabledEquipPoints clazz='Light' value={config.lightDisabledEquipPoints} onChange={update('lightDisabledEquipPoints')}/>
       <DisabledEquipPoints clazz='Medium' value={config.mediumDisabledEquipPoints} onChange={update('mediumDisabledEquipPoints')}/>
       <DisabledEquipPoints clazz='Heavy' value={config.heavyDisabledEquipPoints} onChange={update('heavyDisabledEquipPoints')}/>
-      
-      
+
+
       <Divider orientation='left'>Class Properties</Divider>
       <Form.Item wrapperCol={{offset: 2}}>
         <Space direction='vertical' style={{width: '100%'}}>

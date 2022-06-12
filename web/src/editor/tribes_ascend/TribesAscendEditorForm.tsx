@@ -1,0 +1,85 @@
+import { Tabs } from "antd";
+import React from "react";
+import { GameServerConfig } from "../../api";
+import { EditorProps } from "../Editor";
+import { createUpdateCallbacks } from "../tabHelpers";
+import BasicSettingsTab from "./BasicSettingsTab";
+import GameSettingsTab from "./GameSettingsTab";
+import MapRotationSettingsTab from "./MapRotationSettingsTab";
+import PlayerSettingsTab from "./PlayerSettingsTab";
+import TeamSettingsTab from "./TeamSettingsTab";
+import ValueModsTab from "./ValueModsTab";
+import VehicleSettingsTab from "./VehicleSettingsTab";
+import WeaponsSettingsTab from "./WeaponsSettingsTab";
+
+
+
+const { TabPane } = Tabs;
+
+type EditorState = {
+  config: GameServerConfig,
+  isSaving: boolean
+}
+
+export default class TribesAscendEditorForm extends React.Component<EditorProps, EditorState> {
+
+  constructor(props: EditorProps) {
+    super(props)
+    this.state = {
+      config: Object.assign({}, props.config),
+      isSaving: false
+    }
+  }
+
+  onUpdate = (key: string, value: any) => {
+    this.setState(
+      Object.assign(this.state.config as any, {[key]: value}),
+      () => {
+        if (this.props.onChange) {
+          this.props.onChange(this.state.config)
+        }
+      }
+    )
+  }
+
+  render() {
+    const updateCallbacks = createUpdateCallbacks(this.onUpdate)
+    return (
+      <>
+        <Tabs defaultActiveKey='basic'>
+          <TabPane tab="Basic Settings" key='basic'>
+            <BasicSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
+          </TabPane>
+
+          <TabPane tab="Game Settings" key='game'>
+            <GameSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
+          </TabPane>
+
+          <TabPane tab="Team Settings" key='team'>
+            <TeamSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
+          </TabPane>
+
+          <TabPane tab="Map Rotation" key='maps'>
+            <MapRotationSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
+          </TabPane>
+
+          <TabPane tab="Player/Classes" key='player'>
+            <PlayerSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
+          </TabPane>
+
+          <TabPane tab="Weapons" key='weapons'>
+            <WeaponsSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
+          </TabPane>
+
+          <TabPane tab="Vehicles" key='vehicles'>
+            <VehicleSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
+          </TabPane>
+
+          <TabPane tab="Value Mods" key='value_mods'>
+            <ValueModsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
+          </TabPane>
+        </Tabs>
+      </>
+    )
+  }
+}

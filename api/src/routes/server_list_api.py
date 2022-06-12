@@ -25,6 +25,7 @@ def server_status_list(servers: List[models.Server], db: Session) -> List[respon
       enabled=s.enabled,
       status=deps.status_manager.get_server_status(s),
       game_mode=s.game_mode,
+      game=s.game,
       is_private=GameServerConfig.parse(s.server_config).password is not None
     )
     for s in servers

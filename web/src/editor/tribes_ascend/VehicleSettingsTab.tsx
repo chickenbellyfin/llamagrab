@@ -1,6 +1,6 @@
 import { Form } from "antd";
-import { InputInteger, InputPercent } from "./Inputs";
-import { GameServerConfigTabProps } from "./tabHelpers";
+import { InputInteger, InputPercent } from "../../editor/Inputs";
+import { GameServerConfigTabProps } from "../../editor/tabHelpers";
 
 
 export default function VehicleSettingsTab ({ config, updateCallbacks }: GameServerConfigTabProps) {
@@ -10,13 +10,13 @@ export default function VehicleSettingsTab ({ config, updateCallbacks }: GameSer
   return (
     <Form labelCol={{span: 6}} wrapperCol={{span: 14}}>
       <Form.Item label='Vehicle Health Multiplier' extra="Multiplier affecting all vehicles' health">
-        <InputPercent        
+        <InputPercent
           value={config.vehicleHealthMultiplier}
           onChange={updateInputNumber('vehicleHealthMultiplier')}
           min={0}
         />
       </Form.Item>
-      
+
       <Form.Item label='Grav Cycle Limit'>
         <InputInteger
           min={0}
@@ -67,7 +67,7 @@ export default function VehicleSettingsTab ({ config, updateCallbacks }: GameSer
           placeholder={'120'}
           addonAfter='secs'  />
       </Form.Item>
-      
+
     </Form>
   );
 }

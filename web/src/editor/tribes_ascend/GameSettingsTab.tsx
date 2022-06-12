@@ -1,6 +1,6 @@
 import { Divider, Form, InputNumber, Switch } from "antd";
-import {InputInteger} from "./Inputs";
-import { GameServerConfigTabProps } from "./tabHelpers";
+import {InputInteger} from "../../editor/Inputs";
+import { GameServerConfigTabProps } from "../../editor/tabHelpers";
 
 
 export default function GameSettingsTab (
@@ -17,14 +17,14 @@ export default function GameSettingsTab (
 
     <Divider orientation='left'>Time Settings</Divider>
     <Form.Item label='Time Limit'>
-      <InputNumber 
+      <InputNumber
         precision={0}
         min={1}
         value={config['timeLimit']}
         onChange={updateInputNumber('timeLimit')}
         addonAfter='mins'
         placeholder={'25'} />
-    </Form.Item>          
+    </Form.Item>
 
     <Form.Item label='Overtime Limit'>
       <InputNumber
@@ -89,7 +89,7 @@ export default function GameSettingsTab (
         min={1}
         value={config.ctfCapLimit}
         onChange={updateInputNumber('ctfCapLimit')}
-        placeholder={'5'} 
+        placeholder={'5'}
         addonAfter='caps'/>
     </Form.Item>
 

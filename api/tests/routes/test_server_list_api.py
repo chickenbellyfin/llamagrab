@@ -17,6 +17,7 @@ def test_list_servers(test_client: TestClient, db_session: Session, server1, log
       'enabled': False,
       'status': 'offline',
       'gameMode': 'CTF',
+      'game': 'tribes_ascend_ootb',
       'isPrivate': True
     }
   ]
@@ -41,6 +42,7 @@ def test_list_all_servers(test_client: TestClient, login_user_admin):
       'enabled': False,
       'status': 'offline',
       'gameMode': 'CTF',
+      'game': 'tribes_ascend_ootb',
       'isPrivate': True
     },
     {
@@ -52,6 +54,7 @@ def test_list_all_servers(test_client: TestClient, login_user_admin):
       'enabled': False,
       'status': 'offline',
       'gameMode': 'CTF',
+      'game': 'tribes_ascend_ootb',
       'isPrivate': False
     }
   ]

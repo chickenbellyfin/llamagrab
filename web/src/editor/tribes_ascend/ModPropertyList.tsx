@@ -4,7 +4,7 @@ import { useState } from "react";
 import {  ModProperty } from "../../api";
 import colors from "../../colors";
 import { ModPropertySpecSet } from "../../data";
-import { InputFloat, InputInteger } from "./Inputs";
+import { InputFloat, InputInteger } from "../../editor/Inputs";
 
 
 type ModPropertyListItemProps = {
