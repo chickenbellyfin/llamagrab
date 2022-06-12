@@ -1,6 +1,6 @@
 import { Form, Radio, Switch } from "antd";
-import {InputInteger, InputPercent } from "./Inputs";
-import { GameServerConfigTabProps } from "./tabHelpers";
+import {InputInteger, InputPercent } from "../../editor/Inputs";
+import { GameServerConfigTabProps } from "../../editor/tabHelpers";
 
 
 export default function TeamSettingsTab (
@@ -18,7 +18,7 @@ export default function TeamSettingsTab (
           onChange={updateInputNumber('maxPlayers')}
           placeholder={'32'} />
       </Form.Item>
-      <Form.Item 
+      <Form.Item
       label='Team Assign Type:'>
         <Radio.Group
           defaultValue='balanced'
@@ -32,21 +32,21 @@ export default function TeamSettingsTab (
     </Form.Item>
 
     <Form.Item label='Auto Balance'>
-      <Switch 
+      <Switch
         defaultChecked
         checked={config['autoBalance']}
         onChange={updateSwitch('autoBalance')} />
     </Form.Item>
-    
+
     <Form.Item label='Friendly Fire'>
-      <Switch 
-        defaultChecked 
+      <Switch
+        defaultChecked
         checked={config['friendlyFire']}
         onChange={updateSwitch('friendlyFire')} />
     </Form.Item>
 
     <Form.Item label='Friendly Fire Multiplier'>
-      <InputPercent        
+      <InputPercent
         value={config.friendlyFireMultiplier}
         onChange={updateInputNumber('friendlyFireMultiplier')}
         min={0}
@@ -75,7 +75,7 @@ export default function TeamSettingsTab (
     </Form.Item>
 
     <Form.Item label='Naked Spawn' extra='Whether players should spawn naked (as lights without their loadout)'>
-      <Switch 
+      <Switch
         checked={config['nakedSpawn']}
         onChange={updateSwitch('nakedSpawn')} />
     </Form.Item>

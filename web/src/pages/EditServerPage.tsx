@@ -1,12 +1,13 @@
 import { Button, Card, List, message, Modal, PageHeader, Popconfirm, Row, Spin, Tag } from "antd";
-import { EditGameServerConfigForm } from "../components/edit_server_form/GameServerConfigForm";
 import { useNavigate, useParams } from 'react-router-dom'
 import { API, GameServerConfig, ServerVersion, ServerSettings } from "../api";
 import { useState } from "react";
 import { HistoryOutlined, RollbackOutlined, SaveOutlined } from "@ant-design/icons";
-import ServerConfigForm from "../components/edit_server_form/ServerConfigForm";
+import ServerConfigForm from "../editor/ServerSettingsForm";
 import Loader from "../components/Loader";
 import ContentWrapper from "../components/ContentWrapper";
+import { EditorLoader } from "../editor/Editor";
+import { TribesAscendEditorForm } from "../editor/tribes_ascend/TribesAscendEditorForm";
 
 const DATE_FORMAT: Intl.DateTimeFormatOptions = {
   weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric'
@@ -157,7 +158,10 @@ export default function EditServerPage() {
       </Spin>
       <Spin spinning={isSaving}>
         <Card title='Tribes Settings'>
-          <EditGameServerConfigForm key={`gameSettings${formRefreshKey}`} serverId={serverId} onChange={setConfig}/>
+          <EditorLoader
+            key={`gameSettings${formRefreshKey}`}
+            serverId={serverId}
+            onChange={setConfig}/>
         </Card>
       </Spin>
     </ContentWrapper>

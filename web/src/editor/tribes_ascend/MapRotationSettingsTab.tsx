@@ -2,7 +2,7 @@ import { Checkbox, Form, Switch } from "antd";
 import { useState } from "react";
 import { MapsByKey } from "../../data";
 import MapSelector from "./MapSelector";
-import { GameServerConfigTabProps } from "./tabHelpers";
+import { GameServerConfigTabProps } from "../../editor/tabHelpers";
 
 export default function MapRotationSettingsTab (
   { config, updateCallbacks }: GameServerConfigTabProps
@@ -11,7 +11,7 @@ export default function MapRotationSettingsTab (
   const inferredGameModes = Array.from(new Set(config.maps.map(m => {
     return MapsByKey[m].gameMode})));
   const [gameModes, setGameModes] = useState(inferredGameModes);
-  
+
 
   const { updateSwitch, update } = updateCallbacks;
 
@@ -19,7 +19,7 @@ export default function MapRotationSettingsTab (
 
   return (
     <Form labelCol={{span: 6}} wrapperCol={{span: 12}}>
-    
+
     <Form.Item label='Map Voting'>
       <Switch checked={config.mapVoting} onChange={updateSwitch('mapVoting')} />
     </Form.Item>
@@ -32,7 +32,7 @@ export default function MapRotationSettingsTab (
       onChange={(e) => setGameModes(e as string[])}
     />
     </Form.Item>
-    <MapSelector 
+    <MapSelector
       gameTypes={gameModes}
       mapList={config['maps']}
       onChange={update('maps')}/>

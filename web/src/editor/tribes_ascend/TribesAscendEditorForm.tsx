@@ -3,8 +3,8 @@ import { Tabs } from "antd";
 
 import { API, GameServerConfig } from "../../api";
 
-import Loader from "../Loader";
-import { createUpdateCallbacks } from "./tabHelpers";
+import Loader from "../../components/Loader";
+import { createUpdateCallbacks } from "../tabHelpers";
 import GameSettingsTab from "./GameSettingsTab";
 import MapRotationSettingsTab from "./MapRotationSettingsTab";
 import BasicSettingsTab from "./BasicSettingsTab";
@@ -13,21 +13,16 @@ import VehicleSettingsTab from "./VehicleSettingsTab";
 import TeamSettingsTab from "./TeamSettingsTab";
 import PlayerSettingsTab from "./PlayerSettingsTab";
 import ValueModsTab from "./ValueModsTab";
+import { EditorProps } from "../Editor";
 
 const { TabPane } = Tabs;
-
-type EditorProps = {
-  config: GameServerConfig
-  onChange?: (config: GameServerConfig) => void
-}
 
 type EditorState = {
   config: GameServerConfig,
   isSaving: boolean
 }
 
-
-export class GameServerConfigForm extends React.Component<EditorProps, EditorState> {
+export class TribesAscendEditorForm extends React.Component<EditorProps, EditorState> {
 
   constructor(props: EditorProps) {
     super(props)
@@ -45,9 +40,9 @@ export class GameServerConfigForm extends React.Component<EditorProps, EditorSta
           this.props.onChange(this.state.config)
         }
       }
-    )    
+    )
   }
-  
+
   render() {
     const updateCallbacks = createUpdateCallbacks(this.onUpdate)
     return (
@@ -56,7 +51,7 @@ export class GameServerConfigForm extends React.Component<EditorProps, EditorSta
           <TabPane tab="Basic Settings" key='basic'>
             <BasicSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
           </TabPane>
-          
+
           <TabPane tab="Game Settings" key='game'>
             <GameSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
           </TabPane>
@@ -64,7 +59,7 @@ export class GameServerConfigForm extends React.Component<EditorProps, EditorSta
           <TabPane tab="Team Settings" key='team'>
             <TeamSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
           </TabPane>
-  
+
           <TabPane tab="Map Rotation" key='maps'>
             <MapRotationSettingsTab config={this.state.config} updateCallbacks={updateCallbacks}/>
           </TabPane>
@@ -90,9 +85,9 @@ export class GameServerConfigForm extends React.Component<EditorProps, EditorSta
   }
 }
 
-// wrap in a loader to edit an existing config
-type EditorLoaderProps = Omit<EditorProps, 'config'> & {serverId:  number}
-export const EditGameServerConfigForm = Loader<EditorLoaderProps, GameServerConfig>({
-  loaderFunc: (props) => API.Server.getServerConfig(props.serverId),
-  componentBuilder: (config, props) => <GameServerConfigForm config={config} {...props} />
-})
+// // wrap in a loader to edit an existing config
+// type EditorLoaderProps = Omit<EditorProps, 'config'> & {serverId:  number}
+// export const EditGameServerConfigForm = Loader<EditorLoaderProps, GameServerConfig>({
+//   loaderFunc: (props) => API.Server.getServerConfig(props.serverId),
+//   componentBuilder: (config, props) => <TribesAscendEditorForm config={config} {...props} />
+// })

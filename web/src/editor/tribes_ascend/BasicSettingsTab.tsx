@@ -1,5 +1,5 @@
 import { Form, Input, Select } from "antd";
-import { GameServerConfigTabProps } from "./tabHelpers";
+import { GameServerConfigTabProps } from "../../editor/tabHelpers";
 import Rules from "./validation";
 
 

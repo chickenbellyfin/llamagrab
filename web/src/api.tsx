@@ -40,9 +40,12 @@ export type RegionStatus = {
   servers: ServerStatus[]
 }
 
+export type GameType = 'tribes_ascend_ootb' | 'tribes_ascend_goty'
+
 export type ServerSettings = {
   region?: string
   editors?: number[]
+  game: GameType
 }
 
 export type ModProperty = {

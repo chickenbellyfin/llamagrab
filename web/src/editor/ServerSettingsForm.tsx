@@ -1,12 +1,12 @@
 import { Form, Select } from "antd";
 import { useState } from "react";
-import { API, ServerSettings, ServerStatus, User } from "../../api";
-import { useAuth } from "../../auth";
-import Loader from "../Loader";
+import { API, ServerSettings, ServerStatus, User } from "../api";
+import { useAuth } from "../auth";
+import Loader from "../components/Loader";
 
 const { Option } = Select;
 
-type ServerConfigFormProps = {
+type ServerSettingsFormProps = {
   settings: ServerSettings
   regions: {[key: string]: string}
   status?: ServerStatus
@@ -14,7 +14,7 @@ type ServerConfigFormProps = {
   onChange?: (settings: ServerSettings) => void
 }
 
-function ServerConfigForm({ regions, settings, users, status, onChange }: ServerConfigFormProps) {
+function ServerSettingsForm({ regions, settings, users, status, onChange }: ServerSettingsFormProps) {
 
   const [updatedSettings, setSettings] = useState(settings)
   const auth = useAuth()
@@ -75,7 +75,7 @@ function ServerConfigForm({ regions, settings, users, status, onChange }: Server
 }
 
 
-async function getServerSettings(serverId: number, settings?: ServerSettings): Promise<ServerConfigFormProps> {
+async function getServerSettings(serverId: number, settings?: ServerSettings): Promise<ServerSettingsFormProps> {
   let settingsPromise;
   try {
     if (!settings) {
@@ -102,16 +102,16 @@ type LoaderProps = {
   settings?: ServerSettings
   onChange?: (settings: ServerSettings) => void
 }
-export default Loader<LoaderProps, ServerConfigFormProps>({
+export default Loader<LoaderProps, ServerSettingsFormProps>({
   loaderFunc: (props) => getServerSettings(props.serverId),
-  componentBuilder: (result, props) => <ServerConfigForm {...result} {...props} />
+  componentBuilder: (result, props) => <ServerSettingsForm {...result} {...props} />
 });
 
 type NewLoaderProps = {
   settings: ServerSettings,
   onChange?: (settings: ServerSettings) => void
 }
-export const NewServerConfigForm = Loader<NewLoaderProps, any>({
+export const NewServerSettingsForm = Loader<NewLoaderProps, any>({
   loaderFunc: async (props) => {
     const regions = API.Data.getRegions()
     const users = API.Account.getAllUsers()
@@ -120,5 +120,5 @@ export const NewServerConfigForm = Loader<NewLoaderProps, any>({
       users: await users
     }
   },
-  componentBuilder: (result, props) => <ServerConfigForm {...result} {...props}/>
+  componentBuilder: (result, props) => <ServerSettingsForm {...result} {...props}/>
 })
