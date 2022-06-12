@@ -1,5 +1,4 @@
 import { Form, Select } from "antd";
-import { useState } from "react";
 import { ServerSettings, ServerStatus, User } from "../api";
 import { useAuth } from "../auth";
 
@@ -15,27 +14,22 @@ type ServerSettingsFormProps = {
 
 export default function ServerSettingsForm({ regions, settings, users, status, onChange }: ServerSettingsFormProps) {
 
-  const [updatedSettings, setSettings] = useState(settings)
   const auth = useAuth()
 
   const onRegionChange = (value: string) => {
-    const newState = Object.assign(updatedSettings, {region: value})
-    setSettings(newState)
     if (onChange) {
-      onChange(updatedSettings)
+      onChange(Object.assign({}, settings, {region: value}))
     }
   }
 
   const onEditorsChange = (value: number[]) => {
-    const newState = Object.assign(updatedSettings, {editors: value})
-    setSettings(newState)
     if (onChange) {
-      onChange(updatedSettings)
+      onChange(Object.assign({}, settings, {editors: value}))
     }
   }
 
   const isOwner = status != null ? (status?.owner === auth.user?.username) : true;
-
+  console.log('ServerSettingsForm render', JSON.stringify(settings))
   return (
     <Form
     labelCol={{span: 6}}
@@ -43,7 +37,7 @@ export default function ServerSettingsForm({ regions, settings, users, status, o
     <Form.Item label="Region" name="region" rules={[{ required: true, message: 'Required' }]}>
     <Select
       style={{ width: 200 }}
-      defaultValue={updatedSettings.region}
+      defaultValue={settings.region}
       onChange={onRegionChange}
       >
       {
@@ -61,14 +55,13 @@ export default function ServerSettingsForm({ regions, settings, users, status, o
         disabled={!isOwner}
         showSearch
         onChange={onEditorsChange}
-        defaultValue={updatedSettings.editors || []}
+        defaultValue={settings.editors || []}
         mode="multiple"
         placeholder="Search for llamagrab users..."
         optionFilterProp="label"
         options={users.map(user => { return {label: user.username, value: user.id}})}>
       </Select>
     </Form.Item>
-
   </Form>
   );
 }
