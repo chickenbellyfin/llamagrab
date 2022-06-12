@@ -1,13 +1,13 @@
-import { Button, Card, List, message, Modal, PageHeader, Popconfirm, Row, Spin, Tag } from "antd";
-import { useNavigate, useParams } from 'react-router-dom'
-import { API, GameServerConfig, ServerVersion, ServerSettings } from "../api";
-import { useState } from "react";
 import { HistoryOutlined, RollbackOutlined, SaveOutlined } from "@ant-design/icons";
-import ServerConfigForm from "../editor/ServerSettingsForm";
-import Loader from "../components/Loader";
+import { Button, Card, List, message, Modal, PageHeader, Popconfirm, Row, Spin, Tag } from "antd";
+import { useState } from "react";
+import { useNavigate, useParams } from 'react-router-dom';
+import { API, GameServerConfig, ServerSettings, ServerStatus, ServerVersion, User } from "../api";
 import ContentWrapper from "../components/ContentWrapper";
-import { EditorLoader } from "../editor/Editor";
-import { TribesAscendEditorForm } from "../editor/tribes_ascend/TribesAscendEditorForm";
+import Loader from "../components/Loader";
+import games from "../editor/games";
+import ServerSettingsForm from "../editor/ServerSettingsForm";
+import useLoader from "../useLoader";
 
 const DATE_FORMAT: Intl.DateTimeFormatOptions = {
   weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric'
@@ -20,7 +20,7 @@ interface ServerVersionListProps {
 function ServerVersionList({ history, onRestoreVersion }: ServerVersionListProps) {
   return <List
     dataSource={history}
-    style={{overflow: 'auto', maxHeight: '500px'}}
+    style={{ overflow: 'auto', maxHeight: '500px' }}
     renderItem={item => {
       let changes = `${item.numChanges} Change${item.numChanges == 1 ? '' : 's'}`
       if (item.numChanges == -1) {
@@ -41,7 +41,7 @@ function ServerVersionList({ history, onRestoreVersion }: ServerVersionListProps
             }}>
             <Button
               size='small'
-              >
+            >
               <RollbackOutlined />Restore
             </Button>
           </Popconfirm>
@@ -54,12 +54,12 @@ function ServerVersionList({ history, onRestoreVersion }: ServerVersionListProps
             title={
               <>
                 {changes}&nbsp;&nbsp;&nbsp;
-                { isCurrentVersion &&
+                {isCurrentVersion &&
                   <Tag color='green'>Current Version</Tag>
                 }
               </>
             }
-            description={dateString}/>
+            description={dateString} />
         </List.Item>
       );
     }}
@@ -74,8 +74,35 @@ const ServerHistoryListLoader = Loader<ServerHistoryListLoaderProps, ServerVersi
   loaderFunc: (props) => API.Server.getServerVersions(props.serverId),
   componentBuilder: (serverHistory, props) => {
     serverHistory.sort((a, b) => b.createdAt - a.createdAt);
-    return <ServerVersionList history={serverHistory} onRestoreVersion={props.onRestoreVersion}/>}
+    return <ServerVersionList history={serverHistory} onRestoreVersion={props.onRestoreVersion} />
+  }
 });
+
+interface EditorLoaderResult {
+  settings: ServerSettings,
+  config: GameServerConfig,
+  regions: { [key: string]: string },
+  users: User[],
+  status: ServerStatus
+}
+async function loadServerEditor(serverId: number): Promise<EditorLoaderResult> {
+  try {
+    const settingsPromise = API.Server.getServerSettings(serverId)
+    const configPromise = API.Server.getServerConfig(serverId)
+    const status = API.Server.getServerStatus(serverId)
+    const regions = API.Data.getRegions()
+    const users = API.Account.getAllUsers()
+    return {
+      settings: await settingsPromise,
+      config: await configPromise,
+      regions: await regions,
+      users: await users,
+      status: await status
+    }
+  } catch (error: any) {
+    throw Error('Failed to get settings')
+  }
+}
 
 export default function EditServerPage() {
 
@@ -87,6 +114,8 @@ export default function EditServerPage() {
   const [isHistoryVisible, setHistoryVisible] = useState(false)
   const [historyRefreshKey, setHistoryRefreshKey] = useState(0)
   const [formRefreshKey, setFormRefreshKey] = useState(0)
+
+  const loader = useLoader(() => loadServerEditor(serverId))
 
   const showHistory = () => {
     setHistoryRefreshKey(historyRefreshKey + 1)
@@ -122,6 +151,13 @@ export default function EditServerPage() {
   }
 
   const isConfigChanged = Boolean(config) || Boolean(settings);
+  const isValid = (
+    settings?.region !== undefined
+    && config?.displayName !== undefined
+    && config.displayName.length != 0
+  )
+
+  const gameSpec = loader.value && games[loader.value?.settings.game];
 
   return (
     <ContentWrapper>
@@ -130,41 +166,57 @@ export default function EditServerPage() {
         footer={null}
         onCancel={hideHistory}
         title='Settings History'>
-          <ServerHistoryListLoader key={`${historyRefreshKey}`} onRestoreVersion={revertToVersion} serverId={serverId}/>
+        <ServerHistoryListLoader key={`${historyRefreshKey}`} onRestoreVersion={revertToVersion} serverId={serverId} />
       </Modal>
       <PageHeader
         title={<span className="ui-title">{`Edit ${config?.displayName || 'Server'}`}</span>}
         onBack={() => navigate('/')}
         extra={[
-        <Button
-          key='history'
-          icon={<HistoryOutlined />}
-          onClick={showHistory}
-          style={{marginRight: '10px'}}>History</Button>,
-        <Button
-          key='save'
-          type='primary'
-          icon={<SaveOutlined/>}
-          onClick={() => saveConfig()}
-          disabled={!isConfigChanged}
-          loading={isSaving}>Save</Button>
-        ]}/>
-      <Row justify='end' style={{marginBottom: '10px'}}>
+          <Button
+            key='history'
+            icon={<HistoryOutlined />}
+            onClick={showHistory}
+            disabled={!loader.value}
+            style={{ marginRight: '10px' }}>History</Button>,
+          <Button
+            key='save'
+            type='primary'
+            icon={<SaveOutlined />}
+            onClick={() => saveConfig()}
+            disabled={!isConfigChanged && !isValid}
+            loading={isSaving}>Save</Button>
+        ]} />
+      <Row justify='end' style={{ marginBottom: '10px' }}>
       </Row>
-      <Spin spinning={isSaving}>
-        <Card title='Server Settings' style={{marginBottom: '20px'}}>
-          <ServerConfigForm key={`serverSettings${formRefreshKey}`} serverId={serverId} onChange={setSettings}/>
-        </Card>
-      </Spin>
-      <Spin spinning={isSaving}>
-        <Card title='Tribes Settings'>
-          <EditorLoader
-            key={`gameSettings${formRefreshKey}`}
-            serverId={serverId}
-            onChange={setConfig}
-            Editor={TribesAscendEditorForm}/>
-        </Card>
-      </Spin>
+      {loader.value && gameSpec ?
+        <>
+          <Spin spinning={isSaving}>
+            <Card title='Server Settings' style={{ marginBottom: '20px' }}>
+              <ServerSettingsForm
+                key={`serverSettings${formRefreshKey}`}
+                settings={loader.value.settings}
+                regions={loader.value.regions}
+                status={loader.value.status}
+                users={loader.value.users}
+                onChange={setSettings} />
+            </Card>
+          </Spin>
+          <Spin spinning={isSaving}>
+            <Card title='Tribes Settings'>
+              <gameSpec.editor
+                key={`gameSettings${formRefreshKey}`}
+                config={loader.value.config}
+                onChange={setConfig}
+              />
+            </Card>
+          </Spin>
+        </>
+        :
+        <Spin
+          spinning
+          size='large'
+          style={{ width: '100%', padding: '10%' }} />
+      }
     </ContentWrapper>
   )
 }

@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Optional, List
 from fastapi_camelcase import CamelModel as BaseModel
 from .game_server_config import GameServerConfig
@@ -23,6 +24,10 @@ class User(BaseModel):
   id: int
   username: str
 
+class GameType(str, Enum):
+  tribes_ascend_ootb = 'tribes_ascend_ootb'
+  tribes_ascend_goty = 'tribes_ascend_goty'
+
 # Used for server list
 class ServerStatus(BaseModel):
   id: int
@@ -33,14 +38,18 @@ class ServerStatus(BaseModel):
   enabled: bool
   status: str
   game_mode: str
+  game: GameType
   is_private: bool
 
   class Config:
     orm_mode = True
 
+
+
 # Return editable settings which are not part of the gameserverconfig
 class ServerSettings(BaseModel):
   region: str
+  game: GameType
   editors: Optional[List[int]]
 
   class Config:

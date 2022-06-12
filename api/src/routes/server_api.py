@@ -52,6 +52,7 @@ async def create_server(
     region=request.server_settings.region,
     name=request.server_config.display_name,
     game_mode='Custom',
+    game=request.server_settings.game,
     server_config=request.server_config.serialize(),
     updated_at=now,
     updated_by=user.id
@@ -70,6 +71,7 @@ async def create_server(
     enabled=new_server.enabled,
     status=new_server.status,
     game_mode=new_server.game_mode,
+    game=new_server.game,
     is_private=request.server_config.password is not None
   )
 
@@ -85,6 +87,7 @@ async def get_server_status(server: models.Server = Depends(get_server)):
     enabled=server.enabled,
     status=server.status,
     game_mode=server.game_mode,
+    game=server.game,
     is_private=config.password is not None
   )
 
@@ -99,12 +102,13 @@ async def get_server_settings(
   editors = server_sharing.get_server_editors(db, server)
   return responses.ServerSettings(
     region=server.region,
+    game=server.game,
     editors=[user.id for user in editors]
   )
 
 @router.post('/server/{server_id}/settings', tags=['server'])
 async def set_server_settings(
-  request: responses.ServerSettings,
+  request: requests.ServerSettingsUpdateRequest,
   user: models.User = Depends(deps.login),
   server: models.Server = Depends(get_server),
   db: Session = Depends(deps.db)

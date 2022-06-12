@@ -1,0 +1,23 @@
+{
+  "displayName": "Custom GOTY CTF",
+  "description": "Server Hosted By llamagrab.net",
+  "teamAssignType": "balanced",
+  "autoBalance": true,
+  "friendlyFire": true,
+  "maps": [
+    "ctf_katabatic",
+    "ctf_arx_novena",
+    "ctf_dangerous_crossing",
+    "ctf_drydock",
+    "ctf_terminus",
+    "ctf_canyon_crusade",
+    "ctf_permafrost",
+    "ctf_raindance",
+    "ctf_tartarus",
+    "ctf_temple_ruins"
+  ],
+
+  "lightWeaponBans": [],
+  "mediumWeaponBans": [],
+  "heavyWeaponBans": []
+}

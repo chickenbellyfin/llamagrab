@@ -1,3 +1,4 @@
+from xml.etree.ElementInclude import include
 from src.lua import LuaSettings, to_lua
 from src.schema.game_server_config import GameServerConfig
 from src.database import models
@@ -13,6 +14,7 @@ TEST_SERVER = models.Server(
   name='test_server',
   enabled=True,
   updated_at=0,
+  game='tribes_ascend_ootb',
   owner=models.User(
     id=0,
     username='',
@@ -28,7 +30,7 @@ def compare_example(name: str, server=TEST_SERVER, lua_settings=TEST_LUA_SETTING
   with open(f'tests/examples/{name}.lua') as test_out:
     target = test_out.read()
 
-  assert target == to_lua(TEST_SERVER, source, lua_settings)
+  assert target == to_lua(server, source, lua_settings)
 
 def test_empty():
   # server where owner has not set tribes_username
@@ -38,6 +40,7 @@ def test_empty():
     name='test_server',
     enabled=True,
     updated_at=0,
+    game='tribes_ascend_ootb',
     owner=models.User(
       id=0,
       username='',
@@ -50,6 +53,27 @@ def test_empty():
 def test_all():
   compare_example('all')
 
+def test_goty_base():
+  goty_server = models.Server(
+    id=0,
+    user=0,
+    name='test_server',
+    enabled=True,
+    updated_at=0,
+    game='tribes_ascend_goty',
+    owner=models.User(
+      id=0,
+      username='',
+      password='',
+      tribes_username='goty_admin'
+    )
+  )
+
+  compare_example(
+    'goty',
+    goty_server,
+    LuaSettings(include_admin=False, site_admins=[], include_hitscan_ban=False)
+  )
 
 def test_mods_not_admins():
   '''check that site admins dont get set as mods'''
@@ -60,6 +84,7 @@ def test_mods_not_admins():
     name='test_server',
     enabled=True,
     updated_at=0,
+    game='tribes_ascend_ootb',
     server_config='{"admins": ["siteadmin1"]}',
     owner=models.User(
       id=0,
@@ -83,6 +108,7 @@ def test_owner_mod_not_admins():
     enabled=True,
     updated_at=0,
     server_config='{}',
+    game='tribes_ascend_ootb',
     owner=models.User(
       id=0,
       username='',

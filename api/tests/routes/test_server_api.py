@@ -4,6 +4,7 @@ from sqlalchemy.orm.session import Session
 
 from src.database.models import Server, ServerEditor, ServerVersion, User
 
+
 def _remove_nones(obj: dict):
   for key in obj.copy():
     if obj[key] is None:
@@ -13,7 +14,7 @@ def _remove_nones(obj: dict):
 def test_get_server_settings(test_client: TestClient, login_user_1):
   response = test_client.get('/api/server/0/settings')
   assert response.status_code == status.HTTP_200_OK
-  assert response.json() == {'region': 'region1', 'editors': [1]}
+  assert response.json() == {'region': 'region1', 'editors': [1], 'game': 'tribes_ascend_ootb'}
 
 def test_get_server_settings_other_user(test_client: TestClient, login_user_1):
   # server 1 belongs to admin
@@ -42,7 +43,8 @@ def test_set_server_settings(test_client: TestClient, login_user_1, should_sync)
   assert get_response.status_code == status.HTTP_200_OK
   assert get_response.json() == {
     'region': 'region2',
-    'editors': [3]
+    'editors': [3],
+    'game': 'tribes_ascend_ootb'
   }
 
 def test_set_server_settings_bad_region(test_client: TestClient, login_user_1):
@@ -50,6 +52,12 @@ def test_set_server_settings_bad_region(test_client: TestClient, login_user_1):
     'region': 'not_a_region'
   })
   assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+def test_set_server_settings_game_type(test_client: TestClient, login_user_1):
+  response = test_client.post('/api/server/0/settings', json={
+    'game': 'tribes_ascend_goty'
+  })
+  assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 def test_set_server_editors_non_owner(test_client: TestClient, db_session: Session, login_user_2):
   db_session.add(ServerEditor(server_id=0, user_id=login_user_2.id))
@@ -82,7 +90,7 @@ def test_set_server_config(test_client: TestClient, db_session: Session, login_u
 
 def test_create_server(test_client: TestClient, db_session: Session, login_user_2: User):
   response = test_client.put('/api/servers', json={
-    'serverSettings': { 'region': 'region2', 'editors': [0]},
+    'serverSettings': { 'region': 'region2', 'editors': [0], 'game': 'tribes_ascend_ootb'},
     'serverConfig': {'displayName': 'CreateTestServer1Config'}
   })
 
@@ -94,8 +102,11 @@ def test_create_server(test_client: TestClient, db_session: Session, login_user_
   assert _remove_nones(get_response.json()) == {'displayName': 'CreateTestServer1Config'}
   get_response = test_client.get(f'/api/server/{server_id}/settings')
   assert get_response.status_code == status.HTTP_200_OK
-  assert _remove_nones(get_response.json()) == {'region': 'region2', 'editors': [0]}
-
+  assert _remove_nones(get_response.json()) == {
+    'region': 'region2',
+    'editors': [0],
+    'game': 'tribes_ascend_ootb'
+  }
   versions = db_session.query(ServerVersion).filter(ServerVersion.server_id == server_id).all()
   assert len(versions) == 1
 
@@ -104,12 +115,23 @@ def test_create_server_limit(test_client: TestClient, db_session: Session, login
   db_session.merge(login_user_1)
   db_session.commit()
   response = test_client.put('/api/servers', json={
-    'serverSettings': { 'region': 'region2' },
+    'serverSettings': { 'region': 'region2', 'game': 'tribes_ascend_goty' },
     'serverConfig': {'displayName': 'CreateTestServer1Config'}
   })
 
   assert response.status_code == status.HTTP_429_TOO_MANY_REQUESTS
   assert response.json() == {'detail': 'Server limit reached for user'}
+
+def test_create_server_bad_game_type(test_client: TestClient, db_session: Session, login_user_1: User):
+  login_user_1.limits.server_limit = 0
+  db_session.merge(login_user_1)
+  db_session.commit()
+  response = test_client.put('/api/servers', json={
+    'serverSettings': { 'region': 'region2', 'game': 'unsupport_fake_game' },
+    'serverConfig': {'displayName': 'CreateTestServer1Config'}
+  })
+
+  assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 def test_start_server(test_client: TestClient, db_session: Session, login_user_1: User, should_sync):
   response = test_client.post('/api/server/0/start')

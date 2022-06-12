@@ -1,16 +1,32 @@
-import { Button, Card, message, PageHeader, Select, Spin } from "antd";
-
-import { useNavigate } from 'react-router-dom'
-import { API, GameServerConfig, GameType, ServerSettings } from "../api";
-
 import { SaveOutlined } from "@ant-design/icons";
+import { Button, Card, message, PageHeader, Select, Spin } from "antd";
 import { useState } from "react";
-import { NewServerSettingsForm } from "../editor/ServerSettingsForm";
+import { useNavigate } from 'react-router-dom';
+import { API, GameServerConfig, GameType, ServerSettings, User } from "../api";
 import { useAuth } from "../auth";
 import ContentWrapper from "../components/ContentWrapper";
 import games from "../editor/games";
+import ServerSettingsForm from "../editor/ServerSettingsForm";
+import useLoader from "../useLoader";
 
 const { Option } = Select;
+
+interface EditorLoaderResult {
+  users: User[]
+  regions: { [key: string]: string },
+}
+async function loadServerEditor(): Promise<EditorLoaderResult> {
+  try {
+    const regions = API.Data.getRegions()
+    const users = API.Account.getAllUsers()
+    return {
+      users: await users,
+      regions: await regions
+    }
+  } catch (error: any) {
+    throw Error('Failed to get settings')
+  }
+}
 
 export default function NewServerPage() {
 
@@ -20,10 +36,14 @@ export default function NewServerPage() {
   const [config, setConfig] = useState<GameServerConfig>(games['tribes_ascend_ootb'].defaultConfig)
 
   const [isSaving, setIsSaving] = useState(false)
-
+  const loader = useLoader(loadServerEditor)
 
   const onSettingsChange = (newSettings: ServerSettings) => {
     setSettings(Object.assign({}, newSettings));
+  }
+
+  const onConfigChange = (newConfig: GameServerConfig) => {
+    setConfig(Object.assign({}, newConfig));
   }
 
   const onGameChange = (game: GameType) => {
@@ -46,11 +66,13 @@ export default function NewServerPage() {
     auth.refresh()
   }
 
-  const isValid = (settings.region !== undefined)
+  const isValid = (
+    settings.region !== undefined
+    && config.displayName !== undefined
+    && config.displayName.length != 0
+    )
 
-  const gameTitle = games[settings.game].title;
-  const GameEditor = games[settings.game].editor
-  const defaultGameConfig = games[settings.game].defaultConfig
+  const gameSpec = games[settings.game];
 
   return (
     <ContentWrapper>
@@ -66,30 +88,43 @@ export default function NewServerPage() {
           onClick={() => saveConfig()}
           loading={isSaving}>Save</Button>
         ]}/>
-      <Spin spinning={isSaving}>
-        <Card title='Server Settings' style={{marginBottom: '20px'}}>
-          <NewServerSettingsForm settings={settings} onChange={onSettingsChange}/>
-        </Card>
-      </Spin>
-      <Spin spinning={isSaving}>
-        <Card
-          title={
-            <>
-            <span>{gameTitle} Settings</span>
-            <Select
-              style={{float: 'right'}}
-              defaultValue="tribes_ascend_ootb"
-              onChange={onGameChange}
-              size='small'>
-              <Option value="tribes_ascend_ootb">OOTB</Option>
-              <Option value="tribes_ascend_goty">GOTY</Option>
-            </Select>
-            </>
-          }>
-         <GameEditor config={defaultGameConfig} onChange={setConfig}/>
-        {/* <GameServerConfigForm  config={defaultConfig} onChange={setConfig}/> */}
-        </Card>
-      </Spin>
+      { loader.value ?
+        <>
+          <Spin spinning={isSaving}>
+            <Card title='Server Settings' style={{marginBottom: '20px'}}>
+              <ServerSettingsForm
+                settings={settings}
+                regions={loader.value.regions}
+                users={loader.value.users}
+                onChange={onSettingsChange}/>
+            </Card>
+          </Spin>
+          <Spin spinning={isSaving}>
+            <Card
+              title={
+                <>
+                <span>{gameSpec.title} Settings</span>
+                <Select
+                  style={{float: 'right'}}
+                  defaultValue="tribes_ascend_ootb"
+                  onChange={onGameChange}
+                  size='small'>
+                  <Option value="tribes_ascend_ootb">OOTB</Option>
+                  <Option value="tribes_ascend_goty">GOTY</Option>
+                </Select>
+                </>
+              }>
+            <gameSpec.editor config={gameSpec.defaultConfig} onChange={onConfigChange}/>
+            </Card>
+          </Spin>
+        </>
+        :
+        <Spin
+        spinning
+        size='large'
+        style={{ width: '100%', padding: '10%' }} />
+      }
+
     </ContentWrapper>
   )
 }

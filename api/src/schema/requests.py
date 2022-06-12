@@ -1,17 +1,18 @@
 import re
+from typing import List, Optional
 
 from fastapi_camelcase import CamelModel as BaseModel
 from pydantic import validator
 
 from .game_server_config import GameServerConfig
 from . import validations
-from .responses import ServerSettings
+from .responses import GameType, ServerSettings
 from src.database import models
 
 class LoginRequest(BaseModel):
   class Config:
     extra='forbid'
-  
+
   username: str
   password: str
 
@@ -24,7 +25,7 @@ class LoginRequest(BaseModel):
     if not re.match('^[a-zA-Z0-9_]+$', v):
       raise ValueError('Username may only contain a-z A-Z 0-9 _')
     return v
-  
+
   @validator('password')
   def validate_password(cls, v: str):
     return validations.validate_password(v)
@@ -32,10 +33,10 @@ class LoginRequest(BaseModel):
 class AccountCreateRequest(LoginRequest):
   pass
 
-class SetTribesUsernameRequest(BaseModel):  
+class SetTribesUsernameRequest(BaseModel):
   class Config:
     extra='forbid'
-    
+
   tribes_username: str
 
   @validator('tribes_username')
@@ -46,12 +47,17 @@ class SetTribesUsernameRequest(BaseModel):
 class UpdatePasswordRequest(BaseModel):
   current_password: str
   new_password: str
-  
+
   @validator('new_password')
   def validate_new_password(cls, v: str) -> str:
     return validations.validate_password(v)
- 
+
 
 class ServerCreateRequest(BaseModel):
   server_settings: ServerSettings
   server_config: GameServerConfig
+
+
+class ServerSettingsUpdateRequest(BaseModel):
+  region: str
+  editors: Optional[List[int]]

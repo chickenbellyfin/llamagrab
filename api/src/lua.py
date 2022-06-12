@@ -1,6 +1,6 @@
 import os
 import json
-from typing import Any, List, Mapping
+from typing import Any, List, Mapping, NamedTuple
 
 from .database import models
 from .schema.game_server_config import GameServerConfig, ModProperty
@@ -40,17 +40,16 @@ team_assign_types = {
   'auto': 'TeamAssignTypes.AutoAssign'
 }
 
+lua_base = {
+  'tribes_ascend_ootb': 'tribes_ascend_ootb_base.lua',
+  'tribes_ascend_goty': 'tribes_ascend_goty_base.lua',
+}
 
-class LuaSettings():
-  def __init__(
-    self,
-    include_admin = True,
-    site_admins: List[str] = [],
-    include_hitscan_ban = True
-    ):
-    self.site_admins = site_admins
-    self.include_admin = include_admin
-    self.include_hitscan_ban = include_hitscan_ban
+class LuaSettings(NamedTuple):
+  include_admin: bool = True
+  site_admins: List[str] = []
+  include_hitscan_ban: bool = True
+
 
 class LuaConfig:
   def __init__(self, lua_dir='../common/lua'):
@@ -71,10 +70,8 @@ class LuaConfig:
     """add a lua file from the common lua lib"""
     with open(os.path.join(self.lua_dir, filename)) as lib:
       lib_str = lib.read()
-    self('')
     self(f'-- [{filename}]')
-    self('-' * 80)
-    self(lib_str)
+    self.lua += lib_str + '\n'
     self('-' * 80)
 
   def get(self):
@@ -113,10 +110,11 @@ def _value_mod_value(p: ModProperty) -> str:
 def to_lua(server: models.Server, config: GameServerConfig, lua_settings: LuaSettings) -> str:
   lua = LuaConfig()
 
+  lua.require(lua_base[server.game])
+
   lua('ServerSettings.Description = "%s"', config.display_name)
   lua('ServerSettings.Motd = "%s"', config.description)
 
-  lua('ServerSettings.GameSettingMode = ServerSettings.GameSettingModes.OOTB')
   lua('ServerSettings.TeamAssignType = %s', team_assign_types.get(config.team_assign_type))
   lua('ServerSettings.MaxPlayers = %s', config.max_players)
   lua('ServerSettings.AutoBalanceTeams = %s', _bool(config.auto_balance))

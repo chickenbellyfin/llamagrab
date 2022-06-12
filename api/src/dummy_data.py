@@ -8,7 +8,7 @@ from .schema import requests, responses
 from .schema.game_server_config import GameServerConfig
 
 
-with open('../common/default.json') as default_file:
+with open('../common/defaults/tribes_ascend_ootb.json') as default_file:
   default_json = default_file.read()
 
 users = [
@@ -22,7 +22,8 @@ users = [
 servers = [
   requests.ServerCreateRequest(
     server_settings=responses.ServerSettings(
-      region='central_us'
+      region='central_us',
+      game='tribes_ascend_ootb'
     ),
     server_config=GameServerConfig(
       display_name='NA Mixer',
@@ -40,6 +41,7 @@ servers = [
   requests.ServerCreateRequest(
     server_settings=responses.ServerSettings(
       region='west_us',
+      game='tribes_ascend_ootb'
     ),
     server_config=GameServerConfig.parse(default_json)
   )
@@ -62,6 +64,7 @@ def populate(db: Session):
       name=server.server_config.display_name,
       region=server.server_settings.region,
       server_config=server.server_config.serialize(),
+      game=server.server_settings.game,
       updated_at=int(time.time()),
       updated_by=user1.id
     )

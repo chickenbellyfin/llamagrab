@@ -12,7 +12,6 @@ interface LoaderResult<T> {
   value?: T
   initialLoad: boolean,
   invalidate: () => void
-  iv?: boolean
 }
 
 function useLoader<T>(
@@ -24,7 +23,7 @@ function useLoader<T>(
   const [result, setResult] = useState<LoaderResult<T>>({
     value: initialValue,
     initialLoad: true,
-    invalidate: NoOp, iv: true
+    invalidate: NoOp
   });
   const resultRef = useRef<T>()
   const timerRef = useRef<any>(null);

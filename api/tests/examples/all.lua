@@ -1,6 +1,9 @@
+-- [tribes_ascend_ootb_base.lua]
+ServerSettings.GameSettingMode = ServerSettings.GameSettingModes.OOTB
+
+--------------------------------------------------------------------------------
 ServerSettings.Description = "Test Server"
 ServerSettings.Motd = "the description the description"
-ServerSettings.GameSettingMode = ServerSettings.GameSettingModes.OOTB
 ServerSettings.TeamAssignType = TeamAssignTypes.Unbalanced
 ServerSettings.MaxPlayers = 28
 ServerSettings.AutoBalanceTeams = false
@@ -47,9 +50,7 @@ ServerSettings.BannedItems.add("Medium", "NJ5-B SMG")
 ServerSettings.BannedItems.add("Medium", "Cluster Grenade")
 ServerSettings.BannedItems.add("Heavy", "Heavy Spinfusor")
 ServerSettings.BannedItems.add("Heavy", "Fusion Mortar")
-
 -- [hitscan.lua]
---------------------------------------------------------------------------------
 ServerSettings.BannedItems.add("Light", "Sparrow")
 ServerSettings.BannedItems.add("Light", "Phase Rifle")
 ServerSettings.BannedItems.add("Light", "BXT1 Rifle")
@@ -115,9 +116,7 @@ Loadouts.Hardcoded.Medium.set(2, Loadouts.EquipPoints.Secondary, "Honorfusor")
 Loadouts.Hardcoded.Medium.set(2, Loadouts.EquipPoints.Belt, "Anti-Personnel Grenade")
 Loadouts.Hardcoded.Medium.set(2, Loadouts.EquipPoints.Pack, "Utility Pack")
 Loadouts.Hardcoded.Heavy.set(2, Loadouts.EquipPoints.Tertiary, "Heavy Bolt Launcher")
-
 -- [admin.lua]
---------------------------------------------------------------------------------
 local commands = {
   {
       name      = "NextMap",

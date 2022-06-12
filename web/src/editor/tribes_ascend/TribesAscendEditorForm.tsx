@@ -1,19 +1,18 @@
-import React from "react";
 import { Tabs } from "antd";
-
-import { API, GameServerConfig } from "../../api";
-
-import Loader from "../../components/Loader";
+import React from "react";
+import { GameServerConfig } from "../../api";
+import { EditorProps } from "../Editor";
 import { createUpdateCallbacks } from "../tabHelpers";
+import BasicSettingsTab from "./BasicSettingsTab";
 import GameSettingsTab from "./GameSettingsTab";
 import MapRotationSettingsTab from "./MapRotationSettingsTab";
-import BasicSettingsTab from "./BasicSettingsTab";
-import WeaponsSettingsTab from "./WeaponsSettingsTab";
-import VehicleSettingsTab from "./VehicleSettingsTab";
-import TeamSettingsTab from "./TeamSettingsTab";
 import PlayerSettingsTab from "./PlayerSettingsTab";
+import TeamSettingsTab from "./TeamSettingsTab";
 import ValueModsTab from "./ValueModsTab";
-import { EditorProps } from "../Editor";
+import VehicleSettingsTab from "./VehicleSettingsTab";
+import WeaponsSettingsTab from "./WeaponsSettingsTab";
+
+
 
 const { TabPane } = Tabs;
 
@@ -22,7 +21,7 @@ type EditorState = {
   isSaving: boolean
 }
 
-export class TribesAscendEditorForm extends React.Component<EditorProps, EditorState> {
+export default class TribesAscendEditorForm extends React.Component<EditorProps, EditorState> {
 
   constructor(props: EditorProps) {
     super(props)
@@ -84,10 +83,3 @@ export class TribesAscendEditorForm extends React.Component<EditorProps, EditorS
     )
   }
 }
-
-// // wrap in a loader to edit an existing config
-// type EditorLoaderProps = Omit<EditorProps, 'config'> & {serverId:  number}
-// export const EditGameServerConfigForm = Loader<EditorLoaderProps, GameServerConfig>({
-//   loaderFunc: (props) => API.Server.getServerConfig(props.serverId),
-//   componentBuilder: (config, props) => <TribesAscendEditorForm config={config} {...props} />
-// })

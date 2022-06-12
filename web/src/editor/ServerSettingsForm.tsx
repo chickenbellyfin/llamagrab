@@ -1,8 +1,7 @@
 import { Form, Select } from "antd";
 import { useState } from "react";
-import { API, ServerSettings, ServerStatus, User } from "../api";
+import { ServerSettings, ServerStatus, User } from "../api";
 import { useAuth } from "../auth";
-import Loader from "../components/Loader";
 
 const { Option } = Select;
 
@@ -14,7 +13,7 @@ type ServerSettingsFormProps = {
   onChange?: (settings: ServerSettings) => void
 }
 
-function ServerSettingsForm({ regions, settings, users, status, onChange }: ServerSettingsFormProps) {
+export default function ServerSettingsForm({ regions, settings, users, status, onChange }: ServerSettingsFormProps) {
 
   const [updatedSettings, setSettings] = useState(settings)
   const auth = useAuth()
@@ -73,52 +72,3 @@ function ServerSettingsForm({ regions, settings, users, status, onChange }: Serv
   </Form>
   );
 }
-
-
-async function getServerSettings(serverId: number, settings?: ServerSettings): Promise<ServerSettingsFormProps> {
-  let settingsPromise;
-  try {
-    if (!settings) {
-      settingsPromise = API.Server.getServerSettings(serverId)
-    } else {
-      settingsPromise = Promise.resolve(settings);
-    }
-    const status = API.Server.getServerStatus(serverId)
-    const regions = API.Data.getRegions()
-    const users = API.Account.getAllUsers()
-    return {
-      settings: await settingsPromise,
-      regions: await regions,
-      users: await users,
-      status: await status
-    }
-  } catch(error: any) {
-    throw Error('Failed to get settings')
-  }
-}
-
-type LoaderProps = {
-  serverId: number
-  settings?: ServerSettings
-  onChange?: (settings: ServerSettings) => void
-}
-export default Loader<LoaderProps, ServerSettingsFormProps>({
-  loaderFunc: (props) => getServerSettings(props.serverId),
-  componentBuilder: (result, props) => <ServerSettingsForm {...result} {...props} />
-});
-
-type NewLoaderProps = {
-  settings: ServerSettings,
-  onChange?: (settings: ServerSettings) => void
-}
-export const NewServerSettingsForm = Loader<NewLoaderProps, any>({
-  loaderFunc: async (props) => {
-    const regions = API.Data.getRegions()
-    const users = API.Account.getAllUsers()
-    return {
-      regions: await regions,
-      users: await users
-    }
-  },
-  componentBuilder: (result, props) => <ServerSettingsForm {...result} {...props}/>
-})
