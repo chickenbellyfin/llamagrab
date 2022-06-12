@@ -1,8 +1,8 @@
-import { GameServerConfig, GameType } from "../api"
+import { GameServerConfig } from "../api"
 import { TribesAscendEditorForm } from "./tribes_ascend/TribesAscendEditorForm";
 
 import defaultOOTBConfig from '../../../common/default.json'
-import { EditorProps } from "./Editor";
+import TribesAscendGOTYEditorForm from "./tribes_ascend/TribesAscendGOTYEditorForm";
 
 export default {
     'tribes_ascend_ootb': {
@@ -12,7 +12,7 @@ export default {
     },
     'tribes_ascend_goty': {
         title: 'Tribes Ascend GOTY',
-        editor: (props: EditorProps) => <b>Editing Goty</b>,
+        editor: TribesAscendGOTYEditorForm,
         defaultConfig: {} as GameServerConfig
     }
 };
