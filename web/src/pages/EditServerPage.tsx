@@ -161,7 +161,8 @@ export default function EditServerPage() {
           <EditorLoader
             key={`gameSettings${formRefreshKey}`}
             serverId={serverId}
-            onChange={setConfig}/>
+            onChange={setConfig}
+            Editor={TribesAscendEditorForm}/>
         </Card>
       </Spin>
     </ContentWrapper>
