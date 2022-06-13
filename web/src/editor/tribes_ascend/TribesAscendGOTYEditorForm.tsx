@@ -1,13 +1,12 @@
 import { Tabs } from "antd";
 import React from "react";
-import { GameServerConfig } from "../../api";
+import { GameServerConfig } from "../../domain";
 import { EditorProps } from "../Editor";
 import { createUpdateCallbacks } from "../tabHelpers";
 import BasicSettingsTab from "./BasicSettingsTab";
 import GameSettingsTab from "./GameSettingsTab";
 import MapRotationSettingsTab from "./MapRotationSettingsTab";
 import TeamSettingsTab from "./TeamSettingsTab";
-import ValueModsTab from "./ValueModsTab";
 import VehicleSettingsTab from "./VehicleSettingsTab";
 
 const { TabPane } = Tabs;

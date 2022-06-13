@@ -1,6 +1,6 @@
-import defaultOOTBConfig from '../../../common/defaults/tribes_ascend_ootb.json';
 import defaultGOTYConfig from '../../../common/defaults/tribes_ascend_goty.json';
-import { GameServerConfig, GameType } from "../api";
+import defaultOOTBConfig from '../../../common/defaults/tribes_ascend_ootb.json';
+import { GameServerConfig, GameType } from '../domain';
 import { EditorProps } from "./Editor";
 import TribesAscendEditorForm from "./tribes_ascend/TribesAscendEditorForm";
 import TribesAscendGOTYEditorForm from "./tribes_ascend/TribesAscendGOTYEditorForm";

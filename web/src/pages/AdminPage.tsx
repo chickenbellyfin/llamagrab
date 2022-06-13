@@ -1,17 +1,18 @@
 import { message, Modal, PageHeader, Spin, Table, Tag, Typography } from "antd";
-import { useNavigate } from "react-router-dom";
-import { API, ServerStatus, Status, UserAccount, UserLimits } from "../api";
-import { useAuth } from "../auth";
-import { useState } from "react";
-import ContentWrapper from "../components/ContentWrapper";
-import StatusIcon from "../components/ServerStatusIcon";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
-import ServerName from "../components/ServerName";
-import useLoader from "../useLoader";
-import ServerCard from "../components/ServerCard";
 import { Breakpoint } from "antd/lib/_util/responsiveObserve";
-import UserAccountCard from "../components/UserAccountCard";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { API } from "../api";
+import { useAuth } from "../auth";
 import colors from "../colors";
+import ContentWrapper from "../components/ContentWrapper";
+import ServerCard from "../components/ServerCard";
+import ServerName from "../components/ServerName";
+import StatusIcon from "../components/ServerStatusIcon";
+import UserAccountCard from "../components/UserAccountCard";
+import { ServerStatus, Status, UserAccount, UserLimits } from "../domain";
+import useLoader from "../useLoader";
 
 
 type UserListProps = {

@@ -1,10 +1,9 @@
-import {  Divider, Form,  Select } from "antd";
-
+import { Divider, Form, Select } from "antd";
 import { PlayerClass, weaponOptions } from "../../data";
+import { GameServerConfigTabProps } from "../../editor/tabHelpers";
 import HardcodedLoadoutsForm from "./HardcodedLoadouts";
 import { ItemPropertiesList } from "./ItemPropertiesSection";
 import MutualExclusionList from "./MutualExclusions";
-import { GameServerConfigTabProps } from "../../editor/tabHelpers";
 
 
 type ClassSettingsProps = {

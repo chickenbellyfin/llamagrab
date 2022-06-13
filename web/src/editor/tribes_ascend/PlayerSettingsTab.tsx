@@ -1,8 +1,8 @@
 import { Checkbox, Divider, Form, Space } from "antd";
 import { PlayerClass } from "../../data";
-import {ClassProperties} from "./ClassProperties";
 import { InputFloat, InputInteger } from "../../editor/Inputs";
 import { GameServerConfigTabProps } from "../../editor/tabHelpers";
+import { ClassProperties } from "./ClassProperties";
 
 interface DisabledEquipPointsProps {
   clazz: PlayerClass

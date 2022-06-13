@@ -1,6 +1,6 @@
 import { Form, Select } from "antd";
-import { ServerSettings, ServerStatus, User } from "../api";
 import { useAuth } from "../auth";
+import { ServerSettings, ServerStatus, User } from "../domain";
 
 const { Option } = Select;
 

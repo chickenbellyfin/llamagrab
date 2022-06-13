@@ -2,9 +2,10 @@ import { HistoryOutlined, RollbackOutlined, SaveOutlined } from "@ant-design/ico
 import { Button, Card, List, message, Modal, PageHeader, Popconfirm, Row, Spin, Tag } from "antd";
 import { useState } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
-import { API, GameServerConfig, ServerSettings, ServerStatus, ServerVersion, User } from "../api";
+import { API } from "../api";
 import ContentWrapper from "../components/ContentWrapper";
 import Loader from "../components/Loader";
+import { GameServerConfig, ServerSettings, ServerStatus, ServerVersion, User } from "../domain";
 import games from "../editor/games";
 import ServerSettingsForm from "../editor/ServerSettingsForm";
 import useLoader from "../useLoader";

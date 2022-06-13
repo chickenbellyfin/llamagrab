@@ -1,12 +1,12 @@
 import Icon, { SettingFilled } from "@ant-design/icons";
-import { Menu, Tooltip, Layout, Modal, Button, Space } from "antd";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../auth";
-import { ReactComponent as logo } from '../../public/gen.svg'
+import { Button, Layout, Modal, Space, Tooltip } from "antd";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
-import LoginForm from './LoginForm'
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ReactComponent as logo } from '../../public/gen.svg';
+import { useAuth } from "../auth";
 import DiscordButton from "./DiscordButton";
+import LoginForm from './LoginForm';
 
 const { Header } = Layout;
 

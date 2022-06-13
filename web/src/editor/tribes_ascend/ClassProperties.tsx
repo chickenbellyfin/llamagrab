@@ -1,6 +1,6 @@
 import { Card } from "antd";
-import { ModProperty } from "../../api"
 import { ClassPropertiesSpecSet, ModPropertySpecSet, ValueModsSpecSet } from "../../data";
+import { ModProperty } from "../../domain";
 import ModPropertyList from "./ModPropertyList";
 
 type ClassPropertiesBuilderProps = {
@@ -20,11 +20,11 @@ function ClassPropertiesBuilder({title, specSet}: ClassPropertiesBuilderProps) {
     const setProperties = (value: ModProperty[]) => {
       onChange(value)
     }
-  
+
     return (
-      <Card 
+      <Card
         headStyle={{backgroundColor: 'rgba(0,0,0,.1)'}}
-        className='form-card' 
+        className='form-card'
         title={`${classLabel} ${title}`}
         >
         <ModPropertyList

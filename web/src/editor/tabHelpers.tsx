@@ -1,8 +1,8 @@
-import { ChangeEvent } from "react";
 import {
-  RadioChangeEvent,
+  RadioChangeEvent
 } from "antd";
-import { GameServerConfig } from "../api";
+import { ChangeEvent } from "react";
+import { GameServerConfig } from "../domain";
 
 type ChangeEventHandler = (e: ChangeEvent<HTMLInputElement>) => void
 type RadioChangeEventHandler = (e: RadioChangeEvent) => void

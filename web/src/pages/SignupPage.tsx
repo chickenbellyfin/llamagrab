@@ -1,4 +1,4 @@
-import { Card, Layout, message, Typography} from "antd";
+import { Card, Layout, message, Typography } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { API } from "../api";

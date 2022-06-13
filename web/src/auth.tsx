@@ -2,7 +2,8 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react"
 import { Navigate} from "react-router-dom";
-import { API, UserAccount } from "./api";
+import { API } from "./api";
+import { UserAccount } from "./domain";
 import { AuthPermissions, getPermissions } from "./permissions";
 
 type AuthContext = {

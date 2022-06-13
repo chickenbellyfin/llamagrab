@@ -1,6 +1,6 @@
 import { Tabs } from "antd";
 import React from "react";
-import { GameServerConfig } from "../../api";
+import { GameServerConfig } from "../../domain";
 import { EditorProps } from "../Editor";
 import { createUpdateCallbacks } from "../tabHelpers";
 import BasicSettingsTab from "./BasicSettingsTab";

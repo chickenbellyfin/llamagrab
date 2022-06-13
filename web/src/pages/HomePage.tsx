@@ -1,9 +1,9 @@
-import { Button, PageHeader, Popover } from 'antd'
-import ServerList from '../components/ServerList';
 import { PlusCircleOutlined } from '@ant-design/icons';
+import { Button, PageHeader, Popover } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth';
 import ContentWrapper from '../components/ContentWrapper';
+import ServerList from '../components/ServerList';
 
 export default function HomePage() {
 

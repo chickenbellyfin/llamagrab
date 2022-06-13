@@ -1,9 +1,10 @@
 import { DeleteOutlined, CheckOutlined, CrownOutlined, VerticalAlignBottomOutlined } from "@ant-design/icons"
 import { Card, Divider, Popconfirm, message, Spin, Descriptions, Tag } from "antd"
 import { useState } from "react"
-import { API, UserAccount } from "../api"
+import { API } from "../api"
 import { useAuth } from "../auth"
 import colors from "../colors"
+import { UserAccount } from "../domain"
 
 type UserAccountCardProps = {
   user: UserAccount

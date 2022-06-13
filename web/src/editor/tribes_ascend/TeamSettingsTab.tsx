@@ -1,5 +1,5 @@
 import { Form, Radio, Switch } from "antd";
-import {InputInteger, InputPercent } from "../../editor/Inputs";
+import { InputInteger, InputPercent } from "../../editor/Inputs";
 import { GameServerConfigTabProps } from "../../editor/tabHelpers";
 
 

@@ -3,7 +3,8 @@
  * actual permissions should be enforced in the API
  */
 
-import { ServerStatus, UserAccount } from "./api";
+import { ServerStatus, UserAccount } from "./domain"
+
 
 function isUserSuper(user: UserAccount | undefined): boolean {
   return user?.tier === 'super'
@@ -23,8 +24,8 @@ export class AuthPermissions {
   constructor(user: UserAccount | undefined) {
     this.user = user
   }
-  
-  
+
+
   isSuper(): boolean {
     return isUserSuper(this.user)
   }
@@ -37,7 +38,7 @@ export class AuthPermissions {
     return isUserVerified(this.user)
   }
 
-  canVerifyUser(other: UserAccount): boolean {    
+  canVerifyUser(other: UserAccount): boolean {
     return this.isAdmin() && other.tier === 'unverified'
   }
 
@@ -53,7 +54,7 @@ export class AuthPermissions {
   canMakeAdmin(other: UserAccount): boolean {
     return this.isSuper() && other.tier === 'verified'
   }
-  
+
   canRemoveAdmin(other: UserAccount): boolean {
     return this.isSuper() && other.tier === 'admin'
   }

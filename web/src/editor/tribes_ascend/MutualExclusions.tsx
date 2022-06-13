@@ -1,9 +1,9 @@
 import { CheckCircleOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import { Button, Col, Popover, Row, Select, Space, Tooltip } from "antd";
+import { Button, Col, Row, Select, Space, Tooltip } from "antd";
 import { useState } from "react";
-import { MutualExclusion } from "../../api";
 import colors from "../../colors";
-import { ItemPropertiesSpecSet, PlayerClass, weaponOptions } from "../../data";
+import { PlayerClass, weaponOptions } from "../../data";
+import { MutualExclusion } from "../../domain";
 
 type MutualExclusionItemProps = {
   value: MutualExclusion,

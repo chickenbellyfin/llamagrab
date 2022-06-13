@@ -1,7 +1,7 @@
 import { Divider, Form, Space } from "antd";
-import {ClassValueMods} from "./ClassProperties";
-import { ItemValueModsList } from "./ItemPropertiesSection";
 import { GameServerConfigTabProps } from "../../editor/tabHelpers";
+import { ClassValueMods } from "./ClassProperties";
+import { ItemValueModsList } from "./ItemPropertiesSection";
 
 
 export default function ValueModsTab (

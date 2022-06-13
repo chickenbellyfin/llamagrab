@@ -1,4 +1,4 @@
-import { PageHeader } from 'antd'
+import { PageHeader } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import ContentWrapper from '../components/ContentWrapper';
 import RegionStatusSection from '../components/RegionStatusSection';

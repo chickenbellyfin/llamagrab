@@ -1,9 +1,9 @@
 import { CheckCircleOutlined, DeleteOutlined, ExclamationCircleOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { Button, Col, Popover, Row, Select, Space, Switch, Tooltip} from "antd";
 import { useState } from "react";
-import {  ModProperty } from "../../api";
 import colors from "../../colors";
 import { ModPropertySpecSet } from "../../data";
+import { ModProperty } from "../../domain";
 import { InputFloat, InputInteger } from "../../editor/Inputs";
 
 

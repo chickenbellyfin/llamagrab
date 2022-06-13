@@ -1,13 +1,11 @@
-import { ReactComponent as logo } from '../../public/gen.svg'
-import Icon, { CloudServerOutlined, ControlOutlined, CrownOutlined, SafetyCertificateOutlined, ThunderboltOutlined, UsergroupAddOutlined } from '@ant-design/icons';
-import { Button, Col, Divider, Row, Space, Typography } from 'antd';
+import Icon, { CloudServerOutlined, ControlOutlined, SafetyCertificateOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { Button, Col, Divider, Row, Typography } from 'antd';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
-import RegionStatusSection from '../components/RegionStatusSection';
-import { getBreakpoint } from '../util';
-import { ReactComponent as HonorLogo } from '../../public/honor.svg'
+import { PropsWithChildren } from 'react';
+import { ReactComponent as logo } from '../../public/gen.svg';
 import colors from '../colors';
 import DiscordButton from '../components/DiscordButton';
-import { PropsWithChildren } from 'react';
+import RegionStatusSection from '../components/RegionStatusSection';
 
 
 const { Title, Text } = Typography;

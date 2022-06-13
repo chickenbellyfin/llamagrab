@@ -1,6 +1,6 @@
 import { LockOutlined } from "@ant-design/icons";
 import { Tooltip } from "antd";
-import { ServerStatus } from "../api";
+import { ServerStatus } from "../domain";
 
 interface ServerNameProps {
     status: ServerStatus

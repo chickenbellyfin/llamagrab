@@ -1,9 +1,9 @@
-import { Col,List, Row, Spin, Typography } from 'antd';
-import { API, RegionStatus, ServerStatus } from '../api';
-import { useEffect, useRef, useState } from 'react';
-import StatusIcon from './ServerStatusIcon';
-import ServerName from './ServerName';
+import { Col, List, Row, Spin, Typography } from 'antd';
+import { API } from '../api';
+import { RegionStatus, ServerStatus } from '../domain';
 import useLoader from '../useLoader';
+import ServerName from './ServerName';
+import StatusIcon from './ServerStatusIcon';
 
 const { Title, Text } = Typography;
 
