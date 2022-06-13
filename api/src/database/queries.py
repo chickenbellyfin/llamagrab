@@ -1,7 +1,8 @@
 from typing import List
-from loguru import logger
-from sqlalchemy.orm import Session
+
 from sqlalchemy import or_
+from sqlalchemy.orm import Session
+
 from . import models
 
 

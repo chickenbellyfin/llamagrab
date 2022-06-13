@@ -1,9 +1,8 @@
-from typing import List
-from sqlalchemy.orm import Session
 from loguru import logger
+from sqlalchemy.orm import Session
 
-from .database import models, queries
 from . import server_sharing
+from .database import models, queries
 
 """
 Unverified:

@@ -1,10 +1,9 @@
 import pytest
-
 from fastapi import status
 from fastapi.testclient import TestClient
 from sqlalchemy.orm.session import Session
-
 from src.database import models
+
 
 @pytest.fixture
 def user_to_verify(db_session: Session):

@@ -1,7 +1,9 @@
+from unittest.mock import Mock, call
+
 import pytest
 from docker.errors import NotFound
-from unittest.mock import Mock, call
 from src.lib.docker import Docker, NullDocker
+
 
 def make_object(**kwargs):
   return type('obj', (object,), kwargs)
@@ -23,20 +25,20 @@ def test_status(mock_client):
       'llamagrab': '',
       'server_id': '111',
       'port_offset': '6'
-    }  
+    }
   )
   test2 = make_object(
     labels = {
       'llamagrab': '',
       'server_id': '222',
       'port_offset': '2'
-    }  
+    }
   )
   test3 = make_object( # not a taserver
     labels = {
       'server_id': '333',
       'port_offset': '0'
-    }  
+    }
   )
   mock_client.containers.list.return_value = [
     test1, test2, test3
@@ -53,7 +55,7 @@ def test_start_server(mock_client):
   docker = Docker(mock_client)
 
   docker.start_server(56, 0, '/test/gamesettings/path')
-  
+
   mock_client.assert_has_calls([
     call.containers.get('taserver_56'),
     call.containers.get().remove(force=True),
@@ -77,7 +79,7 @@ def test_start_server(mock_client):
         '7778/udp':7778,
         '9002/tcp':9002,
         '9002/udp':9002,
-      },      
+      },
       environment = None,
       network_mode = None
     )
@@ -90,7 +92,7 @@ def test_start_server_no_existing(mock_client):
   mock_client.containers.get.side_effect = NotFound('test not found')
   docker = Docker(mock_client)
   docker.start_server(56, 0, '/test/gamesettings/path')
-  
+
   mock_client.assert_has_calls([
     call.containers.get('taserver_56'),
     # remove() not called
@@ -114,7 +116,7 @@ def test_start_server_no_existing(mock_client):
         '7778/udp':7778,
         '9002/tcp':9002,
         '9002/udp':9002,
-      },      
+      },
       environment = None,
       network_mode = None
     )
@@ -148,7 +150,7 @@ def test_start_server_offset(mock_client):
         '7788/udp':7788,
         '9012/tcp':9012,
         '9012/udp':9012,
-      },      
+      },
       environment = None,
       network_mode = None
     )
@@ -156,7 +158,7 @@ def test_start_server_offset(mock_client):
 
 def test_start_server_host_network(mock_client):
   docker = Docker(mock_client, use_host_networking=True)
-  docker.start_server(56, 0, '/test/gamesettings/path')  
+  docker.start_server(56, 0, '/test/gamesettings/path')
   mock_client.assert_has_calls([
     call.containers.get('taserver_56'),
     call.containers.get().remove(force=True),
@@ -205,7 +207,7 @@ def test_start_server_custom_login(mock_client):
         '7778/udp':7778,
         '9002/tcp':9002,
         '9002/udp':9002,
-      },      
+      },
       environment = ['LOGINSERVER=loginserver.test.local'],
       network_mode = None
     )
@@ -238,7 +240,7 @@ def test_start_server_custom_image(mock_client):
         '7778/udp':7778,
         '9002/tcp':9002,
         '9002/udp':9002,
-      },      
+      },
       environment = None,
       network_mode = None
     )

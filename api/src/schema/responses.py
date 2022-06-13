@@ -1,7 +1,8 @@
 from enum import Enum
-from typing import Optional, List
+from typing import List, Optional
+
 from fastapi_camelcase import CamelModel as BaseModel
-from .game_server_config import GameServerConfig
+
 
 class UserLimits(BaseModel):
   server_limit: Optional[int]

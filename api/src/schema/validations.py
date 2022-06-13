@@ -1,5 +1,4 @@
 
-
 def validate_password(v: str) -> str:
   if len(v) < 8 or len(v) > 32:
     raise ValueError('Password must be 8-32 characters')
@@ -23,5 +22,5 @@ def validate_tribes_username(v):
   valid_chars = all((33 <= c <= 126 and chr(c) not in r'#/:?\`~') for c in ascii_bytes)
   if not valid_chars:
     raise ValueError('contains disallowed characters')
-  
+
   return v

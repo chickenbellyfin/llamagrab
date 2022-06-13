@@ -1,20 +1,18 @@
-from collections import namedtuple
 import hashlib
-import requests
 import threading
-from threading import Event
 import time
+from collections import namedtuple
+from threading import Event
 
+import requests
+from loguru import logger
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.session import sessionmaker
 
-from . import database
+from . import database, lua
 from .database import queries
-from . import lua
 from .lua import LuaSettings
 from .schema.game_server_config import GameServerConfig
-
-from loguru import logger
 
 Node = namedtuple('Node', 'name, host, token')
 

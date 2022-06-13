@@ -4,10 +4,10 @@ from typing import List, Optional
 from fastapi_camelcase import CamelModel as BaseModel
 from pydantic import validator
 
-from .game_server_config import GameServerConfig
 from . import validations
-from .responses import GameType, ServerSettings
-from src.database import models
+from .game_server_config import GameServerConfig
+from .responses import ServerSettings
+
 
 class LoginRequest(BaseModel):
   class Config:

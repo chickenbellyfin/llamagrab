@@ -3,12 +3,12 @@ ServerManager Agent - Service runs on each region's host server and listens for 
 ServerManager API and runs taserver docker containers on the host accordingly.
 """
 import json
-from logging import Logger
 import logging
 import os
+from logging import Logger
 
-from .hashing import md5
 from .docker import Docker
+from .hashing import md5
 
 
 class Agent:

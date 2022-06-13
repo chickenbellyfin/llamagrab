@@ -1,14 +1,14 @@
-from fastapi import status
-import pytest
+import json
+import os
+import shutil
 import tempfile
 from unittest.mock import Mock, call
-import os
-import json
 
+import pytest
+from fastapi import status
+from fastapi.testclient import TestClient
 from src.lib.agent import Agent
 from src.lib.docker import Docker
-import shutil
-from fastapi.testclient import TestClient
 from src.main import create_app
 
 HEADER = {'Token': 'thetoken'}

@@ -1,9 +1,11 @@
-from loguru import logger
 import threading
 import time
 
+from loguru import logger
+
 from .database import models
 from .host_manager import HostManager
+
 
 class ServerStatusManager:
   """

@@ -7,7 +7,6 @@ from .database import models, queries
 from .schema import requests, responses
 from .schema.game_server_config import GameServerConfig
 
-
 with open('../common/defaults/tribes_ascend_ootb.json') as default_file:
   default_json = default_file.read()
 

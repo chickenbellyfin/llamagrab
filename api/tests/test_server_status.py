@@ -1,18 +1,11 @@
-from asyncore import poll
-import pytest
-
-import requests
 import time
 from typing import Callable, Tuple
-from unittest.mock import MagicMock, Mock, call, patch
+from unittest.mock import MagicMock
 
-from loguru import logger
-
+import pytest
+from src.database.models import Server
 from src.host_manager import HostManager
 from src.server_status import ServerStatusManager
-from src.database.models import Server
-from src.database import queries as db_queries
-from src import lua
 
 TEST_SERVER_ID = 23
 

@@ -5,6 +5,7 @@ from sqlalchemy.orm.session import Session
 from .database import models
 from .schema.game_server_config import GameServerConfig
 
+
 def diff_game_server_config(old_config: GameServerConfig, new_config: GameServerConfig):
   old = old_config.dict()
   new = new_config.dict()

@@ -5,9 +5,9 @@
 All endpoints in under the Data API are public, READ-ONLY, and don't require authentication
 """
 from typing import Dict
+
 from fastapi.routing import APIRouter
 from pydantic import BaseModel
-
 from src.dependencies import dependencies as deps
 
 router = APIRouter()

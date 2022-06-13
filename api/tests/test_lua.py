@@ -1,7 +1,6 @@
-from xml.etree.ElementInclude import include
+from src.database import models
 from src.lua import LuaSettings, to_lua
 from src.schema.game_server_config import GameServerConfig
-from src.database import models
 
 TEST_LUA_SETTINGS = LuaSettings(
   include_admin=True,

@@ -3,11 +3,11 @@ set -ex
 
 # Install docker
 # https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script
-if [ -z $(which docker) ]; then
+if [ -z "$(which docker)" ]; then
   curl -L "https://get.docker.com" -o "get-docker.sh"
   sudo sh get-docker.sh && rm get-docker.sh
   # setup current user for docker
-  sudo usermod -aG docker $USER
+  sudo usermod -aG docker "$USER"
 else
   echo "Docker is already installed, skipping"
 fi

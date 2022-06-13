@@ -2,23 +2,21 @@
 /api/account/*
 Enpoints in the Account API are for login & user account management.
 """
-from os import stat
-import time
 from typing import List
 
-from fastapi import Depends, status as http_status, Request
+from fastapi import Depends, Request
+from fastapi import status as http_status
 from fastapi.exceptions import HTTPException
 from fastapi.routing import APIRouter
 from fastapi_login.exceptions import InvalidCredentialsException
 from loguru import logger
 from passlib.hash import argon2
 from sqlalchemy.orm.session import Session
-
-from src.database import models, queries as db_queries
+from src.database import models
+from src.database import queries as db_queries
 from src.dependencies import dependencies as deps
-from src.schema.requests import UpdatePasswordRequest
 from src.schema import requests, responses
-
+from src.schema.requests import UpdatePasswordRequest
 
 router = APIRouter()
 

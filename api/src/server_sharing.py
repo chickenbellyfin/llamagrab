@@ -3,7 +3,9 @@ from typing import List
 from loguru import logger
 from sqlalchemy.orm.session import Session
 
-from .database import models, queries as db_queries
+from .database import models
+from .database import queries as db_queries
+
 
 def get_shared_servers(db: Session, user: models.User) -> List[models.Server]:
   server_editors = db.query(models.ServerEditor).filter(models.ServerEditor.user_id == user.id).all()
@@ -32,6 +34,6 @@ def set_server_editors(db: Session, server: models.Server, user_ids: List[int]):
     if user_id == server.user:
       logger.error(f'user id {user_id} is the owner of server {server.id}. Skipped adding to editors')
       continue
-    
+
     db.add(models.ServerEditor(server_id=server.id, user_id=user_id))
-    db.commit() 
+    db.commit()

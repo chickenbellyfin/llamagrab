@@ -1,9 +1,9 @@
 from fastapi import status
 from fastapi_login.fastapi_login import LoginManager
-from starlette.testclient import TestClient
 from sqlalchemy.orm.session import Session
+from src.database.models import Server, User, UserLimits
+from starlette.testclient import TestClient
 
-from src.database.models import User, UserLimits, Server
 
 def test_get_user(test_client: TestClient, login_user_1):
   response = test_client.get('/api/account/user')
@@ -25,7 +25,7 @@ def test_login(test_client: TestClient, mock_login_manager: LoginManager):
   mock_login_manager.create_access_token.return_value = 'test_access_token'
 
   response = test_client.post(
-    '/api/account/login', 
+    '/api/account/login',
     json={'username':'testuser', 'password': 'testpassword'}
   )
 
@@ -33,7 +33,7 @@ def test_login(test_client: TestClient, mock_login_manager: LoginManager):
 
 def test_login_doesnt_exist(test_client: TestClient):
   response = test_client.post(
-    '/api/account/login', 
+    '/api/account/login',
     json={'username':'idontexist', 'password': 'neitherdoi'}
   )
   assert response.status_code == status.HTTP_401_UNAUTHORIZED
@@ -41,7 +41,7 @@ def test_login_doesnt_exist(test_client: TestClient):
 def test_login_wrong_password(test_client: TestClient, mock_login_manager: LoginManager):
   mock_login_manager.create_access_token.return_value = 'test_access_token'
   response = test_client.post(
-    '/api/account/login', 
+    '/api/account/login',
     json={'username':'testuser', 'password': 'wrongpassword'}
   )
   assert response.status_code == status.HTTP_401_UNAUTHORIZED
@@ -57,14 +57,14 @@ def test_create_account(test_client: TestClient, db_session: Session):
   assert db_user.tier == 'unverified'
   assert db_user.limits.server_limit == 1
   assert db_user.limits.active_limit == 1
-  
+
 def test_create_second_account(test_client: TestClient):
   response = test_client.post('/api/account/create', json={
     'username': 'testuser3',
     'password': 'testpassword3',
   })
   assert response.status_code == status.HTTP_200_OK
-  
+
   # second one fails
   response2 = test_client.post('/api/account/create', json={
     'username': 'testuser4',
@@ -79,31 +79,31 @@ def test_create_second_account_reverse_proxied(test_client: TestClient):
   create a user with same x-forwarded-for IP -> 429
   """
   response = test_client.post(
-    '/api/account/create', 
+    '/api/account/create',
     json={
       'username': 'testuser3',
       'password': 'testpassword3',
-    }, 
+    },
     headers={'X-Forwarded-For': '1.2.3.4'}
   )
   assert response.status_code == status.HTTP_200_OK
-  
+
   response2 = test_client.post(
-    '/api/account/create', 
+    '/api/account/create',
     json={
       'username': 'testuser4',
       'password': 'testpassword4',
     }
   )
   assert response2.status_code == status.HTTP_200_OK
-  
+
   # second one fails since client ip (forwarded) matches first account
   response3 = test_client.post(
-    '/api/account/create', 
+    '/api/account/create',
     json={
       'username': 'testuser5',
       'password': 'testpassword5',
-    }, 
+    },
     headers={'X-Forwarded-For': '1.2.3.4'}
   )
   assert response3.status_code == status.HTTP_429_TOO_MANY_REQUESTS
@@ -123,17 +123,17 @@ def test_change_password(test_client: TestClient, login_user_1: User):
     'newPassword': 'password123'
   })
   assert response.status_code == status.HTTP_200_OK
-  
+
   # try to login with old password, should fail
   login_old_password = test_client.post(
-    '/api/account/login', 
+    '/api/account/login',
     json={'username':'testuser', 'password': 'testpassword'}
   )
   assert login_old_password.status_code == status.HTTP_401_UNAUTHORIZED
 
   # try to login with new password, should succeed
   login_old_password = test_client.post(
-    '/api/account/login', 
+    '/api/account/login',
     json={'username':'testuser', 'password': 'password123'}
   )
   assert login_old_password.status_code == status.HTTP_200_OK
@@ -216,4 +216,3 @@ def test_list_users(test_client: TestClient, login_user_1):
     {'id': 2, 'username': 'testadmin'},
     {'id': 3, 'username': 'testsuper'},
   ]
-

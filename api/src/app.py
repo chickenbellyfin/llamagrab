@@ -1,25 +1,24 @@
-from datetime import timedelta
 import logging
 import os
 import sys
+from datetime import timedelta
 from typing import List, Mapping
-import yaml
 
+import uvicorn
+import uvicorn.config
+import yaml
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi_login import LoginManager
 from loguru import logger
-import uvicorn
-import uvicorn.config
 
-
-from .host_manager import HostManager
+from . import dependencies
 from .database import models, queries
 from .database.database import Database, run_migrations
-from . import dependencies
-from .routes import account_api, admin_api, data_api, server_api, server_list_api
+from .host_manager import HostManager
+from .routes import (account_api, admin_api, data_api, server_api,
+                     server_list_api)
 from .server_status import ServerStatusManager
-
 
 DEFAULT_CONFIG_PATH = 'config.yaml'
 

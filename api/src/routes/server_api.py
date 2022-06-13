@@ -4,18 +4,18 @@ Methods for managing servers & server configs
 Endpoints in the Server API require user authentication.
 """
 import time
-from typing import List
 
-from fastapi import Depends, status as http_status
+from fastapi import Depends
+from fastapi import status as http_status
 from fastapi.exceptions import HTTPException
 from fastapi.routing import APIRouter
 from sqlalchemy.orm.session import Session
-
-from src.database import models, queries as db_queries
+from src import permissions, server_history, server_sharing
+from src.database import models
+from src.database import queries as db_queries
 from src.dependencies import dependencies as deps
 from src.schema import requests, responses
 from src.schema.game_server_config import GameServerConfig
-from src import  permissions, server_history, server_sharing
 
 router = APIRouter()
 
@@ -141,7 +141,7 @@ async def set_server_settings(
 @router.get('/server/{server_id}/config', tags=['server'])
 async def get_server_config(server: models.Server = Depends(get_server)) -> GameServerConfig:
   """ Get the game server configuration (Tribes settings) for a server"""
-  return responses.GameServerConfig.parse(server.server_config)
+  return GameServerConfig.parse(server.server_config)
 
 @router.post('/server/{server_id}/config', tags=['server'])
 async def set_server_config(

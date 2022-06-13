@@ -3,15 +3,15 @@
 All endpoints in under the Admin API require the authenticated user to have a role of 'admin' or higher
 """
 
-from fastapi import Depends, status as http_status
+from fastapi import Depends
+from fastapi import status as http_status
 from fastapi.exceptions import HTTPException
 from fastapi.routing import APIRouter
 from loguru import logger
 from sqlalchemy.orm.session import Session
-
+from src import permissions
 from src.database import models
 from src.dependencies import dependencies as deps
-from src import permissions
 
 TOKEN_TTL_SECS = 60 * 60 * 24 # 1 day
 

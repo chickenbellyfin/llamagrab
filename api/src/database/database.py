@@ -1,11 +1,11 @@
-from alembic.config import Config
-from alembic.migration import MigrationContext
+import os
+
 from alembic import command
+from alembic.config import Config
+from loguru import logger
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from loguru import logger
-import os
 
 ALEMBIC_SCRIPT_LOCATION = 'src/alembic'
 
@@ -42,4 +42,3 @@ def run_migrations(base_path: str, db_file_name: str ='data.db') -> None:
     alembic_cfg.set_main_option('script_location', ALEMBIC_SCRIPT_LOCATION)
     alembic_cfg.set_main_option('sqlalchemy.url', db_url)
     command.upgrade(alembic_cfg, 'head')
-    

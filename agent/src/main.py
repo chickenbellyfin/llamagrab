@@ -2,17 +2,17 @@
 import logging
 import os
 import sys
+from typing import List, Set
 
 import docker as docker_lib
-from fastapi.exceptions import HTTPException
-from fastapi import FastAPI, Request, status
-from typing import List, Set
-import yaml
 import uvicorn
+import yaml
+from fastapi import FastAPI, Request, status
+from fastapi.exceptions import HTTPException
 
-from .lib.hashing import md5
 from .lib.agent import Agent
 from .lib.docker import Docker, NullDocker
+from .lib.hashing import md5
 
 logger = logging.getLogger()
 

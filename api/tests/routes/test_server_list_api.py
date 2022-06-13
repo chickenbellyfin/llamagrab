@@ -1,8 +1,8 @@
 from fastapi import status
 from fastapi.testclient import TestClient
 from sqlalchemy.orm.session import Session
-
 from src.database.models import ServerEditor
+
 
 def test_list_servers(test_client: TestClient, db_session: Session, server1, login_user_1):
   response = test_client.get('/api/servers/user')

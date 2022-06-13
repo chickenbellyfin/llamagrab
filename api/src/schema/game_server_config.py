@@ -1,8 +1,8 @@
 import json
-from typing import List, Optional, Any
+from typing import Any, List, Optional
 
 from fastapi_camelcase import CamelModel as BaseModel
-from loguru import logger
+
 
 class ModProperty(BaseModel):
   name: str

@@ -1,16 +1,13 @@
-import pytest
-
-import requests
 import time
 from typing import Callable, Tuple
 from unittest.mock import MagicMock, Mock, call, patch
 
-from loguru import logger
-
-from src.host_manager import HostManager
-from src.database.models import Server
-from src.database import queries as db_queries
+import pytest
+import requests
 from src import lua
+from src.database import queries as db_queries
+from src.database.models import Server
+from src.host_manager import HostManager
 
 TEST_PORT=23456;
 

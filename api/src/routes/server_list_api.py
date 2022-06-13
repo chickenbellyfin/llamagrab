@@ -4,12 +4,12 @@ from typing import List
 from fastapi import Depends
 from fastapi.routing import APIRouter
 from sqlalchemy.orm.session import Session
-
-from src.database import models, queries as db_queries
+from src import server_sharing
+from src.database import models
+from src.database import queries as db_queries
 from src.dependencies import dependencies as deps
 from src.schema import responses
 from src.schema.game_server_config import GameServerConfig
-from src import server_sharing
 
 router = APIRouter()
 

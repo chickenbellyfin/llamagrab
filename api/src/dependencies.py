@@ -1,4 +1,4 @@
-from typing import Dict, Mapping
+from typing import Dict
 
 from fastapi import Request, status
 from fastapi.exceptions import HTTPException
@@ -7,11 +7,11 @@ from fastapi.security.oauth2 import SecurityScopes
 from fastapi_login.fastapi_login import LoginManager
 from sqlalchemy.orm.session import Session, sessionmaker
 
-
+from . import permissions
 from .database.models import User
 from .host_manager import HostManager
 from .server_status import ServerStatusManager
-from . import permissions
+
 
 class Dependencies:
   def __init__(self):
