@@ -1,77 +1,66 @@
-# Getting Started with Create React App
+# llamagrab-web
+Web UI for llamagrab. Main interface for users to create and manage servers. Communicates with llamagrab API only.
+
+The interface is mainly targeted for desktop use, but aims to be fully functional on mobile.
+
+It is built using:
+* [React](https://reactjs.org/)
+* [Typescript](https://www.typescriptlang.org/)
+* [ant-design](https://ant.design/)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+### Run Locally
 
-In the project directory, you can run:
+Start live-reloading mode. Open [http://localhost:3000](localhost:3000).
+It will attempt to use llamagrab-api at http://localhost:8000. This is configurable as `proxy` in package.json
+```
+yarn install
+yarn start
+```
 
-### `yarn start`
+### Run tests
+```
+yarn test
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Build
+```
+yarn build
+```
+files will be in `build/`
 
 ### Deployment
+For deployment, the web app is built statically with `yarn build` and served by the llamagrab-api python app on `/`. This is mainly to simplify deployment and packaging for now.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Notes
 
-### `npm run build` fails to minify
+### Code
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+* `public/` - index.html, images, static assets
+* `src/` - TS/JS code
+  * `components/` - core UI components
+  * `editor/` - UI components for the game server editing forms
+  * `pages/` - components which correspond to the top-level pages/navigation
+  * `App.tsx` - Top level component for the app (contains routing)
+  * `api.ts, domain.ts` - API queries and type definitions
+  * `App.less, colors.ts` - main CSS / color theme settings
+
+The web app also depends on resources in `llamagrab/common`, mostly for JSON data about game options (weapons, maps, value mods, etc)
+
+### Design
+The design of the app relies almost entirely on [antd](https://ant.design/) components with a minimal amount of styling/color scheme applied on top. Colors should be used sparingly to indicate actions or status.
+
+All UI elements should be designed first for desktop use (`md` breakpoint or larger), but should be responsive and usable on mobile. For small screens, breakpoints are used to hide less critical information, shorten/remove some text.
 
 
-### Notes
-
-### images
+#### Images
 - gen.svg is a trace of the TA generator icon
 - gen_aligned.svg in sligthly modified gen.svg to align better with 16x16 favicon pixel boundaries
+
+## Screenshots (6/12/2022)
+|  | | |
+| --- | --- | --- |
+| Landing Page ![](screenshots/landing.png) | Home Page / Server List ![](screenshots/home.png) | Region status page ![](screenshots/region_status.png)
+| Server editor ![](screenshots/editor.png) | Server history ![](screenshots/history.png) | Account settings ![](screenshots/account.jpg)
+Admin (users) ![](screenshots/admin_users.png) | Admin (servers) ![](screenshots/admin_servers.png) | Signup page ![](screenshots/signup.jpg)

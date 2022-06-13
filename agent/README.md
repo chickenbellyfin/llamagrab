@@ -1,4 +1,4 @@
-# llamagrab Agent
+# llamagrab-agent
 LLamagrab Agent - Service that runs on each host server. It listens for commands from the API and runs taserver docker containers on the host accordingly.
 
 ## Commands:
