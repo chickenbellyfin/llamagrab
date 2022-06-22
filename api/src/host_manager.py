@@ -55,11 +55,14 @@ class HostManager:
     if payload is not None:
       json['payload'] = payload
     try:
-      return requests.post(
+      response = requests.post(
         f'{node.host}:{self.port}/message',
         json=json,
         headers={'Token': node.token}
-      ).json()
+      )
+      if not response.ok:
+        return None
+      return response.json()
     except Exception as e:
       logger.error(f'Error while sending {command} command to {node.name}- {type(e)}: {e}')
       return None

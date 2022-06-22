@@ -127,12 +127,14 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
       json={'type': 'sync', 'payload': {1: 'TEST_LUA_1'}},
       headers={'Token': 'r1token'}
     ),
+    call.post().ok.__bool__(),
     call.post().json(),
     call.post(
       'hostname2:23456/message',
       json= {'type': 'sync', 'payload': {2: 'TEST_LUA_2'}},
       headers={'Token': 'r2token'}
     ),
+    call.post().ok.__bool__(),
     call.post().json()
   ])
 
