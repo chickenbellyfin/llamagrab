@@ -11,7 +11,7 @@ RUN yarn install
 RUN yarn build
 
 # Build python app
-FROM python:3
+FROM python:3-slim
 WORKDIR /app
 
 COPY api/requirements.txt requirements.txt
