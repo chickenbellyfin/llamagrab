@@ -1,5 +1,5 @@
 # Llamagrab
-![Unit Tests - API](https://github.com/chickenbellyfin/llamagrab/actions/workflows/pytest_api.yml/badge.svg) 
+![Unit Tests - API](https://github.com/chickenbellyfin/llamagrab/actions/workflows/pytest_api.yml/badge.svg)
 ![Unit Tests - Agent](https://github.com/chickenbellyfin/llamagrab/actions/workflows/pytest_agent.yml/badge.svg)
 
 ## Tribes Ascend Community Server Manager
@@ -82,7 +82,7 @@ $ (cd web && yarn test --ci)
 $ (cd agent && python -m pytest)
 
 # Using coverage.py in api/ or agent/ (run test & open in browser)
-coverage run --source=. -m pytest && coverage html && xdg-open htmlcov/index.html
+coverage run --source=src -m pytest && coverage html && xdg-open htmlcov/index.html
 ```
 
 ## Release
