@@ -1,11 +1,13 @@
 import { PoweroffOutlined, EditOutlined, DeleteOutlined, PlayCircleOutlined, LinkOutlined } from "@ant-design/icons"
 import { Card, Divider, Descriptions, Popconfirm, message, Spin } from "antd"
+import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint"
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { API } from "../api"
 import { useAuth } from "../auth"
 import { ServerStatus } from "../domain"
 import games from "../editor/games"
+import { getBreakpoint } from "../util"
 import ServerName from "./ServerName"
 import StatusIcon from "./ServerStatusIcon"
 
@@ -28,6 +30,7 @@ export default function ServerCard(props: ServerCardProps) {
 
   const maxWidth = props.maxWidth === undefined ? '360px' : props.maxWidth
   const minWidth = props.minWidth === undefined ? '280px' : props.minWidth
+  const bk = useBreakpoint()
 
   const showAsShared = !isOwner && !props.hideShareStyles;
 
@@ -123,8 +126,8 @@ export default function ServerCard(props: ServerCardProps) {
             }
           </h3>
           <Divider/>
-
           <Descriptions
+            column={3}
             colon={false}
             layout='vertical'
             size='small'

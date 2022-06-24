@@ -97,7 +97,9 @@ function App () {
             ]}/>
           </Sider>
         }
-        <Content style={{overflowX: 'hidden', display: 'flex', flexDirection: 'column'}}>
+        <Content style={{
+          // minWidth here allows the collapsible side menu to 'move' content out of the way instead of squishing it
+          minWidth: '375px', overflowX: 'hidden', display: 'flex', flexDirection: 'column'}}>
           <div style={{flexGrow: 1}}>
           <Routes>
 
