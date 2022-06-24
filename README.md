@@ -82,7 +82,7 @@ $ (cd web && yarn test --ci)
 $ (cd agent && python -m pytest)
 
 # Using coverage.py in api/ or agent/ (run test & open in browser)
-coverage run --source=src -m pytest && coverage html && xdg-open htmlcov/index.html
+coverage run && coverage report
 ```
 
 ## Release

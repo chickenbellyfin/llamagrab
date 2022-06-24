@@ -112,8 +112,8 @@ def ensure_admin_user(db: Database):
     if not admin_user:
       logger.info(f'Admin user does not exist, creating')
       # TODO Create only the admin user, add separate script for filling test data
-      from src import dummy_data
-      dummy_data.populate(session)
+      from src import initialize_db
+      initialize_db.populate(session)
 
 
 def create_app(
