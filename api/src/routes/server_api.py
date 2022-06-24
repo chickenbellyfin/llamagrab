@@ -51,7 +51,6 @@ async def create_server(
     user=user.id,
     region=request.server_settings.region,
     name=request.server_config.display_name,
-    game_mode='Custom',
     game=request.server_settings.game,
     server_config=request.server_config.serialize(),
     updated_at=now,
@@ -69,8 +68,7 @@ async def create_server(
     name=new_server.name,
     region=new_server.region,
     enabled=new_server.enabled,
-    status=new_server.status,
-    game_mode=new_server.game_mode,
+    status='offline', # new server is offline
     game=new_server.game,
     is_private=request.server_config.password is not None
   )
@@ -86,7 +84,6 @@ async def get_server_status(server: models.Server = Depends(get_server)):
     region=server.region,
     enabled=server.enabled,
     status=server.status,
-    game_mode=server.game_mode,
     game=server.game,
     is_private=config.password is not None
   )
@@ -169,7 +166,6 @@ async def start_server( server: models.Server = Depends(get_server), db: Session
   """ Request to start a server. Status will be enabled=True immediatley, but the server may not be started immediatley.
       You should poll /api/server/{server_id}/status status to wait for the server to actually start."""
   server.enabled = True
-  server.status = 'running'
   db.commit()
   deps.host_manager().sync()
 
@@ -179,7 +175,6 @@ async def stop_server(server: models.Server = Depends(get_server), db: Session =
   """ Request to stop a server. Status will be enabled=False immediatley, but the server may not stop immediately.
       You should poll /api/server/{server_id}/status status to wait for the server to actually stop."""
   server.enabled = False
-  server.status = 'stopped'
   db.commit()
   deps.host_manager().sync()
 

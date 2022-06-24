@@ -62,8 +62,6 @@ def server1(user_1: User):
     user=user_1.id,
     name='Test Server 1',
     region='region1',
-    status='stopped',
-    game_mode='CTF',
     game='tribes_ascend_ootb',
     server_config=GameServerConfig(
       password='testserverpassword',
@@ -80,8 +78,6 @@ def server2(user_admin: User):
     user=user_admin.id,
     name='Test Server 2',
     region='region2',
-    status='stopped',
-    game_mode='CTF',
     game='tribes_ascend_ootb',
     server_config=GameServerConfig().serialize(),
     updated_at=0,

@@ -32,9 +32,7 @@ class Server(Base):
   user = Column(Integer, ForeignKey('users.id'))
   name = Column(String, nullable=False)
   region = Column(String)
-  status = Column(String, default='stopped') # deprecated
   enabled = Column(Boolean, default=False, nullable=False)
-  game_mode = Column(String, default='CTF')
   game = Column(String, nullable=False)
   server_config = Column(String)
   updated_at = Column(Integer, nullable=False)

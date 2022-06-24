@@ -28,8 +28,6 @@ def server_with(enabled=False, region='test_region'):
     name='Status Test Server',
     region=region,
     enabled=enabled,
-    status='deprecated',
-    game_mode='CTF',
     server_config='{}'
   )
 

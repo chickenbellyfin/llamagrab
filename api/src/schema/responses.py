@@ -38,7 +38,6 @@ class ServerStatus(BaseModel):
   region_name: Optional[str]
   enabled: bool
   status: str
-  game_mode: str
   game: GameType
   is_private: bool
 

@@ -22,8 +22,6 @@ test_server = Server(
   user=2,
   name='Test Server',
   region='region1',
-  status='running',
-  game_mode='CTF',
   server_config=test_server_config1
 )
 
@@ -32,8 +30,6 @@ test_server2 = Server(
   user=4,
   name='Test Server2',
   region='region2',
-  status='running',
-  game_mode='CTF',
   server_config=test_server_config2
 )
 
