@@ -41,9 +41,6 @@ def create_app(agent: Agent, tokens: Set[str]):
       logger.exception(f'Exception while handling request')
       raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    if not result:
-      raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
   return app
 
 

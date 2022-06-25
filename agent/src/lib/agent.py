@@ -138,4 +138,4 @@ class Agent:
       self.logger.info(f'Got ping message')
       return True
     else:
-      raise Exception(f'Message type "{message_type}" not recognized')
+      raise Exception(f'Invalid message type {message_type}')

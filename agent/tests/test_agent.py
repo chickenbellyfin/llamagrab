@@ -233,3 +233,43 @@ def test_bad_message_payload(test_client: TestClient, mock_docker: Docker):
   mock_docker.status.assert_not_called()
   mock_docker.stop_server.assert_not_called()
   mock_docker.start_server.assert_not_called()
+
+def test_get_status(test_client: TestClient, mock_docker: Docker):
+  mock_docker.status.return_value = {
+    66: 77,
+    88: 99
+  }
+  response = test_client.post('/message', json={
+    'type': 'status'
+  }, headers=HEADER)
+
+  assert response.ok
+  assert response.json() == [66, 88]
+
+def test_agent_invalid_message_type(temp_dir: str, mock_docker: Docker):
+  agent = Agent(
+    data_dir=temp_dir,
+    docker=mock_docker,
+    host_abs_data_dir='/some/host/dir'
+  )
+  try:
+    agent.handle_message({ 'type': 'invalid_type' })
+    assert False
+  except Exception as e:
+    assert 'invalid_type' in str(e)
+  mock_docker.assert_not_called()
+
+def test_unauthorized(test_client: TestClient, mock_docker: Docker):
+  # no token
+  response = test_client.post('/message', json={
+    'type': 'ping'
+  }, headers={})
+
+  assert response.status_code == 401
+
+  # bad token
+  response2 = test_client.post('/message', json={
+    'type': 'ping'
+  }, headers={'token': 'bad_token'})
+
+  assert response2.status_code == 401
