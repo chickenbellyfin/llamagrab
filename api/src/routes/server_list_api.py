@@ -6,7 +6,7 @@ from fastapi.routing import APIRouter
 from sqlalchemy.orm.session import Session
 from src import server_sharing
 from src.database import models
-from src.database import queries as db_queries
+from src.database import queries
 from src.dependencies import dependencies as deps
 from src.schema import responses
 from src.schema.game_server_config import GameServerConfig
@@ -18,7 +18,7 @@ def server_status_list(servers: List[models.Server], db: Session) -> List[respon
   return [
     responses.ServerStatus(
       id=s.id,
-      owner=db_queries.user_by_id(db, s.user).username,
+      owner=queries.user_by_id(db, s.user).username,
       name=s.name,
       region=s.region,
       region_name=deps.regions.get(s.region, s.region),
@@ -38,7 +38,7 @@ async def get_servers_for_user(
   """
   Get all servers which the requesting user owns or is an editor of
   """
-  servers = db_queries.get_servers(db, user)
+  servers = queries.get_servers(db, user)
   shared_servers = server_sharing.get_shared_servers(db, user)
   return server_status_list(servers + shared_servers, db)
 
@@ -64,7 +64,7 @@ async def get_region_status(
     {
       'region': deps.regions[region],
       'online': deps.status_manager.get_region_status(region),
-      'servers': server_status_list(db_queries.get_active_servers(db, region), db)
+      'servers': server_status_list(queries.get_active_servers(db, region), db)
     }
     for region in deps.regions
   ]

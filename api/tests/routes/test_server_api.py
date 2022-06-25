@@ -177,3 +177,18 @@ def test_get_server_versions(test_client: TestClient, login_user_1):
       'createdBy': 'testuser'
     }
   ]
+
+def test_get_server_status(test_client: TestClient, login_user_1):
+  response = test_client.get('/api/server/0/status')
+  assert response.status_code == status.HTTP_200_OK
+  assert response.json() ==     {
+    'id': 0,
+    'owner': 'testuser',
+    'name': 'Test Server 1',
+    'region': 'region1',
+    'regionName': 'TestRegion1',
+    'enabled': False,
+    'status': 'offline',
+    'game': 'tribes_ascend_ootb',
+    'isPrivate': True
+  }

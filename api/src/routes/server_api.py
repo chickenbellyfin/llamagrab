@@ -82,8 +82,9 @@ async def get_server_status(server: models.Server = Depends(get_server)):
     owner=server.owner.username,
     name=server.name,
     region=server.region,
+    region_name=deps.regions.get(server.region, server.region),
     enabled=server.enabled,
-    status=server.status,
+    status=deps.status_manager.get_server_status(server),
     game=server.game,
     is_private=config.password is not None
   )
