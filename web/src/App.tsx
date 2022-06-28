@@ -100,7 +100,7 @@ function App () {
         <Content style={{
           // minWidth here allows the collapsible side menu to 'move' content out of the way instead of squishing it
           minWidth: '375px', overflowX: 'hidden', display: 'flex', flexDirection: 'column'}}>
-          <div style={{flexGrow: 1}}>
+          <div style={{flexGrow: 1 /* Forces content to expand vertically so footer is at the bottom*/}}>
           <Routes>
 
             {/* Login & Signup pages disabled for logged in users, will redirect to '/' */}

@@ -30,7 +30,6 @@ export default function ServerCard(props: ServerCardProps) {
 
   const maxWidth = props.maxWidth === undefined ? '360px' : props.maxWidth
   const minWidth = props.minWidth === undefined ? '280px' : props.minWidth
-  const bk = useBreakpoint()
 
   const showAsShared = !isOwner && !props.hideShareStyles;
 

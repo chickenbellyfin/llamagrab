@@ -29,7 +29,6 @@ export default function AppHeader(props: AppHeaderProps) {
     <>
       <Header style={{
         padding: Boolean(breakpoint.md) ? undefined : '0 20px',
-        background: 'none'
       }}>
         {props.showLogo &&
           <a href='/'>
