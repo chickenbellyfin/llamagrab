@@ -6,7 +6,6 @@ import HomePage from './pages/HomePage';
 import Icon, { DatabaseFilled, GlobalOutlined } from '@ant-design/icons';
 import './App.less';
 import AppHeader from './components/AppHeader';
-import AdminPage from './pages/AdminPage';
 import EditServerPage from './pages/EditServerPage';
 import NewServerPage from './pages/NewServerPage';
 import SettingsPage from './pages/SettingsPage';
@@ -15,6 +14,8 @@ import SignupPage from './pages/SignupPage';
 import { Footer } from 'antd/lib/layout/layout';
 import { useState } from 'react';
 import { ReactComponent as adminLogo } from '../public/admin.svg';
+import ServersAdminPage from './pages/admin/ServersAdminPage';
+import UsersAdminPage from './pages/admin/UsersAdminPage';
 import LandingPage from './pages/LandingPage';
 import RegionsPage from './pages/RegionsPage';
 
@@ -90,7 +91,19 @@ function App () {
                 key: '/admin',
                 icon: <Icon style={{fontSize:'18px'}} component={adminLogo}/>,
                 label: 'Admin',
-                title: '' // disables tooltip on mobile
+                title: '', // disables tooltip on mobile
+                children: [
+                  {
+                    key: '/admin/users',
+                    label: 'Users',
+                    title: '', // disables tooltip on mobile
+                  },
+                  {
+                    key: '/admin/servers',
+                    label: 'Servers',
+                    title: '', // disables tooltip on mobile
+                  }
+                ]
               }] : []
             ]}/>
           </Sider>
@@ -114,9 +127,14 @@ function App () {
             }/>
             <Route path='/edit/:serverId' element={<ProtectedRoute><EditServerPage/></ProtectedRoute>}/>
             <Route path='/new' element={<ProtectedRoute><NewServerPage/></ProtectedRoute>}/>
-            <Route path='/admin' element={<ProtectedRoute><AdminPage/></ProtectedRoute>}/>
             <Route path='/regions' element={<ProtectedRoute><RegionsPage/></ProtectedRoute>}/>
             <Route path='/settings' element={<ProtectedRoute><SettingsPage/></ProtectedRoute>}/>
+            { auth.permissions.isAdmin() &&
+              <>
+              <Route path='/admin/users' element={<ProtectedRoute><UsersAdminPage/></ProtectedRoute>}/>
+              <Route path='/admin/servers' element={<ProtectedRoute><ServersAdminPage/></ProtectedRoute>}/>
+              </>
+            }
 
             {/* Any paths not defined redirect to '/' */}
             <Route path='*' element={<Navigate replace to='/'/>}/>
