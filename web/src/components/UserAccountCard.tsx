@@ -80,6 +80,9 @@ export default function UserAccountCard(props: UserAccountCardProps) {
             layout='vertical'
             size='small'
             labelStyle={{opacity:'85%'}}>
+            <Descriptions.Item label="id">
+              {props.user.id}
+            </Descriptions.Item>
             <Descriptions.Item label="Tier">
               <Tag color={colors.tiers[props.user.tier]}>{props.user.tier.toUpperCase()}</Tag>
             </Descriptions.Item>

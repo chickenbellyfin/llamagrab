@@ -129,6 +129,11 @@ export default function ServerCard(props: ServerCardProps) {
             layout='vertical'
             size='small'
             labelStyle={{opacity:'85%'}}>
+            { props.showOwner &&
+              <Descriptions.Item label="id">
+                {props.server.id}
+              </Descriptions.Item>
+            }
             <Descriptions.Item label="Status">
               <StatusIcon status={props.server.status} showLabel/>
             </Descriptions.Item>
