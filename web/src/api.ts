@@ -1,4 +1,4 @@
-import { getToken } from './auth'
+import { getToken } from './auth';
 import { GameServerConfig, ModProperty, RegionStatus, ServerSettings, ServerStatus, ServerVersion, User, UserAccount } from './domain';
 
 function removeEmptyModProperties(items: ModProperty[] | undefined): ModProperty[] | undefined {

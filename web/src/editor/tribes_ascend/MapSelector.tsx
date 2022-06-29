@@ -1,6 +1,6 @@
-import { Button, Form, Popconfirm, Select, Space} from "antd"
+import { Button, Form, Popconfirm, Select, Space } from "antd";
 import { LabeledValue } from "antd/lib/select";
-import { useState } from "react"
+import { useState } from "react";
 
 import { getMaps, MapsByKey } from "../../data";
 
@@ -39,7 +39,7 @@ export default function MapSelector({gameTypes, mapList, onChange}: MapSelectorP
       maps: state.maps.filter(m => gameTypes.includes( MapsByKey[m].gameMode))
     });
   }
-  
+
   const updateMapList = (newSelectedMaps: Array<string>) => {
     setState({
       gameTypes: state.gameTypes,
@@ -68,7 +68,7 @@ export default function MapSelector({gameTypes, mapList, onChange}: MapSelectorP
     <>
 
       <Form.Item label='Select Maps'>
-        <Select 
+        <Select
           size='large'
           mode='multiple'
           allowClear
@@ -92,13 +92,13 @@ export default function MapSelector({gameTypes, mapList, onChange}: MapSelectorP
               {MapsByKey[mapName].name}
               </Option>);
           })}
-  
+
         </Select>
       </Form.Item>
       <Form.Item label=' ' colon={false}>
         <Space>
         {unSelectedMaps.length > 0 &&
-          <Button 
+          <Button
             disabled={!(unSelectedMaps.length > 0)}
             size='small'
             onClick={e => addMaps(unSelectedMaps)}>
@@ -111,7 +111,7 @@ export default function MapSelector({gameTypes, mapList, onChange}: MapSelectorP
             onConfirm={e => addMaps(unSelectedCustomMaps)}
             okText="Understood"
             >
-          <Button 
+          <Button
             disabled={!(unSelectedCustomMaps.length > 0)}
             size='small'>
               {`Add (${unSelectedCustomMaps.length} custom maps)`}

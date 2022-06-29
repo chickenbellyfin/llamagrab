@@ -1,8 +1,8 @@
 import { Checkbox, Form, Switch } from "antd";
 import { useState } from "react";
 import { MapsByKey } from "../../data";
-import MapSelector from "./MapSelector";
 import { GameServerConfigTabProps } from "../../editor/tabHelpers";
+import MapSelector from "./MapSelector";
 
 export default function MapRotationSettingsTab (
   { config, updateCallbacks }: GameServerConfigTabProps

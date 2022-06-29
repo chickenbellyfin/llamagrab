@@ -1,4 +1,4 @@
-import { presetDarkPalettes } from '@ant-design/colors'
+import { presetDarkPalettes } from '@ant-design/colors';
 import { CSSProperties } from 'react';
 
 const colors = presetDarkPalettes;

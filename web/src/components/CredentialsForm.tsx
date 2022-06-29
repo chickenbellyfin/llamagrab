@@ -1,6 +1,6 @@
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input } from "antd";
 import { ReactNode, useState } from "react";
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
 
 type CredentialsFormProps = {

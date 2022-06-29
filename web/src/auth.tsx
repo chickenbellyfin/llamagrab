@@ -1,7 +1,5 @@
-
-
-import React, { createContext, useContext, useEffect, useState } from "react"
-import { Navigate} from "react-router-dom";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 import { API } from "./api";
 import { UserAccount } from "./domain";
 import { AuthPermissions, getPermissions } from "./permissions";
@@ -122,4 +120,4 @@ export {
   ProtectedRoute,
   ProvideAuth,
   setToken, deleteToken, getToken
-}
+};

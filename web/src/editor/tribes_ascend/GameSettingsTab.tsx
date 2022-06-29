@@ -1,5 +1,5 @@
 import { Divider, Form, InputNumber, Switch } from "antd";
-import {InputInteger} from "../../editor/Inputs";
+import { InputInteger } from "../../editor/Inputs";
 import { GameServerConfigTabProps } from "../../editor/tabHelpers";
 
 

@@ -1,8 +1,8 @@
 import { CheckCircleFilled, CheckCircleOutlined, ClockCircleFilled, ClockCircleOutlined, CloseCircleFilled, CloseCircleOutlined, PauseCircleFilled, PauseCircleOutlined, QuestionCircleFilled, QuestionCircleOutlined } from "@ant-design/icons";
-import colors from '../colors'
 import { Tooltip } from "antd";
-import './ServerStatusIcon.css'
+import colors from '../colors';
 import { Status } from "../domain";
+import './ServerStatusIcon.css';
 
 const ICONS = {
   'running': {

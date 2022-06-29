@@ -2,9 +2,9 @@ import { Form, Select, Switch, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { PlayerClass, weaponOptions } from "../../data";
-import './HardcodedLoadouts.less'
-import { UpdateCallbacks } from "../../editor/tabHelpers";
 import { GameServerConfig, HardcodedLoadout } from "../../domain";
+import { UpdateCallbacks } from "../../editor/tabHelpers";
+import './HardcodedLoadouts.less';
 
 const allSlots = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 

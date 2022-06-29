@@ -1,24 +1,22 @@
-
-import { Link, Navigate, Route, Routes, useLocation, useNavigate} from 'react-router-dom'
-import { Layout, Menu, Spin } from 'antd'
+import { Layout, Menu, Spin } from 'antd';
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { ProtectedRoute, useAuth } from './auth';
 import HomePage from './pages/HomePage';
-import { ProtectedRoute, useAuth } from './auth'
 
-import './App.less'
+import Icon, { DatabaseFilled, GlobalOutlined } from '@ant-design/icons';
+import './App.less';
+import AppHeader from './components/AppHeader';
+import AdminPage from './pages/AdminPage';
 import EditServerPage from './pages/EditServerPage';
 import NewServerPage from './pages/NewServerPage';
 import SettingsPage from './pages/SettingsPage';
-import AdminPage from './pages/AdminPage';
 import SignupPage from './pages/SignupPage';
-import AppHeader from './components/AppHeader';
-import Icon, { DatabaseFilled, GlobalOutlined } from '@ant-design/icons';
 
-import { ReactComponent as adminLogo } from '../public/admin.svg'
-import LandingPage from './pages/LandingPage';
-import RegionsPage from './pages/RegionsPage';
 import { Footer } from 'antd/lib/layout/layout';
 import { useState } from 'react';
-import { CollapseType } from 'antd/lib/layout/Sider';
+import { ReactComponent as adminLogo } from '../public/admin.svg';
+import LandingPage from './pages/LandingPage';
+import RegionsPage from './pages/RegionsPage';
 
 const { Header, Content, Sider } = Layout;
 

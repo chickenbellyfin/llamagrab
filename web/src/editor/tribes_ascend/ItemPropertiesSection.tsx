@@ -1,5 +1,5 @@
 import { DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import { Button, Card, List, Select, Space} from "antd";
+import { Button, Card, List, Select, Space } from "antd";
 import { useState } from "react";
 import { ItemPropertiesSpecSet, ModPropertySpecSet, PlayerClass, ValueModsSpecSet, weaponOptions } from "../../data";
 import { ItemProperties, ModProperty } from "../../domain";

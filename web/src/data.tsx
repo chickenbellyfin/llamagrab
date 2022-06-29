@@ -1,9 +1,9 @@
-import Maps from '../../common/maps.json'
-import Weapons from '../../common/weapons.json'
-import ItemPropertyOptions from '../../common/item_properties.json'
+import { Select } from 'antd'
 import ClassPropertyOptions from '../../common/class_properties.json'
+import ItemPropertyOptions from '../../common/item_properties.json'
+import Maps from '../../common/maps.json'
 import ValueModOptions from '../../common/value_mods.json'
-import { Select } from 'antd';
+import Weapons from '../../common/weapons.json'
 
 
 const { Option, OptGroup } = Select;

@@ -1,10 +1,10 @@
+import { Button, Typography } from 'antd';
 import { useState } from 'react';
-import { setToken, useAuth } from '../auth'
-import { Button, Typography } from 'antd'
 import { useNavigate } from 'react-router';
-import { API } from '../api';
-import CredentialsForm from './CredentialsForm';
 import { Link } from 'react-router-dom';
+import { API } from '../api';
+import { setToken, useAuth } from '../auth';
+import CredentialsForm from './CredentialsForm';
 
 const { Text } = Typography;
 

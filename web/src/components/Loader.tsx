@@ -28,7 +28,7 @@ export default function Loader<Props, ResultType>({loaderFunc, componentBuilder}
         firstLoad: true
       }
     }
-    
+
     componentDidMount() {
       this.load()
     }
@@ -55,7 +55,7 @@ export default function Loader<Props, ResultType>({loaderFunc, componentBuilder}
     render() {
       return (
       <>
-        {this.state.firstLoad && 
+        {this.state.firstLoad &&
           <Row justify='center' style={{padding:'20px'}}>
             <Col>
               <Spin indicator={
@@ -67,7 +67,7 @@ export default function Loader<Props, ResultType>({loaderFunc, componentBuilder}
           <Spin spinning={this.state.isLoading} indicator={<div/>}>
             {componentBuilder(this.state.result, this.props, this.onInvalidate)}
           </Spin>
-        }  
+        }
       </>);
     }
   };

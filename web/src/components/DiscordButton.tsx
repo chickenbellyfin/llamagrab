@@ -1,8 +1,8 @@
 import Icon from "@ant-design/icons";
 import { Button } from "antd";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
-import { ReactComponent as DiscordLogo } from '../../public/discord.svg'
-import './DiscordButton.less'
+import { ReactComponent as DiscordLogo } from '../../public/discord.svg';
+import './DiscordButton.less';
 
 interface DiscordButtonProps {
     size?: 'small' | 'middle' | 'large'

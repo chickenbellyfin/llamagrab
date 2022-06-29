@@ -1,8 +1,8 @@
-import { Col, Row, Space, Spin } from 'antd'
+import { Col, Row, Space, Spin } from 'antd';
 
-import ServerCard from './ServerCard'
-import { API } from '../api'
-import useLoader from '../useLoader'
+import { API } from '../api';
+import useLoader from '../useLoader';
+import ServerCard from './ServerCard';
 
 export default function ServerList() {
   const loader = useLoader(API.Server.getUserServerList, undefined, 10);
