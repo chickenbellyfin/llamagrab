@@ -104,6 +104,11 @@
       "key": "light_utility_pack",
       "name": "Light Utility Pack",
       "type": "pack"
+    },
+    {
+      "key": "light_melee",
+      "name": "Melee",
+      "type": "melee"
     }
   ],
   "Medium": [
@@ -241,6 +246,11 @@
       "key": "medium_utility_pack",
       "name": "Utility Pack",
       "type": "pack"
+    },
+    {
+      "key": "light_melee",
+      "name": "Melee",
+      "type": "melee"
     }
   ],
   "Heavy": [
@@ -343,6 +353,11 @@
       "key": "heavy_utility_pack",
       "name": "Heavy Utility Pack",
       "type": "pack"
+    },
+    {
+      "key": "light_melee",
+      "name": "Melee",
+      "type": "melee"
     }
   ]
 }
