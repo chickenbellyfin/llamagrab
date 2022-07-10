@@ -35,7 +35,7 @@ def validate_string(v):
   if len(v) > 500:
     raise ValueError('Length must be < 500 characters')
 
-  valid_chars = re.match(r'^[a-zA-Z0-9 _\-\.:/,*\|[\]]*$', v)
+  valid_chars = re.match(r"^[a-zA-Z0-9 _\-\.':/,*\|[\]]*$", v)
   if not valid_chars:
     raise ValueError('contains disallowed characters')
 

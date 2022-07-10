@@ -2,7 +2,7 @@ import {allowedCharactersRegex} from '../validation'
 
 test('allow allowed characters', () => {
   expect(allowedCharactersRegex.test(' ')).toEqual(true)
-  expect(allowedCharactersRegex.test('[CLAN] *MY server, 0* | status:yes w/o/w')).toEqual(true)
+  expect(allowedCharactersRegex.test("[CLAN] *MY server's, 0* | status:yes w/o/w")).toEqual(true)
   expect(allowedCharactersRegex.test('llamagrab.net')).toEqual(true)
 })
 

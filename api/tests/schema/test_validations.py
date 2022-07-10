@@ -4,7 +4,7 @@ from src.schema.validations import validate_string
 def test_string_allowed():
   assert validate_string('') is not None
   assert validate_string(' ') is not None
-  assert validate_string('[CLAN] *MY server, 0* | status:yes w/o/w') is not None
+  assert validate_string("[CLAN] *MY server's, 0* | status:yes w/o/w") is not None
   assert validate_string('llamagrab.net') is not None
   assert validate_string('A' * 500) is not None
 
