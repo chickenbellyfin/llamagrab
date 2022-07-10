@@ -1,3 +1,6 @@
+from multiprocessing.sharedctypes import Value
+import re
+
 
 def validate_password(v: str) -> str:
   if len(v) < 8 or len(v) > 32:
@@ -20,6 +23,19 @@ def validate_tribes_username(v):
   # character restrictions
   # https://github.com/Griffon26/taserver/blob/master/common/utils.py#L43
   valid_chars = all((33 <= c <= 126 and chr(c) not in r'#/:?\`~') for c in ascii_bytes)
+  if not valid_chars:
+    raise ValueError('contains disallowed characters')
+
+  return v
+
+def validate_string(v):
+  if v is None:
+    return v
+
+  if len(v) > 500:
+    raise ValueError('Length must be < 500 characters')
+
+  valid_chars = re.match(r'^[a-zA-Z0-9 _\-\.:/,*\|[\]]*$', v)
   if not valid_chars:
     raise ValueError('contains disallowed characters')
 

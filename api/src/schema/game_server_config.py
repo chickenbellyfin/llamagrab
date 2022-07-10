@@ -2,6 +2,9 @@ import json
 from typing import Any, List, Optional
 
 from fastapi_camelcase import CamelModel as BaseModel
+from pydantic import validator
+
+from . import validations
 
 
 class ModProperty(BaseModel):
@@ -98,6 +101,15 @@ class GameServerConfig(BaseModel):
   item_value_mods: Optional[List[ItemProperties]]
 
   mutual_exclusions: Optional[List[MutualExclusion]]
+
+  @validator('display_name')
+  def validate_display_name(cls, v):
+    return validations.validate_string(v)
+
+  @validator('description')
+  def validate_description(cls, v):
+    return validations.validate_string(v)
+
 
   def serialize(self):
     return json.dumps(self.dict())

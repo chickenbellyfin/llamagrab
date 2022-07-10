@@ -27,13 +27,15 @@ export default function BasicSettingsTab (
       rules={[Rules.required, Rules.allowedCharacters]}>
       <Input
         defaultValue={config['displayName']} value={config['displayName']}
-        onChange={updateInput('displayName')}/>
+        onChange={updateInput('displayName')}
+        maxLength={500}/>
     </Form.Item>
 
     <Form.Item name='description' label='Description' rules={[Rules.allowedCharacters]}>
       <Input
         defaultValue={config['description']}
-        onChange={updateInput('description')}/>
+        onChange={updateInput('description')}
+        maxLength={500}/>
     </Form.Item>
 
     <Form.Item name='tribes_server_password' label='Server Password' rules={[Rules.allowedCharacters]}>
