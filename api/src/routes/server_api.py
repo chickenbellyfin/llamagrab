@@ -16,6 +16,7 @@ from src.database import queries as db_queries
 from src.dependencies import dependencies as deps
 from src.schema import requests, responses
 from src.schema.game_server_config import GameServerConfig
+from src.schema.responses import ServerVersionChange, ServerVersionDetails
 
 router = APIRouter()
 
@@ -206,6 +207,7 @@ async def get_server_history(
   """ Get all past versions of a server's settings"""
   return [
     responses.ServerVersion(
+      version_id=s.id,
       server_id=s.server_id,
       server_config=s.server_config,
       num_changes=s.num_changes,
@@ -213,3 +215,18 @@ async def get_server_history(
       created_by=s.creator.username if s.creator else 'deleted user'
     ) for s in server_history.get_versions(db, server)
   ]
+
+@router.get('/server/{server_id}/history/{id}')
+async def get_server_version_diff(
+  id: int,
+  server: models.Server = Depends(get_server),
+  db: Session = Depends(deps.db)
+) -> ServerVersionDetails:
+  diff = server_history.get_diff(db, server, id)
+
+  return ServerVersionDetails(
+    changes=[
+      ServerVersionChange(field=k, old=v['old'], new=v['new'])
+      for k, v in diff.items()
+    ]
+  )

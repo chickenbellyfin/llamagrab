@@ -163,6 +163,7 @@ def test_get_server_versions(test_client: TestClient, login_user_1):
   response = test_client.get('/api/server/0/history')
   assert response.json() == [
     {
+      'versionId': 0,
       'serverId': 0,
       'serverConfig': '{"displayName": "server1Version0"}',
       'numChanges': -1,
@@ -170,6 +171,7 @@ def test_get_server_versions(test_client: TestClient, login_user_1):
       'createdBy': 'testuser'
     },
     {
+      'versionId': 1,
       'serverId': 0,
       'serverConfig': '{"displayName": "server1Version2"}',
       'numChanges': 1,

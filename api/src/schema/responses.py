@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from fastapi_camelcase import CamelModel as BaseModel
 
@@ -56,8 +56,17 @@ class ServerSettings(BaseModel):
     orm_mode = True
 
 class ServerVersion(BaseModel):
+  version_id: int
   server_id: int
   server_config: str
   num_changes: int
   created_at: int
   created_by: str
+
+class ServerVersionChange(BaseModel):
+  field: str
+  old: Optional[Union[str, List]]
+  new: Optional[Union[str, List]]
+
+class ServerVersionDetails(BaseModel):
+  changes: List[ServerVersionChange]

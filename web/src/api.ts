@@ -1,5 +1,5 @@
 import { getToken } from './auth';
-import { GameServerConfig, ModProperty, RegionStatus, ServerSettings, ServerStatus, ServerVersion, User, UserAccount } from './domain';
+import { GameServerConfig, ModProperty, RegionStatus, ServerSettings, ServerStatus, ServerVersion, ServerVersionDetails, User, UserAccount } from './domain';
 
 function removeEmptyModProperties(items: ModProperty[] | undefined): ModProperty[] | undefined {
   // NOTE: do not change to `!=`, needs to also check for null
@@ -263,6 +263,12 @@ async function getServerVersions(serverId: number): Promise<ServerVersion[]> {
   })
 }
 
+async function getServerVersionDetails(serverId: number, versionId: number): Promise<ServerVersionDetails[]> {
+  return doRequest({
+    path: `/api/server/${serverId}/history/${versionId}`
+  })
+}
+
 async function verifyUser(userId: number): Promise<any> {
   return doRequest({
     method: 'POST',
@@ -320,7 +326,8 @@ export const API = {
     startServer,
     stopServer,
     deleteServer,
-    getServerVersions
+    getServerVersions,
+    getServerVersionDetails
   },
   Data: {
     getRegions

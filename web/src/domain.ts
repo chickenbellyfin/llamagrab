@@ -149,9 +149,19 @@ export type GameServerConfig = {
 }
 
 export type ServerVersion = {
+  versionId: number
   serverId: number
-  serverConfig: string,
-  numChanges: number,
-  createdAt: number,
+  serverConfig: string
+  numChanges: number
+  createdAt: number
   createdBy: string
+}
+
+export type ServerVersionChange = {
+  field: string,
+  old: string | any[]
+  new: string | any[]
+}
+export type ServerVersionDetails = {
+  changes: ServerVersionChange[]
 }
