@@ -10,8 +10,12 @@ import { NoOp } from "./util";
  */
 interface LoaderResult<T> {
   value?: T
-  initialLoad: boolean,
+  initialLoad: boolean
+  // invalidate - fetch new values without removing old ones
   invalidate: () => void
+  // reset - delete current values first, then fetch new values
+  // this is useful for showing a loader during fetch
+  reset: () => void
 }
 
 function useLoader<T>(
@@ -23,7 +27,8 @@ function useLoader<T>(
   const [result, setResult] = useState<LoaderResult<T>>({
     value: initialValue,
     initialLoad: true,
-    invalidate: NoOp
+    invalidate: NoOp,
+    reset: NoOp,
   });
   const resultRef = useRef<T>()
   const timerRef = useRef<any>(null);
@@ -31,15 +36,18 @@ function useLoader<T>(
   // set ref so invalidate() gets the latest result
   resultRef.current = result.value;
 
-  const invalidate = () => {
+
+  const invalidate = (reset: boolean) => {
     setResult({
-      value: resultRef.current,
+      value: reset ? undefined : resultRef.current,
       initialLoad: true,
-      invalidate: NoOp
+      invalidate: NoOp,
+      reset: NoOp
     })
     clearTimeout(timerRef.current);
     runLoader();
   }
+
 
   const runLoader = async () => {
     try {
@@ -47,7 +55,8 @@ function useLoader<T>(
       setResult({
         value: loaderResult,
         initialLoad: false,
-        invalidate
+        invalidate: () => invalidate(false),
+        reset: () => invalidate(true)
       })
       if (refreshIntervalSecs !== undefined) {
         timerRef.current = setTimeout(runLoader, refreshIntervalSecs * 1000)

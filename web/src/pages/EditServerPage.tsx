@@ -45,7 +45,6 @@ export default function EditServerPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [isHistoryVisible, setHistoryVisible] = useState(false)
   const [historyRefreshKey, setHistoryRefreshKey] = useState(0)
-  const [formRefreshKey, setFormRefreshKey] = useState(0)
 
   const loader = useLoader(() => loadServerEditor(serverId))
 
@@ -78,7 +77,7 @@ export default function EditServerPage() {
     setHistoryVisible(false)
     setIsSaving(true);
     await API.Server.setServerConfig(version.serverId, JSON.parse(version.serverConfig))
-    setFormRefreshKey(formRefreshKey + 1)
+    loader.reset();
     setIsSaving(false)
   }
 
@@ -126,7 +125,6 @@ export default function EditServerPage() {
           <Spin spinning={isSaving}>
             <Card title='Server Settings' style={{ marginBottom: '20px' }}>
               <ServerSettingsForm
-                key={`serverSettings${formRefreshKey}`}
                 settings={loader.value.settings}
                 regions={loader.value.regions}
                 status={loader.value.status}
@@ -137,7 +135,6 @@ export default function EditServerPage() {
           <Spin spinning={isSaving}>
             <Card title={`${gameSpec.title} Settings`}>
               <gameSpec.editor
-                key={`gameSettings${formRefreshKey}`}
                 config={loader.value.config}
                 onChange={setConfig}
               />
