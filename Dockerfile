@@ -2,12 +2,19 @@
 # yarn build takes a long time on arm, so this step is only run in buildarch/amd64, then the
 # static output is copied
 FROM --platform=$BUILDPLATFORM node:lts as build_web
+
+# yarn install depends only on package.json and yarn.lock
+# Run yarn install before copying the rest of web to avoid reinstalling if deps didnt change
+WORKDIR /app/web
+COPY web/package.json package.json
+COPY web/yarn.lock yarn.lock
+RUN yarn install
+
 WORKDIR /app
 COPY web web
 COPY common common
 
 WORKDIR /app/web
-RUN yarn install
 RUN yarn build
 
 # Build python app
