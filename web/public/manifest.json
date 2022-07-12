@@ -1,6 +1,6 @@
 {
-  "short_name": "TA Server Manager",
-  "name": "Web app for creating and managing taservers",
+  "short_name": "llamagrab",
+  "name": "Tribes Ascend Server Manager",
   "icons": [
     {
       "src": "favicon.ico",
@@ -10,6 +10,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#1d84e3",
+  "background_color": "#2f343c"
 }
