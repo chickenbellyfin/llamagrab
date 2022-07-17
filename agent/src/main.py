@@ -2,13 +2,14 @@
 import logging
 import os
 import sys
-from typing import List, Set
+from typing import Dict, List, Set
 
 import docker as docker_lib
 import uvicorn
 import yaml
-from fastapi import FastAPI, Request, status
+from fastapi import Depends, FastAPI, Request, status
 from fastapi.exceptions import HTTPException
+
 
 from .lib.agent import Agent
 from .lib.docker import Docker, NullDocker
@@ -23,23 +24,25 @@ MESSAGE_TYPES = {
 def create_app(agent: Agent, tokens: Set[str]):
   app = FastAPI()
 
-  @app.post('/message')
-  async def handle_message(request: Request):
+  def auth(request: Request):
     request_token = request.headers.get('token')
     if request_token is None or request_token not in tokens:
       raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    pass
 
-    try:
-      json = await request.json()
-      if not json.get('type') or json.get('type') not in MESSAGE_TYPES:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
-      result = agent.handle_message(json)
-      return result
-    except HTTPException as he:
-      raise he
-    except Exception as e:
-      logger.exception(f'Exception while handling request')
-      raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+  @app.post('/api/sync')
+  def handle_sync(servers: Dict[int, str], auth=Depends(auth)):
+    logging.info(servers)
+    agent.sync(servers)
+    return 'ok'
+
+  @app.get('/api/status')
+  def handle_status(auth=Depends(auth)):
+    return agent.status()
+
+  @app.post('/api/ping')
+  def handle_ping(auth=Depends(auth)):
+    return 'pong'
 
   return app
 

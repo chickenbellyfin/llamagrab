@@ -37,16 +37,13 @@ def test_client(agent):
 
 
 def test_start(test_client: TestClient):
-  response = test_client.post('/message', json={'type': 'ping'}, headers=HEADER)
+  response = test_client.post('/api/ping', json={'type': 'ping'}, headers=HEADER)
   assert response.ok
 
 def test_sync_empty(test_client: TestClient, mock_docker: Docker):
 
   mock_docker.status.return_value = {}
-  response = test_client.post('/message', json={
-    'type': 'sync',
-    'payload': {}
-  }, headers=HEADER)
+  response = test_client.post('/api/sync', json={}, headers=HEADER)
 
   assert response.ok
   mock_docker.status.assert_called()
@@ -56,12 +53,9 @@ def test_sync_empty(test_client: TestClient, mock_docker: Docker):
 def test_sync_new_server(test_client: TestClient, mock_docker: Docker, temp_dir):
 
   mock_docker.status.return_value = {}
-  response = test_client.post('/message', json={
-    'type': 'sync',
-    'payload': {
-      1: 'Test Lua 1',
-      5: 'Test Lua 5'
-    }
+  response = test_client.post('/api/sync', json={
+    1: 'Test Lua 1',
+    5: 'Test Lua 5'
   }, headers=HEADER)
 
   assert response.ok
@@ -84,12 +78,9 @@ def test_host_abs_path(temp_dir, mock_docker):
   test_client = TestClient(create_app(agent, 'thetoken'))
 
   mock_docker.status.return_value = {}
-  response = test_client.post('/message', json={
-    'type': 'sync',
-    'payload': {
-      1: 'Test Lua 1',
-      5: 'Test Lua 5'
-    }
+  response = test_client.post('/api/sync', json={
+    1: 'Test Lua 1',
+    5: 'Test Lua 5'
   }, headers=HEADER)
 
   assert response.ok
@@ -111,12 +102,9 @@ def test_host_abs_path(temp_dir, mock_docker):
 def test_sync_stop_server(test_client: TestClient, mock_docker: Docker):
   mock_docker.status.return_value = {}
   # create two servers
-  response1 = test_client.post('/message', json={
-    'type': 'sync',
-    'payload': {
-      1: 'Test Lua 1',
-      5: 'Test Lua 5'
-    }
+  response1 = test_client.post('/api/sync', json={
+    1: 'Test Lua 1',
+    5: 'Test Lua 5'
   }, headers=HEADER)
 
   assert response1.ok
@@ -128,11 +116,8 @@ def test_sync_stop_server(test_client: TestClient, mock_docker: Docker):
   }
 
   # Remove server 1
-  response2 = test_client.post('/message', json={
-    'type': 'sync',
-    'payload': {
-      5: 'Test Lua 5'
-    }
+  response2 = test_client.post('/api/sync', json={
+    5: 'Test Lua 5'
   }, headers=HEADER)
   assert response2.ok
   mock_docker.status.assert_called()
@@ -142,12 +127,9 @@ def test_sync_stop_server(test_client: TestClient, mock_docker: Docker):
 def test_sync_update_server(test_client: TestClient, mock_docker: Docker, temp_dir):
   mock_docker.status.return_value = {}
   # create two servers
-  response1 = test_client.post('/message', json={
-    'type': 'sync',
-    'payload': {
-      1: 'Test Lua 1',
-      5: 'Test Lua 5'
-    }
+  response1 = test_client.post('/api/sync', json={
+    1: 'Test Lua 1',
+    5: 'Test Lua 5'
   }, headers=HEADER)
   assert response1.ok
 
@@ -158,12 +140,9 @@ def test_sync_update_server(test_client: TestClient, mock_docker: Docker, temp_d
   }
 
   # update server 1
-  response2 = test_client.post('/message', json={
-    'type': 'sync',
-    'payload': {
-      1: 'Test Lua 1 updated',
-      5: 'Test Lua 5'
-    }
+  response2 = test_client.post('/api/sync', json={
+    1: 'Test Lua 1 updated',
+    5: 'Test Lua 5'
   }, headers=HEADER)
   assert response2.ok
 
@@ -175,12 +154,9 @@ def test_sync_update_server(test_client: TestClient, mock_docker: Docker, temp_d
 def test_sync_lua_written(test_client: TestClient, mock_docker: Docker, temp_dir):
   mock_docker.status.return_value = {}
   # create two servers
-  response = test_client.post('/message', json={
-    'type': 'sync',
-    'payload': {
-      1: 'Test Lua 1',
-      5: 'Test Lua 5'
-    }
+  response = test_client.post('/api/sync', json={
+    1: 'Test Lua 1',
+    5: 'Test Lua 5'
   }, headers=HEADER)
 
   assert response.ok
@@ -195,39 +171,14 @@ def test_sync_lua_written(test_client: TestClient, mock_docker: Docker, temp_dir
     assert 'Test Lua 5' == f.read()
 
 
-def test_bad_message_type(test_client: TestClient, mock_docker: Docker):
-  # create two servers
-  response = test_client.post('/message', json={
-    'type': 'invalid_type',
-    'payload': {}
-  }, headers=HEADER)
-
-  assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-  # still running
-  # still running
-  response2 = test_client.post('/message', json={
-    'type': 'ping'
-  }, headers=HEADER)
-  assert response2.ok
-
-  mock_docker.status.assert_not_called()
-  mock_docker.stop_server.assert_not_called()
-  mock_docker.start_server.assert_not_called()
-
 def test_bad_message_payload(test_client: TestClient, mock_docker: Docker):
   # create two servers
-  response1 = test_client.post('/message', json={
-    'type': 'sync',
-    'payload': 0
-  }, headers=HEADER)
+  response1 = test_client.post('/api/sync', json=0, headers=HEADER)
 
-  assert response1.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+  assert response1.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
   # still running
-  response2 = test_client.post('/message', json={
-    'type': 'ping'
-  }, headers=HEADER)
+  response2 = test_client.post('/api/ping', headers=HEADER)
   assert response2.ok
 
   mock_docker.status.assert_not_called()
@@ -239,37 +190,22 @@ def test_get_status(test_client: TestClient, mock_docker: Docker):
     66: 77,
     88: 99
   }
-  response = test_client.post('/message', json={
-    'type': 'status'
-  }, headers=HEADER)
+  response = test_client.get('/api/status', headers=HEADER)
 
   assert response.ok
   assert response.json() == [66, 88]
 
-def test_agent_invalid_message_type(temp_dir: str, mock_docker: Docker):
-  agent = Agent(
-    data_dir=temp_dir,
-    docker=mock_docker,
-    host_abs_data_dir='/some/host/dir'
-  )
-  try:
-    agent.handle_message({ 'type': 'invalid_type' })
-    assert False
-  except Exception as e:
-    assert 'invalid_type' in str(e)
-  mock_docker.assert_not_called()
-
 def test_unauthorized(test_client: TestClient, mock_docker: Docker):
   # no token
-  response = test_client.post('/message', json={
-    'type': 'ping'
-  }, headers={})
+  ping_res = test_client.post('/api/ping', headers={})
+  assert ping_res.status_code == 401
 
-  assert response.status_code == 401
+  sync_res = test_client.post('/api/sync', json={}, headers={})
+  assert sync_res.status_code == 401
+
+  status_res = test_client.get('/api/status', headers={})
+  assert status_res.status_code == 401
 
   # bad token
-  response2 = test_client.post('/message', json={
-    'type': 'ping'
-  }, headers={'token': 'bad_token'})
-
+  response2 = test_client.post('/api/ping', headers={'token': 'bad_token'})
   assert response2.status_code == 401

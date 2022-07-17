@@ -39,7 +39,7 @@ TEST_NODES = {
     'token': 'test_token'
   }
 }
-EMPTY_SYNC_MESSAGE = {'type': 'sync', 'payload': {}}
+EMPTY_SYNC_MESSAGE = {}
 
 
 def wait_for(assertion: Callable[[], bool], wait_time=1, interval=0.001) -> Tuple[float, int]:
@@ -76,7 +76,7 @@ def test_sync_empty(monkeypatch, mock_requests: Mock):
 
   wait_for(lambda: mock_requests.called)
   mock_requests.post.assert_called_once_with(
-    'http://localhost:23456/message',
+    'http://localhost:23456/api/sync',
     json=EMPTY_SYNC_MESSAGE,
     headers={'Token': 'test_token'}
   )
@@ -119,15 +119,15 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
   wait_for(lambda: mock_requests.call_count == 2)
   mock_requests.assert_has_calls([
     call.post(
-      'hostname1:23456/message',
-      json={'type': 'sync', 'payload': {1: 'TEST_LUA_1'}},
+      'hostname1:23456/api/sync',
+      json={1: 'TEST_LUA_1'},
       headers={'Token': 'r1token'}
     ),
     call.post().ok.__bool__(),
     call.post().json(),
     call.post(
-      'hostname2:23456/message',
-      json= {'type': 'sync', 'payload': {2: 'TEST_LUA_2'}},
+      'hostname2:23456/api/sync',
+      json= {2: 'TEST_LUA_2'},
       headers={'Token': 'r2token'}
     ),
     call.post().ok.__bool__(),
@@ -160,6 +160,6 @@ def test_sync_rate_limit(monkeypatch, mock_requests: Mock):
 
   wait_for(lambda: len(calls) > 2, wait_time=2)
   assert calls == [
-    call('localhost:23456/message', json=EMPTY_SYNC_MESSAGE, headers={'Token': 'test_token'}),
-    call('localhost:23456/message', json=EMPTY_SYNC_MESSAGE, headers={'Token': 'test_token'})
+    call('localhost:23456/api/sync', json=EMPTY_SYNC_MESSAGE, headers={'Token': 'test_token'}),
+    call('localhost:23456/api/sync', json=EMPTY_SYNC_MESSAGE, headers={'Token': 'test_token'})
   ]

@@ -50,23 +50,22 @@ class HostManager:
 
     threading.Thread(target=self._worker, daemon=True).start()
 
-  def _post(self, node: Node, command: str, payload=None):
-    json = { 'type': command }
+  def _request(self, method, node:Node, path: str, payload: object = None):
+    kwargs = {}
     if payload is not None:
-      json['payload'] = payload
+      kwargs = {'json': payload}
     try:
-      response = requests.post(
-        f'{node.host}:{self.port}/message',
-        json=json,
-        headers={'Token': node.token}
+      response = method(
+        f'{node.host}:{self.port}{path}',
+        headers={'Token': node.token},
+        **kwargs
       )
       if not response.ok:
         return None
       return response.json()
     except Exception as e:
-      logger.error(f'Error while sending {command} command to {node.name}- {type(e)}: {e}')
+      logger.error(f'Error requesting {node.name}:{path} - {type(e)}: {e}')
       return None
-
 
   def _do_sync(self):
     with self.session() as db:
@@ -84,9 +83,7 @@ class HostManager:
 
         message_hashed = { k: md5(payload[k]) for k in payload }
         logger.info(f'Syncing configs to {node.name}@{node.host}:{self.port} {message_hashed}')
-        self._post(node, 'sync', payload)
-
-
+        self._request(requests.post, node, '/api/sync', payload)
 
   def _wait_for_sync(self) -> bool:
     secs_since_last_sync = time.time() - self.last_sync_time
@@ -99,7 +96,6 @@ class HostManager:
     self.last_sync_time = time.time()
     self.event.clear()
     return should_sync
-
 
   def _worker(self):
     while True:
@@ -117,6 +113,6 @@ class HostManager:
 
   def status(self):
     return {
-      node.name: self._post(node, 'status')
+      node.name: self._request(requests.get, node, '/api/status')
       for node in self.nodes
     }

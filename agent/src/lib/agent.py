@@ -63,7 +63,7 @@ class Agent:
     with open(self.active_servers_file, 'w') as config_file:
       json.dump(active_servers, config_file, indent=2)
 
-  def handle_sync(self, active_servers):
+  def sync(self, active_servers):
     active_servers = {
       int(k): active_servers[k] for k in active_servers
     }
@@ -121,21 +121,6 @@ class Agent:
 
       self.docker.start_server(server_id, server_offset, server_path)
 
-  def handle_status(self):
+  def status(self):
     """ Return a list of server ids which are running"""
     return list(self.docker.status())
-
-
-  def handle_message(self, message):
-    message_type = message['type']
-    if message_type == 'sync':
-      # payload is map of server_id -> lua config
-      self.handle_sync(message['payload'])
-      return True
-    elif message_type == 'status':
-      return self.handle_status()
-    elif message_type == 'ping':
-      self.logger.info(f'Got ping message')
-      return True
-    else:
-      raise Exception(f'Invalid message type {message_type}')

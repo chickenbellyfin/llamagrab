@@ -1,16 +1,12 @@
 # llamagrab-agent
 LLamagrab Agent - Service that runs on each host server. It listens for commands from the API and runs taserver docker containers on the host accordingly.
 
-## Commands:
-Commands are of the form:
-```
-{
-  'type': str,
-  'payload': Optional[str]
-}
-```
+## Agent Endpoints
+All agent endpoins require a token header:
 
-### sync command
+`Token: <token>`
+
+### POST /api/sync
 Sync message payloads contain the entire set of taserver configs which are suppost to run on the host.
 ```
 {
@@ -22,11 +18,23 @@ Sync message payloads contain the entire set of taserver configs which are suppo
 ```
 Agent compares the incoming server list and config hashes with the previous saved active servers and running docker containers. It then kills, starts, and restarts containers to match the new configuration.
 
-### status command
+Responds with `ok`
+
+### GET /api/status
 Returns a list of server ids of containers which are currently running on the host.
 
-### ping command
-Empty payload, used for testing/status, has no effect.
+Response with:
+```
+{
+  0: 0,
+  1: 2,
+  <serverid:int>: <post_offset:int>,
+  ...
+}
+```
+
+### POST /api/ping
+Empty payload, used for testing/status, has no effect. Response with `pong`
 
 ## Build
 ```
