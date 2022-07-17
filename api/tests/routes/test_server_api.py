@@ -159,27 +159,6 @@ def test_delete_server_super_ok(test_client: TestClient, login_user_super: User,
   response = test_client.delete('/api/server/0')
   assert response.status_code == status.HTTP_200_OK
 
-def test_get_server_versions(test_client: TestClient, login_user_1):
-  response = test_client.get('/api/server/0/history')
-  assert response.json() == [
-    {
-      'versionId': 0,
-      'serverId': 0,
-      'serverConfig': '{"displayName": "server1Version0"}',
-      'numChanges': -1,
-      'createdAt': 0,
-      'createdBy': 'testuser'
-    },
-    {
-      'versionId': 1,
-      'serverId': 0,
-      'serverConfig': '{"displayName": "server1Version2"}',
-      'numChanges': 1,
-      'createdAt': 1,
-      'createdBy': 'testuser'
-    }
-  ]
-
 def test_get_server_status(test_client: TestClient, login_user_1):
   response = test_client.get('/api/server/0/status')
   assert response.status_code == status.HTTP_200_OK
