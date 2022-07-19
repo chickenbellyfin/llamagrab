@@ -103,7 +103,6 @@ export default function EditServerPage() {
   )
 
   const gameSpec = loader.value && games[loader.value?.settings.game];
-
   const showDelete = loader.value && auth.permissions.canDeleteServer(loader.value?.status);
 
   return (
@@ -120,17 +119,6 @@ export default function EditServerPage() {
         title={<span className="ui-title">{`Edit ${config?.displayName || 'Server'}`}</span>}
         onBack={() => navigate('/')}
         extra={[
-          ... showDelete ? [<Popconfirm
-            key='delete'
-            title={<>Are you sure you want to delete <b>{ config?.displayName}</b>?`</>}
-            okText={<><DeleteOutlined/>&nbsp;Delete Server</>}
-            okButtonProps={{danger: true}}
-            onConfirm={deleteServer}>
-            <Button
-              danger
-              icon={<DeleteOutlined/>}
-              disabled={!loader.value}>Delete</Button>
-          </Popconfirm>]: [],
           <Button
             key='history'
             icon={<HistoryOutlined />}
@@ -160,12 +148,27 @@ export default function EditServerPage() {
             </Card>
           </Spin>
           <Spin spinning={isSaving}>
-            <Card title={`${gameSpec.title} Settings`}>
+            <Card title={`${gameSpec.title} Settings`}  style={{ marginBottom: '20px' }}>
               <gameSpec.editor
                 config={loader.value.config}
                 onChange={setConfig}
               />
             </Card>
+            { showDelete &&
+              <Popconfirm
+                key='delete'
+                title={<>Are you sure you want to delete <b>{ loader.value?.config.displayName}</b>?</>}
+                okText={<><DeleteOutlined/>&nbsp;Delete Server</>}
+                okButtonProps={{danger: true}}
+                onConfirm={deleteServer}
+                >
+                <Button
+                style={{float: 'right'}}
+                  danger
+                  icon={<DeleteOutlined/>}
+                  disabled={!loader.value}>Delete</Button>
+              </Popconfirm>
+            }
           </Spin>
         </>
         :
