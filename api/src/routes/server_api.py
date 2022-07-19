@@ -178,7 +178,18 @@ async def stop_server(server: models.Server = Depends(get_server), db: Session =
       You should poll /api/server/{server_id}/status status to wait for the server to actually stop."""
   server.enabled = False
   db.commit()
+  deps.status_manager.notify_disabled(server)
   deps.host_manager().sync()
+
+@router.post('/server/{server_id}/restart', tags=['server'])
+async def restart_server(server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
+  """ Restart a server. Server will be restart immediately on the host. If the server is already restarting, will
+  return an error."""
+  if deps.status_manager.get_server_status(server) != 'running':
+    raise HTTPException(status_code=http_status.HTTP_400_BAD_REQUEST)
+
+  deps.status_manager.notify_restarting(server)
+  deps.host_manager().restart(server)
 
 @router.delete('/server/{server_id}', tags=['server'])
 async def delete_server(

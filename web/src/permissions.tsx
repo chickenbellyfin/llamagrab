@@ -60,7 +60,7 @@ export class AuthPermissions {
   }
 
   canDeleteServer(server: ServerStatus): boolean {
-    return this.isSuper()
+    return  server.owner == this.user?.username || this.isSuper()
   }
 
 }

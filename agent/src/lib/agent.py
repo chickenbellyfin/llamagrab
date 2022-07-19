@@ -121,6 +121,17 @@ class Agent:
 
       self.docker.start_server(server_id, server_offset, server_path)
 
+  def restart(self, server_id):
+    active = self.docker.status()
+    if server_id not in active:
+      logging.warn(f'Requested to restart {server_id} but it is not active on this host')
+      return
+    logging.info(f'Restarting {server_id}')
+    self.docker.stop_server(server_id)
+    self.docker.start_server(server_id, active[server_id], self.host_path_for(server_id))
+    logging.info(f'Restarted {server_id}')
+
+
   def status(self):
     """ Return a list of server ids which are running"""
     return list(self.docker.status())

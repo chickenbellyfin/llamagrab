@@ -1,8 +1,9 @@
-import { HistoryOutlined, SaveOutlined } from "@ant-design/icons";
-import { Button, Card, message, Modal, PageHeader, Row, Spin } from "antd";
+import { DeleteOutlined, HistoryOutlined, SaveOutlined } from "@ant-design/icons";
+import { Button, Card, message, Modal, PageHeader, Popconfirm, Row, Spin } from "antd";
 import { useState } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import { API } from "../api";
+import { useAuth } from "../auth";
 import ContentWrapper from "../components/ContentWrapper";
 import ServerHistoryList from "../components/ServerHistoryList";
 import { GameServerConfig, ServerSettings, ServerStatus, ServerVersion, User } from "../domain";
@@ -39,6 +40,7 @@ async function loadServerEditor(serverId: number): Promise<EditorLoaderResult> {
 export default function EditServerPage() {
 
   const navigate = useNavigate()
+  const auth = useAuth()
   const { serverId } = useParams() as any
   const [config, setConfig] = useState<GameServerConfig>()
   const [settings, setSettings] = useState<ServerSettings>()
@@ -81,6 +83,18 @@ export default function EditServerPage() {
     setIsSaving(false)
   }
 
+  const deleteServer = async () => {
+    const name = loader.value?.config.displayName
+    try {
+      await API.Server.deleteServer(serverId)
+      message.success(`Deleted ${ name }`)
+    } catch {
+      message.error(`Error deleting  ${ name }`)
+    } finally {
+      navigate('/')
+    }
+  }
+
   const isConfigChanged = Boolean(config) || Boolean(settings);
   const isValid = (
     settings?.region !== undefined
@@ -89,6 +103,8 @@ export default function EditServerPage() {
   )
 
   const gameSpec = loader.value && games[loader.value?.settings.game];
+
+  const showDelete = loader.value && auth.permissions.canDeleteServer(loader.value?.status);
 
   return (
     <ContentWrapper>
@@ -104,6 +120,17 @@ export default function EditServerPage() {
         title={<span className="ui-title">{`Edit ${config?.displayName || 'Server'}`}</span>}
         onBack={() => navigate('/')}
         extra={[
+          ... showDelete ? [<Popconfirm
+            key='delete'
+            title={<>Are you sure you want to delete <b>{ config?.displayName}</b>?`</>}
+            okText={<><DeleteOutlined/>&nbsp;Delete Server</>}
+            okButtonProps={{danger: true}}
+            onConfirm={deleteServer}>
+            <Button
+              danger
+              icon={<DeleteOutlined/>}
+              disabled={!loader.value}>Delete</Button>
+          </Popconfirm>]: [],
           <Button
             key='history'
             icon={<HistoryOutlined />}

@@ -1,4 +1,4 @@
-import { CheckCircleFilled, CheckCircleOutlined, ClockCircleFilled, ClockCircleOutlined, CloseCircleFilled, CloseCircleOutlined, PauseCircleFilled, PauseCircleOutlined, QuestionCircleFilled, QuestionCircleOutlined } from "@ant-design/icons";
+import { CheckCircleFilled, CheckCircleOutlined, ClockCircleFilled, ClockCircleOutlined, CloseCircleFilled, CloseCircleOutlined, PauseCircleFilled, PauseCircleOutlined, QuestionCircleFilled, QuestionCircleOutlined, SyncOutlined } from "@ant-design/icons";
 import { Tooltip } from "antd";
 import colors from '../colors';
 import { Status } from "../domain";
@@ -17,6 +17,13 @@ const ICONS = {
     color: colors.warning.hex,
     label: 'Starting',
     className: 'pulse'
+  },
+  'restarting': {
+    outlined: SyncOutlined,
+    filled: SyncOutlined,
+    color: colors.warning.hex,
+    label: 'Restarting',
+    spin: true
   },
   'stopping': {
     outlined: ClockCircleOutlined,
@@ -60,7 +67,10 @@ export default function ServerStatusIcon(props: ServerStatusIconProps) {
 
   const preset = ICONS[presetKey]
   const IconClass = props.filled ? preset.filled : preset.outlined;
-  const icon = <IconClass className={(preset as any)['className']} style={{ color: preset.color }} />
+  const icon = <IconClass
+    className={(preset as any)['className']}
+    style={{ color: preset.color }}
+    spin={(preset as any)['spin']}/>
   return (props.showLabel ?
     <span style={{alignItems: 'middle'}}>
       <span style={{marginRight: '5px'}}>{icon}</span>{preset.label}

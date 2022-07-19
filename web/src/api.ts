@@ -250,6 +250,13 @@ async function stopServer(serverId: number): Promise<any> {
   })
 }
 
+async function restartServer(serverId: number): Promise<any> {
+  return doRequest({
+    method: 'POST',
+    path: `/api/server/${serverId}/restart`
+  })
+}
+
 async function deleteServer(serverId: number): Promise<any> {
   return doRequest({
     method: 'DELETE',
@@ -325,6 +332,7 @@ export const API = {
     setServerConfig,
     startServer,
     stopServer,
+    restartServer,
     deleteServer,
     getServerVersions,
     getServerVersionDetails

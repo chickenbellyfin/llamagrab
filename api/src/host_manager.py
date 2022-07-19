@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.session import sessionmaker
 
 from . import database, lua
-from .database import queries
+from .database import models, queries
 from .lua import LuaSettings
 from .schema.game_server_config import GameServerConfig
 
@@ -43,10 +43,10 @@ class HostManager:
     self.sync_requested = False
     self.last_sync_time = 0
 
-    self.nodes = [
-      Node(k, nodes[k]['host'], nodes[k]['token'])
+    self.nodes = {
+      k: Node(k, nodes[k]['host'], nodes[k]['token'])
       for k in nodes
-    ]
+    }
 
     threading.Thread(target=self._worker, daemon=True).start()
 
@@ -71,7 +71,7 @@ class HostManager:
     with self.session() as db:
       logger.info(f'Running sync')
       lua_settings = get_lua_settings(db)
-      for node in self.nodes:
+      for node in self.nodes.values():
         active_for_region = database.queries.get_active_servers(db, node.name)
         # Note: even if a region has no active servers, we should still sync so that newly stopped
         # servers are killed on the host
@@ -111,8 +111,17 @@ class HostManager:
     self.sync_requested = True
     self.event.set()
 
+  def restart(self, server: models.Server):
+    node = self.nodes.get(server.region)
+    if node is None:
+      logger.error(f'Region {server.region} does not exist')
+      return
+
+    self._request(requests.post, node, f'/api/restart/{server.id}')
+
+
   def status(self):
     return {
       node.name: self._request(requests.get, node, '/api/status')
-      for node in self.nodes
+      for node in self.nodes.values()
     }

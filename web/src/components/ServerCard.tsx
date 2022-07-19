@@ -1,4 +1,4 @@
-import { DeleteOutlined, EditOutlined, LinkOutlined, PlayCircleOutlined, PoweroffOutlined } from "@ant-design/icons"
+import { DeleteOutlined, EditOutlined, LinkOutlined, PlayCircleOutlined, PoweroffOutlined, SyncOutlined } from "@ant-design/icons"
 import { Card, Descriptions, Divider, message, Popconfirm, Spin } from "antd"
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
@@ -34,8 +34,8 @@ export default function ServerCard(props: ServerCardProps) {
   const makeAction = (
     apiCall: (serverId: number) => Promise<any>,
     success: string,
-    error: string,
-    callback?: () => void) => {
+    error: string
+  ) => {
     return async () => {
       setActionInProgress(true)
       try {
@@ -46,19 +46,9 @@ export default function ServerCard(props: ServerCardProps) {
       } finally {
         setActionInProgress(false)
         props.invalidate()
-        if (callback) {
-          callback()
-        }
       }
     }
   }
-
-  const onDelete = makeAction(
-    API.Server.deleteServer,
-    `Deleted ${ props.server.name }`,
-    `Error deleting ${ props.server.name }`,
-    auth.refresh
-  )
 
   const onStart = makeAction(
     API.Server.startServer,
@@ -72,6 +62,12 @@ export default function ServerCard(props: ServerCardProps) {
     `Failed to stop ${ props.server.name }`
   )
 
+  const onRestart = makeAction(
+    API.Server.restartServer,
+    `Restarting ${ props.server.name }`,
+    `Failed to restart ${ props.server.name }`
+  )
+
   const editAction = props.warnBeforeEdit ?
     <Popconfirm
       title={<span>{props.warnBeforeEdit}</span>}
@@ -83,26 +79,15 @@ export default function ServerCard(props: ServerCardProps) {
     </Link>
     ;
 
+  const restartAction = (<div onClick={onRestart}><SyncOutlined/> RESTART</div>)
+
   const startAction = ( <div onClick={onStart}><PlayCircleOutlined/> START</div>)
   const stopAction = (<div onClick={onStop}><PoweroffOutlined/> STOP</div>);
 
-  let deleteAction: JSX.Element = <></>;
-  if (!showAsShared) {
-    deleteAction = (
-      <Popconfirm
-        title={<span>Are you sure you want to delete <b>{props.server.name}</b>?</span>}
-        onConfirm={onDelete}
-        okText='Yes, Delete'
-        >
-          <div className='action-delete'><DeleteOutlined/> DELETE</div>
-      </Popconfirm>
-    );
-  }
-
   const actions = [
     ... props.server.enabled ? [stopAction] : [startAction],
-    editAction,
-    deleteAction
+    ... (props.server.enabled && props.server.status == 'running') ?[restartAction] : [],
+    editAction
   ]
 
   return (

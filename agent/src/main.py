@@ -32,9 +32,13 @@ def create_app(agent: Agent, tokens: Set[str]):
 
   @app.post('/api/sync')
   def handle_sync(servers: Dict[int, str], auth=Depends(auth)):
-    logging.info(servers)
     agent.sync(servers)
     return 'ok'
+
+  @app.post('/api/restart/{server_id}')
+  def handle_restart(server_id: int, auth=Depends(auth)):
+    agent.restart(server_id)
+    return ''
 
   @app.get('/api/status')
   def handle_status(auth=Depends(auth)):

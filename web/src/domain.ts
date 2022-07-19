@@ -18,7 +18,7 @@ export type User = {
   username: string
 }
 
-export type Status = 'running' | 'starting' | 'stopping' | 'offline' | 'unknown';
+export type Status = 'running' | 'restarting' | 'starting' | 'stopping' | 'offline' | 'unknown';
 
 export type ServerStatus = {
   id: number,

@@ -25,6 +25,7 @@ class ServerStatusManager:
     self._thread = threading.Thread(target=self._poller, daemon=True)
     self._polling = True
     self._thread.start()
+    self.restarting = {} # id -> restart_until_timestamp
 
 
   def _poller(self):
@@ -32,6 +33,23 @@ class ServerStatusManager:
         self.host_statuses = self.host_manager.status()
         time.sleep(self.polling_rate)
 
+
+  def notify_restarting(self, server: models.Server, timeout=30):
+    self.restarting[server.id] = time.time() + timeout
+
+  def notify_disabled(self, server: models.Server):
+    if server.id in self.restarting:
+      del self.restarting[server.id]
+
+  def is_restarting(self, server: models.Server):
+    if not server.id in self.restarting:
+      return False
+    else:
+      if self.restarting[server.id] <= time.time():
+        del self.restarting[server.id]
+        return False
+      else:
+        return True
 
   def get_region_status(self, region):
     return self.host_statuses.get(region) is not None
@@ -41,7 +59,7 @@ class ServerStatusManager:
     enabled = server.enabled
     region = server.region is not None and self.host_statuses.get(server.region) is not None
     running = self.host_statuses.get(server.region) is not None and  server.id in self.host_statuses.get(server.region, [])
-
+    restarting = self.is_restarting(server)
     if not enabled:
       if not running:
         return 'disabled'
@@ -51,7 +69,9 @@ class ServerStatusManager:
       if not region:
         return 'unknown'
       else:
-        if not running:
+        if restarting:
+          return 'restarting'
+        elif not running:
           return 'starting'
         else:
           return 'running'
