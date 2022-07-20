@@ -109,7 +109,7 @@ def create_login_manager(config, db: Database) -> LoginManager:
       user = queries.get_user(db_session, username)
       return user
 
-  login_manager = LoginManager(config['login_secret'], token_url='/api/login', default_expiry=timedelta(days=1))
+  login_manager = LoginManager(config['login_secret'], token_url='/api/login', default_expiry=timedelta(days=30))
   login_manager.user_loader()(load_user)
   return login_manager
 
