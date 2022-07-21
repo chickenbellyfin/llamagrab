@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined, LinkOutlined, PlayCircleOutlined, PoweroffOutlined, SyncOutlined } from "@ant-design/icons"
-import { Card, Descriptions, Divider, message, Popconfirm, Spin } from "antd"
+import { Card, Col, Descriptions, Divider, message, Popconfirm, Row, Spin, Tooltip } from "antd"
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { API } from "../api"
@@ -101,13 +101,24 @@ export default function ServerCard(props: ServerCardProps) {
           }}
           actions={actions}>
 
-          <h3>
-            <b><ServerName status={props.server}/></b>
+          <Row wrap={false}>
+            <Col flex='auto'>
+              <h3 className='no-overflow' style={{fontWeight: 700}}>
+                <ServerName status={props.server}/>
+              </h3>
+            </Col>
+            <Col flex='none' style={{marginLeft: '.5em'}}>
             { showAsShared &&
-              <span style={{opacity: '80%', float: 'right'}}><LinkOutlined />&nbsp;{props.server.owner}</span>
+              <Tooltip title={`Shared by ${props.server.owner}`}>
+                <span style={{opacity: '80%'}}>
+                  <h3><LinkOutlined/></h3>
+                </span>
+              </Tooltip>
             }
-          </h3>
+            </Col>
+          </Row>
           <Divider/>
+
           <Descriptions
             column={3}
             colon={false}

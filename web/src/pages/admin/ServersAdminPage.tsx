@@ -27,7 +27,10 @@ function AllServersList(props: AllServersListProps) {
 
   const serverColumns = [
     {title: 'id', dataIndex: 'id', responsive: ['md' as Breakpoint]},
-    {title: 'Name', dataIndex: 'name', render: (name: string, item: ServerStatus) => <ServerName status={item}/>},
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      render: (name: string, item: ServerStatus) => <ServerName status={item}/>},
     {title: 'Status', dataIndex: 'status', render: (status: Status) => <StatusIcon status={status} showLabel={breakpoint.lg}/>},
     {title: 'Region', dataIndex: 'regionName'},
     {title: 'Owner', dataIndex: 'owner'}

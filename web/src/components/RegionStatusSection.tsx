@@ -13,7 +13,7 @@ interface ServerStatusListItemProps {
 function ServerStatusListItem({serverStatus}: ServerStatusListItemProps) {
   return (
     <List.Item key={`${serverStatus.id}`}>
-      <span>
+      <span className='no-overflow'>
         <span style={{marginRight: '10px'}}><StatusIcon status={serverStatus.status}/></span>
         <ServerName status={serverStatus}/>
       </span>
