@@ -6,6 +6,7 @@ import json
 import logging
 import os
 from logging import Logger
+from typing import List
 
 from .docker import Docker
 from .hashing import md5
@@ -21,14 +22,22 @@ class Agent:
     logger: Logger = logging.getLogger()
   ):
     self.gamesettings_dir = os.path.join(data_dir, 'managed_gamesettings')
+    self.banlist = os.path.join(data_dir, 'banlist.txt')
     self.active_servers_file = os.path.join(data_dir, 'active_servers.json')
+
+    # create empty banlist.txt
+    if not os.path.exists(self.banlist):
+      with open(self.banlist, 'w'):
+        pass
 
     # If agent is running inside a container, the gamesettings mount path for taserver must be
     # relative to the host machine
     if host_abs_data_dir:
       self.host_gamesettings_dir = os.path.join(host_abs_data_dir, 'managed_gamesettings')
+      self.host_banlist = os.path.join(host_abs_data_dir, 'banlist.txt')
     else:
       self.host_gamesettings_dir = self.gamesettings_dir
+      self.host_banlist = self.banlist
 
     self.docker = docker
     self.logger = logger
@@ -119,7 +128,7 @@ class Agent:
         used_port_offsets.add(new_port_offset)
         self.logger.info(f'Starting server({server_id}) with offset {new_port_offset}')
 
-      self.docker.start_server(server_id, server_offset, server_path)
+      self.docker.start_server(server_id, server_offset, server_path, self.host_banlist)
 
   def restart(self, server_id):
     active = self.docker.status()
@@ -128,10 +137,18 @@ class Agent:
       return
     logging.info(f'Restarting {server_id}')
     self.docker.stop_server(server_id)
-    self.docker.start_server(server_id, active[server_id], self.host_path_for(server_id))
+    self.docker.start_server(server_id, active[server_id], self.host_path_for(server_id), self.host_banlist)
     logging.info(f'Restarted {server_id}')
 
 
   def status(self):
     """ Return a list of server ids which are running"""
     return list(self.docker.status())
+
+  def update_banlist(self, ips: List[str]):
+    txt = ''
+    for ip in ips:
+      txt += f'{ip}\n'
+    with open(self.banlist, 'w') as f:
+      f.write(txt)
+    return 'ok'

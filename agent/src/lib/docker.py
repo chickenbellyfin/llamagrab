@@ -27,7 +27,7 @@ class Docker:
 
     return running_containers
 
-  def start_server(self, server_id: int, offset: int, abs_gamesettings: str) -> None:
+  def start_server(self, server_id: int, offset: int, abs_gamesettings: str, abs_banlist: str) -> None:
     name = self._container_name(server_id)
 
     gameserver1_port = 7777 + offset
@@ -59,7 +59,10 @@ class Docker:
         'server_id': f'{server_id}',
         'port_offset': f'{offset}'
       },
-      volumes = [f'{abs_gamesettings}:/gamesettings'],
+      volumes = [
+        f'{abs_gamesettings}:/gamesettings',
+        f'{abs_banlist}:/app/taserver/data/banlist.txt'
+      ],
       detach = True,
       restart_policy = {'Name': 'unless-stopped'},
       cap_add = ['NET_ADMIN'],

@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 from typing import Dict, List, Set
+from ipaddress import ip_interface
 
 import docker as docker_lib
 import uvicorn
@@ -43,6 +44,20 @@ def create_app(agent: Agent, tokens: Set[str]):
   @app.get('/api/status')
   def handle_status(auth=Depends(auth)):
     return agent.status()
+
+  @app.post('/api/banlist')
+  def handle_update_banlist(ips: List[str], auth=Depends(auth)):
+    def validate_ip(ip: str):
+      try:
+        ip_interface(ip)
+        return True
+      except:
+        return False
+
+    if not all(map(validate_ip, ips)):
+      raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+
+    return agent.update_banlist(ips)
 
   @app.post('/api/ping')
   def handle_ping(auth=Depends(auth)):

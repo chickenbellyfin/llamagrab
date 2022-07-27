@@ -62,8 +62,8 @@ def test_sync_new_server(test_client: TestClient, mock_docker: Docker, temp_dir)
 
   mock_docker.status.assert_called()
   mock_docker.start_server.assert_has_calls([
-    call(1, 0, os.path.join(temp_dir, 'managed_gamesettings', 'server_1')),
-    call(5, 2, os.path.join(temp_dir, 'managed_gamesettings', 'server_5'))
+    call(1, 0, os.path.join(temp_dir, 'managed_gamesettings', 'server_1'), os.path.join(temp_dir, 'banlist.txt')),
+    call(5, 2, os.path.join(temp_dir, 'managed_gamesettings', 'server_5'), os.path.join(temp_dir, 'banlist.txt'))
   ])
   mock_docker.stop_server.assert_not_called()
 
@@ -87,8 +87,8 @@ def test_host_abs_path(temp_dir, mock_docker):
 
   mock_docker.status.assert_called()
   mock_docker.start_server.assert_has_calls([
-    call(1, 0, os.path.join('/some/host/dir/managed_gamesettings', 'server_1')),
-    call(5, 2, os.path.join('/some/host/dir/managed_gamesettings', 'server_5'))
+    call(1, 0, os.path.join('/some/host/dir/managed_gamesettings', 'server_1'), os.path.join('/some/host/dir', 'banlist.txt')),
+    call(5, 2, os.path.join('/some/host/dir/managed_gamesettings', 'server_5'), os.path.join('/some/host/dir', 'banlist.txt'))
   ])
   mock_docker.stop_server.assert_not_called()
 
@@ -149,7 +149,7 @@ def test_sync_update_server(test_client: TestClient, mock_docker: Docker, temp_d
   mock_docker.status.assert_called()
   mock_docker.stop_server.assert_not_called()
   mock_docker.start_server.assert_called_once_with(
-    1, 0, os.path.join(temp_dir, 'managed_gamesettings', 'server_1'))
+    1, 0, os.path.join(temp_dir, 'managed_gamesettings', 'server_1'), os.path.join(temp_dir, 'banlist.txt'))
 
 def test_sync_lua_written(test_client: TestClient, mock_docker: Docker, temp_dir):
   mock_docker.status.return_value = {}
@@ -194,6 +194,43 @@ def test_get_status(test_client: TestClient, mock_docker: Docker):
 
   assert response.ok
   assert response.json() == [66, 88]
+
+def test_update_banlist(test_client: TestClient, temp_dir: str):
+  banlist = os.path.join(temp_dir, 'banlist.txt')
+  with open(banlist) as f:
+    assert f.read() == ''
+  response1 = test_client.post(
+    '/api/banlist',
+    json=['1.1.1.1', '0.255.6.98', '43.46.46.1/24'],
+    headers=HEADER
+  )
+
+  assert response1.status_code == status.HTTP_200_OK
+  with open(banlist) as f:
+    assert f.read() == '1.1.1.1\n0.255.6.98\n43.46.46.1/24\n'
+
+  response2 = test_client.post(
+    '/api/banlist',
+    json=['2.2.2.2', '3.3.3.3'],
+    headers=HEADER
+  )
+
+  assert response2.status_code == status.HTTP_200_OK
+  with open(banlist) as f:
+    assert f.read() == '2.2.2.2\n3.3.3.3\n'
+
+def test_update_banlist_invalid(test_client: TestClient, temp_dir: str):
+  banlist = os.path.join(temp_dir, 'banlist.txt')
+  with open(banlist) as f:
+    assert f.read() == ''
+  response1 = test_client.post(
+    '/api/banlist',
+    json=['1.1.1.1', 'abcde'],
+    headers=HEADER
+  )
+  assert response1.status_code == status.HTTP_400_BAD_REQUEST
+  with open(banlist) as f:
+    assert f.read() == ''
 
 def test_unauthorized(test_client: TestClient, mock_docker: Docker):
   # no token
