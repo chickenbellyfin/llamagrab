@@ -49,7 +49,7 @@ class Docker:
       network_mode = None
 
     self.stop_server(server_id)
-    logging.info(f'Running container {name} offset={offset} ports={gameserver1_port},{gameserver2_port},{control_port} path={abs_gamesettings}')
+    logger.info(f'Running container {name} offset={offset} ports={gameserver1_port},{gameserver2_port},{control_port} path={abs_gamesettings}')
     self.client.containers.run(
       self.image,
       command = [f'--port-offset={offset}'],
