@@ -202,7 +202,7 @@ def main(argv: List[str]):
     app,
     host='0.0.0.0',
     port=config.get('port', 8000),
-    debug=True,
+    #debug=True,
     log_config=None,
     proxy_headers=True
   )

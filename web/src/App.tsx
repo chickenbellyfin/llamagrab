@@ -111,7 +111,7 @@ function App () {
         <Content
           style={{
             // minWidth here allows the collapsible side menu to 'move' content out of the way instead of squishing it
-            minWidth: '375px',
+            minWidth: '360px',
             overflowX: 'hidden',
             display: 'flex',
             flexDirection: 'column',
