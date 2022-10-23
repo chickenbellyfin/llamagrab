@@ -58,6 +58,12 @@ All UI elements should be designed first for desktop use (`md` breakpoint or lar
 - gen.svg is a trace of the TA generator icon
 - gen_aligned.svg in sligthly modified gen.svg to align better with 16x16 favicon pixel boundaries
 
+##### Updating favicons
+
+1. Render `web/public/gen_aligned.svg` as a 512x512 PNG
+2. Upload `gen_aligned.png` to [favicon.io](https://favicon.io/favicon-converter/)
+3. Extract result to `web/public/icon/`
+
 ## Screenshots (6/12/2022)
 |  | | |
 | --- | --- | --- |
