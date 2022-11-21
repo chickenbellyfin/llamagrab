@@ -16,6 +16,10 @@ class ItemProperties(BaseModel):
   weapon: str
   properties: List[ModProperty]
 
+class VehicleWeaponProperties(BaseModel):
+  vehicle_weapon: str
+  properties: List[ModProperty]
+
 class MutualExclusion(BaseModel):
   player_class: str
   item1: str
@@ -105,6 +109,8 @@ class GameServerConfig(BaseModel):
   grav_cycle_properties: Optional[List[ModProperty]]
   shrike_properties: Optional[List[ModProperty]]
   beowulf_properties: Optional[List[ModProperty]]
+
+  vehicle_weapon_properties: Optional[List[VehicleWeaponProperties]]
 
   @validator('display_name')
   def validate_display_name(cls, v):

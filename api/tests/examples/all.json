@@ -238,5 +238,43 @@
       "name": "MinVehicleCrashDamage",
       "value": 100
     }
+  ],
+  "vehicleWeaponProperties": [
+    {
+      "vehicleWeapon": "Grav Cycle",
+      "properties": [
+        {
+          "name": "ClipAmmo",
+          "value": 21
+        }
+      ]
+    },
+    {
+      "vehicleWeapon": "Shrike",
+      "properties": [
+        {
+          "name": "BurstShotCount",
+          "value": 20
+        }
+      ]
+    },
+    {
+      "vehicleWeapon": "Beowulf Cannon",
+      "properties": [
+        {
+          "name": "EnergyDrain",
+          "value": 100
+        }
+      ]
+    },
+    {
+      "vehicleWeapon": "Beowulf Chain Gun",
+      "properties": [
+        {
+          "name":"Accuracy",
+          "value": 0.4
+        }
+      ]
+    }
   ]
 }

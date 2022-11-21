@@ -1,0 +1,262 @@
+{
+  "Ammo": [
+    {
+      "name": "ClipAmmo",
+      "type": "integer",
+      "restrictions": ">=0",
+      "unit": "Bullets",
+      "description": "Number of bullets in a clip"
+    },
+    {
+      "name": "SpareAmmo",
+      "type": "integer",
+      "restrictions": ">=0",
+      "unit": "Bullets",
+      "description": "Spare ammo carried by each vehicle (normally all vehicles have 10000)"
+    },
+    {
+      "name": "AmmoPerShot",
+      "type": "integer",
+      "restrictions": ">=0",
+      "unit": "Bullets",
+      "description": "Ammo cost for each shot"
+    }
+  ],
+  "Reloading & Firing": [
+    {
+      "name": "ReloadTime",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Seconds",
+      "description": "Time taken to reload"
+    },
+    {
+      "name": "FireInterval",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Seconds",
+      "description": "Time between consecutive shots"
+    },
+    {
+      "name": "ReloadSingle",
+      "type": "boolean",
+      "description": "Whether bullets are reloaded one at a time"
+    },
+    {
+      "name": "ReloadApplicationProportion",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+      "description": "Proportion through the reload that the actual reload occurs"
+    },
+    {
+      "name": "BurstShotCount",
+      "type": "integer",
+      "restrictions": ">0",
+      "unit": "Bullets",
+      "description": "Number of bullets fired in a single burst"
+    }
+  ],
+  "Damage & Impact": [
+    {
+      "name": "Damage",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Damage",
+      "description": "Damage the weapon does, before considering multipliers, falloff etc."
+    },
+    {
+      "name": "DirectHitMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Damage multiplier to apply to the damage done on a direct hit"
+    },
+    {
+      "name": "EnergyDrain",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Energy",
+      "description": "Amount of energy to drain from targets"
+    },
+    {
+      "name": "DamageAgainstArmorMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier for damage against armoured targets"
+    },
+    {
+      "name": "DamageAgainstGeneratorMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier for damage against generators"
+    },
+    {
+      "name": "DamageAgainstBaseTurretMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier for damage against base turrets"
+    },
+    {
+      "name": "DamageAgainstBaseSensorMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier for damage against sensors"
+    },
+    {
+      "name": "DamageAgainstGravCycleMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier for damage against Grav Cycles"
+    },
+    {
+      "name": "DamageAgainstBeowulfMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier for damage against Beowulfs"
+    },
+    {
+      "name": "DamageAgainstShrikeMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier for damage against Shrikes"
+    },
+    {
+      "name": "ImpactMomentum",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Momentum",
+      "description": "Amount of momentum applied to a player hit by this weapon"
+    },
+    {
+      "name": "ExplosiveRadius",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU",
+      "description": "Size of the weapon's damaging explosion"
+    },
+    {
+      "name": "BulletDamageRange",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU",
+      "description": "Size of the damage range (not the total range of the weapon)"
+    },
+    {
+      "name": "MaxDamageRangeProportion",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+      "description": "Proportion of the damage range at which falloff starts"
+    },
+    {
+      "name": "MinDamageRangeProportion",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+      "description": "Proportion of the damage range at which falloff ends"
+    },
+    {
+      "name": "MinDamageProportion",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+      "description": "Proportion of the normal damage dealt at the MinDamageRangeProportion"
+    },
+    {
+      "name": "DoesImpulseFlag",
+      "type": "boolean",
+      "description": "Whether the weapon's explosion pushes the flag around"
+    },
+    {
+      "name": "DoesGibOnKill",
+      "type": "boolean",
+      "description": "Whether this weapon will cause a killed enemy to explode into pieces"
+    },
+    {
+      "name": "GibImpulseRadius",
+      "type": "float",
+      "unit": "Unreal Units",
+      "description": "Radius for which gibbing impulse is applied to pieces of deceased enemy"
+    },
+    {
+      "name": "GibStrength",
+      "type": "float",
+      "unit": "Momentum",
+      "description": "Momentum applied to gibbed pieces of an enemy"
+    }
+  ],
+  "Projectiles": [
+    {
+      "name": "ProjectileSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU / S",
+      "description": "Launch speed of the projectile"
+    },
+    {
+      "name": "ProjectileMaxSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU / S",
+      "description": "Cap on the absolute projectile speed, regardless of inheritance"
+    },
+    {
+      "name": "CollisionSize",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU",
+      "description": "Radius of the projectile's collision sphere"
+    },
+    {
+      "name": "ProjectileInheritance",
+      "type": "float",
+      "restrictions": ">=0",
+
+      "description": "Proportion of the shooter's velocity the projectile inherits"
+    },
+    {
+      "name": "ProjectileLifespan",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "S",
+      "description": "How long the projectile travels for before exploding in midair"
+    },
+    {
+      "name": "ProjectileGravity",
+      "type": "float",
+      "restrictions": ">=0",
+
+      "description": "Multiplier by which gravity affects the projectile"
+    },
+    {
+      "name": "ProjectileTerminalVelocity",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU / S",
+      "description": "Terminal velocity due to gravity"
+    }
+  ],
+  "Accuracy": [
+    {
+      "name": "Accuracy",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+
+      "description": "Proportion of accuracy for the weapon's shot"
+    },
+    {
+      "name": "AccuracyLossOnShot",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+      "description": "Accuracy decrease after shooting"
+    },
+    {
+      "name": "AccuracyLossMax",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+      "description": "Maximum decrease in accuracy at a given time"
+    },
+    {
+      "name": "AccuracyCorrectionRate",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+      "description": "Rate at which accuracy returns after decreasing"
+    }
+  ]
+}

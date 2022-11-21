@@ -32,6 +32,7 @@ def load_mod_properties(file_path):
 item_props = load_mod_properties('../common/item_properties.json')
 class_props = load_mod_properties('../common/class_properties.json')
 vehicle_props = load_mod_properties('../common/vehicle_properties.json')
+vehicle_weapon_props = load_mod_properties('../common/vehicle_weapon_properties.json')
 value_mod_props = load_mod_properties('../common/value_mods.json')
 
 team_assign_types = {
@@ -111,6 +112,9 @@ def _class_property_value(p: ModProperty) -> str:
 
 def _vehicle_property_value(p: ModProperty) -> str:
   return _mod_property_value(p, vehicle_props)
+
+def _vehicle_weapon_property_value(p: ModProperty) -> str:
+  return _mod_property_value(p, vehicle_weapon_props)
 
 def _value_mod_value(p: ModProperty) -> str:
   return _mod_property_value(p, value_mod_props)
@@ -236,6 +240,15 @@ def to_lua(server: models.Server, config: GameServerConfig, lua_settings: LuaSet
         lua(
           'Vehicles.setProperty("%s", Vehicles.Properties.%s, %s)',
           vehicle, property.name, _vehicle_property_value(property)
+        )
+  
+  # Vehicle Weapon Properties
+  if config.vehicle_weapon_properties:
+    for vehicle_weapon in config.vehicle_weapon_properties:
+      for property in vehicle_weapon.properties:
+        lua(
+          'VehicleWeapons.setProperty("%s", VehicleWeapons.Properties.%s, %s)',
+          vehicle_weapon.vehicle_weapon, property.name, _vehicle_weapon_property_value(property)
         )
 
   # Value Mods

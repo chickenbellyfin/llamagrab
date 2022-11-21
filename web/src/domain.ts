@@ -57,6 +57,11 @@ export type ItemProperties = {
   properties?: ModProperty[]
 }
 
+export type VehicleWeaponProperties = {
+  vehicleWeapon?: string,
+  properties?: ModProperty[]
+}
+
 export type MutualExclusion = {
   playerClass?: string,
   item1?: string,
@@ -150,6 +155,8 @@ export type GameServerConfig = {
   gravCycleProperties?: ModProperty[]
   shrikeProperties?: ModProperty[]
   beowulfProperties?: ModProperty[]
+
+  vehicleWeaponProperties?: VehicleWeaponProperties[]
 }
 
 export type ServerVersion = {

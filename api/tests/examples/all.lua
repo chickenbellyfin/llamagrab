@@ -77,6 +77,10 @@ Vehicles.setProperty("Grav Cycle", Vehicles.Properties.CanCarryFlagAsPilot, fals
 Vehicles.setProperty("Grav Cycle", Vehicles.Properties.TimeBeforeSelfDestruct, 30.00)
 Vehicles.setProperty("Shrike", Vehicles.Properties.BoostMultiplier, 2.40)
 Vehicles.setProperty("Beowulf", Vehicles.Properties.MinVehicleCrashDamage, 100.00)
+VehicleWeapons.setProperty("Grav Cycle", VehicleWeapons.Properties.ClipAmmo, 21)
+VehicleWeapons.setProperty("Shrike", VehicleWeapons.Properties.BurstShotCount, 20)
+VehicleWeapons.setProperty("Beowulf Cannon", VehicleWeapons.Properties.EnergyDrain, 100.00)
+VehicleWeapons.setProperty("Beowulf Chain Gun", VehicleWeapons.Properties.Accuracy, 0.40)
 Items.setValueMods("Medium", "Arx Buster", {
   {ValueMods.SonicPunch, true},
   {ValueMods.SonicPunchRange, 13.00},

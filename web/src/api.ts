@@ -31,6 +31,16 @@ function sanitizeGameServerConfig(config: GameServerConfig): GameServerConfig {
       .filter(item =>item.properties !== undefined && item.properties.length > 0)
   }
 
+  if (sanitized.vehicleWeaponProperties) {
+    sanitized.vehicleWeaponProperties = sanitized.vehicleWeaponProperties
+      // filter out any vehicle weapons where the weapon is not set
+      .filter(item => (item.vehicleWeapon !== undefined))
+      // remove any item properties which are incomplete (name or value not set)
+      .map(item =>  Object.assign(item, {properties: removeEmptyModProperties(item.properties)}))
+      // remove any vehicle weapons which have no completed item properties
+      .filter(item =>item.properties !== undefined && item.properties.length > 0)
+  }
+
   sanitized.lightClassProperties = removeEmptyModProperties(sanitized.lightClassProperties)
   sanitized.mediumClassProperties = removeEmptyModProperties(sanitized.mediumClassProperties)
   sanitized.heavyClassProperties = removeEmptyModProperties(sanitized.heavyClassProperties)

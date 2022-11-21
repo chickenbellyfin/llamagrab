@@ -2,6 +2,7 @@ import { Divider, Form, Space } from "antd";
 import { InputInteger, InputPercent } from "../../editor/Inputs";
 import { GameServerConfigTabProps } from "../../editor/tabHelpers";
 import { VehicleProperties } from "./VehicleProperties";
+import VehicleWeaponPropertiesSection from "./VehicleWeaponPropertiesSection";
 
 
 export default function VehicleSettingsTab ({ config, updateCallbacks }: GameServerConfigTabProps) {
@@ -77,6 +78,12 @@ export default function VehicleSettingsTab ({ config, updateCallbacks }: GameSer
         <VehicleProperties vehicleLabel='Beowulf' vehicleProperties={config.beowulfProperties} onChange={update('beowulfProperties')}/>
         </Space>
       </Form.Item>
+
+      <Divider orientation='left'>Vehicle Weapon Properties</Divider>
+      <Form.Item wrapperCol={{offset: 2}}>
+        <VehicleWeaponPropertiesSection properties={config.vehicleWeaponProperties} onChange={update('vehicleWeaponProperties')}/>
+      </Form.Item>
+
 
     </Form>
   );
