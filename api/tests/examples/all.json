@@ -216,5 +216,27 @@
       "item1": "heavy_shield_pack",
       "item2": "heavy_plasma_cannon"
     }
+  ],
+  "gravCycleProperties": [
+    {
+      "name": "CanCarryFlagAsPilot",
+      "value": false
+    },
+    {
+      "name": "TimeBeforeSelfDestruct",
+      "value": 30
+    }
+  ],
+  "shrikeProperties": [
+    {
+      "name": "BoostMultiplier",
+      "value": 2.4
+    }
+  ],
+  "beowulfProperties": [
+    {
+      "name": "MinVehicleCrashDamage",
+      "value": 100
+    }
   ]
 }

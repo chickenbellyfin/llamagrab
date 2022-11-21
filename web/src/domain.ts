@@ -146,6 +146,10 @@ export type GameServerConfig = {
   itemValueMods?: ItemProperties[]
 
   mutualExclusions?: MutualExclusion[]
+
+  gravCycleProperties?: ModProperty[]
+  shrikeProperties?: ModProperty[]
+  beowulfProperties?: ModProperty[]
 }
 
 export type ServerVersion = {

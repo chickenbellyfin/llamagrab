@@ -57,7 +57,7 @@ All components will be able to commicate with each other on localhost without an
 cd api
 pip install -r requirements.txt
 
-python3 -m app
+python3 -m src.app
 ```
 
 ### Start local web app

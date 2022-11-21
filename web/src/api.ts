@@ -37,6 +37,9 @@ function sanitizeGameServerConfig(config: GameServerConfig): GameServerConfig {
   sanitized.lightValueMods = removeEmptyModProperties(sanitized.lightValueMods)
   sanitized.mediumValueMods = removeEmptyModProperties(sanitized.mediumValueMods)
   sanitized.heavyValueMods = removeEmptyModProperties(sanitized.heavyValueMods)
+  sanitized.gravCycleProperties = removeEmptyModProperties(sanitized.gravCycleProperties)
+  sanitized.shrikeProperties = removeEmptyModProperties(sanitized.shrikeProperties)
+  sanitized.beowulfProperties = removeEmptyModProperties(sanitized.beowulfProperties)
 
   if (sanitized.mutualExclusions) {
     sanitized.mutualExclusions = sanitized.mutualExclusions.filter(item => {

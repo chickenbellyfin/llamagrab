@@ -73,6 +73,10 @@ Classes.setProperty("Light", Classes.Properties.EnergyPool, 110.00)
 Classes.setProperty("Light", Classes.Properties.MomentumDampeningEnabled, true)
 Classes.setProperty("Medium", Classes.Properties.Mass, 5.00)
 Classes.setProperty("Heavy", Classes.Properties.RegenTime, 15.00)
+Vehicles.setProperty("Grav Cycle", Vehicles.Properties.CanCarryFlagAsPilot, false)
+Vehicles.setProperty("Grav Cycle", Vehicles.Properties.TimeBeforeSelfDestruct, 30.00)
+Vehicles.setProperty("Shrike", Vehicles.Properties.BoostMultiplier, 2.40)
+Vehicles.setProperty("Beowulf", Vehicles.Properties.MinVehicleCrashDamage, 100.00)
 Items.setValueMods("Medium", "Arx Buster", {
   {ValueMods.SonicPunch, true},
   {ValueMods.SonicPunchRange, 13.00},

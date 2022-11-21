@@ -1,11 +1,12 @@
-import { Form } from "antd";
+import { Divider, Form, Space } from "antd";
 import { InputInteger, InputPercent } from "../../editor/Inputs";
 import { GameServerConfigTabProps } from "../../editor/tabHelpers";
+import { VehicleProperties } from "./VehicleProperties";
 
 
 export default function VehicleSettingsTab ({ config, updateCallbacks }: GameServerConfigTabProps) {
 
-  const { updateInputNumber } = updateCallbacks;
+  const { update, updateInputNumber } = updateCallbacks;
 
   return (
     <Form labelCol={{span: 6}} wrapperCol={{span: 14}}>
@@ -66,6 +67,15 @@ export default function VehicleSettingsTab ({ config, updateCallbacks }: GameSer
           onChange={updateInputNumber('beowulfSpawnTime')}
           placeholder={'120'}
           addonAfter='secs'  />
+      </Form.Item>
+
+      <Divider orientation='left'>Vehicle Properties</Divider>
+      <Form.Item wrapperCol={{offset: 2}}>
+        <Space direction='vertical' style={{width: '100%'}}>
+        <VehicleProperties vehicleLabel='Grav Cycle' vehicleProperties={config.gravCycleProperties} onChange={update('gravCycleProperties')}/>
+        <VehicleProperties vehicleLabel='Shrike' vehicleProperties={config.shrikeProperties} onChange={update('shrikeProperties')}/>
+        <VehicleProperties vehicleLabel='Beowulf' vehicleProperties={config.beowulfProperties} onChange={update('beowulfProperties')}/>
+        </Space>
       </Form.Item>
 
     </Form>

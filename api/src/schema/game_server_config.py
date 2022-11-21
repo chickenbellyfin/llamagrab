@@ -102,6 +102,10 @@ class GameServerConfig(BaseModel):
 
   mutual_exclusions: Optional[List[MutualExclusion]]
 
+  grav_cycle_properties: Optional[List[ModProperty]]
+  shrike_properties: Optional[List[ModProperty]]
+  beowulf_properties: Optional[List[ModProperty]]
+
   @validator('display_name')
   def validate_display_name(cls, v):
     return validations.validate_string(v)

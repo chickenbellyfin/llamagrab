@@ -31,8 +31,8 @@ def load_mod_properties(file_path):
 
 item_props = load_mod_properties('../common/item_properties.json')
 class_props = load_mod_properties('../common/class_properties.json')
+vehicle_props = load_mod_properties('../common/vehicle_properties.json')
 value_mod_props = load_mod_properties('../common/value_mods.json')
-
 
 team_assign_types = {
   'balanced': 'TeamAssignTypes.Balanced',
@@ -108,6 +108,9 @@ def _item_property_value(p: ModProperty) -> str:
 
 def _class_property_value(p: ModProperty) -> str:
   return _mod_property_value(p, class_props)
+
+def _vehicle_property_value(p: ModProperty) -> str:
+  return _mod_property_value(p, vehicle_props)
 
 def _value_mod_value(p: ModProperty) -> str:
   return _mod_property_value(p, value_mod_props)
@@ -220,6 +223,19 @@ def to_lua(server: models.Server, config: GameServerConfig, lua_settings: LuaSet
         lua(
           'Classes.setProperty("%s", Classes.Properties.%s, %s)',
           clazz, property.name, _class_property_value(property)
+        )
+  
+  # Vehicle Properties
+  for vehicle, vehicle_props in [
+    ('Grav Cycle', config.grav_cycle_properties),
+    ('Shrike', config.shrike_properties),
+    ('Beowulf', config.beowulf_properties),
+  ]:
+    if vehicle_props:
+      for property in vehicle_props:
+        lua(
+          'Vehicles.setProperty("%s", Vehicles.Properties.%s, %s)',
+          vehicle, property.name, _vehicle_property_value(property)
         )
 
   # Value Mods

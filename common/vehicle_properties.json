@@ -1,0 +1,203 @@
+{
+  "Base Stats": [
+    {
+      "name": "HealthPool",
+      "type": "integer",
+      "restrictions": ">0",
+      "unit": "Health",
+      "description": "Health pool for the vehicle"
+    },
+    {
+      "name": "EnergyPool",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Energy",
+      "description": "Energy pool for the vehicle"
+    },
+    {
+      "name": "EnergyRechargeRate",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Energy / S",
+      "description": "Rate of energy recovery"
+    },
+    {
+      "name": "IsArmored",
+      "type": "boolean",
+      "description": "Whether the vehicle counts as armoured when considering damage dealt"
+    },
+    {
+      "name": "IsHomingTarget",
+      "type": "boolean",
+      "description": "Whether the vehicle may be targeted by the Sabre Launcher"
+    },
+    {
+      "name": "CanCarryFlagAsPilot",
+      "type": "boolean",
+      "description": "Whether you can carry the flag while piloting the vehicle"
+    },
+    {
+      "name": "CanCarryFlagAsPassenger",
+      "type": "boolean",
+      "description": "Whether you can carry the flag as a passenger of the vehicle"
+    },
+    {
+      "name": "TimeBeforeSelfDestruct",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Seconds",
+      "description": "Time before an empty vehicle self-destructs"
+    }
+  ],
+  "Movement": [
+    {
+      "name": "MaxSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU / S",
+      "description": "Maximum speed the vehicle can attain via normal acceleration"
+    },
+    {
+      "name": "MaxDivingSpeedMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier to allow the Shrike to go slightly faster than its normal max while diving"
+    },
+    {
+      "name": "BoostMultiplier",
+      "type": "float",
+      "restrictions": ">=0",
+      "description": "Multiplier applied to maximum vehicle speed while boosting"
+    },
+    {
+      "name": "BoostEnergyCost",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Energy / S",
+      "description": "Energy cost of boosting"
+    },
+    {
+      "name": "BoostMinUsableProportion",
+      "type": "float",
+      "restrictions": "0<=x<=1",
+      "unit": "",
+      "description": "Proportion of energy required to start boosting"
+    },
+    {
+      "name": "MaxPlayerExitSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU / S",
+      "description": "Cap on the speed a player can inherit when exiting the vehicle"
+    },
+    {
+      "name": "GravityScale",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "",
+      "description": "Effect of gravity on the vehicle"
+    }
+  ],
+  "Self Damage": [
+    {
+      "name": "MaxCrashDamage",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Damage",
+      "description": "Amount of damage sustained by crashing at or beyond the MaxCrashDamageSpeed"
+    },
+    {
+      "name": "MinCrashDamage",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Damage",
+      "description": "Amount of damage sustained when crashing at MinCrashDamageSpeed"
+    },
+    {
+      "name": "MaxCrashDamageSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU / S",
+      "description": "Speed at which the maximum crashing damage will be applied"
+    },
+    {
+      "name": "MinCrashDamageSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU / S",
+      "description": "Minimum speed at which crashing causes damage"
+    },
+    {
+      "name": "MaxVehicleCrashDamage",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Damage",
+      "description": "Amount of damage sustained when hitting another vehicle at or beyond the MaxCrashDamageSpeed"
+    },
+    {
+      "name": "MinVehicleCrashDamage",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Damage",
+      "description": "Amount of damage sustained when hitting another vehicle at MinCrashDamageSpeed"
+    },
+    {
+      "name": "MaxVehicleCrashDamageSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU / S",
+      "description": "Speed of collision with another vehicle at which the maximum crashing damage will be applied"
+    },
+    {
+      "name": "MinVehicleCrashDamageSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU / S",
+      "description": "Minimum speed at which crashing into another vehicle causes damage"
+    }
+  ],
+  "Ramming": [
+    {
+      "name": "RamMinSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU / S",
+      "description": "Minimum speed at which ramming a player causes them damage"
+    },
+    {
+      "name": "RamMaxDamageSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU / S",
+      "description": "Speed at which ramming a player causes them max damage"
+    },
+    {
+      "name": "RamMinDamage",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Damage",
+      "description": "Minimum damage caused by ramming"
+    },
+    {
+      "name": "RamMaxDamage",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "Damage",
+      "description": "Maximum damage caused by ramming"
+    },
+    {
+      "name": "RamPlayerPushSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU / S",
+      "description": "Speed at which rammed players are pushed"
+    },
+    {
+      "name": "RamFlagPushSpeed",
+      "type": "float",
+      "restrictions": ">=0",
+      "unit": "UU / S",
+      "description": "Speed at which a rammed flag is pushed"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import { Select } from 'antd'
 import ClassPropertyOptions from '../../common/class_properties.json'
 import ItemPropertyOptions from '../../common/item_properties.json'
+import VehiclePropertyOptions from '../../common/vehicle_properties.json'
 import Maps from '../../common/maps.json'
 import ValueModOptions from '../../common/value_mods.json'
 import Weapons from '../../common/weapons.json'
@@ -116,6 +117,12 @@ const ValueModsByName = Object.keys(ValueModOptions).reduce((prev, group) => {
   return prev;
 }, {} as {[key: string]: ModPropertySpec})
 
+const VehiclePropertiesByName = Object.keys(VehiclePropertyOptions).reduce((prev, group) => {
+  const props = VehiclePropertyOptions[group as keyof typeof VehiclePropertyOptions]
+  props.forEach(prop => Object.assign(prev, {[prop.name]: prop}))
+  return prev;
+}, {} as {[key: string]: ModPropertySpec})
+
 const ItemPropertiesSpecSet: ModPropertySpecSet = {
   byName: ItemPropertiesByName,
   groupedOptions: createModPropertyOptions(ItemPropertyOptions)
@@ -131,6 +138,11 @@ const ValueModsSpecSet: ModPropertySpecSet = {
   groupedOptions: createModPropertyOptions(ValueModOptions)
 }
 
+const VehiclePropertiesSpecSet: ModPropertySpecSet = {
+  byName: VehiclePropertiesByName,
+  groupedOptions: createModPropertyOptions(VehiclePropertyOptions)
+}
+
 export {
   Maps,
   MapsByKey,
@@ -139,5 +151,6 @@ export {
   weaponOptions,
   ItemPropertiesSpecSet,
   ClassPropertiesSpecSet,
-  ValueModsSpecSet
+  ValueModsSpecSet,
+  VehiclePropertiesSpecSet
 }
