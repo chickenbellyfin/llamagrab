@@ -7,7 +7,6 @@ from ipaddress import ip_interface
 
 import docker as docker_lib
 import uvicorn
-import yaml
 from fastapi import Depends, FastAPI, Request, status
 from fastapi.exceptions import HTTPException
 
@@ -82,19 +81,22 @@ def main(argv: List[str]):
     ]
   )
 
-  config_path = os.path.join(data_dir, 'config.yaml')
+  host_abs_data_dir = os.environ.get('LG_HOST_ABS_DATA_DIR')
+  port = int(os.environ.get('LG_PORT', 8999))
+  testing = os.environ.get('LG_TESTING', 'true').lower() == 'true'
+  loginserver = os.environ.get('LG_LOGINSERVER')
+  use_host_networking = os.environ.get('LG_USE_HOST_NETWORKING', 'false') == 'true'
+  image = os.environ.get('LG_TASERVER_IMAGE', 'taserver')
+  # tokens are comma separated non-empty strings
+  tokens = [
+    token.strip() for token in
+    os.environ.get('LG_TOKENS', '').split(',')
+    if len(token.strip()) > 0
+  ]
 
-  logger.info(f'Reading config from {config_path}')
-  with open(config_path) as config_file:
-    config = yaml.safe_load(config_file)
-
-  host_abs_data_dir = config.get('host_abs_data_dir')
-  port = int(config['port'])
-  testing = config.get('testing', False)
-  loginserver = config.get('loginserver', None)
-  use_host_networking = config.get('use_host_networking', False)
-  image = config.get('image', 'taserver')
-  tokens = config.get('tokens', [])
+  if len(tokens) == 0:
+    logger.error(f'LG_TOKENS env not set. At least 1 auth token is required.')
+    exit(1)
 
   docker = NullDocker() if testing else Docker(
     docker_lib.from_env(),
