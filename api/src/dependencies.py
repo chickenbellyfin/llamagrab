@@ -11,6 +11,7 @@ from . import permissions
 from .database.models import User
 from .host_manager import HostManager
 from .server_status import ServerStatusManager
+from src import flags
 
 
 class Dependencies:
@@ -43,17 +44,29 @@ class Dependencies:
   def host_manager(self) -> HostManager:
     return self._host_manager
 
+  def check_account_disabled_flags(self, user: User):
+    with self._db_session() as db:
+      if not permissions.is_verified(user) and flags.get_flag(db, 'disable_unverified_accounts'):
+        raise HTTPException(status.HTTP_403_FORBIDDEN)
+      elif not permissions.is_admin(user) and flags.get_flag(db, 'disable_non_admin_accounts'):
+        raise HTTPException(status.HTTP_403_FORBIDDEN)
+
+
   async def login(self, request: Request, security_scopes: SecurityScopes = None) -> User:
-    return await self.login_manager(request, security_scopes)
+    user = await self.login_manager(request, security_scopes)
+    self.check_account_disabled_flags(user)
+    return user
 
   async def login_admin(self, request: Request, security_scopes: SecurityScopes = None) -> User:
     user = await self.login_manager(request, security_scopes)
+    self.check_account_disabled_flags(user)
     if not permissions.is_admin(user):
       raise HTTPException(status.HTTP_403_FORBIDDEN)
     return user
 
   async def login_super(self, request: Request, security_scopes: SecurityScopes = None) -> User:
     user = await self.login_manager(request, security_scopes)
+    self.check_account_disabled_flags(user)
     if not permissions.is_super(user):
       raise HTTPException(status.HTTP_403_FORBIDDEN)
     return user

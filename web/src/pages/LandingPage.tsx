@@ -76,12 +76,12 @@ export default function LandingPage() {
       title: 'Customizable',
       text:
         <p>Easy-to-use interface backed by the full power of&nbsp;
-          <a style={{color: 'white', textDecoration: 'underline'}} target='_blank' href='https://www.tamods.org/'>TAMods</a>. No coding/lua required. Brand New community maps already installed</p>,
+          <a style={{color: 'white', textDecoration: 'underline'}} target='_blank' href='https://www.tamods.org/'>TAMods</a>. No coding/lua required. Brand New community maps already installed</p>
     },
     {
       icon: CloudServerOutlined,
       title: 'Reliable',
-      text: "Servers stay up as long as you want with 24/7 Cloud Hosting. Server history lets you expirement easily and rollback to a good config,",
+      text: "Servers stay up as long as you want with 24/7 Cloud Hosting. Server history lets you expirement easily and rollback to a good config",
     },
     {
       icon: SafetyCertificateOutlined,

@@ -18,6 +18,7 @@ import ServersAdminPage from './pages/admin/ServersAdminPage';
 import UsersAdminPage from './pages/admin/UsersAdminPage';
 import LandingPage from './pages/LandingPage';
 import RegionsPage from './pages/RegionsPage';
+import SiteAdminPage from './pages/admin/SiteAdminPage';
 
 const { Header, Content, Sider } = Layout;
 
@@ -102,6 +103,11 @@ function App () {
                     key: '/admin/servers',
                     label: 'Servers',
                     title: '', // disables tooltip on mobile
+                  },                 
+                  {
+                    key: '/admin/site',
+                    label: 'Site',
+                    title: '', // disables tooltip on mobile
                   }
                 ]
               }] : []
@@ -139,6 +145,7 @@ function App () {
               <>
               <Route path='/admin/users' element={<ProtectedRoute><UsersAdminPage/></ProtectedRoute>}/>
               <Route path='/admin/servers' element={<ProtectedRoute><ServersAdminPage/></ProtectedRoute>}/>
+              <Route path='/admin/site' element={<ProtectedRoute><SiteAdminPage/></ProtectedRoute>}/>
               </>
             }
 

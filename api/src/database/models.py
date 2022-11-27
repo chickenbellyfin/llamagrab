@@ -61,3 +61,8 @@ class ServerEditor(Base):
 
   server = relationship('Server', foreign_keys=[server_id])
   user = relationship('User', foreign_keys=[user_id])
+
+class Flag(Base):
+  __tablename__ = 'flags'
+  key = Column(String, nullable=False, primary_key=True)
+  value = Column(String)

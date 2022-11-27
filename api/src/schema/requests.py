@@ -1,5 +1,5 @@
 import re
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from fastapi_camelcase import CamelModel as BaseModel
 from pydantic import validator
@@ -61,3 +61,8 @@ class ServerCreateRequest(BaseModel):
 class ServerSettingsUpdateRequest(BaseModel):
   region: str
   editors: Optional[List[int]]
+
+
+class SetFlagRequest(BaseModel):
+  key: str
+  value: Any

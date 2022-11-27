@@ -17,7 +17,7 @@ from .database import models, queries
 from .database.database import Database, run_migrations
 from .host_manager import HostManager
 from .routes import (account_api, admin_api, data_api, server_api,
-                     server_list_api)
+                     server_list_api, site_admin_api)
 from .server_status import ServerStatusManager
 
 DEFAULT_CONFIG_PATH = 'config.yaml'
@@ -150,6 +150,7 @@ def create_app(
   app.include_router(data_api.router)
   app.include_router(server_api.router)
   app.include_router(server_list_api.router)
+  app.include_router(site_admin_api.router)
 
   return app
 

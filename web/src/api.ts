@@ -316,6 +316,44 @@ async function getRegions(): Promise<{[key: string]: string}> {
   })
 }
 
+async function setSiteFlag(key: string, value: any): Promise<any> {
+  return doRequest({
+    method: 'POST',
+    path: '/api/admin/site/flag',
+    body: JSON.stringify({
+      'key': key,
+      'value': value
+    })
+  })
+}
+
+async function getSiteFlags(): Promise<any> {
+  return doRequest({
+    path: '/api/admin/site/flags'
+  })
+}
+
+async function requestSync(): Promise<any> {
+  return doRequest({
+    method: 'POST',
+    path: '/api/admin/site/request_sync'
+  })
+}
+
+async function restartAllServers(): Promise<number> {
+  return doRequest({
+    method: 'POST',
+    path: '/api/admin/site/restart_all'
+  })
+}
+
+async function disableAllServers(): Promise<number> {
+  return doRequest({
+    method: 'POST',
+    path: '/api/admin/site/disable_all'
+  })
+}
+
 
 export const API = {
   Account: {
@@ -331,6 +369,13 @@ export const API = {
     verifyUser,
     makeAdmin,
     removeAdmin,
+    Site: {
+      setSiteFlag,
+      getSiteFlags,
+      requestSync,
+      restartAllServers,
+      disableAllServers
+    }
   },
   Server: {
     getServerStatus,

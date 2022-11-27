@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "569acd3f-82e1-47ef-a433-cc0a054b1430",
+		"_postman_id": "af4b73b0-fa87-4c16-85ef-ea1f6343b438",
 		"name": "Server Manager",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -208,7 +208,9 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": null
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				}
@@ -319,44 +321,70 @@
 			"name": "Admin API",
 			"item": [
 				{
-					"name": "Create Invite Token",
-					"event": [
+					"name": "Site",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = JSON.parse(responseBody);\r",
-									"postman.setEnvironmentVariable(\"invite_token\", jsonData.invite_token);\r",
-									"pm.test(\"Invite Token Updated\", function() {\r",
-									"    postman.getEnvironmentVariable(\"invite_token\") == jsonData.access_token;\r",
-									"})"
+							"name": "Get Site Flags",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
 								],
-								"type": "text/javascript"
-							}
+								"url": {
+									"raw": "{{base_url}}/api/server/1/stop",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"server",
+										"1",
+										"stop"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Set Flag",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"key\": \"disable_new_accounts\",\r\n    \"value\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin/site/flag",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"site",
+										"flag"
+									]
+								}
+							},
+							"response": []
 						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/admin/invite",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"admin",
-								"invite"
-							]
-						}
-					},
-					"response": []
+					]
 				}
 			]
 		},

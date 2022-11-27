@@ -17,6 +17,7 @@ from src.database import queries as db_queries
 from src.dependencies import dependencies as deps
 from src.schema import requests, responses
 from src.schema.requests import UpdatePasswordRequest
+from src import flags
 
 router = APIRouter()
 
@@ -45,6 +46,8 @@ async def login(login: requests.LoginRequest, db: Session = Depends(deps.db)):
       Header is 'Authorization': 'Bearer $access_token'
   """
   user = db_queries.get_user(db, login.username)
+
+  deps.check_account_disabled_flags(user)
 
   if not user:
     raise InvalidCredentialsException
@@ -124,6 +127,11 @@ def _get_ip(request: Request):
 @router.post('/account/create', include_in_schema=False)
 async def create_account(create_req: requests.AccountCreateRequest, request: Request, db: Session = Depends(deps.db)):
   client_host = _get_ip(request)
+  
+  if flags.get_flag(db, 'disable_new_accounts'):
+    logger.info(f"Blocked new account from IP {client_host} because flag disable_new_accounts is enabled")
+    raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN)
+
   # only allow 1 account to be created from a client address
   # this only persists during the lifetime of the process but probably good enough
   if client_host in deps.created_account:
