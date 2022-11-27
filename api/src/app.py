@@ -52,14 +52,14 @@ class InterceptHandler(logging.Handler):
             level = record.levelno
 
         # Find caller from where originated the logged message
-        frame, depth = logging.currentframe(), 2
+        frame, depth = sys._getframe(6), 6
         while frame.f_code.co_filename == logging.__file__:
             frame = frame.f_back
             depth += 1
 
         logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
 
-logging.basicConfig(handlers=[InterceptHandler()], level=0)
+logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
 
 # https://stackoverflow.com/a/68363904
 class SPAStaticFiles(StaticFiles):
@@ -202,9 +202,9 @@ def main(argv: List[str]):
     app,
     host='0.0.0.0',
     port=config.get('port', 8000),
-    #debug=True,
     log_config=None,
-    proxy_headers=True
+    proxy_headers=True,
+    forwarded_allow_ips="*" # allows uvicorn to access log with IPs forwarded by reverse proxy (caddy)
   )
 
 

@@ -290,7 +290,6 @@ def to_lua(server: models.Server, config: GameServerConfig, lua_settings: LuaSet
   ]:
     if hardcoded_loadouts:
       for idx, loadout in enumerate(hardcoded_loadouts):
-        print(f'{idx} {clazz} {loadout}')
         lua('Loadouts.Hardcoded.%s.set(%d, Loadouts.EquipPoints.Primary, "%s")', clazz, idx, _weapon(clazz, loadout.primary))
         lua('Loadouts.Hardcoded.%s.set(%d, Loadouts.EquipPoints.Secondary, "%s")', clazz, idx, _weapon(clazz, loadout.secondary))
         lua('Loadouts.Hardcoded.%s.set(%d, Loadouts.EquipPoints.Tertiary, "%s")', clazz, idx, _weapon(clazz, loadout.tertiary))
