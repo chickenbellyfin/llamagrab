@@ -85,6 +85,8 @@ class Agent:
     old_active_servers = self.get_current_active_servers()
     self.write_active_servers(active_servers)
 
+    running_servers = self.docker.status()
+
     # Detect changes
     changed = set()
     for server_id in active_servers:
@@ -95,6 +97,9 @@ class Agent:
       elif active_servers[server_id] != old_active_servers[server_id]:
         old_hash = md5(old_active_servers[server_id])
         self.logger.info(f'server({server_id}) is being updated new={new_hash} old={old_hash}')
+        changed.add(server_id)
+      elif server_id not in running_servers:
+        self.logger.info(f'server({server_id}) is supposed to be running but isn\'t. Starting with hash={new_hash}')
         changed.add(server_id)
       else:
         self.logger.info(f'server({server_id}) is unchanged')
@@ -109,7 +114,6 @@ class Agent:
       self.logger.info(f'Stopping server({server_id})')
       self.docker.stop_server(server_id)
 
-    running_servers = self.docker.status()
     used_port_offsets = set(running_servers.values())
     new_port_offset = 0
 
