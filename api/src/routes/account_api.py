@@ -47,11 +47,13 @@ async def login(login: requests.LoginRequest, db: Session = Depends(deps.db)):
   """
   user = db_queries.get_user(db, login.username)
 
-  deps.check_account_disabled_flags(user)
 
   if not user:
     raise InvalidCredentialsException
-  elif not argon2.verify(login.password, user.password):
+  
+  deps.check_account_disabled_flags(user)
+  
+  if not argon2.verify(login.password, user.password):
     raise InvalidCredentialsException
 
   access_token = deps.login_manager.create_access_token(data=dict(sub=login.username))
