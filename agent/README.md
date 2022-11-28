@@ -105,7 +105,6 @@ Agent is configured through env vars
 | LG_HOST_ABS_DATA_DIR |  |  | If running in docker, should be the path on the host which will contain gamesettings 
 | LG_PORT |  | `8999` | HTTP Port for the agent API. Must match the setting in llamagrab-api. 
 | LG_TESTING | | `false` in docker image, `true` otherwise | Disables launching actual game servers and uses dummy implementation. This is set to `false` in the docker image.
-| LG_LOGINSERVER | | | Override the loginserver that game servers connect to. By default, taserver-docker image uses `ta.kfk4ever.com`
 | LG_USE_HOST_NETWORKING | | `false` | Set to `true` if loginserver is on the same host as taserver so that loginserver can detect the correct IP for taservers
 | LG_TASERVER_IMAGE | | `taserver` | Docker image to launch for taserver.
 | LG_TOKENS | **Required** | | Comma separated list of auth tokens which will allow API access.
