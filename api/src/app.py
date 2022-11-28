@@ -12,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi_login import LoginManager
 from loguru import logger
 
-from . import dependencies
+from . import dependencies, flags
 from .database import models, queries
 from .database.database import Database, run_migrations
 from .host_manager import HostManager
@@ -129,7 +129,8 @@ def create_app(
   login_manager: LoginManager,
   host_manager: HostManager,
   status_manager: ServerStatusManager,
-  regions: Mapping[str, str]
+  regions: Mapping[str, str],
+  loginservers: List
 ) -> FastAPI:
 
   dependencies.dependencies.set(
@@ -137,8 +138,10 @@ def create_app(
     login_manager=login_manager,
     host_manager=host_manager,
     status_manager=status_manager,
-    regions=regions
+    regions=regions,
+    loginservers=loginservers
   )
+  flags.set_loginserver_urls([s['url'] for s in loginservers])
   app = FastAPI(
     title="Llamagrab",
     description=DESCRIPTION,
@@ -190,7 +193,8 @@ def main(argv: List[str]):
     login_manager=login_manager,
     host_manager=host_manager,
     status_manager=server_status_manager,
-    regions=config['regions']
+    regions=config['regions'],
+    loginservers=config['loginservers']
   )
 
   app = FastAPI(docs_url=None, redoc_url=None)

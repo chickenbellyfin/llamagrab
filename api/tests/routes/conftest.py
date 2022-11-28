@@ -223,7 +223,8 @@ def test_app(
     login_manager=mock_login_manager,
     host_manager=host_manager,
     status_manager=status_manager,
-    regions=test_regions
+    regions=test_regions,
+    loginservers=[]
   )
   top_level = FastAPI()
   top_level.mount('/api', api)

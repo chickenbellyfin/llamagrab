@@ -1,5 +1,5 @@
 import { getToken } from './auth';
-import { GameServerConfig, ModProperty, RegionStatus, ServerSettings, ServerStatus, ServerVersion, ServerVersionDetails, User, UserAccount } from './domain';
+import { GameServerConfig, Loginserver, ModProperty, RegionStatus, ServerSettings, ServerStatus, ServerVersion, ServerVersionDetails, User, UserAccount } from './domain';
 
 function removeEmptyModProperties(items: ModProperty[] | undefined): ModProperty[] | undefined {
   // NOTE: do not change to `!=`, needs to also check for null
@@ -354,6 +354,12 @@ async function disableAllServers(): Promise<number> {
   })
 }
 
+async function getLoginservers(): Promise<Loginserver[]> {
+  return doRequest({
+    path: '/api/data/loginservers'
+  })
+}
+
 
 export const API = {
   Account: {
@@ -396,6 +402,7 @@ export const API = {
     getServerVersionDetails
   },
   Data: {
-    getRegions
+    getRegions,
+    getLoginservers
   }
 }

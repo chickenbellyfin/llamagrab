@@ -20,6 +20,12 @@ regions:
 # how frequently to poll the agent for status in each region
 status_polling_rate_secs: 300
 
+loginservers:
+  - name: Server
+    url: server.local
+  - name: localhost
+    url: localhost
+
 host_manager:
   port: 8999
 

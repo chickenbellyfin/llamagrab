@@ -54,16 +54,28 @@ def test_sync_new_server(test_client: TestClient, mock_docker: Docker, temp_dir)
 
   mock_docker.status.return_value = {}
   response = test_client.post('/api/sync', json={
-    1: 'Test Lua 1',
-    5: 'Test Lua 5'
+    1: {'lua': 'Test Lua 1'},
+    5: {'lua': 'Test Lua 5', 'loginserver': 'loginserver.somewhere'}
   }, headers=HEADER)
 
   assert response.ok
 
   mock_docker.status.assert_called()
   mock_docker.start_server.assert_has_calls([
-    call(1, 0, os.path.join(temp_dir, 'managed_gamesettings', 'server_1'), os.path.join(temp_dir, 'banlist.txt')),
-    call(5, 2, os.path.join(temp_dir, 'managed_gamesettings', 'server_5'), os.path.join(temp_dir, 'banlist.txt'))
+    call(
+      server_id=1, 
+      offset=0, 
+      abs_gamesettings=os.path.join(temp_dir, 'managed_gamesettings', 'server_1'), 
+      abs_banlist=os.path.join(temp_dir, 'banlist.txt'),
+      loginserver=None
+    ),
+    call(
+      server_id=5, 
+      offset=2, 
+      abs_gamesettings=os.path.join(temp_dir, 'managed_gamesettings', 'server_5'), 
+      abs_banlist=os.path.join(temp_dir, 'banlist.txt'), 
+      loginserver='loginserver.somewhere'
+    )
   ])
   mock_docker.stop_server.assert_not_called()
 
@@ -79,16 +91,28 @@ def test_host_abs_path(temp_dir, mock_docker):
 
   mock_docker.status.return_value = {}
   response = test_client.post('/api/sync', json={
-    1: 'Test Lua 1',
-    5: 'Test Lua 5'
+    1: {'lua': 'Test Lua 1'},
+    5: {'lua': 'Test Lua 5'}
   }, headers=HEADER)
 
   assert response.ok
 
   mock_docker.status.assert_called()
   mock_docker.start_server.assert_has_calls([
-    call(1, 0, os.path.join('/some/host/dir/managed_gamesettings', 'server_1'), os.path.join('/some/host/dir', 'banlist.txt')),
-    call(5, 2, os.path.join('/some/host/dir/managed_gamesettings', 'server_5'), os.path.join('/some/host/dir', 'banlist.txt'))
+    call(
+      server_id=1, 
+      offset=0, 
+      abs_gamesettings=os.path.join('/some/host/dir/managed_gamesettings', 'server_1'), 
+      abs_banlist=os.path.join('/some/host/dir', 'banlist.txt'),
+      loginserver=None
+    ),
+    call(
+      server_id=5, 
+      offset=2, 
+      abs_gamesettings=os.path.join('/some/host/dir/managed_gamesettings', 'server_5'), 
+      abs_banlist=os.path.join('/some/host/dir', 'banlist.txt'),
+      loginserver=None
+    )
   ])
   mock_docker.stop_server.assert_not_called()
 
@@ -103,8 +127,8 @@ def test_sync_stop_server(test_client: TestClient, mock_docker: Docker):
   mock_docker.status.return_value = {}
   # create two servers
   response1 = test_client.post('/api/sync', json={
-    1: 'Test Lua 1',
-    5: 'Test Lua 5'
+    1: {'lua': 'Test Lua 1'},
+    5: {'lua': 'Test Lua 5'}
   }, headers=HEADER)
 
   assert response1.ok
@@ -117,7 +141,7 @@ def test_sync_stop_server(test_client: TestClient, mock_docker: Docker):
 
   # Remove server 1
   response2 = test_client.post('/api/sync', json={
-    5: 'Test Lua 5'
+    5: {'lua': 'Test Lua 5'}
   }, headers=HEADER)
   assert response2.ok
   mock_docker.status.assert_called()
@@ -128,8 +152,8 @@ def test_sync_update_server(test_client: TestClient, mock_docker: Docker, temp_d
   mock_docker.status.return_value = {}
   # create two servers
   response1 = test_client.post('/api/sync', json={
-    1: 'Test Lua 1',
-    5: 'Test Lua 5'
+    1: {'lua': 'Test Lua 1'},
+    5: {'lua': 'Test Lua 5'}
   }, headers=HEADER)
   assert response1.ok
 
@@ -141,28 +165,33 @@ def test_sync_update_server(test_client: TestClient, mock_docker: Docker, temp_d
 
   # update server 1
   response2 = test_client.post('/api/sync', json={
-    1: 'Test Lua 1 updated',
-    5: 'Test Lua 5'
+    1: {'lua': 'Test Lua 1 updated'},
+    5: {'lua': 'Test Lua 5'}
   }, headers=HEADER)
   assert response2.ok
 
   mock_docker.status.assert_called()
   mock_docker.stop_server.assert_not_called()
   mock_docker.start_server.assert_called_once_with(
-    1, 0, os.path.join(temp_dir, 'managed_gamesettings', 'server_1'), os.path.join(temp_dir, 'banlist.txt'))
+    server_id=1, 
+    offset=0, 
+    abs_gamesettings=os.path.join(temp_dir, 'managed_gamesettings', 'server_1'), 
+    abs_banlist=os.path.join(temp_dir, 'banlist.txt'),
+    loginserver=None
+  )
 
 def test_sync_lua_written(test_client: TestClient, mock_docker: Docker, temp_dir):
   mock_docker.status.return_value = {}
   # create two servers
   response = test_client.post('/api/sync', json={
-    1: 'Test Lua 1',
-    5: 'Test Lua 5'
+    1: {'lua': 'Test Lua 1'},
+    5: {'lua': 'Test Lua 5'}
   }, headers=HEADER)
 
   assert response.ok
 
   with open(os.path.join(temp_dir, 'active_servers.json')) as f:
-    assert {'1':'Test Lua 1', '5': 'Test Lua 5'} == json.load(f)
+    assert {'1':{'lua': 'Test Lua 1'}, '5': {'lua': 'Test Lua 5'}} == json.load(f)
 
   with open(os.path.join(temp_dir, 'managed_gamesettings', 'server_1', 'serverconfig.lua')) as f:
     assert 'Test Lua 1' == f.read()

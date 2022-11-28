@@ -1,5 +1,6 @@
 alembic
 argon2_cffi
+attrs
 fastapi==0.70.1
 fastapi-camelcase
 fastapi-login

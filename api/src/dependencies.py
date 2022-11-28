@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 from fastapi import Request, status
 from fastapi.exceptions import HTTPException
@@ -24,12 +24,14 @@ class Dependencies:
     login_manager: LoginManager,
     host_manager: HostManager,
     status_manager: ServerStatusManager,
-    regions: Dict[str, str]):
+    regions: Dict[str, str],
+    loginservers: List):
     self._db_session = db_session
     self.login_manager = login_manager
     self._host_manager = host_manager
     self.status_manager = status_manager
     self.regions = regions
+    self.loginservers = loginservers
 
     # set of IPs which created an account
     self.created_account = set()

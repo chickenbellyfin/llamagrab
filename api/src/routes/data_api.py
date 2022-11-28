@@ -27,6 +27,12 @@ async def get_regions() -> RegionListResponse:
   """ Return a list of region codes and their human-friendly names"""
   return deps.regions
 
+@router.get('/data/loginservers', tags=['data'])
+async def get_loginservers():
+  """ Return a list of allowed loginservers"""
+  return deps.loginservers
+
+
 @router.get('/status', tags=['data'])
 async def get_status() -> str:
   """ Health check. Responds with `"ok"` if the service is healthy"""

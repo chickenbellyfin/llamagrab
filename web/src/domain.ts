@@ -176,3 +176,8 @@ export type ServerVersionChange = {
 export type ServerVersionDetails = {
   changes: ServerVersionChange[]
 }
+
+export type Loginserver = {
+  name: string,
+  url: string
+}

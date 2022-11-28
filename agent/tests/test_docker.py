@@ -194,8 +194,8 @@ def test_start_server_host_network(mock_client):
   ])
 
 def test_start_server_custom_login(mock_client):
-  docker = Docker(mock_client, loginserver='loginserver.test.local')
-  docker.start_server(56, 0, '/test/gamesettings/path', '/test/banlist.txt')
+  docker = Docker(mock_client)
+  docker.start_server(56, 0, '/test/gamesettings/path', '/test/banlist.txt', loginserver='loginserver.test.local')
   mock_client.assert_has_calls([
     call.containers.get('taserver_56'),
     call.containers.get().remove(force=True),
@@ -276,7 +276,7 @@ def test_stop_server(mock_client):
 def test_null_docker():
   nd = NullDocker()
   assert {} == nd.status()
-  nd.start_server(5, 0, "test")
+  nd.start_server(5, 0, "test", "test_banlist")
   assert {5:0} == nd.status()
 
   nd.stop_server(4)

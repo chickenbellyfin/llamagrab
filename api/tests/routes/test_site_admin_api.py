@@ -8,6 +8,7 @@ def test_get_flags(test_client: TestClient, login_user_admin,):
     "disable_new_accounts": False,
     "disable_unverified_accounts": False,
     "disable_non_admin_accounts": False,
+    "loginserver": None
   }
 
 def test_set_flags(test_client: TestClient, login_user_admin,):
@@ -22,4 +23,5 @@ def test_set_flags(test_client: TestClient, login_user_admin,):
     "disable_new_accounts": True,
     "disable_unverified_accounts": False,
     "disable_non_admin_accounts": False,
+    "loginserver": None
   }

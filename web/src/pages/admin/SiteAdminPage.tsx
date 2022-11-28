@@ -1,4 +1,4 @@
-import { Button, Card, Form, Input, message, PageHeader, Popconfirm, Spin, Switch } from "antd";
+import { Button, Card, Form, Input, message, PageHeader, Popconfirm, Select, Spin, Switch } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../../api";
@@ -8,18 +8,19 @@ import useLoader from "../../useLoader";
 
 
 export default function SiteAdminPage() {
-  const loader = useLoader(API.Admin.Site.getSiteFlags)
+  const flagsLoader = useLoader(API.Admin.Site.getSiteFlags)
+  const loginserversLoader = useLoader(API.Data.getLoginservers)
   const [actionInProgress, setActionInProgress] = useState(false)
   const navigate = useNavigate()
 
-  const onUpdateFlag = async (key: string, newValue: boolean) => {
+  const onUpdateFlag = async (key: string, newValue: any) => {
     try {
       await API.Admin.Site.setSiteFlag(key, newValue)
       message.success("Flag Updated")
     } catch {
       message.error("Flag Update Failed")
     } finally {
-      loader.invalidate()
+      flagsLoader.invalidate()
     }
   }
 
@@ -59,32 +60,49 @@ export default function SiteAdminPage() {
     }
   }
 
-
   return (
     <ContentWrapper>
       <PageHeader title={<span className="ui-title">Site Settings</span>} onBack={() => navigate('/')} />
 
-      <Spin spinning={loader.initialLoad}>
+      <Spin spinning={flagsLoader.initialLoad}>
         <Card title="Flags" style={{marginBottom: '10px'}}>
           <Form>
             <Form.Item label="Disable New Account Creation">
               <Switch 
-                checked={loader.value ? loader.value['disable_new_accounts'] : false} 
+                checked={flagsLoader.value ? flagsLoader.value['disable_new_accounts'] : false} 
                 onChange={(value) => onUpdateFlag('disable_new_accounts', value)}/>
             </Form.Item>
 
             <Form.Item label="Disable Un-Verified Users"
               extra="All unverified-tier users will be unable to log in or make changes.">
               <Switch
-                checked={loader.value? loader.value['disable_unverified_accounts'] : false} 
+                checked={flagsLoader.value? flagsLoader.value['disable_unverified_accounts'] : false} 
                 onChange={(value) => onUpdateFlag('disable_unverified_accounts', value)}/>
             </Form.Item>
 
             <Form.Item label="Disable Non-Admin Users"
               extra="All users other than Admin+ (including unverified) will be unable to log in or make changes.">
               <Switch
-                checked={loader.value? loader.value['disable_non_admin_accounts'] : false} 
+                checked={flagsLoader.value? flagsLoader.value['disable_non_admin_accounts'] : false} 
                 onChange={(value) => onUpdateFlag('disable_non_admin_accounts', value)}/>
+            </Form.Item>
+
+            <Form.Item label="Login Server"
+              extra='Set the loginserver URL for all servers. Must "Request Sync" after changing this setting'>
+              <Select
+                defaultValue=""
+                value={flagsLoader.value ? flagsLoader.value['loginserver'] : ""}
+                style={{ width: 230 }}
+                onChange={(value) => onUpdateFlag('loginserver', value)}
+                options={
+                  loginserversLoader.value ? 
+                    loginserversLoader.value.map(item => { 
+                      return {value: item.url, label: item.name}
+                    })
+                    :
+                    []
+                }
+              />
             </Form.Item>
           </Form>
         </Card>

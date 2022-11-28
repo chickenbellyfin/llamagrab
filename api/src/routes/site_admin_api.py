@@ -17,7 +17,7 @@ router = APIRouter()
 @router.post('/admin/site/flag', include_in_schema=False)
 async def set_flag(request: SetFlagRequest, user: models.User = Depends(deps.login_admin), db: Session = Depends(deps.db)):
   logger.info(
-    f"Set Flag {request.key} = {request.value} ({type(request.value)})")
+    f"User(id={user.id} username={user.username}) Set Flag {request.key} = {request.value} ({type(request.value)})")
   flags.set_flag(db, request.key, request.value)
 
 

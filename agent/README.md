@@ -10,9 +10,12 @@ All agent endpoins require a token header:
 Sync message payloads contain the entire set of taserver configs which are suppost to run on the host.
 ```
 {
-  0: '<tamods lua config>',
-  1: '<tamods lua config>',
-  <serverid:int>: '<tamods lua config>',
+  0: {
+    'lua': '<tamods lua config>',
+    'loginserver': '<optional:loginserver url>'
+  },
+  1: { ... },
+  <serverid:int>: { ... },
   ...
 }
 ```

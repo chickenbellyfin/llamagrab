@@ -6,9 +6,8 @@ logger = logging.getLogger(__name__)
 
 class Docker:
 
-  def __init__(self, docker_client, use_host_networking: bool = False, loginserver: str = None, image = 'taserver'):
+  def __init__(self, docker_client, use_host_networking: bool = False, image = 'taserver'):
     self.use_host_networking = use_host_networking
-    self.loginserver = loginserver
     self.image = image
     self.client = docker_client
 
@@ -27,7 +26,7 @@ class Docker:
 
     return running_containers
 
-  def start_server(self, server_id: int, offset: int, abs_gamesettings: str, abs_banlist: str) -> None:
+  def start_server(self, server_id: int, offset: int, abs_gamesettings: str, abs_banlist: str, loginserver: str = None) -> None:
     name = self._container_name(server_id)
 
     gameserver1_port = 7777 + offset
@@ -67,7 +66,7 @@ class Docker:
       restart_policy = {'Name': 'unless-stopped'},
       cap_add = ['NET_ADMIN'],
       ports = port_mappings,
-      environment = [f'LOGINSERVER={self.loginserver}'] if self.loginserver else None,
+      environment = [f'LOGINSERVER={loginserver}'] if loginserver else None,
       # If the login server is on the same host as the container, use host networking so that
       # the ip address is detected correctly
       network_mode = network_mode
@@ -93,7 +92,7 @@ class NullDocker:
   def status(self) -> Mapping[int, int]:
     return self.running.copy()
 
-  def start_server(self, server_id: int, offset: int, abs_gamesettings: str) -> None:
+  def start_server(self, server_id: int, offset: int, abs_gamesettings: str, abs_banlist: str, loginserver: str = None) -> None:
     self.running[server_id] = offset
 
   def stop_server(self, server_id: int) -> None:

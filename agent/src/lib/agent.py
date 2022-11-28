@@ -67,7 +67,7 @@ class Agent:
       server_dir = self.path_for(server_id)
       os.makedirs(server_dir, exist_ok=True)
       with open(os.path.join(server_dir, 'serverconfig.lua'), 'w') as lua_file:
-        lua_file.write(active_servers[server_id])
+        lua_file.write(active_servers[server_id]['lua'])
 
     with open(self.active_servers_file, 'w') as config_file:
       json.dump(active_servers, config_file, indent=2)
@@ -128,16 +128,29 @@ class Agent:
         used_port_offsets.add(new_port_offset)
         self.logger.info(f'Starting server({server_id}) with offset {new_port_offset}')
 
-      self.docker.start_server(server_id, server_offset, server_path, self.host_banlist)
+      self.docker.start_server(
+        server_id=server_id, 
+        offset=server_offset, 
+        abs_gamesettings=server_path, 
+        abs_banlist=self.host_banlist, 
+        loginserver=active_servers[server_id].get('loginserver')
+      )
 
   def restart(self, server_id):
-    active = self.docker.status()
-    if server_id not in active:
+    offsets = self.docker.status()
+    active_servers = self.get_current_active_servers()
+    if server_id not in offsets:
       logging.warn(f'Requested to restart {server_id} but it is not active on this host')
       return
     logging.info(f'Restarting {server_id}')
     self.docker.stop_server(server_id)
-    self.docker.start_server(server_id, active[server_id], self.host_path_for(server_id), self.host_banlist)
+    self.docker.start_server(
+      server_id=server_id, 
+      offset=offsets[server_id], 
+      abs_gamesettings=self.host_path_for(server_id), 
+      abs_banlist=self.host_banlist,
+      loginserver=active_servers[server_id].get('loginserver')
+    )
     logging.info(f'Restarted {server_id}')
 
 

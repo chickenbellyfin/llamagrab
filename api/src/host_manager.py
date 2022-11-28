@@ -1,4 +1,5 @@
 import hashlib
+import json
 import threading
 import time
 from collections import namedtuple
@@ -9,15 +10,16 @@ from loguru import logger
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.session import sessionmaker
 
-from . import database, lua
+from . import database, flags, lua
 from .database import models, queries
 from .lua import LuaSettings
 from .schema.game_server_config import GameServerConfig
 
 Node = namedtuple('Node', 'name, host, token')
 
-def md5(data: str) -> str:
-  return hashlib.md5(data.encode('utf-8')).hexdigest()
+def md5(data) -> str:
+  val = json.dumps(data, sort_keys=True)
+  return hashlib.md5(val.encode('utf-8')).hexdigest()
 
 def get_lua_settings(db: Session) -> LuaSettings:
   admin_users = queries.get_admin_tribes_usernames(db)
@@ -79,7 +81,10 @@ class HostManager:
         for server in active_for_region:
           server_config = GameServerConfig.parse(server.server_config)
           server_lua = lua.to_lua(server, server_config, lua_settings)
-          payload[server.id] = server_lua
+          payload[server.id] = {
+            'lua': server_lua,
+            'loginserver': flags.get_flag(db, 'loginserver')
+          }
 
         message_hashed = { k: md5(payload[k]) for k in payload }
         logger.info(f'Syncing configs to {node.name}@{node.host}:{self.port} {message_hashed}')

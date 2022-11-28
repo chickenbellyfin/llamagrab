@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, Mock, call, patch
 
 import pytest
 import requests
-from src import lua
+from src import lua, flags
 from src.database import queries as db_queries
 from src.database.models import Server
 from src.host_manager import HostManager
@@ -103,6 +103,7 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
 
   monkeypatch.setattr(db_queries, 'get_active_servers', mocked_active_servers)
   monkeypatch.setattr(db_queries, "get_admin_tribes_usernames", lambda db: [])
+  monkeypatch.setattr(flags, 'get_flag', lambda db,key: None)
 
   def mocked_lua(server, config, lua_settings):
     return name_to_test_lua[config.display_name]
@@ -120,14 +121,14 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
   mock_requests.assert_has_calls([
     call.post(
       'hostname1:23456/api/sync',
-      json={1: 'TEST_LUA_1'},
+      json={1: {'lua': 'TEST_LUA_1', 'loginserver': None}},
       headers={'Token': 'r1token'}
     ),
     call.post().ok.__bool__(),
     call.post().json(),
     call.post(
       'hostname2:23456/api/sync',
-      json= {2: 'TEST_LUA_2'},
+      json= {2: {'lua': 'TEST_LUA_2', 'loginserver': None}},
       headers={'Token': 'r2token'}
     ),
     call.post().ok.__bool__(),

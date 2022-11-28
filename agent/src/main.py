@@ -2,7 +2,7 @@
 import logging
 import os
 import sys
-from typing import Dict, List, Set
+from typing import Any, Dict, List, Set
 from ipaddress import ip_interface
 
 import docker as docker_lib
@@ -31,7 +31,7 @@ def create_app(agent: Agent, tokens: Set[str]):
     pass
 
   @app.post('/api/sync')
-  def handle_sync(servers: Dict[int, str], auth=Depends(auth)):
+  def handle_sync(servers: Dict[int, Any], auth=Depends(auth)):
     agent.sync(servers)
     return 'ok'
 
@@ -84,7 +84,6 @@ def main(argv: List[str]):
   host_abs_data_dir = os.environ.get('LG_HOST_ABS_DATA_DIR')
   port = int(os.environ.get('LG_PORT', 8999))
   testing = os.environ.get('LG_TESTING', 'true').lower() == 'true'
-  loginserver = os.environ.get('LG_LOGINSERVER')
   use_host_networking = os.environ.get('LG_USE_HOST_NETWORKING', 'false') == 'true'
   image = os.environ.get('LG_TASERVER_IMAGE', 'taserver')
   # tokens are comma separated non-empty strings
@@ -101,7 +100,6 @@ def main(argv: List[str]):
   docker = NullDocker() if testing else Docker(
     docker_lib.from_env(),
     use_host_networking=use_host_networking,
-    loginserver=loginserver,
     image=image
   )
 
