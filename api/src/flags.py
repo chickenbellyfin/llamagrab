@@ -34,8 +34,7 @@ def set_loginserver_urls(urls: List[str]):
   FLAGS['loginserver'].options = list(urls)
 
 def get_flag(db: Session, key: str):
-  flag = _query_flag(db, key)  
-  print(flag.value, type(flag.value))
+  flag = _query_flag(db, key) 
   return json.loads(flag.value)
 
 def set_flag(db: Session, key: str, value):
