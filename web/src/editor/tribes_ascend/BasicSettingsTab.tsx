@@ -38,11 +38,11 @@ export default function BasicSettingsTab (
         maxLength={500}/>
     </Form.Item>
 
-    <Form.Item name='tribes_server_password' label='Server Password' rules={[Rules.allowedCharacters]}>
+    <Form.Item name='tribes_server_special_word' label='Server Password' rules={[Rules.allowedCharacters]}>
       <Input.Password
         defaultValue={config['password']}
         onChange={updateInput('password')}
-        autoComplete='off'/>
+        autoComplete='new-password'/>
     </Form.Item>
     <Form.Item
       label='Server Admins'
