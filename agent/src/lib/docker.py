@@ -1,8 +1,14 @@
 import logging
 from typing import Mapping
+from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
 
+@dataclass
+class ContainerMetadata:
+  server_id: int
+  port_offset: int
+  hash: str
 
 class Docker:
 
@@ -14,19 +20,30 @@ class Docker:
   def _container_name(self, server_id):
     return f'taserver_{server_id}'
 
-  def status(self) -> Mapping[int, int]:
+  def status(self) -> Mapping[int, ContainerMetadata]:
     containers = self.client.containers.list()
     taservers = filter(lambda c: 'llamagrab' in c.labels, containers)
     running_containers = {}
 
     for container in taservers:
       server_id = int(container.labels['server_id'])
-      port_offset = int(container.labels['port_offset'])
-      running_containers[server_id] = port_offset
+      running_containers[server_id] = ContainerMetadata(
+        server_id=server_id,
+        port_offset=int(container.labels['port_offset']),
+        hash=container.labels.get('hash')
+      )
 
     return running_containers
 
-  def start_server(self, server_id: int, offset: int, abs_gamesettings: str, abs_banlist: str, loginserver: str = None) -> None:
+  def start_server(
+    self, 
+    server_id: int, 
+    offset: int, 
+    abs_gamesettings: str, 
+    abs_banlist: str, 
+    hash: str,
+    loginserver: str = None
+  ) -> None:
     name = self._container_name(server_id)
 
     gameserver1_port = 7777 + offset
@@ -56,14 +73,16 @@ class Docker:
       labels = {
         'llamagrab': '', # makes it easy to filter containers to get status
         'server_id': f'{server_id}',
-        'port_offset': f'{offset}'
+        'port_offset': f'{offset}',
+        'hash': hash
       },
       volumes = [
         f'{abs_gamesettings}:/gamesettings',
         f'{abs_banlist}:/app/taserver/data/banlist.txt'
       ],
       detach = True,
-      restart_policy = {'Name': 'unless-stopped'},
+      # Note: no restart policy since agent will handle bringing containers up with limited concurrency
+      # restart_policy = {'Name': 'unless-stopped'},
       cap_add = ['NET_ADMIN'],
       ports = port_mappings,
       environment = [f'LOGINSERVER={loginserver}'] if loginserver else None,
@@ -89,11 +108,22 @@ class NullDocker:
   def __init__(self):
     self.running = {}
 
-  def status(self) -> Mapping[int, int]:
+  def status(self) -> Mapping[int, ContainerMetadata]:
     return self.running.copy()
 
-  def start_server(self, server_id: int, offset: int, abs_gamesettings: str, abs_banlist: str, loginserver: str = None) -> None:
-    self.running[server_id] = offset
+  def start_server(self,
+    server_id: int, 
+    offset: int, 
+    abs_gamesettings: str, 
+    abs_banlist: str, 
+    hash: str,
+    loginserver: str = None
+  ) -> None:
+    self.running[server_id] = ContainerMetadata(
+      server_id=server_id,
+      port_offset=offset,
+      hash=hash
+    )
 
   def stop_server(self, server_id: int) -> None:
     if server_id in self.running:

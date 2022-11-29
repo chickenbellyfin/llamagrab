@@ -7,8 +7,9 @@ from unittest.mock import Mock, call
 import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
+from src.lib import hashing
 from src.lib.agent import Agent
-from src.lib.docker import Docker
+from src.lib.docker import ContainerMetadata, Docker
 from src.main import create_app
 
 HEADER = {'Token': 'thetoken'}
@@ -27,7 +28,9 @@ def temp_dir():
 def agent(temp_dir, mock_docker) -> Agent:
   the_agent = Agent(
     data_dir=temp_dir,
-    docker=mock_docker
+    docker=mock_docker,
+    max_concurrency=99,
+    container_start_time_secs=-1 # sets the expiry in the past
   )
   return the_agent
 
@@ -58,6 +61,9 @@ def test_sync_new_server(test_client: TestClient, mock_docker: Docker, temp_dir)
     5: {'lua': 'Test Lua 5', 'loginserver': 'loginserver.somewhere'}
   }, headers=HEADER)
 
+  hash1 = hashing.md5({'lua': 'Test Lua 1'})
+  hash2 = hashing.md5({'lua': 'Test Lua 5', 'loginserver': 'loginserver.somewhere'})
+
   assert response.ok
 
   mock_docker.status.assert_called()
@@ -67,6 +73,7 @@ def test_sync_new_server(test_client: TestClient, mock_docker: Docker, temp_dir)
       offset=0, 
       abs_gamesettings=os.path.join(temp_dir, 'managed_gamesettings', 'server_1'), 
       abs_banlist=os.path.join(temp_dir, 'banlist.txt'),
+      hash=hash1,
       loginserver=None
     ),
     call(
@@ -74,6 +81,7 @@ def test_sync_new_server(test_client: TestClient, mock_docker: Docker, temp_dir)
       offset=2, 
       abs_gamesettings=os.path.join(temp_dir, 'managed_gamesettings', 'server_5'), 
       abs_banlist=os.path.join(temp_dir, 'banlist.txt'), 
+      hash=hash2,
       loginserver='loginserver.somewhere'
     )
   ])
@@ -104,6 +112,7 @@ def test_host_abs_path(temp_dir, mock_docker):
       offset=0, 
       abs_gamesettings=os.path.join('/some/host/dir/managed_gamesettings', 'server_1'), 
       abs_banlist=os.path.join('/some/host/dir', 'banlist.txt'),
+      hash=hashing.md5({'lua': 'Test Lua 1'}),
       loginserver=None
     ),
     call(
@@ -111,6 +120,7 @@ def test_host_abs_path(temp_dir, mock_docker):
       offset=2, 
       abs_gamesettings=os.path.join('/some/host/dir/managed_gamesettings', 'server_5'), 
       abs_banlist=os.path.join('/some/host/dir', 'banlist.txt'),
+      hash=hashing.md5({'lua': 'Test Lua 5'}),
       loginserver=None
     )
   ])
@@ -135,8 +145,8 @@ def test_sync_stop_server(test_client: TestClient, mock_docker: Docker):
 
   mock_docker.reset_mock()
   mock_docker.status.return_value = {
-    1: 0,
-    5: 2
+    1: ContainerMetadata(1, 0, hashing.md5({'lua': 'Test Lua 1'})),
+    5: ContainerMetadata(1, 0, hashing.md5({'lua': 'Test Lua 5'}))
   }
 
   # Remove server 1
@@ -159,8 +169,8 @@ def test_sync_update_server(test_client: TestClient, mock_docker: Docker, temp_d
 
   mock_docker.reset_mock()
   mock_docker.status.return_value = {
-    1: 0,
-    5: 2
+    1: ContainerMetadata(server_id=1, port_offset=0, hash=hashing.md5({'lua': 'Test Lua 1'})),
+    5: ContainerMetadata(server_id=2, port_offset=2, hash=hashing.md5({'lua': 'Test Lua 5'}))
   }
 
   # update server 1
@@ -177,6 +187,7 @@ def test_sync_update_server(test_client: TestClient, mock_docker: Docker, temp_d
     offset=0, 
     abs_gamesettings=os.path.join(temp_dir, 'managed_gamesettings', 'server_1'), 
     abs_banlist=os.path.join(temp_dir, 'banlist.txt'),
+    hash=hashing.md5({'lua': 'Test Lua 1 updated'}),
     loginserver=None
   )
 
@@ -215,14 +226,68 @@ def test_bad_message_payload(test_client: TestClient, mock_docker: Docker):
   mock_docker.start_server.assert_not_called()
 
 def test_get_status(test_client: TestClient, mock_docker: Docker):
+  mock_docker.status.return_value = {}
+
+  response = test_client.post('/api/sync', json={
+    66: {'lua': 'Test Lua 66'},
+    99: {'lua': 'Test Lua 99'}
+  }, headers=HEADER)
+  # the servers should be in agent.tasks with action=start
+
   mock_docker.status.return_value = {
-    66: 77,
-    88: 99
+    66: ContainerMetadata(server_id=66, port_offset=0, hash='hash1'),
+    88: ContainerMetadata(server_id=99, port_offset=2, hash='hash1')
   }
   response = test_client.get('/api/status', headers=HEADER)
 
   assert response.ok
-  assert response.json() == [66, 88]
+  assert response.json() == {
+    '66': 'starting',
+    '99': 'starting'
+  }
+
+def test_get_status_running(test_client: TestClient, mock_docker: Docker):
+  mock_docker.status.return_value = {}
+
+  response = test_client.post('/api/sync', json={
+    66: {'lua': 'Test Lua 66'},
+  }, headers=HEADER)
+  # the server is agent.tasks with action=start
+  
+  mock_docker.status.return_value = {
+    66: ContainerMetadata(server_id=66, port_offset=0, hash=hashing.md5({'lua': 'Test Lua 66'}))
+  }
+  response = test_client.post('/api/sync', json={
+    66: {'lua': 'Test Lua 66'},
+  }, headers=HEADER)
+  # the second sync causes agent to expire the 'start' task
+  # now server_66 is running in docker and not starting in agent tasks
+
+  response = test_client.get('/api/status', headers=HEADER)
+
+  assert response.ok
+  assert response.json() == {
+    '66': 'running'
+  }
+
+def test_get_status_restarting(test_client: TestClient, mock_docker: Docker):
+  mock_docker.status.return_value = {}
+
+  mock_docker.status.return_value = {
+    66: ContainerMetadata(server_id=66, port_offset=0, hash='differenthash')
+  }
+  response = test_client.post('/api/sync', json={
+    66: {'lua': 'Test Lua 66'},
+  }, headers=HEADER)
+  # the server is agent.tasks with action=restart since the running hash won't match the sync
+  
+
+  response = test_client.get('/api/status', headers=HEADER)
+
+  assert response.ok
+  assert response.json() == {
+    '66': 'restarting'
+  }
 
 def test_update_banlist(test_client: TestClient, temp_dir: str):
   banlist = os.path.join(temp_dir, 'banlist.txt')

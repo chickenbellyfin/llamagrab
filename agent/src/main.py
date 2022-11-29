@@ -32,13 +32,11 @@ def create_app(agent: Agent, tokens: Set[str]):
 
   @app.post('/api/sync')
   def handle_sync(servers: Dict[int, Any], auth=Depends(auth)):
-    agent.sync(servers)
-    return 'ok'
+    return agent.sync(servers)
 
   @app.post('/api/restart/{server_id}')
   def handle_restart(server_id: int, auth=Depends(auth)):
-    agent.restart(server_id)
-    return ''
+    return agent.restart(server_id)
 
   @app.get('/api/status')
   def handle_status(auth=Depends(auth)):
@@ -116,6 +114,7 @@ def main(argv: List[str]):
   logger.info(f'Current active servers: {active_hashes}')
 
   app = create_app(agent, tokens=set(tokens))
+  agent.start()
   uvicorn.run(app, host='0.0.0.0', port=port)
 
 

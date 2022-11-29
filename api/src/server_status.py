@@ -20,46 +20,34 @@ class ServerStatusManager:
   ):
     self.host_manager = host_manager
     self.polling_rate = polling_rate
-    self.host_statuses = {}
     logger.info(f'ServerStatusManager poll_interval = {polling_rate}s')
     self._thread = threading.Thread(target=self._poller, daemon=True)
     self._polling = True
     self._thread.start()
-    self.restarting = {} # id -> restart_until_timestamp
 
 
   def _poller(self):
     while self._polling:
-        self.host_statuses = self.host_manager.status()
-        time.sleep(self.polling_rate)
-
-
-  def notify_restarting(self, server: models.Server, timeout=30):
-    self.restarting[server.id] = time.time() + timeout
-
-  def notify_disabled(self, server: models.Server):
-    if server.id in self.restarting:
-      del self.restarting[server.id]
-
-  def is_restarting(self, server: models.Server):
-    if not server.id in self.restarting:
-      return False
-    else:
-      if self.restarting[server.id] <= time.time():
-        del self.restarting[server.id]
-        return False
-      else:
-        return True
+      self.host_manager.status()
+      time.sleep(self.polling_rate)
 
   def get_region_status(self, region):
-    return self.host_statuses.get(region) is not None
+    return self.host_manager.last_status.get(region) is not None
 
 
   def get_server_status(self, server: models.Server) -> str:
     enabled = server.enabled
-    region = server.region is not None and self.host_statuses.get(server.region) is not None
-    running = self.host_statuses.get(server.region) is not None and  server.id in self.host_statuses.get(server.region, [])
-    restarting = self.is_restarting(server)
+    last_status = self.host_manager.last_status.get(server.region)
+    region = server.region is not None and last_status is not None # is region up?
+    
+    if last_status is not None and server.id in last_status:
+      # we have the actual status from the region so use that
+      status = last_status[server.id]
+    else:
+      # region is up, but server is not in latest region status
+      status = 'starting'
+    
+    running = last_status is not None and server.id in last_status
     if not enabled:
       if not running:
         return 'disabled'
@@ -69,9 +57,4 @@ class ServerStatusManager:
       if not region:
         return 'unknown'
       else:
-        if restarting:
-          return 'restarting'
-        elif not running:
-          return 'starting'
-        else:
-          return 'running'
+        return status

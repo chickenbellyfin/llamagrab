@@ -2,8 +2,7 @@ from unittest.mock import Mock, call
 
 import pytest
 from docker.errors import NotFound
-from src.lib.docker import Docker, NullDocker
-
+from src.lib.docker import Docker, NullDocker, ContainerMetadata
 
 def make_object(**kwargs):
   return type('obj', (object,), kwargs)
@@ -46,15 +45,15 @@ def test_status(mock_client):
   docker = Docker(mock_client)
   result = docker.status()
   assert {
-    111: 6,
-    222: 2
+    111: ContainerMetadata(server_id=111, port_offset=6, hash=None),
+    222: ContainerMetadata(server_id=222, port_offset=2, hash=None)
   } == result
 
 
 def test_start_server(mock_client):
   docker = Docker(mock_client)
 
-  docker.start_server(56, 0, '/test/gamesettings/path', '/test/banlist.txt')
+  docker.start_server(56, 0, '/test/gamesettings/path', '/test/banlist.txt', 'testhash')
 
   mock_client.assert_has_calls([
     call.containers.get('taserver_56'),
@@ -66,14 +65,14 @@ def test_start_server(mock_client):
       labels = {
         'llamagrab': '',
         'server_id': '56',
-        'port_offset': '0'
+        'port_offset': '0',
+        'hash': 'testhash'
       },
       volumes = [
         '/test/gamesettings/path:/gamesettings',
         '/test/banlist.txt:/app/taserver/data/banlist.txt'
       ],
       detach = True,
-      restart_policy = {'Name': 'unless-stopped'},
       cap_add = ['NET_ADMIN'],
       ports = {
         '7777/tcp':7777,
@@ -94,7 +93,7 @@ def test_start_server_no_existing(mock_client):
   """
   mock_client.containers.get.side_effect = NotFound('test not found')
   docker = Docker(mock_client)
-  docker.start_server(56, 0, '/test/gamesettings/path', '/test/banlist.txt')
+  docker.start_server(56, 0, '/test/gamesettings/path', '/test/banlist.txt', 'testhash')
 
   mock_client.assert_has_calls([
     call.containers.get('taserver_56'),
@@ -106,14 +105,14 @@ def test_start_server_no_existing(mock_client):
       labels = {
         'llamagrab': '',
         'server_id': '56',
-        'port_offset': '0'
+        'port_offset': '0',
+        'hash': 'testhash'
       },
       volumes = [
         '/test/gamesettings/path:/gamesettings',
         '/test/banlist.txt:/app/taserver/data/banlist.txt'
       ],
       detach = True,
-      restart_policy = {'Name': 'unless-stopped'},
       cap_add = ['NET_ADMIN'],
       ports = {
         '7777/tcp':7777,
@@ -131,7 +130,7 @@ def test_start_server_no_existing(mock_client):
 
 def test_start_server_offset(mock_client):
   docker = Docker(mock_client)
-  docker.start_server(1234, 10, '/test/gamesettings/path', '/test/banlist.txt')
+  docker.start_server(1234, 10, '/test/gamesettings/path', '/test/banlist.txt', 'testhash')
 
   mock_client.assert_has_calls([
     call.containers.get('taserver_1234'),
@@ -143,14 +142,14 @@ def test_start_server_offset(mock_client):
       labels = {
         'llamagrab': '',
         'server_id': '1234',
-        'port_offset': '10'
+        'port_offset': '10',
+        'hash': 'testhash'
       },
       volumes = [
         '/test/gamesettings/path:/gamesettings',
         '/test/banlist.txt:/app/taserver/data/banlist.txt'
       ],
       detach = True,
-      restart_policy = {'Name': 'unless-stopped'},
       cap_add = ['NET_ADMIN'],
       ports = {
         '7787/tcp':7787,
@@ -167,7 +166,7 @@ def test_start_server_offset(mock_client):
 
 def test_start_server_host_network(mock_client):
   docker = Docker(mock_client, use_host_networking=True)
-  docker.start_server(56, 0, '/test/gamesettings/path', '/test/banlist.txt')
+  docker.start_server(56, 0, '/test/gamesettings/path', '/test/banlist.txt', 'testhash')
   mock_client.assert_has_calls([
     call.containers.get('taserver_56'),
     call.containers.get().remove(force=True),
@@ -178,14 +177,14 @@ def test_start_server_host_network(mock_client):
       labels = {
         'llamagrab': '',
         'server_id': '56',
-        'port_offset': '0'
+        'port_offset': '0',
+        'hash': 'testhash'
       },
       volumes = [
         '/test/gamesettings/path:/gamesettings',
         '/test/banlist.txt:/app/taserver/data/banlist.txt'
       ],
       detach = True,
-      restart_policy = {'Name': 'unless-stopped'},
       cap_add = ['NET_ADMIN'],
       ports = None,
       environment = None,
@@ -195,7 +194,7 @@ def test_start_server_host_network(mock_client):
 
 def test_start_server_custom_login(mock_client):
   docker = Docker(mock_client)
-  docker.start_server(56, 0, '/test/gamesettings/path', '/test/banlist.txt', loginserver='loginserver.test.local')
+  docker.start_server(56, 0, '/test/gamesettings/path', '/test/banlist.txt', 'testhash', loginserver='loginserver.test.local')
   mock_client.assert_has_calls([
     call.containers.get('taserver_56'),
     call.containers.get().remove(force=True),
@@ -206,14 +205,14 @@ def test_start_server_custom_login(mock_client):
       labels = {
         'llamagrab': '',
         'server_id': '56',
-        'port_offset': '0'
+        'port_offset': '0',
+        'hash': 'testhash'
       },
       volumes = [
         '/test/gamesettings/path:/gamesettings',
         '/test/banlist.txt:/app/taserver/data/banlist.txt'
       ],
       detach = True,
-      restart_policy = {'Name': 'unless-stopped'},
       cap_add = ['NET_ADMIN'],
       ports = {
         '7777/tcp':7777,
@@ -230,7 +229,7 @@ def test_start_server_custom_login(mock_client):
 
 def test_start_server_custom_image(mock_client):
   docker = Docker(mock_client, image='some.registry/taseZZrver')
-  docker.start_server(56, 0, '/test/gamesettings/path', '/test/banlist.txt')
+  docker.start_server(56, 0, '/test/gamesettings/path', '/test/banlist.txt', 'testhash')
 
   mock_client.assert_has_calls([
     call.containers.get('taserver_56'),
@@ -242,14 +241,14 @@ def test_start_server_custom_image(mock_client):
       labels = {
         'llamagrab': '',
         'server_id': '56',
-        'port_offset': '0'
+        'port_offset': '0',
+        'hash': 'testhash'
       },
       volumes = [
         '/test/gamesettings/path:/gamesettings',
         '/test/banlist.txt:/app/taserver/data/banlist.txt'
       ],
       detach = True,
-      restart_policy = {'Name': 'unless-stopped'},
       cap_add = ['NET_ADMIN'],
       ports = {
         '7777/tcp':7777,
@@ -276,11 +275,11 @@ def test_stop_server(mock_client):
 def test_null_docker():
   nd = NullDocker()
   assert {} == nd.status()
-  nd.start_server(5, 0, "test", "test_banlist")
-  assert {5:0} == nd.status()
+  nd.start_server(5, 0, "test", "test_banlist", 'testhash')
+  assert {5: ContainerMetadata(5, 0, 'testhash')} == nd.status()
 
   nd.stop_server(4)
-  assert {5:0} == nd.status()
+  assert {5:ContainerMetadata(5, 0, 'testhash')} == nd.status()
 
   nd.stop_server(5)
   assert {} == nd.status()

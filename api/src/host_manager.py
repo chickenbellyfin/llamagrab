@@ -50,6 +50,11 @@ class HostManager:
       for k in nodes
     }
 
+    self.last_status = {
+      k: None
+      for k in nodes
+    }
+
     threading.Thread(target=self._worker, daemon=True).start()
 
   def _request(self, method, node:Node, path: str, payload: object = None):
@@ -73,7 +78,7 @@ class HostManager:
     with self.session() as db:
       logger.info(f'Running sync')
       lua_settings = get_lua_settings(db)
-      for node in self.nodes.values():
+      for node_name, node in self.nodes.items():
         active_for_region = database.queries.get_active_servers(db, node.name)
         # Note: even if a region has no active servers, we should still sync so that newly stopped
         # servers are killed on the host
@@ -88,7 +93,10 @@ class HostManager:
 
         message_hashed = { k: md5(payload[k]) for k in payload }
         logger.info(f'Syncing configs to {node.name}@{node.host}:{self.port} {message_hashed}')
-        self._request(requests.post, node, '/api/sync', payload)
+        self._update_status(
+          node_name,
+          self._request(requests.post, node, '/api/sync', payload)
+        )
 
   def _wait_for_sync(self) -> bool:
     secs_since_last_sync = time.time() - self.last_sync_time
@@ -122,11 +130,18 @@ class HostManager:
       logger.error(f'Region {server.region} does not exist')
       return
 
-    self._request(requests.post, node, f'/api/restart/{server.id}')
+    self._update_status(server.region, self._request(requests.post, node, f'/api/restart/{server.id}'))
 
+
+  def _update_status(self, region, status_response):
+    if status_response is not None:
+      self.last_status[region] = {
+        int(k): v for k, v in status_response.items()
+      }
+    else:
+      self.last_status[region] = None
 
   def status(self):
-    return {
-      node.name: self._request(requests.get, node, '/api/status')
-      for node in self.nodes.values()
-    }
+    for node_name, node in self.nodes.items():
+      self._update_status(node_name, self._request(requests.get, node, '/api/status'))
+    return self.last_status

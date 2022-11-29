@@ -41,7 +41,6 @@ async def request_sync(user: models.User = Depends(deps.login_admin), db: Sessio
   active = queries.get_active_servers(db)
   logger.info(f"User(id={user.id}, username={user.username}) restarted all servers")
   for server in active:
-    deps.status_manager.notify_restarting(server)
     deps.host_manager().restart(server)
   return len(active)
 
@@ -51,7 +50,6 @@ async def request_sync(user: models.User = Depends(deps.login_admin), db: Sessio
   logger.info(f"User(id={user.id}, username={user.username}) disabled all servers")
   for server in active:
     server.enabled = False
-    deps.status_manager.notify_disabled(server)
   db.commit()
   deps.host_manager().sync()
   return len(active)
