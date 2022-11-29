@@ -18,7 +18,7 @@ module.exports = {
     {
       plugin: babelInclude,
       options: {
-        include: ['../../common'],
+        include: ['../../resources'],
       },
     },
   ],

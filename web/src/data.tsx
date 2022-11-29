@@ -1,11 +1,11 @@
 import { Select } from 'antd'
-import ClassPropertyOptions from '../../common/class_properties.json'
-import ItemPropertyOptions from '../../common/item_properties.json'
-import VehiclePropertyOptions from '../../common/vehicle_properties.json'
-import VehicleWeaponPropertyOptions from '../../common/vehicle_weapon_properties.json'
-import Maps from '../../common/maps.json'
-import ValueModOptions from '../../common/value_mods.json'
-import Weapons from '../../common/weapons.json'
+import ClassPropertyOptions from '../../resources/class_properties.json'
+import ItemPropertyOptions from '../../resources/item_properties.json'
+import VehiclePropertyOptions from '../../resources/vehicle_properties.json'
+import VehicleWeaponPropertyOptions from '../../resources/vehicle_weapon_properties.json'
+import Maps from '../../resources/maps.json'
+import ValueModOptions from '../../resources/value_mods.json'
+import Weapons from '../../resources/weapons.json'
 
 
 const { Option, OptGroup } = Select;

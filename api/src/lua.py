@@ -5,13 +5,13 @@ from typing import Any, List, Mapping, NamedTuple
 from .database import models
 from .schema.game_server_config import GameServerConfig, ModProperty
 
-with open('../common/maps.json') as maps_json:
+with open('../resources/maps.json') as maps_json:
  maps_raw = json.load(maps_json)
 maps = {
   map_obj['key']: map_obj for map_obj in maps_raw
 }
 
-with open('../common/weapons.json') as weapons_json:
+with open('../resources/weapons.json') as weapons_json:
  weapons_raw = json.load(weapons_json)
 weapons = {
   clazz: {
@@ -29,11 +29,11 @@ def load_mod_properties(file_path):
       mod_properties[mod_property['name']] = mod_property
   return mod_properties
 
-item_props = load_mod_properties('../common/item_properties.json')
-class_props = load_mod_properties('../common/class_properties.json')
-vehicle_props = load_mod_properties('../common/vehicle_properties.json')
-vehicle_weapon_props = load_mod_properties('../common/vehicle_weapon_properties.json')
-value_mod_props = load_mod_properties('../common/value_mods.json')
+item_props = load_mod_properties('../resources/item_properties.json')
+class_props = load_mod_properties('../resources/class_properties.json')
+vehicle_props = load_mod_properties('../resources/vehicle_properties.json')
+vehicle_weapon_props = load_mod_properties('../resources/vehicle_weapon_properties.json')
+value_mod_props = load_mod_properties('../resources/value_mods.json')
 
 team_assign_types = {
   'balanced': 'TeamAssignTypes.Balanced',
@@ -58,7 +58,7 @@ class LuaSettings(NamedTuple):
 
 
 class LuaConfig:
-  def __init__(self, lua_dir='../common/lua'):
+  def __init__(self, lua_dir='../resources/lua'):
     self.lua = ""
     self.lua_dir = lua_dir
 
