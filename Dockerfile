@@ -12,7 +12,7 @@ RUN yarn install
 
 WORKDIR /app
 COPY web web
-COPY common common
+COPY resources resources
 
 WORKDIR /app/web
 RUN yarn build
@@ -26,7 +26,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY api api
 RUN mv api/config_docker.yaml api/config.yaml
-COPY common common
+COPY resources resources
 COPY --from=build_web /app/web/build /app/api/static
 
 WORKDIR /app/api
