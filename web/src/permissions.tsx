@@ -63,6 +63,10 @@ export class AuthPermissions {
     return  server.owner == this.user?.username || this.isSuper()
   }
 
+  canShareServer(server: ServerStatus): boolean {
+    return server.owner == this.user?.username || this.isAdmin()
+  }
+
 }
 
 

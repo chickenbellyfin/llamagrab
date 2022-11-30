@@ -15,6 +15,7 @@ type ServerSettingsFormProps = {
 export default function ServerSettingsForm({ regions, settings, users, status, onChange }: ServerSettingsFormProps) {
 
   const auth = useAuth()
+  const nonOwnerUsers = users.filter((user) => user.username != status?.owner)
 
   const onRegionChange = (value: string) => {
     if (onChange) {
@@ -28,7 +29,6 @@ export default function ServerSettingsForm({ regions, settings, users, status, o
     }
   }
 
-  const isOwner = status != null ? (status?.owner === auth.user?.username) : true;
   return (
     <Form
     labelCol={{span: 6}}
@@ -51,14 +51,14 @@ export default function ServerSettingsForm({ regions, settings, users, status, o
       label="Editors"
       extra="Other llamagrab users that can edit this server's settings">
       <Select
-        disabled={!isOwner}
+        disabled={!(status && auth.permissions.canShareServer(status))}
         showSearch
         onChange={onEditorsChange}
         defaultValue={settings.editors || []}
         mode="multiple"
         placeholder="Search for llamagrab users..."
         optionFilterProp="label"
-        options={users.map(user => { return {label: user.username, value: user.id}})}>
+        options={nonOwnerUsers.map(user => { return {label: user.username, value: user.id}})}>
       </Select>
     </Form.Item>
   </Form>
