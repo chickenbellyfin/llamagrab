@@ -3,6 +3,8 @@ from fastapi.routing import APIRouter
 from fastapi import Depends
 from loguru import logger
 from src.schema.requests import SetFlagRequest
+from fastapi.exceptions import HTTPException
+from fastapi import status as http_status
 
 from sqlalchemy.orm.session import Session
 
@@ -18,7 +20,10 @@ router = APIRouter()
 async def set_flag(request: SetFlagRequest, user: models.User = Depends(deps.login_admin), db: Session = Depends(deps.db)):
   logger.info(
     f"User(id={user.id} username={user.username}) Set Flag {request.key} = {request.value} ({type(request.value)})")
-  flags.set_flag(db, request.key, request.value)
+  try:
+    flags.set_flag(db, request.key, request.value)
+  except TypeError:
+    raise HTTPException(http_status.HTTP_400_BAD_REQUEST)
 
 
 @router.get('/admin/site/flags', include_in_schema=False)

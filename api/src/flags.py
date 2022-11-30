@@ -20,7 +20,7 @@ FLAGS = {
 
 def _query_flag(db: Session, key: str):
     if key not in FLAGS:
-      raise Exception(f'\"{key}\" is not a valid flag')
+      raise TypeError(f'\"{key}\" is not a valid flag')
     
     flag = db.query(models.Flag).filter(models.Flag.key == key).first()
     if flag is None:
@@ -40,8 +40,10 @@ def get_flag(db: Session, key: str):
 def set_flag(db: Session, key: str, value):
   flag = _query_flag(db, key)
 
+  if type(value) != FLAGS[key].flag_type:
+    raise TypeError(f'Value "{value}" for flag \"{key}\" is {type(value)} but must be {FLAGS[key].flag_type}')
   if FLAGS[key].options is not None and value not in FLAGS[key].options:
-    raise Exception(f'Value "{value}" for flag \"{key}\" is not allowed ({FLAGS[key].options})')
+    raise TypeError(f'Value "{value}" for flag \"{key}\" is not allowed ({FLAGS[key].options})')
 
   flag.value = json.dumps(value)  
   db.commit()
