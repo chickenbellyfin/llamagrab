@@ -57,6 +57,9 @@ class Agent:
 
     self.docker = docker
 
+    # used only by _log_tasks()
+    self._log_tasks_was_nonzero = False
+
     # track ongoing server starts/restarts
     self.tasks: Mapping[int, AgentTask] = {}
     self.requested_restarts: Set[int] = set()
@@ -94,12 +97,14 @@ class Agent:
       json.dump(active_servers, config_file, indent=2)
 
   def _log_tasks(self):
-    if len(self.tasks) > 0:
+    # we log when there are ongoing tasks, and log once more after all the tasks have completed
+    if len(self.tasks) > 0 or self._log_tasks_was_nonzero:
       now = time.time()
       task_str = []
       for server_id, task in self.tasks.items():
         task_str.append(f"(server {server_id}, {task.expiry_time - now:.0f}s)")
       logger.info(f"{len(self.tasks)} Ongoing Tasks: {' '.join(task_str)}   Restart Queue: [{' '.join(map(str, self.requested_restarts))}]")
+    self._log_tasks_was_nonzero = len(self.tasks) > 0
 
   @synchronized
   def _check_servers(self):
