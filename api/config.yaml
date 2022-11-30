@@ -18,7 +18,7 @@ regions:
   east_au: 'Australia East'
 
 # how frequently to poll the agent for status in each region
-status_polling_rate_secs: 300
+status_polling_rate_secs: 60
 
 loginservers:
   - name: Server

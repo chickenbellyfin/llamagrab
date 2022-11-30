@@ -3,13 +3,13 @@ ServerManager Agent - Service runs on each region's host server and listens for 
 ServerManager API and runs taserver docker containers on the host accordingly.
 """
 import json
-import logging
 import multiprocessing
 import os
 import time
 from collections import namedtuple
-from logging import Logger
 from typing import List, Mapping, Set
+
+from loguru import logger
 
 from .docker import Docker
 from .hashing import md5
@@ -26,20 +26,18 @@ class Agent:
     host_abs_data_dir: str = None,
     max_concurrency=None,
     interval_secs=15,
-    container_start_time_secs=40,
-    logger: Logger = logging.getLogger()
+    container_start_time_secs=40
   ):
-    self.logger = logger
     self.gamesettings_dir = os.path.join(data_dir, 'managed_gamesettings')
     self.banlist = os.path.join(data_dir, 'banlist.txt')
     self.active_servers_file = os.path.join(data_dir, 'active_servers.json')
     
     if max_concurrency is None:
       self.max_concurrency = multiprocessing.cpu_count() # TODO: try 2n-1, ceil(1.5n), etc
-      self.logger.info(f"Container start concurrency is {self.max_concurrency} based on CPUs ({multiprocessing.cpu_count()})")
+      logger.info(f"Container start concurrency is {self.max_concurrency} based on CPUs ({multiprocessing.cpu_count()})")
     else:
       self.max_concurrency = max_concurrency
-      self.logger.info(f"Container start concurrency is set to {max_concurrency}")
+      logger.info(f"Container start concurrency is set to {max_concurrency}")
     self.interval_secs = interval_secs
     self.container_start_time_secs = container_start_time_secs
 
@@ -85,7 +83,6 @@ class Agent:
     else:
       return {}
 
-
   def write_active_servers(self, active_servers):
     for server_id in active_servers:
       server_dir = self.path_for(server_id)
@@ -99,11 +96,10 @@ class Agent:
   def _log_tasks(self):
     if len(self.tasks) > 0:
       now = time.time()
-      task_str = "\nTasks:\n"
+      task_str = []
       for server_id, task in self.tasks.items():
-        task_str += f"\t{task.action} server({server_id}): {task.expiry_time - now:.0f}s\n"
-      task_str += f"\trestarts: {self.requested_restarts}\n"
-      self.logger.info(task_str)
+        task_str.append(f"(server {server_id}, {task.expiry_time - now:.0f}s)")
+      logger.info(f"{len(self.tasks)} Ongoing Tasks: {' '.join(task_str)}   Restart Queue: [{' '.join(map(str, self.requested_restarts))}]")
 
   @synchronized
   def _check_servers(self):
@@ -134,7 +130,7 @@ class Agent:
     
     for server_id in self.requested_restarts:
       if server_id not in active_servers:
-        self.logger.info(f"requested restart server({server_id}) but it is not active")
+        logger.info(f"requested restart server({server_id}) but it is not active")
         self.requested_restarts.discard(server_id)
       elif server_id not in pending_tasks:
         pending_tasks[server_id] = 'restart'
@@ -143,7 +139,7 @@ class Agent:
       self._log_tasks()
       return
 
-    self.logger.info(f"{len(pending_tasks)} starts/restarts pending")
+    logger.info(f"{len(pending_tasks)} pending server start tasks")
 
 
     used_port_offsets = set([c.port_offset for c in running_servers.values()])
@@ -155,13 +151,13 @@ class Agent:
         # for new servers, find an open port offset
         if server_id in running_servers:
           server_offset = running_servers[server_id].port_offset
-          self.logger.info(f'Restarting server({server_id}) with offset {server_offset}')
+          logger.info(f'Restarting server({server_id}) with offset {server_offset}')
         else:
           while new_port_offset in used_port_offsets:
             new_port_offset += 2
           server_offset = new_port_offset
           used_port_offsets.add(new_port_offset)
-          self.logger.info(f'Starting server({server_id}) with offset {server_offset}')
+          logger.info(f'Starting server({server_id}) with offset {server_offset}')
 
         # start and restart are the same operation
         self.docker.start_server(
@@ -189,7 +185,7 @@ class Agent:
     active_hashes = {
       k: md5(active_servers[k]) for k in active_servers
     }
-    self.logger.info(f'Received sync message: {active_hashes}')
+    logger.info(f'Received sync message: {active_hashes}')
 
     # load the previous config and write the new one
     old_active_servers = self.get_current_active_servers()
@@ -201,23 +197,23 @@ class Agent:
     for server_id in active_servers:
       new_hash = md5(active_servers[server_id])
       if server_id not in old_active_servers:
-        self.logger.info(f'server({server_id}) is being added hash={new_hash}')
+        logger.info(f'server({server_id}) is being added hash={new_hash}')
       elif active_servers[server_id] != old_active_servers[server_id]:
         old_hash = md5(old_active_servers[server_id])
-        self.logger.info(f'server({server_id}) is being updated new={new_hash} old={old_hash}')
+        logger.info(f'server({server_id}) is being updated new={new_hash} old={old_hash}')
       elif server_id not in running_servers:
-        self.logger.info(f'server({server_id}) is supposed to be running but isn\'t. hash={new_hash}')
+        logger.info(f'server({server_id}) is supposed to be running but isn\'t. hash={new_hash}')
       else:
-        self.logger.info(f'server({server_id}) is unchanged')
+        logger.info(f'server({server_id}) is unchanged')
 
     stopped = set(old_active_servers) - set(active_servers)
     for server_id in stopped:
-      self.logger.info(f'server({server_id}) is being stopped')
+      logger.info(f'server({server_id}) is being stopped')
 
     # Apply changes
     # Stop any deleted servers first to free up resources
     for server_id in stopped:
-      self.logger.info(f'Stopping server({server_id})')
+      logger.info(f'Stopping server({server_id})')
       self.docker.stop_server(server_id)
     
     self._check_servers()
@@ -227,9 +223,9 @@ class Agent:
   def restart(self, server_id):
     active = self.get_current_active_servers()
     if server_id not in active:
-      logging.warn(f'Requested to restart {server_id} but it is not active on this host')
+      logger.warn(f'Requested to restart {server_id} but it is not active on this host')
       return
-    logging.info(f'Restarting {server_id}')
+    logger.info(f'Restarting {server_id}')
     self.requested_restarts.add(server_id)
     self._check_servers()
     return self.status()

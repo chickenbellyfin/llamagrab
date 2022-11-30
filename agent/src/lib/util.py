@@ -1,9 +1,9 @@
-import time
 import threading
+import time
 from typing import Callable
-import logging
 
-logger = logging.getLogger()
+from loguru import logger
+
 
 def synchronized(func):
   """ Wrap a function in a threading.Lock so it can only execute one at a time"""

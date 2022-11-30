@@ -19,7 +19,7 @@ Node = namedtuple('Node', 'name, host, token')
 
 def md5(data) -> str:
   val = json.dumps(data, sort_keys=True)
-  return hashlib.md5(val.encode('utf-8')).hexdigest()
+  return hashlib.md5(val.encode('utf-8')).hexdigest()[:7]
 
 def get_lua_settings(db: Session) -> LuaSettings:
   admin_users = queries.get_admin_tribes_usernames(db)

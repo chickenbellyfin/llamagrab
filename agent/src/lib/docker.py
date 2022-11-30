@@ -1,8 +1,8 @@
-import logging
-from typing import Mapping
 from dataclasses import dataclass
+from typing import Mapping
 
-logger = logging.getLogger(__name__)
+from loguru import logger
+
 
 @dataclass
 class ContainerMetadata:
