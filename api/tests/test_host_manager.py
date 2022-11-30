@@ -126,13 +126,17 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
     ),
     call.post().ok.__bool__(),
     call.post().json(),
+    call.post().json().items(),
+    call.post().json().items().__iter__(),
     call.post(
       'hostname2:23456/api/sync',
       json= {2: {'lua': 'TEST_LUA_2', 'loginserver': None}},
       headers={'Token': 'r2token'}
     ),
     call.post().ok.__bool__(),
-    call.post().json()
+    call.post().json(),
+    call.post().json().items(),
+    call.post().json().items().__iter__()
   ])
 
 

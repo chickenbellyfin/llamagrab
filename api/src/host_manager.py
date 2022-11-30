@@ -76,7 +76,6 @@ class HostManager:
 
   def _do_sync(self):
     with self.session() as db:
-      logger.info(f'Running sync')
       lua_settings = get_lua_settings(db)
       for node_name, node in self.nodes.items():
         active_for_region = database.queries.get_active_servers(db, node.name)
