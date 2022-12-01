@@ -41,14 +41,14 @@ def test_client(agent):
 
 def test_start(test_client: TestClient):
   response = test_client.post('/api/ping', json={'type': 'ping'}, headers=HEADER)
-  assert response.ok
+  assert response.status_code == 200
 
 def test_sync_empty(test_client: TestClient, mock_docker: Docker):
 
   mock_docker.status.return_value = {}
   response = test_client.post('/api/sync', json={}, headers=HEADER)
 
-  assert response.ok
+  assert response.status_code == 200
   mock_docker.status.assert_called()
   mock_docker.start_server.assert_not_called()
   mock_docker.stop_server.assert_not_called()
@@ -64,7 +64,7 @@ def test_sync_new_server(test_client: TestClient, mock_docker: Docker, temp_dir)
   hash1 = hashing.md5({'lua': 'Test Lua 1'})
   hash2 = hashing.md5({'lua': 'Test Lua 5', 'loginserver': 'loginserver.somewhere'})
 
-  assert response.ok
+  assert response.status_code == 200
 
   mock_docker.status.assert_called()
   mock_docker.start_server.assert_has_calls([
@@ -103,7 +103,7 @@ def test_host_abs_path(temp_dir, mock_docker):
     5: {'lua': 'Test Lua 5'}
   }, headers=HEADER)
 
-  assert response.ok
+  assert response.status_code == 200
 
   mock_docker.status.assert_called()
   mock_docker.start_server.assert_has_calls([
@@ -141,7 +141,7 @@ def test_sync_stop_server(test_client: TestClient, mock_docker: Docker):
     5: {'lua': 'Test Lua 5'}
   }, headers=HEADER)
 
-  assert response1.ok
+  assert response1.status_code == 200
 
   mock_docker.reset_mock()
   mock_docker.status.return_value = {
@@ -153,7 +153,7 @@ def test_sync_stop_server(test_client: TestClient, mock_docker: Docker):
   response2 = test_client.post('/api/sync', json={
     5: {'lua': 'Test Lua 5'}
   }, headers=HEADER)
-  assert response2.ok
+  assert response2.status_code == 200
   mock_docker.status.assert_called()
   mock_docker.start_server.assert_not_called()
   mock_docker.stop_server.assert_called_once_with(1)
@@ -165,7 +165,7 @@ def test_sync_update_server(test_client: TestClient, mock_docker: Docker, temp_d
     1: {'lua': 'Test Lua 1'},
     5: {'lua': 'Test Lua 5'}
   }, headers=HEADER)
-  assert response1.ok
+  assert response1.status_code == 200
 
   mock_docker.reset_mock()
   mock_docker.status.return_value = {
@@ -178,7 +178,7 @@ def test_sync_update_server(test_client: TestClient, mock_docker: Docker, temp_d
     1: {'lua': 'Test Lua 1 updated'},
     5: {'lua': 'Test Lua 5'}
   }, headers=HEADER)
-  assert response2.ok
+  assert response2.status_code == 200
 
   mock_docker.status.assert_called()
   mock_docker.stop_server.assert_not_called()
@@ -199,7 +199,7 @@ def test_sync_lua_written(test_client: TestClient, mock_docker: Docker, temp_dir
     5: {'lua': 'Test Lua 5'}
   }, headers=HEADER)
 
-  assert response.ok
+  assert response.status_code == 200
 
   with open(os.path.join(temp_dir, 'active_servers.json')) as f:
     assert {'1':{'lua': 'Test Lua 1'}, '5': {'lua': 'Test Lua 5'}} == json.load(f)
@@ -219,7 +219,7 @@ def test_bad_message_payload(test_client: TestClient, mock_docker: Docker):
 
   # still running
   response2 = test_client.post('/api/ping', headers=HEADER)
-  assert response2.ok
+  assert response2.status_code == 200
 
   mock_docker.status.assert_not_called()
   mock_docker.stop_server.assert_not_called()
@@ -240,7 +240,7 @@ def test_get_status(test_client: TestClient, mock_docker: Docker):
   }
   response = test_client.get('/api/status', headers=HEADER)
 
-  assert response.ok
+  assert response.status_code == 200
   assert response.json() == {
     '66': 'starting',
     '99': 'starting'
@@ -265,7 +265,7 @@ def test_get_status_running(test_client: TestClient, mock_docker: Docker):
 
   response = test_client.get('/api/status', headers=HEADER)
 
-  assert response.ok
+  assert response.status_code == 200
   assert response.json() == {
     '66': 'running'
   }
@@ -284,7 +284,7 @@ def test_get_status_restarting(test_client: TestClient, mock_docker: Docker):
 
   response = test_client.get('/api/status', headers=HEADER)
 
-  assert response.ok
+  assert response.status_code == 200
   assert response.json() == {
     '66': 'restarting'
   }

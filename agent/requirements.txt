@@ -1,5 +1,6 @@
 attrs
 docker
-fastapi==0.70.1
+fastapi==0.88.0
 loguru
 uvicorn
+httpx

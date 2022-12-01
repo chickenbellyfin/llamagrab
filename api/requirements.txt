@@ -1,10 +1,11 @@
 alembic
 argon2_cffi
 attrs
-fastapi==0.70.1
 fastapi-camelcase
 fastapi-login
 fastapi-users[sqlalchemy]
+fastapi==0.88.0
+httpx
 loguru
 passlib
 pyyaml

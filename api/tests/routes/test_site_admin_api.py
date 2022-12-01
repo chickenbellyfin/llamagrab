@@ -16,7 +16,7 @@ def test_set_flags(test_client: TestClient, login_user_admin,):
     'key': 'disable_new_accounts',
     'value': True
   })
-  assert response1.ok
+  assert response1.status_code == 200
 
   response2 = test_client.get('/api/admin/site/flags')
   assert response2.json() == {
