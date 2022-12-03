@@ -1,7 +1,0 @@
-**/__pycache__
-*.db
-*.log
-.coverage
-htmlcov/
-**/.pytest_cache
-static/

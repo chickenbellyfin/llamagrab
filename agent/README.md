@@ -41,18 +41,18 @@ Empty payload, used for testing/status, has no effect. Response with `pong`
 
 ## Build
 ```
-$ docker build . -t llamagrab-agent
+$ docker build . -t agent -f agent/Dockerfile
 ```
 
 ## Run
 Run locally
 ```
-$ LG_TOKENS=test_token python3 -m src.main
+$ LG_TOKENS=test_token python3 -m agent
 ```
 
 Run docker container
 ```
-$ docker run -v /var/run/docker.sock:/var/run/docker.sock -v /home/ubuntu/llamagrab_agent:/data -p 8999:8999 llamagrab-agent
+$ docker run -v /var/run/docker.sock:/var/run/docker.sock -v /home/ubuntu/llamagrab_agent:/data -p 8999:8999 agent
 ```
 
 Run with docker-compose
@@ -91,11 +91,12 @@ volumes:
 
 #### Run unit tests
 ```
-python3 -m pytest
+# from repo root
+python3 -m pytest tests/agent
 ```
 
 #### Local testing server
-For local testing without running actual taserver containers, make sure to add `testing: true` to config.yaml. This will disable the docker implementation with `NullDocker`
+By default for local testing outside a container, the docker implementation is disabled with `NullDocker`,and agent will not run any actual taserver containers.
 
 ## Configuration
 Agent is configured through env vars
