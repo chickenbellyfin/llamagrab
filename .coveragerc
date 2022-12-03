@@ -1,0 +1,8 @@
+[run]
+command_line = -m pytest
+source = 
+  api
+  agent
+  common
+omit =
+  api/alembic/*

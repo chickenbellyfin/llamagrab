@@ -1,4 +1,9 @@
 .pytest_cache/
 data/
-*.log
+**/*.log
 **/.venv
+**/__pycache__
+.coverage
+static/
+htmlcov/
+.coverage

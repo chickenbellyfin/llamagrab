@@ -1,8 +1,0 @@
-**/__pycache__
-.pytest_cache
-managed_gamesettings/
-active_servers.json
-*.log
-.coverage
-htmlcov/
-banlist.txt

@@ -1,5 +1,0 @@
-[run]
-command_line = -m pytest
-source = src
-omit =
-  src/alembic/*

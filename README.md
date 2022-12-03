@@ -1,6 +1,6 @@
 # Llamagrab
-![Unit Tests - API](https://github.com/chickenbellyfin/llamagrab/actions/workflows/pytest_api.yml/badge.svg)
-![Unit Tests - Agent](https://github.com/chickenbellyfin/llamagrab/actions/workflows/pytest_agent.yml/badge.svg)
+![Unit Tests - API](https://github.com/chickenbellyfin/llamagrab/actions/workflows/pytest.yml/badge.svg)
+
 
 ## Tribes Ascend Community Server Manager
 
@@ -29,7 +29,7 @@ See [agent](/agent/README.md) for more details.
 
 ## Build
 ```
-docker build . -t llamagrab
+docker build . -t llamagrab -f api/Dockerfile
 ```
 
 ## Run
@@ -54,10 +54,9 @@ All components will be able to commicate with each other on localhost without an
 
 ### Start local API
 ```
-cd api
-pip install -r requirements.txt
+pip install -r api/requirements.txt
 
-python3 -m src.app
+python3 -m api
 ```
 
 ### Start local web app
@@ -71,24 +70,28 @@ yarn start
 ### (Optional) Start local Agent
 The local agent will stub out any calls to docker, so no game servers will actually be started.
 ```
-cd agent
-python3 -m src.main
+pip install -r agent/requirements.txt
+
+python3 -m agent
 ```
 
 ### Unit Tests
 ```
-$ (cd api && python -m pytest)
-$ (cd web && yarn test --ci)
-$ (cd agent && python -m pytest)
+# tests for api + agent
+$ python -m pytest
 
-# Using coverage.py in api/ or agent/ (run test & open in browser)
-coverage run && coverage report
+$ (cd web && yarn test --ci)
+
+# Using coverage.py
+$ coverage run && coverage report
 ```
 
 ## Release
 Build for amd64 & arm64 & push to ECR
 ```
 docker buildx build --platform linux/amd64,linux/arm64 --tag public.ecr.aws/i2q9d4v7/llamagrab:latest --push .
+
+docker buildx build --platform linux/amd64,linux/arm64 --tag r.llamagrab.net/llamagrab -f api/Dockerfile --push .
 ```
 
 ## Production Deployment Setup

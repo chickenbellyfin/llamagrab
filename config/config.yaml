@@ -1,0 +1,37 @@
+# for testing - not a real secret
+login_secret: 'ffffffffffffffffffffffffffffffffffffffffffffffff'
+
+# Disabled for testing
+# Serve web app from ./static
+#serve_static: 'static'
+port: 8000 # (default for uvicorn)
+
+# diabled for testing
+# location of db, logs
+#base_path: '/data/api'
+
+# Regions returned by /api/data/regions
+regions:
+  central_us: 'NA Central'
+  east_us: 'NA East'
+  west_us: 'NA West'
+  east_au: 'Australia East'
+
+# how frequently to poll the agent for status in each region
+status_polling_rate_secs: 60
+
+loginservers:
+  - name: Server
+    url: server.local
+  - name: localhost
+    url: localhost
+
+host_manager:
+  port: 8999
+
+  # mapping from region key to hostname
+  # host_manager iterates over this list so missing or extra regions wont cause errors
+  nodes:
+    central_us:
+      host: 'http://localhost'
+      token: 'test_token'
