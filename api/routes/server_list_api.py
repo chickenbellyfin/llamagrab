@@ -21,7 +21,7 @@ def server_status_list(servers: List[models.Server], db: Session) -> List[respon
       owner=queries.user_by_id(db, s.user).username,
       name=s.name,
       region=s.region,
-      region_name=deps.regions.get(s.region, s.region),
+      region_name=deps.regions[s.region].name if s.region in deps.regions else s.region,
       enabled=s.enabled,
       status=deps.status_manager.get_server_status(s),
       game=s.game,
@@ -62,10 +62,10 @@ async def get_region_status(
   """
   region_status = [
     {
-      'region': deps.regions[region],
-      'online': deps.status_manager.get_region_status(region),
-      'servers': server_status_list(queries.get_active_servers(db, region), db)
+      'region': region_key,
+      'online': deps.status_manager.get_region_status(region_key),
+      'servers': server_status_list(queries.get_active_servers(db, region_key), db)
     }
-    for region in deps.regions
+    for region_key in deps.regions
   ]
   return region_status

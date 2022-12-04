@@ -9,6 +9,7 @@ from api import flags, lua
 from api.database import queries as db_queries
 from api.database.models import Server
 from api.host_manager import HostManager
+from api.schema.app_config import Region
 
 TEST_PORT=23456;
 
@@ -34,12 +35,6 @@ test_server2 = Server(
   server_config=test_server_config2
 )
 
-TEST_NODES = {
-  'test_host': {
-    'host': 'localhost',
-    'token': 'test_token'
-  }
-}
 EMPTY_SYNC_MESSAGE = {}
 
 
@@ -69,7 +64,14 @@ def test_sync_empty(monkeypatch, mock_requests: Mock):
 
 
   host_manager = HostManager(
-    nodes={ 'test_host': {'host':'http://localhost','token': 'test_token'}},
+    regions=[
+      Region(
+        key='test_host',
+        name='Test Host',
+        host='http://localhost',
+        token='test_token'
+      )
+    ],
     port=TEST_PORT,
     db_session=MagicMock()
   )
@@ -84,11 +86,6 @@ def test_sync_empty(monkeypatch, mock_requests: Mock):
 
 
 def test_sync_multiple(monkeypatch, mock_requests: Mock):
-  test_nodes = {
-    'region1': {'host': 'hostname1', 'token': 'r1token'},
-    'region2': {'host': 'hostname2', 'token': 'r2token'}
-  }
-
   active = {
     'region1': [test_server],
     'region2': [test_server2]
@@ -112,7 +109,20 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
   monkeypatch.setattr(lua, 'to_lua', mocked_lua)
 
   host_manager = HostManager(
-    nodes=test_nodes,
+    regions=[
+      Region(
+        key='region1',
+        name='Region 1',
+        host='hostname1',
+        token='r1token'
+      ),      
+      Region(
+        key='region2',
+        name='Region 2',
+        host='hostname2',
+        token='r2token'
+      )
+    ],
     port=TEST_PORT,
     db_session=MagicMock
   )
@@ -146,7 +156,14 @@ def test_sync_rate_limit(monkeypatch, mock_requests: Mock):
   monkeypatch.setattr(db_queries, "get_admin_tribes_usernames", lambda db: [])
 
   host_manager = HostManager(
-    nodes=TEST_NODES,
+    regions=[
+      Region(
+        key='test_host',
+        name='Test Host',
+        host='localhost',
+        token='test_token'
+      )
+    ],
     port=TEST_PORT,
     db_session=MagicMock(),
     rate_limit_secs=0 # don't rate limit syncs

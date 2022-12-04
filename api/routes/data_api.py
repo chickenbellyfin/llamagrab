@@ -26,7 +26,10 @@ class RegionListResponse(BaseModel):
 @router.get('/data/regions', tags=['data'], response_model=RegionListResponse)
 async def get_regions() -> RegionListResponse:
   """ Return a list of region codes and their human-friendly names"""
-  return deps.regions
+  return {
+    region.key: region.name
+    for region in deps.regions.values()
+  }
 
 @router.get('/data/loginservers', tags=['data'])
 async def get_loginservers():

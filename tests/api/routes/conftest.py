@@ -1,4 +1,5 @@
 import asyncio
+from typing import List
 from unittest.mock import MagicMock
 
 import pytest
@@ -11,6 +12,7 @@ from api import app
 from api.database import database
 from api.database.models import (Server, ServerEditor, ServerVersion, User,
                                  UserLimits)
+from api.schema.app_config import Region
 from api.schema.game_server_config import GameServerConfig
 
 
@@ -178,11 +180,11 @@ def mock_login_manager():
   return login_manager
 
 @pytest.fixture
-def test_regions():
-  return {
-    'region1': 'TestRegion1',
-    'region2': 'TestRegion2'
-  }
+def test_regions() -> List[Region]:
+  return [
+    Region(key='region1', name="TestRegion1", host="http://r1url", token="r1token"),
+    Region(key='region2', name="TestRegion2", host="http://r2url", token="r2token")
+  ]
 
 @pytest.fixture
 def db_session(inmemory_db: database.Database):

@@ -10,6 +10,7 @@ from sqlalchemy.orm.session import Session, sessionmaker
 from api import flags, permissions
 from api.database.models import User
 from api.host_manager import HostManager
+from api.schema.app_config import Loginserver, Region
 from api.server_status import ServerStatusManager
 
 
@@ -23,13 +24,15 @@ class Dependencies:
     login_manager: LoginManager,
     host_manager: HostManager,
     status_manager: ServerStatusManager,
-    regions: Dict[str, str],
-    loginservers: List):
+    regions: List[Region],
+    loginservers: List[Loginserver]):
     self._db_session = db_session
     self.login_manager = login_manager
     self._host_manager = host_manager
     self.status_manager = status_manager
-    self.regions = regions
+    self.regions = {
+      r.key: r for r in regions
+    }
     self.loginservers = loginservers
 
     # set of IPs which created an account

@@ -19,6 +19,7 @@ from api.host_manager import HostManager
 from api.routes import (account_api, admin_api, data_api, server_api,
                         server_list_api, site_admin_api)
 from api.server_status import ServerStatusManager
+from api.schema.app_config import AppConfig, Loginserver, Region
 
 DEFAULT_CONFIG_PATH = 'config/config.yaml'
 
@@ -78,38 +79,35 @@ class SPAStaticFiles(StaticFiles):
       return response
 
 
-def load_config(argv: List[str]):
+def load_config(argv: List[str]) -> AppConfig:
   config_path = DEFAULT_CONFIG_PATH
   if len(argv) > 1:
     config_path = argv[1]
-
+  
   logger.info(f'Reading config from {config_path}')
   with open(config_path) as config_file:
-    config = yaml.safe_load(config_file)
-
-  if not config.get('base_path'):
-    config['base_path'] = 'data/api'
+    config = AppConfig.parse_obj(yaml.safe_load(config_file))
   return config
 
-def create_database(config):
-  return Database(config['base_path'])
+def create_database(config: AppConfig):
+  return Database(config.base_path)
 
-def create_host_manager(config, db: Database) -> HostManager:
+def create_host_manager(config: AppConfig, db: Database) -> HostManager:
   return HostManager(
-    nodes=config['host_manager']['nodes'],
-    port=int(config['host_manager']['port']),
+    regions=config.regions,
+    port=int(config.host_manager_port),
     db_session=db.SessionFactory
   )
 
 
-def create_login_manager(config, db: Database) -> LoginManager:
+def create_login_manager(config: AppConfig, db: Database) -> LoginManager:
   # todo get a better login library
   def load_user(username: str) -> models.User:
     with db.SessionFactory() as db_session:
       user = queries.get_user(db_session, username)
       return user
 
-  login_manager = LoginManager(config['login_secret'], token_url='/api/login', default_expiry=timedelta(days=30))
+  login_manager = LoginManager(config.login_secret, token_url='/api/login', default_expiry=timedelta(days=30))
   login_manager.user_loader()(load_user)
   return login_manager
 
@@ -129,8 +127,8 @@ def create_app(
   login_manager: LoginManager,
   host_manager: HostManager,
   status_manager: ServerStatusManager,
-  regions: Mapping[str, str],
-  loginservers: List
+  regions: List[Region],
+  loginservers: List[Loginserver]
 ) -> FastAPI:
 
   dependencies.dependencies.set(
@@ -141,7 +139,7 @@ def create_app(
     regions=regions,
     loginservers=loginservers
   )
-  flags.set_loginserver_urls([s['url'] for s in loginservers])
+  flags.set_loginserver_urls([s.url for s in loginservers])
   app = FastAPI(
     title="Llamagrab",
     description=DESCRIPTION,
@@ -164,7 +162,7 @@ def main(argv: List[str]):
   config = load_config(argv)
 
   # path for all variable data (db, log, etc)
-  base_path = os.path.abspath(config.get('base_path'))
+  base_path = os.path.abspath(config.base_path)
   logger.info(f'base_path={base_path}')
 
   # uvicorn http logs are filtered out to access.log
@@ -182,7 +180,7 @@ def main(argv: List[str]):
   host_manager = create_host_manager(config, db)
   server_status_manager = ServerStatusManager(
     host_manager,
-    polling_rate=config.get('status_polling_rate_secs', 60)
+    polling_rate=config.status_polling_rate_secs
   )
 
   # Make sure the admin user exists
@@ -193,20 +191,20 @@ def main(argv: List[str]):
     login_manager=login_manager,
     host_manager=host_manager,
     status_manager=server_status_manager,
-    regions=config['regions'],
-    loginservers=config['loginservers']
+    regions=config.regions,
+    loginservers=config.loginservers
   )
 
   app = FastAPI(docs_url=None, redoc_url=None)
   app.mount('/api', api)
   # For deployment, the API serve also serves the static web app
-  if config.get('serve_static'):
-    app.mount('/', SPAStaticFiles(directory=config['serve_static'], html=True), name='webapp')
+  if config.serve_static is not None:
+    app.mount('/', SPAStaticFiles(directory=config.serve_static, html=True), name='webapp')
 
   uvicorn.run(
     app,
     host='0.0.0.0',
-    port=config.get('port', 8000),
+    port=config.port,
     log_config=None,
     proxy_headers=True,
     forwarded_allow_ips="*" # allows uvicorn to access log with IPs forwarded by reverse proxy (caddy)

@@ -31,8 +31,8 @@ class ServerStatusManager:
       self.host_manager.status()
       time.sleep(self.polling_rate)
 
-  def get_region_status(self, region):
-    return self.host_manager.last_status.get(region) is not None
+  def get_region_status(self, region_key: str):
+    return self.host_manager.last_status.get(region_key) is not None
 
 
   def get_server_status(self, server: models.Server) -> str:
