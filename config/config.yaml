@@ -3,7 +3,7 @@ login_secret: 'ffffffffffffffffffffffffffffffffffffffffffffffff'
 
 # Disabled for testing
 # Serve web app from ./static
-#serve_static: 'static'
+serve_static: 'static'
 port: 8000 # (default for uvicorn)
 
 # diabled for testing
@@ -16,17 +16,17 @@ regions:
     name: 'NA Central'
     host: 'http://central'
     token: 'central_token'
-  - key: west_us
-    name: 'NA West'
-    host: 'http://central'
-    token: 'west_token'
-  - key: central_eu
-    name: 'EU Central'
-    host: 'http://eu_central_url'
-    token: ''
+  # - key: west_us
+  #   name: 'NA West'
+  #   host: 'http://central'
+  #   token: 'west_token'
+  # - key: central_eu
+  #   name: 'EU Central'
+  #   host: 'http://eu_central_url'
+  #   token: ''
 
 # how frequently to poll the agent for status in each region
-status_polling_rate_secs: 60
+status_polling_rate_secs: 300
 
 loginservers:
   - name: Server

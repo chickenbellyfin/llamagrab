@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 from datetime import timedelta
-from typing import List, Mapping
+from typing import List
 
 import uvicorn
 import uvicorn.config
@@ -11,6 +11,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi_login import LoginManager
 from loguru import logger
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from api import dependencies, flags
 from api.database import models, queries
@@ -18,8 +19,8 @@ from api.database.database import Database, run_migrations
 from api.host_manager import HostManager
 from api.routes import (account_api, admin_api, data_api, server_api,
                         server_list_api, site_admin_api)
-from api.server_status import ServerStatusManager
 from api.schema.app_config import AppConfig, Loginserver, Region
+from api.server_status import ServerStatusManager
 
 DEFAULT_CONFIG_PATH = 'config/config.yaml'
 
@@ -68,10 +69,14 @@ class SPAStaticFiles(StaticFiles):
       is_index = False
       if path == '.' or path == 'index.html':
         is_index = True
-      response = await super().get_response(path, scope)
-      if response.status_code == 404:
+      try:
+        response = await super().get_response(path, scope)
+      except StarletteHTTPException as ex:
+        if ex.status_code == 404:
           is_index = True
           response = await super().get_response('.', scope)
+        else:
+          raise ex
 
       # for SPAs, index should never be cached
       if is_index:
