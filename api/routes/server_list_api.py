@@ -62,10 +62,10 @@ async def get_region_status(
   """
   region_status = [
     {
-      'region': region_key,
-      'online': deps.status_manager.get_region_status(region_key),
-      'servers': server_status_list(queries.get_active_servers(db, region_key), db)
+      'region': region.name,
+      'online': deps.status_manager.get_region_status(region.key),
+      'servers': server_status_list(queries.get_active_servers(db, region.key), db)
     }
-    for region_key in deps.regions
+    for region in deps.regions.values()
   ]
   return region_status
