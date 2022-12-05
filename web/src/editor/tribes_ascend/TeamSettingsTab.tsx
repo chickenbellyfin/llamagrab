@@ -1,4 +1,4 @@
-import { Form, Radio, Switch } from "antd";
+import { Divider, Form, Radio, Switch } from "antd";
 import { InputInteger, InputPercent } from "../../editor/Inputs";
 import { GameServerConfigTabProps } from "../../editor/tabHelpers";
 
@@ -33,14 +33,12 @@ export default function TeamSettingsTab (
 
     <Form.Item label='Auto Balance'>
       <Switch
-        defaultChecked
         checked={config['autoBalance']}
         onChange={updateSwitch('autoBalance')} />
     </Form.Item>
 
     <Form.Item label='Friendly Fire'>
       <Switch
-        defaultChecked
         checked={config['friendlyFire']}
         onChange={updateSwitch('friendlyFire')} />
     </Form.Item>
@@ -52,6 +50,34 @@ export default function TeamSettingsTab (
         min={0}
       />
     </Form.Item>
+
+    <Form.Item label='Friendly Damage Kick Limit'>
+      <InputInteger
+        placeholder='0 (no limit)'
+        value={config.friendlyFireDamageKickLimit}
+        onChange={updateInputNumber('friendlyFireDamageKickLimit')}
+        min={0}
+      />
+    </Form.Item>
+
+    <Form.Item label='Friendly Kill Kick Limit'>
+      <InputInteger
+        placeholder='0 (no limit)'
+        value={config.friendlyFireKillKickLimit}
+        onChange={updateInputNumber('friendlyFireKillKickLimit')}
+        min={0}
+      />
+    </Form.Item>
+
+    <Form.Item label='Base Destruction Kick Limit'>
+      <InputInteger
+        placeholder='0 (no limit)'
+        value={config.baseDestructionKickLimit}
+        onChange={updateInputNumber('baseDestructionKickLimit')}
+        min={0}
+      />
+    </Form.Item>
+
     <Form.Item label='Light Limit' extra='Maximum light players per team'>
       <InputInteger
         min={0}
@@ -79,6 +105,42 @@ export default function TeamSettingsTab (
         checked={config['nakedSpawn']}
         onChange={updateSwitch('nakedSpawn')} />
     </Form.Item>
+
+    <Divider orientation='left'>Base Settings</Divider>
+
+    <Form.Item label='Base Assets' extra="Whether turrets and sensors are enabled">
+      <Switch
+        checked={config.baseAssets ?? true}
+        onChange={updateSwitch('baseAssets')} />
+    </Form.Item>
+    <Form.Item label='Powered Deployables' extra="Whether deployables (e.g. turrets) require generator power">
+      <Switch
+        checked={config.poweredDeployables ?? true}
+        onChange={updateSwitch('poweredDeployables')} />
+    </Form.Item>
+    <Form.Item label='Generator Regen' extra="Whether the generator regenerates automatically over time">
+      <Switch
+        checked={config.generatorRegen}
+        onChange={updateSwitch('generatorRegen')} />
+    </Form.Item>
+    <Form.Item label='Generator Destroyable'>
+      <Switch
+        checked={config.generatorDestroyable ?? true}
+        onChange={updateSwitch('generatorDestroyable')} />
+    </Form.Item>
+    
+    <Form.Item label='Base Asset Friendly Fire'>
+      <Switch
+        checked={config.baseAssetFriendlyFire}
+        onChange={updateSwitch('baseAssetFriendlyFire')} />
+    </Form.Item>
+
+    <Form.Item label='Deployable Asset Friendly Fire'>
+      <Switch
+        checked={config.deployableFriendlyFire}
+        onChange={updateSwitch('deployableFriendlyFire')} />
+    </Form.Item>
+
     </Form>
   );
 }

@@ -106,6 +106,9 @@ export type GameServerConfig = {
   flagDragMedium?: number
   flagDragHeavy?: number
   flagDragDeceleration?: number
+  skiingEnabled?: boolean
+  useGotyShieldPack?: boolean
+  inventoryStationRestoreEnergy?: boolean
 
   maxPlayers?: number
   nakedSpawn?: boolean
@@ -114,8 +117,11 @@ export type GameServerConfig = {
   heavyCountLimit?: number
 
   friendlyFireMultiplier?: number
-
   friendlyFire?: boolean
+  friendlyFireDamageKickLimit?: number
+  friendlyFireKillKickLimit?: number
+  baseDestructionKickLimit?: number
+
   mapVoting?: boolean
   maps: Array<string> | []
 
@@ -126,6 +132,19 @@ export type GameServerConfig = {
   gravCycleSpawnTime?: number
   shrikeSpawnTime?: number
   beowulfSpawnTime?: number
+  gravCycleEjectionSeat?: boolean
+  shrikeEjectionSeat?: boolean
+  beowulfEjectionSeat?: boolean
+
+  baseAssets?: boolean
+  poweredDeployables?: boolean
+  generatorRegen?: boolean
+  generatorDestroyable?: boolean
+  baseAssetFriendlyFire?: boolean
+  deployableFriendlyFire?: boolean
+
+  aoeSizeMultiplier?: number
+  aoeDamageMultiplier?: number
 
   lightWeaponBans: Array<string>
   mediumWeaponBans: Array<string>

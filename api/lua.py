@@ -151,12 +151,13 @@ def to_lua(server: models.Server, config: GameServerConfig, lua_settings: LuaSet
   lua('ServerSettings.VehicleHealthMultiplier = %0.2f', config.vehicle_health_multiplier)
   lua('ServerSettings.GravCycleLimit = %d', config.grav_cycle_limit)
   lua('ServerSettings.GravCycleSpawnTime = %d', config.grav_cycle_spawn_time)
-
+  lua('ServerSettings.GravCycleEjectionSeat = %s', _bool(config.grav_cycle_ejection_seat))
   lua('ServerSettings.ShrikeLimit = %d', config.shrike_limit)
   lua('ServerSettings.ShrikeSpawnTime = %d', config.shrike_spawn_time)
-
+  lua('ServerSettings.ShrikeEjectionSeat = %s', _bool(config.shrike_ejection_seat))
   lua('ServerSettings.BeowulfLimit = %d', config.beowulf_limit)
   lua('ServerSettings.BeowulfSpawnTime = %d', config.beowulf_spawn_time)
+  lua('ServerSettings.BeowulfEjectionSeat = %s', _bool(config.beowulf_ejection_seat))
 
   lua('ServerSettings.CTFCapLimit = %d', config.ctf_cap_limit)
   lua('ServerSettings.TDMKillLimit = %d', config.tdm_kill_limit)
@@ -170,6 +171,23 @@ def to_lua(server: models.Server, config: GameServerConfig, lua_settings: LuaSet
   lua('ServerSettings.FlagDragMedium = %d', config.flag_drag_medium)
   lua('ServerSettings.FlagDragHeavy = %d', config.flag_drag_heavy)
   lua('ServerSettings.FlagDragDeceleration = %d', config.flag_drag_deceleration)
+  lua('ServerSettings.SkiingEnabled = %s', _bool(config.skiing_enabled))
+  lua('ServerSettings.UseGOTYShieldPack = %s', _bool(config.use_goty_shield_pack))
+  lua('ServerSettings.InventoryStationsRestoreEnergy = %s', _bool(config.inventory_station_restore_energy))
+  lua('ServerSettings.FriendlyFireDamageKickLimit = %d', config.friendly_fire_damage_kick_limit)
+  lua('ServerSettings.FriendlyFireKillKickLimit = %d', config.friendly_fire_kill_kick_limit)
+  lua('ServerSettings.BaseDestructionKickLimit = %d', config.base_destruction_kick_limit)
+
+  lua('ServerSettings.BaseAssets = %s', _bool(config.base_assets))
+  lua('ServerSettings.PoweredDeployables = %s', _bool(config.powered_deployables))
+  lua('ServerSettings.GeneratorRegen = %s', _bool(config.generator_regen))
+  lua('ServerSettings.GeneratorDestroyable = %s', _bool(config.generator_destroyable))
+  lua('ServerSettings.BaseAssetFriendlyFire = %s', _bool(config.base_asset_friendly_fire))
+  lua('ServerSettings.DeployableFriendlyFire = %s', _bool(config.deployable_friendly_fire))
+
+  lua('ServerSettings.AoESizeMultiplier = %0.2f', config.aoe_size_multiplier)
+  lua('ServerSettings.AoEDamageMultiplier = %0.2f', config.aoe_damage_multiplier)
+
 
   # Map Rotation
   lua('ServerSettings.MapRotation.VotingEnabled = %s', _bool(config.map_voting))

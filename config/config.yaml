@@ -12,6 +12,10 @@ port: 8000 # (default for uvicorn)
 
 # Regions
 regions:
+  - key: localhost
+    name: 'Local Agent'
+    host: 'http://localhost'
+    token: 'test_token'
   - key: central_us
     name: 'NA Central'
     host: 'http://central'

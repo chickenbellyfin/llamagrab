@@ -1,4 +1,4 @@
-import { Divider, Form, Space } from "antd";
+import { Divider, Form, Space, Switch } from "antd";
 import { InputInteger, InputPercent } from "../../editor/Inputs";
 import { GameServerConfigTabProps } from "../../editor/tabHelpers";
 import { VehicleProperties } from "./VehicleProperties";
@@ -7,7 +7,7 @@ import VehicleWeaponPropertiesSection from "./VehicleWeaponPropertiesSection";
 
 export default function VehicleSettingsTab ({ config, updateCallbacks }: GameServerConfigTabProps) {
 
-  const { update, updateInputNumber } = updateCallbacks;
+  const { update, updateInputNumber, updateSwitch } = updateCallbacks;
 
   return (
     <Form labelCol={{span: 6}} wrapperCol={{span: 14}}>
@@ -68,6 +68,24 @@ export default function VehicleSettingsTab ({ config, updateCallbacks }: GameSer
           onChange={updateInputNumber('beowulfSpawnTime')}
           placeholder={'120'}
           addonAfter='secs'  />
+      </Form.Item>
+
+      <Form.Item label='Grav Cycle Ejection Seat'>
+        <Switch
+          checked={config.gravCycleEjectionSeat}
+          onChange={updateSwitch('gravCycleEjectionSeat')} />
+      </Form.Item>
+
+      <Form.Item label='Shrike Ejection Seat'>
+        <Switch
+          checked={config.shrikeEjectionSeat}
+          onChange={updateSwitch('shrikeEjectionSeat')} />
+      </Form.Item>
+
+      <Form.Item label='Beowulf Ejection Seat'>
+        <Switch
+          checked={config.beowulfEjectionSeat}
+          onChange={updateSwitch('beowulfEjectionSeat')} />
       </Form.Item>
 
       <Divider orientation='left'>Vehicle Properties</Divider>

@@ -66,9 +66,15 @@ class GameServerConfig(BaseModel):
   flag_drag_medium: Optional[int]
   flag_drag_heavy: Optional[int]
   flag_drag_deceleration: Optional[int]
+  skiing_enabled: Optional[bool]
+  use_goty_shield_pack: Optional[bool]
+  inventory_station_restore_energy: Optional[bool]
 
   friendly_fire_multiplier: Optional[float]
   friendly_fire: Optional[bool]
+  friendly_fire_damage_kick_limit: Optional[int]
+  friendly_fire_kill_kick_limit: Optional[int]
+  base_destruction_kick_limit: Optional[int]
 
   map_voting: Optional[bool]
   maps: Optional[List[str]]
@@ -76,10 +82,24 @@ class GameServerConfig(BaseModel):
   vehicle_health_multiplier: Optional[float]
   grav_cycle_limit: Optional[int]
   grav_cycle_spawn_time: Optional[int]
+  grav_cycle_ejection_seat: Optional[bool]
   shrike_limit: Optional[int]
   shrike_spawn_time: Optional[int]
+  shrike_ejection_seat: Optional[bool]
   beowulf_limit: Optional[int]
   beowulf_spawn_time: Optional[int]
+  beowulf_ejection_seat: Optional[bool]
+
+  base_assets: Optional[bool]
+  powered_deployables: Optional[bool]
+  generator_regen: Optional[bool]
+  generator_destroyable: Optional[bool]
+  base_asset_friendly_fire: Optional[bool]
+  deployable_friendly_fire: Optional[bool]
+
+  aoe_size_multiplier: Optional[float]
+  aoe_damage_multiplier: Optional[float]
+
 
   light_weapon_bans: Optional[List[str]]
   medium_weapon_bans: Optional[List[str]]

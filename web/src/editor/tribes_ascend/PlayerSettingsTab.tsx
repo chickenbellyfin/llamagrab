@@ -1,4 +1,4 @@
-import { Checkbox, Divider, Form, Space } from "antd";
+import { Checkbox, Divider, Form, Space, Switch } from "antd";
 import { PlayerClass } from "../../data";
 import { InputFloat, InputInteger } from "../../editor/Inputs";
 import { GameServerConfigTabProps } from "../../editor/tabHelpers";
@@ -24,9 +24,7 @@ export default function PlayerSettingsTab (
   { config, updateCallbacks }: GameServerConfigTabProps
 ) {
 
-  const { updateInputNumber, update } = updateCallbacks;
-
-
+  const { updateInputNumber, update, updateSwitch } = updateCallbacks;
 
   return (
     <Form
@@ -39,6 +37,28 @@ export default function PlayerSettingsTab (
           onChange={updateInputNumber('energyMultiplier')}
           placeholder='1.0' />
       </Form.Item>
+      
+
+      <Form.Item label='Skiing Enabled'>
+        <Switch
+          checked={config.skiingEnabled ?? true}
+          onChange={updateSwitch('skiingEnabled')} />
+      </Form.Item>
+
+      <Form.Item 
+        label='Use GOTY Shield Pack' 
+        extra="Taking damage with shields will not block regen, and heavy shield pack will not reduce impulse received when active">
+        <Switch
+          checked={config.useGotyShieldPack}
+          onChange={updateSwitch('useGotyShieldPack')} />
+      </Form.Item>
+
+      <Form.Item label='Inventory Station Restore Energy'>
+        <Switch
+          checked={config.inventoryStationRestoreEnergy}
+          onChange={updateSwitch('inventoryStationRestoreEnergy')} />
+      </Form.Item>
+
       <Divider orientation='left'>Flag Drag</Divider>
       <Form.Item label='Light Flag Drag' extra='Speed at which flag-drag occurs for lights'>
         <InputInteger

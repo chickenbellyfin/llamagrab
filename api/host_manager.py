@@ -32,7 +32,7 @@ class HostManager:
     regions: List[Region],
     port: int,
     db_session: sessionmaker,
-    rate_limit_secs=30):
+    rate_limit_secs=10):
     self.port = port
     self.session = db_session
     self.rate_limit_secs = rate_limit_secs
