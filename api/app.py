@@ -184,8 +184,7 @@ def main(argv: List[str]):
   login_manager = create_login_manager(config, db)
   host_manager = create_host_manager(config, db)
   server_status_manager = ServerStatusManager(
-    host_manager,
-    polling_rate=config.status_polling_rate_secs
+    host_manager
   )
 
   # Make sure the admin user exists

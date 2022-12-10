@@ -78,11 +78,13 @@ def test_sync_empty(monkeypatch, mock_requests: Mock):
   host_manager.sync()
 
   wait_for(lambda: mock_requests.called)
-  mock_requests.post.assert_called_once_with(
-    'http://localhost:23456/api/sync',
-    json=EMPTY_SYNC_MESSAGE,
-    headers={'Token': 'test_token'}
-  )
+  mock_requests.assert_has_calls([
+    call.post(
+      'http://localhost:23456/api/sync',
+      json=EMPTY_SYNC_MESSAGE,
+      headers={'Token': 'test_token'}
+    )
+  ])
 
 
 def test_sync_multiple(monkeypatch, mock_requests: Mock):

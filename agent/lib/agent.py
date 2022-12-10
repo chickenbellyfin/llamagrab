@@ -12,8 +12,8 @@ from typing import List, Mapping, Set
 from loguru import logger
 
 from agent.lib.docker import Docker
+from common import concurrency, polling
 from common.hashing import md5
-from agent.lib.util import start_polling, synchronized
 
 AgentTask = namedtuple('AgentTask', 'action,expiry_time')
 
@@ -63,9 +63,13 @@ class Agent:
     # track ongoing server starts/restarts
     self.tasks: Mapping[int, AgentTask] = {}
     self.requested_restarts: Set[int] = set()
+
+    # unless we start(), trigger check calls _check_servers directly
+    self.trigger_check = self._check_servers
   
   def start(self):    
-    start_polling(self._check_servers, self.interval_secs)
+    # don't check more than every 5 seconds
+    polling.variable_rate(self._check_servers, self.interval_secs, 5)
 
 
   def host_path_for(self, server_id: int) -> str:
@@ -106,7 +110,7 @@ class Agent:
       logger.info(f"{len(self.tasks)} Ongoing Tasks: {' '.join(task_str)}   Restart Queue: [{' '.join(map(str, self.requested_restarts))}]")
     self._log_tasks_was_nonzero = len(self.tasks) > 0
 
-  @synchronized
+  @concurrency.synchronized
   def _check_servers(self):
     current_time = time.time()
     
@@ -221,7 +225,7 @@ class Agent:
       logger.info(f'Stopping server({server_id})')
       self.docker.stop_server(server_id)
     
-    self._check_servers()
+    self.trigger_check()
     return self.status()
 
 

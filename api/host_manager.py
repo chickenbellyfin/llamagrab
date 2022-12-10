@@ -13,7 +13,7 @@ from api.database import models, queries
 from api.lua import LuaSettings
 from api.schema.app_config import Region
 from api.schema.game_server_config import GameServerConfig
-from common.hashing import md5
+from common import polling, concurrency, hashing
 
 
 def get_lua_settings(db: Session) -> LuaSettings:
@@ -32,13 +32,11 @@ class HostManager:
     regions: List[Region],
     port: int,
     db_session: sessionmaker,
-    rate_limit_secs=10):
+    rate_limit_secs=10,
+    periodic_sync=3600
+  ):
     self.port = port
     self.session = db_session
-    self.rate_limit_secs = rate_limit_secs
-    self.event = Event()
-    self.sync_requested = False
-    self.last_sync_time = 0
 
     self.regions: Dict[str, Region] = {
       r.key: r
@@ -50,7 +48,8 @@ class HostManager:
       for r in regions
     }
 
-    threading.Thread(target=self._worker, daemon=True).start()
+    self.trigger_sync = polling.variable_rate(self._do_sync, periodic_sync, rate_limit_secs)
+
 
   def _request(self, method, region: Region, path: str, payload: object = None):
     kwargs = {}
@@ -69,6 +68,7 @@ class HostManager:
       logger.error(f'Error requesting {region.name}:{path} - {type(e)}: {e}')
       return None
 
+  @concurrency.synchronized
   def _do_sync(self):
     with self.session() as db:
       lua_settings = get_lua_settings(db)
@@ -85,38 +85,15 @@ class HostManager:
             'loginserver': flags.get_flag(db, 'loginserver')
           }
 
-        message_hashed = { k: md5(payload[k]) for k in payload }
+        message_hashed = { k: hashing.md5(payload[k]) for k in payload }
         logger.info(f'Syncing configs to {region.name}@{region.host}:{self.port} {message_hashed}')
         self._update_status(
           region,
           self._request(requests.post, region, '/api/sync', payload)
         )
 
-  def _wait_for_sync(self) -> bool:
-    secs_since_last_sync = time.time() - self.last_sync_time
-    if secs_since_last_sync < self.rate_limit_secs:
-      time.sleep(max(0, self.rate_limit_secs - secs_since_last_sync))
-    # todo maybe rewrite as a generator
-    self.event.wait()
-    should_sync = self.sync_requested
-    self.sync_requested = False
-    self.last_sync_time = time.time()
-    self.event.clear()
-    return should_sync
-
-  def _worker(self):
-    while True:
-      try:
-        should_sync = self._wait_for_sync()
-
-        if should_sync:
-          self._do_sync()
-      except Exception as e:
-        logger.opt(exception=True).error('Error while syncing')
-
   def sync(self):
-    self.sync_requested = True
-    self.event.set()
+    self.trigger_sync()
 
   def restart(self, server: models.Server):
     region = self.regions.get(server.region)
