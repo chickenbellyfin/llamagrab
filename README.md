@@ -89,8 +89,6 @@ $ coverage run && coverage report
 ## Release
 Build for amd64 & arm64 & push to ECR
 ```
-docker buildx build --platform linux/amd64,linux/arm64 --tag public.ecr.aws/i2q9d4v7/llamagrab:latest --push .
-
 docker buildx build --platform linux/amd64,linux/arm64 --tag r.llamagrab.net/llamagrab -f api/Dockerfile --push .
 ```
 
@@ -100,14 +98,8 @@ docker buildx build --platform linux/amd64,linux/arm64 --tag r.llamagrab.net/lla
 mkdir -p ~/data
 touch ~/data/config.yaml # Must add config here before continuing
 
-# download/update image
-docker pull public.ecr.aws/i2q9d4v7/llamagrab:latest
-
-# kill existing container and start new one
-docker rm -f llamagrab-app
-docker run --name llamagrab-app -d --restart unless-stopped -p 8000:8000 -v "$data_path:/data" public.ecr.aws/i2q9d4v7/llamagrab:latest "/data/config.yaml"
-
-# or
+# use docker-compose
+nano docker-compose.yaml
 
 docker-compose pull && docker-compose up -d
 ```
@@ -118,22 +110,35 @@ version: '3.6'
 
 services:
   llamagrab:
-    image: public.ecr.aws/i2q9d4v7/llamagrab
-    container_name: llamagrab-app
+    image: r.llamagrab.net/llamagrab
+    container_name: llamagrab
     volumes:
       - './data/llamagrab:/data'
-    ports:
-      - 8000:8000
     command: /data/config.yaml
     restart: unless-stopped
+  
+  # use caddy for HTTPS
+  caddy:
+    image: caddy
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./data/Caddyfile:/etc/caddy/Caddyfile
+      - certs-volume:/data
+
+volumes:
+  certs-volume:
 ```
 
 Caddy is used as a reverse proxy and for automatically provisioning TLS certificates.
 
-#### /etc/caddy/Caddyfile:
+#### ./data/Caddyfile:
 ```
 llamagrab.net {
-  reverse_proxy localhost:8000
+  reverse_proxy llamagrab:8000
 }
 ```
 Open :80 and :443 in network security group/firewall
