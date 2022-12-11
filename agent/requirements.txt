@@ -4,3 +4,4 @@ fastapi==0.88.0
 loguru
 uvicorn
 httpx
+prometheus_client

@@ -21,6 +21,7 @@ from api.routes import (account_api, admin_api, data_api, server_api,
                         server_list_api, site_admin_api)
 from api.schema.app_config import AppConfig, Loginserver, Region
 from api.server_status import ServerStatusManager
+from common import metrics
 
 DEFAULT_CONFIG_PATH = 'config/config.yaml'
 
@@ -199,11 +200,15 @@ def main(argv: List[str]):
     loginservers=config.loginservers
   )
 
+
   app = FastAPI(docs_url=None, redoc_url=None)
+  metrics.expose(app, allowed_ips=config.allowed_metrics_ips)
   app.mount('/api', api)
   # For deployment, the API serve also serves the static web app
   if config.serve_static is not None:
     app.mount('/', SPAStaticFiles(directory=config.serve_static, html=True), name='webapp')
+
+  api.add_middleware(metrics.HTTPMetricsMiddleware, route_prefix='/api')
 
   uvicorn.run(
     app,

@@ -5,13 +5,13 @@ import tempfile
 from unittest.mock import Mock, call
 
 import pytest
-from fastapi import status
+from fastapi import status, FastAPI
 from fastapi.testclient import TestClient
 
 from common import hashing
 from agent.lib.agent import Agent
 from agent.lib.docker import ContainerMetadata, Docker
-from agent.app import create_app
+from agent.app import create_api
 
 HEADER = {'Token': 'thetoken'}
 
@@ -37,7 +37,9 @@ def agent(temp_dir, mock_docker) -> Agent:
 
 @pytest.fixture
 def test_client(agent):
-  return TestClient(create_app(agent, 'thetoken'))
+  app = FastAPI()
+  app.mount('/api', create_api(agent, 'thetoken'))
+  return TestClient(app)
 
 
 def test_start(test_client: TestClient):
@@ -96,7 +98,9 @@ def test_host_abs_path(temp_dir, mock_docker):
     docker=mock_docker,
     host_abs_data_dir='/some/host/dir'
   )
-  test_client = TestClient(create_app(agent, 'thetoken'))
+  app = FastAPI()
+  app.mount('/api', create_api(agent, 'thetoken'))
+  test_client = TestClient(app)
 
   mock_docker.status.return_value = {}
   response = test_client.post('/api/sync', json={
