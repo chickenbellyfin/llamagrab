@@ -26,5 +26,7 @@ class AppConfig(BaseModel):
   regions: List[Region]
   loginservers: List[Loginserver]
 
+  allowed_metrics_ips: Optional[List[str]]
+
   class Config:
     extra = 'forbid' # don't allow unkown attributes

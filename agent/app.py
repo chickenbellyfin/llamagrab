@@ -13,7 +13,7 @@ from loguru import logger
 
 from agent.lib.agent import Agent
 from agent.lib.docker import Docker, NullDocker
-from common.hashing import md5
+from common import hashing, metrics
 
 MESSAGE_TYPES = {
   'sync', 'status', 'ping'
@@ -38,8 +38,8 @@ class InterceptHandler(logging.Handler):
 
 logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
 
-def create_app(agent: Agent, tokens: Set[str]):
-  app = FastAPI()
+def create_api(agent: Agent, tokens: Set[str]):
+  api = FastAPI()
 
   def auth(request: Request):
     request_token = request.headers.get('token')
@@ -47,19 +47,19 @@ def create_app(agent: Agent, tokens: Set[str]):
       raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     pass
 
-  @app.post('/api/sync')
+  @api.post('/sync')
   def handle_sync(servers: Dict[int, Any], auth=Depends(auth)):
     return agent.sync(servers)
 
-  @app.post('/api/restart/{server_id}')
+  @api.post('/restart/{server_id}')
   def handle_restart(server_id: int, auth=Depends(auth)):
     return agent.restart(server_id)
 
-  @app.get('/api/status')
+  @api.get('/status')
   def handle_status(auth=Depends(auth)):
     return agent.status()
 
-  @app.post('/api/banlist')
+  @api.post('/banlist')
   def handle_update_banlist(ips: List[str], auth=Depends(auth)):
     def validate_ip(ip: str):
       try:
@@ -73,11 +73,11 @@ def create_app(agent: Agent, tokens: Set[str]):
 
     return agent.update_banlist(ips)
 
-  @app.post('/api/ping')
+  @api.post('/ping')
   def handle_ping(auth=Depends(auth)):
     return 'pong'
 
-  return app
+  return api
 
 
 def main(argv: List[str]):
@@ -107,6 +107,14 @@ def main(argv: List[str]):
     if len(token.strip()) > 0
   ]
 
+  allowed_metrics_ips = None
+  if os.environ.get('LG_ALLOWED_METRICS_IPS') is not None:
+    allowed_metrics_ips = [
+      ip.strip() for ip in
+      os.environ.get('LG_ALLOWED_METRICS_IPS').split(',')
+      if len(ip.strip()) > 0
+    ]
+
   if len(tokens) == 0:
     logger.error(f'LG_TOKENS env not set. At least 1 auth token is required.')
     exit(1)
@@ -125,11 +133,17 @@ def main(argv: List[str]):
 
   active_servers = agent.get_current_active_servers()
   active_hashes = {
-    k: md5(active_servers[k]) for k in active_servers
+    k: hashing.md5(active_servers[k]) for k in active_servers
   }
   logger.info(f'Current active servers: {active_hashes}')
 
-  app = create_app(agent, tokens=set(tokens))
+  api = create_api(agent, tokens=set(tokens))
+  api.add_middleware(metrics.HTTPMetricsMiddleware, route_prefix='/api')
+  
+  app = FastAPI()
+  app.mount('/api', api)
+  metrics.expose(app, allowed_ips=allowed_metrics_ips)
+
   agent.start()
   uvicorn.run(
     app, 

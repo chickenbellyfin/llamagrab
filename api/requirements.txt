@@ -12,3 +12,4 @@ pyyaml
 requests
 sqlalchemy
 uvicorn
+prometheus_client
