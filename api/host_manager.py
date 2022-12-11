@@ -33,7 +33,7 @@ class HostManager:
     port: int,
     db_session: sessionmaker,
     rate_limit_secs=10,
-    periodic_sync=3600
+    periodic_sync=3600 * 2 
   ):
     self.port = port
     self.session = db_session
