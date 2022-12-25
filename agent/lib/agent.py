@@ -248,7 +248,6 @@ class Agent:
     logger.info(f'Restarting {server_id}')
     self.requested_restarts.add(server_id)
     self._check_servers()
-    return self.status()
 
 
   def status(self) -> Mapping[int, str]:

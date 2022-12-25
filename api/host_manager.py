@@ -1,7 +1,8 @@
+from collections import defaultdict
 import threading
 import time
 from threading import Event
-from typing import Dict, List
+from typing import Dict, List, Union
 
 import requests
 from loguru import logger
@@ -95,14 +96,18 @@ class HostManager:
   def sync(self):
     self.trigger_sync()
 
-  def restart(self, server: models.Server):
-    region = self.regions.get(server.region)
-    if region is None:
-      logger.error(f'Region {server.region} does not exist')
-      return
+  def restart(self, servers: List[models.Server]):    
+    by_region = defaultdict(list)
+    for server in servers:
+      by_region[server.region].append(server.id)
 
-    self._update_status(region, self._request(requests.post, region, f'/api/restart/{server.id}'))
-
+    for region_id, server_ids in by_region.items():
+      region = self.regions.get(region_id)
+      if region is None:
+        logger.error(f'Region {region_id} does not exist')
+      else:
+        response = self._request(requests.post, region, f'/api/restart', server_ids)
+        self._update_status(region, response)
 
   def _update_status(self, region: Region, status_response):
     if status_response is not None:

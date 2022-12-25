@@ -1,4 +1,4 @@
-import { Button, Card, Form, Input, message, PageHeader, Popconfirm, Select, Spin, Switch } from "antd";
+import { Button, Card, Checkbox, Form, Input, message, PageHeader, Popconfirm, Select, Space, Spin, Switch } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../../api";
@@ -10,7 +10,9 @@ import useLoader from "../../useLoader";
 export default function SiteAdminPage() {
   const flagsLoader = useLoader(API.Admin.Site.getSiteFlags)
   const loginserversLoader = useLoader(API.Data.getLoginservers)
+  const regionsLoader = useLoader(API.Data.getRegions)
   const [actionInProgress, setActionInProgress] = useState(false)
+
   const navigate = useNavigate()
 
   const onUpdateFlag = async (key: string, newValue: any) => {
@@ -36,10 +38,10 @@ export default function SiteAdminPage() {
     }
   }
 
-  const onRestartAll = async () => {
+  const onRestartAll = async (region: string | undefined = undefined) => {
     setActionInProgress(true)
     try {
-      const count = await API.Admin.Site.restartAllServers()
+      const count = await API.Admin.Site.restartAllServers(region)
       message.success(`Triggered restart of ${count} servers`)
     } catch {
       message.error("Restart all failed")
@@ -48,10 +50,10 @@ export default function SiteAdminPage() {
     }
   }
 
-  const onDisableAll = async () => {
+  const onDisableAll = async (region: string | undefined = undefined) => {
     setActionInProgress(true)
     try {
-      const count = await API.Admin.Site.disableAllServers()
+      const count = await API.Admin.Site.disableAllServers(region)
       message.success(`Disabled ${count} active servers`)
     } catch {
       message.error("Disable all failed")
@@ -125,21 +127,45 @@ export default function SiteAdminPage() {
             <Form.Item 
               label="Restart All Servers"
               extra="Force re-create all servers with their current config. (Do Not Spam)">
-              <Popconfirm 
-              title="All servers will be restarted immediately. Regions with a lot of servers may become unstable."
-              onConfirm={onRestartAll}>
-                <Button type="primary" danger>Restart</Button>
-              </Popconfirm>
+              <Space direction="horizontal">
+                <Popconfirm 
+                title="All servers will be restarted immediately."
+                onConfirm={() => onRestartAll()}>
+                  <Button type="primary" danger>Restart</Button>
+                </Popconfirm>
+                
+                { regionsLoader.value && 
+                  Object.entries(regionsLoader.value).map(([id, name]) => (
+                    <Popconfirm 
+                    title={`All servers in ${name} will be restarted immediately.`}
+                    onConfirm={() => onRestartAll(id)}>
+                      <Button danger>"{name}" Only</Button>
+                    </Popconfirm>
+                  ))
+                }
+              </Space>
             </Form.Item>
 
             <Form.Item 
               label="Disable All Servers"
               extra="Stop all enabled servers.">
-              <Popconfirm 
-              title="All servers will be shut down and must be manually started. Are you sure?"
-              onConfirm={onDisableAll}>
-                <Button type="primary" danger>Disable</Button>
-              </Popconfirm>
+              <Space direction="horizontal">
+                <Popconfirm 
+                title="All servers will be shut down and must be manually started. Are you sure?"
+                onConfirm={() => onDisableAll()}>
+                  <Button type="primary" danger>Disable</Button>
+                </Popconfirm>
+
+                { regionsLoader.value && 
+                  Object.entries(regionsLoader.value).map(([id, name]) => (
+                    <Popconfirm 
+                    title={`All servers in ${name} shut down and must be manually started. Are you sure?`}
+                    onConfirm={() => onDisableAll(id)}>
+                      <Button danger>"{name}" Only</Button>
+                    </Popconfirm>
+                  ))
+                }
+              </Space>
             </Form.Item>
           </Form>
         </Card>

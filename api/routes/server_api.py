@@ -188,7 +188,7 @@ async def restart_server(server: models.Server = Depends(get_server), db: Sessio
   if deps.status_manager.get_server_status(server) != 'running':
     raise HTTPException(status_code=http_status.HTTP_400_BAD_REQUEST)
 
-  deps.host_manager().restart(server)
+  deps.host_manager().restart([server])
 
 @router.delete('/server/{server_id}', tags=['server'])
 async def delete_server(

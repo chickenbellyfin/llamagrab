@@ -340,17 +340,18 @@ async function requestSync(): Promise<any> {
   })
 }
 
-async function restartAllServers(): Promise<number> {
+async function restartAllServers(region: string | undefined = undefined): Promise<number> {
+  
   return doRequest({
     method: 'POST',
-    path: '/api/admin/site/restart_all'
+    path: region ? `/api/admin/site/restart_all/${region}` : '/api/admin/site/restart_all'
   })
 }
 
-async function disableAllServers(): Promise<number> {
+async function disableAllServers(region: string | undefined = undefined): Promise<number> {
   return doRequest({
     method: 'POST',
-    path: '/api/admin/site/disable_all'
+    path: region ? `/api/admin/site/disable_all/${region}` : '/api/admin/site/disable_all'
   })
 }
 

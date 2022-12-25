@@ -35,17 +35,33 @@ async def request_sync(user: models.User = Depends(deps.login_admin)):
   deps.host_manager().sync()
 
 @router.post('/admin/site/restart_all', include_in_schema=False)
-async def request_sync(user: models.User = Depends(deps.login_admin), db: Session = Depends(deps.db)):
+async def restart_all(user: models.User = Depends(deps.login_admin), db: Session = Depends(deps.db)):
   active = queries.get_active_servers(db)
   logger.info(f"User(id={user.id}, username={user.username}) restarted all servers")
-  for server in active:
-    deps.host_manager().restart(server)
+  deps.host_manager().restart(active)
+  return len(active)
+
+@router.post('/admin/site/restart_all/{region}', include_in_schema=False)
+async def restart_all(region: str, user: models.User = Depends(deps.login_admin), db: Session = Depends(deps.db)):
+  active = queries.get_active_servers(db, region = region)
+  logger.info(f"User(id={user.id}, username={user.username}) restarted all servers in {region}")
+  deps.host_manager().restart(active)
   return len(active)
 
 @router.post('/admin/site/disable_all', include_in_schema=False)
-async def request_sync(user: models.User = Depends(deps.login_admin), db: Session = Depends(deps.db)):
+async def disable_all(user: models.User = Depends(deps.login_admin), db: Session = Depends(deps.db)):
   active = queries.get_active_servers(db)
   logger.info(f"User(id={user.id}, username={user.username}) disabled all servers")
+  for server in active:
+    server.enabled = False
+  db.commit()
+  deps.host_manager().sync()
+  return len(active)
+
+@router.post('/admin/site/disable_all/{region}', include_in_schema=False)
+async def disable_all(region: str, user: models.User = Depends(deps.login_admin), db: Session = Depends(deps.db)):
+  active = queries.get_active_servers(db, region = region)
+  logger.info(f"User(id={user.id}, username={user.username}) disabled all servers in {region}")
   for server in active:
     server.enabled = False
   db.commit()

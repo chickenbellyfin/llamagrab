@@ -51,9 +51,11 @@ def create_api(agent: Agent, tokens: Set[str]):
   def handle_sync(servers: Dict[int, Any], auth=Depends(auth)):
     return agent.sync(servers)
 
-  @api.post('/restart/{server_id}')
-  def handle_restart(server_id: int, auth=Depends(auth)):
-    return agent.restart(server_id)
+  @api.post('/restart')
+  def handle_restart(server_ids: List[int], auth=Depends(auth)):
+    for server_id in server_ids:
+      agent.restart(server_id)
+    return agent.status()
 
   @api.get('/status')
   def handle_status(auth=Depends(auth)):
