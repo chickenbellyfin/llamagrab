@@ -19,6 +19,7 @@ import UsersAdminPage from './pages/admin/UsersAdminPage';
 import LandingPage from './pages/LandingPage';
 import RegionsPage from './pages/RegionsPage';
 import SiteAdminPage from './pages/admin/SiteAdminPage';
+import IPLogAdminPage from './pages/admin/IPLogAdminPage';
 
 const { Header, Content, Sider } = Layout;
 
@@ -108,7 +109,12 @@ function App () {
                     key: '/admin/site',
                     label: 'Site',
                     title: '', // disables tooltip on mobile
-                  }
+                  },                
+                  ... auth.permissions.isSuper() ? [{
+                    key: '/admin/iplogs',
+                    label: 'IP Logs',
+                    title: '', // disables tooltip on mobile
+                  }] : []
                 ]
               }] : []
             ]}/>
@@ -147,6 +153,9 @@ function App () {
               <Route path='/admin/servers' element={<ProtectedRoute><ServersAdminPage/></ProtectedRoute>}/>
               <Route path='/admin/site' element={<ProtectedRoute><SiteAdminPage/></ProtectedRoute>}/>
               </>
+            }
+            { auth.permissions.isSuper() &&
+              <Route path='/admin/iplogs' element={<ProtectedRoute><IPLogAdminPage/></ProtectedRoute>}/>
             }
 
             {/* Any paths not defined redirect to '/' */}

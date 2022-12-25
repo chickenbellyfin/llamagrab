@@ -12,7 +12,7 @@ from api.database.models import User
 from api.host_manager import HostManager
 from api.schema.app_config import Loginserver, Region
 from api.server_status import ServerStatusManager
-
+from api.iplog import IPLogDatabase
 
 class Dependencies:
   def __init__(self):
@@ -24,12 +24,14 @@ class Dependencies:
     login_manager: LoginManager,
     host_manager: HostManager,
     status_manager: ServerStatusManager,
+    ip_log_db: IPLogDatabase,
     regions: List[Region],
     loginservers: List[Loginserver]):
     self._db_session = db_session
     self.login_manager = login_manager
     self._host_manager = host_manager
     self.status_manager = status_manager
+    self.ip_log_db = ip_log_db
     self.regions = {
       r.key: r for r in regions
     }

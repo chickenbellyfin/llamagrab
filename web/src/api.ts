@@ -1,5 +1,5 @@
 import { getToken } from './auth';
-import { GameServerConfig, Loginserver, ModProperty, RegionStatus, ServerSettings, ServerStatus, ServerVersion, ServerVersionDetails, User, UserAccount } from './domain';
+import { GameServerConfig, IPLogEntry, Loginserver, ModProperty, RegionStatus, ServerSettings, ServerStatus, ServerVersion, ServerVersionDetails, User, UserAccount } from './domain';
 
 function removeEmptyModProperties(items: ModProperty[] | undefined): ModProperty[] | undefined {
   // NOTE: do not change to `!=`, needs to also check for null
@@ -360,6 +360,19 @@ async function getLoginservers(): Promise<Loginserver[]> {
   })
 }
 
+async function getIPLogs(): Promise<IPLogEntry[]> {
+  return doRequest({
+    path: '/api/admin/ip/log'
+  })
+}
+
+async function fetchIPLogs(): Promise<any> {
+  return doRequest({
+    method: 'POST',
+    path: '/api/admin/ip/fetch'
+  })
+}
+
 
 export const API = {
   Account: {
@@ -381,7 +394,9 @@ export const API = {
       requestSync,
       restartAllServers,
       disableAllServers
-    }
+    },
+    getIPLogs,
+    fetchIPLogs
   },
   Server: {
     getServerStatus,

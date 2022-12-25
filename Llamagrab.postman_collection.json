@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "af4b73b0-fa87-4c16-85ef-ea1f6343b438",
-		"name": "Server Manager",
+		"name": "Llamagrab",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -326,7 +326,7 @@
 						{
 							"name": "Get Site Flags",
 							"request": {
-								"method": "POST",
+								"method": "GET",
 								"header": [
 									{
 										"key": "Authorization",
@@ -335,15 +335,15 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/api/server/1/stop",
+									"raw": "{{base_url}}/api/admin/site/flags",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
 										"api",
-										"server",
-										"1",
-										"stop"
+										"admin",
+										"site",
+										"flags"
 									]
 								}
 							},
@@ -362,7 +362,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"key\": \"disable_new_accounts\",\r\n    \"value\": true\r\n}",
+									"raw": "{\r\n    \"key\": \"loginserver\",\r\n    \"value\": \"llamagrab.net\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -409,8 +409,44 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Loginservers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/data/loginservers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"data",
+								"loginservers"
+							]
+						}
+					},
+					"response": []
 				}
 			]
+		},
+		{
+			"name": "/metrics",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/metrics",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"metrics"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

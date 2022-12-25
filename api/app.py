@@ -18,10 +18,11 @@ from api.database import models, queries
 from api.database.database import Database, run_migrations
 from api.host_manager import HostManager
 from api.routes import (account_api, admin_api, data_api, server_api,
-                        server_list_api, site_admin_api)
+                        server_list_api, site_admin_api, ip_log_api)
 from api.schema.app_config import AppConfig, Loginserver, Region
 from api.server_status import ServerStatusManager
 from common import metrics
+from api.iplog import IPLogDatabase
 
 DEFAULT_CONFIG_PATH = 'config/config.yaml'
 
@@ -133,6 +134,7 @@ def create_app(
   login_manager: LoginManager,
   host_manager: HostManager,
   status_manager: ServerStatusManager,
+  ip_log_db: IPLogDatabase,
   regions: List[Region],
   loginservers: List[Loginserver]
 ) -> FastAPI:
@@ -142,6 +144,7 @@ def create_app(
     login_manager=login_manager,
     host_manager=host_manager,
     status_manager=status_manager,
+    ip_log_db=ip_log_db,
     regions=regions,
     loginservers=loginservers
   )
@@ -158,6 +161,7 @@ def create_app(
   app.include_router(server_api.router)
   app.include_router(server_list_api.router)
   app.include_router(site_admin_api.router)
+  app.include_router(ip_log_api.router)
 
   return app
 
@@ -188,6 +192,11 @@ def main(argv: List[str]):
     host_manager
   )
 
+  ip_log_db = IPLogDatabase(
+    base_path=base_path,
+    host_manager=host_manager
+  )
+
   # Make sure the admin user exists
   ensure_admin_user(db)
 
@@ -196,6 +205,7 @@ def main(argv: List[str]):
     login_manager=login_manager,
     host_manager=host_manager,
     status_manager=server_status_manager,
+    ip_log_db=ip_log_db,
     regions=config.regions,
     loginservers=config.loginservers
   )

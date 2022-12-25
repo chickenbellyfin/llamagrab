@@ -117,3 +117,12 @@ class HostManager:
     for region in self.regions.values():
       self._update_status(region, self._request(requests.get, region, '/api/status'))
     return self.last_status
+  
+  def iplogs(self):
+    log = []
+    for region in self.regions.values():
+      response = self._request(requests.get, region, '/api/iplog')
+      if response is not None:
+        log.extend(response)
+    
+    return log

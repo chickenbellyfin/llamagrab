@@ -42,7 +42,8 @@ class Docker:
     abs_gamesettings: str, 
     abs_banlist: str, 
     hash: str,
-    loginserver: str = None
+    loginserver: str = None,
+    abs_iplog: str = None
   ) -> None:
     name = self._container_name(server_id)
 
@@ -63,6 +64,20 @@ class Docker:
         f'{control_port}/udp': control_port,
       }
       network_mode = None
+    
+    volumes = [
+        f'{abs_gamesettings}:/gamesettings',
+        f'{abs_banlist}:/app/taserver/data/banlist.txt' 
+    ]
+
+    environment = []
+    
+    if abs_iplog is not None:
+      volumes += [f'{abs_iplog}:/app/taserver/data/iplog.tsv']
+      environment += [f'IPLOG_LABEL={server_id}', f'IPLOG_FILE=/app/taserver/data/iplog.tsv']
+    
+    if loginserver is not None:
+      environment += [f'LOGINSERVER={loginserver}']
 
     self.stop_server(server_id)
     logger.info(f'Running container {name} offset={offset} ports={gameserver1_port},{gameserver2_port},{control_port} path={abs_gamesettings}')
@@ -76,16 +91,13 @@ class Docker:
         'port_offset': f'{offset}',
         'hash': hash
       },
-      volumes = [
-        f'{abs_gamesettings}:/gamesettings',
-        f'{abs_banlist}:/app/taserver/data/banlist.txt'
-      ],
+      volumes = volumes,
       detach = True,
       # Note: no restart policy since agent will handle bringing containers up with limited concurrency
       # restart_policy = {'Name': 'unless-stopped'},
       cap_add = ['NET_ADMIN'],
       ports = port_mappings,
-      environment = [f'LOGINSERVER={loginserver}'] if loginserver else None,
+      environment = environment,
       # If the login server is on the same host as the container, use host networking so that
       # the ip address is detected correctly
       network_mode = network_mode
@@ -117,7 +129,8 @@ class NullDocker:
     abs_gamesettings: str, 
     abs_banlist: str, 
     hash: str,
-    loginserver: str = None
+    loginserver: str = None,
+    abs_iplog = None
   ) -> None:
     self.running[server_id] = ContainerMetadata(
       server_id=server_id,

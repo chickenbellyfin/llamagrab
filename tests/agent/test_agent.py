@@ -77,7 +77,8 @@ def test_sync_new_server(test_client: TestClient, mock_docker: Docker, temp_dir)
       abs_gamesettings=os.path.join(temp_dir, 'managed_gamesettings', 'server_1'), 
       abs_banlist=os.path.join(temp_dir, 'banlist.txt'),
       hash=hash1,
-      loginserver=None
+      loginserver=None,
+      abs_iplog=os.path.join(temp_dir, 'iplog.tsv')
     ),
     call(
       server_id=5, 
@@ -85,7 +86,8 @@ def test_sync_new_server(test_client: TestClient, mock_docker: Docker, temp_dir)
       abs_gamesettings=os.path.join(temp_dir, 'managed_gamesettings', 'server_5'), 
       abs_banlist=os.path.join(temp_dir, 'banlist.txt'), 
       hash=hash2,
-      loginserver='loginserver.somewhere'
+      loginserver='loginserver.somewhere',
+      abs_iplog=os.path.join(temp_dir, 'iplog.tsv')
     )
   ])
   mock_docker.stop_server.assert_not_called()
@@ -118,7 +120,8 @@ def test_host_abs_path(temp_dir, mock_docker):
       abs_gamesettings=os.path.join('/some/host/dir/managed_gamesettings', 'server_1'), 
       abs_banlist=os.path.join('/some/host/dir', 'banlist.txt'),
       hash=hashing.md5({'lua': 'Test Lua 1'}),
-      loginserver=None
+      loginserver=None,
+      abs_iplog=os.path.join('/some/host/dir', 'iplog.tsv')
     ),
     call(
       server_id=5, 
@@ -126,7 +129,8 @@ def test_host_abs_path(temp_dir, mock_docker):
       abs_gamesettings=os.path.join('/some/host/dir/managed_gamesettings', 'server_5'), 
       abs_banlist=os.path.join('/some/host/dir', 'banlist.txt'),
       hash=hashing.md5({'lua': 'Test Lua 5'}),
-      loginserver=None
+      loginserver=None,
+      abs_iplog=os.path.join('/some/host/dir', 'iplog.tsv')
     )
   ])
   mock_docker.stop_server.assert_not_called()
@@ -193,7 +197,8 @@ def test_sync_update_server(test_client: TestClient, mock_docker: Docker, temp_d
     abs_gamesettings=os.path.join(temp_dir, 'managed_gamesettings', 'server_1'), 
     abs_banlist=os.path.join(temp_dir, 'banlist.txt'),
     hash=hashing.md5({'lua': 'Test Lua 1 updated'}),
-    loginserver=None
+    loginserver=None,
+    abs_iplog=os.path.join(temp_dir, 'iplog.tsv')
   )
 
 def test_sync_lua_written(test_client: TestClient, mock_docker: Docker, temp_dir):

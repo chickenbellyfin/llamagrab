@@ -188,7 +188,7 @@ export type ServerVersion = {
 }
 
 export type ServerVersionChange = {
-  field: string,
+  field: string
   old: string | any[]
   new: string | any[]
 }
@@ -199,4 +199,12 @@ export type ServerVersionDetails = {
 export type Loginserver = {
   name: string,
   url: string
+}
+
+export type IPLogEntry = {
+  timestamp: number
+  label: string
+  userId: number
+  displayName: string
+  ip: string
 }

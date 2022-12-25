@@ -84,7 +84,7 @@ def test_start_server(mock_client):
         '9002/tcp':9002,
         '9002/udp':9002,
       },
-      environment = None,
+      environment = [],
       network_mode = None
     )
   ])
@@ -124,7 +124,7 @@ def test_start_server_no_existing(mock_client):
         '9002/tcp':9002,
         '9002/udp':9002,
       },
-      environment = None,
+      environment = [],
       network_mode = None
     )
   ])
@@ -161,7 +161,7 @@ def test_start_server_offset(mock_client):
         '9012/tcp':9012,
         '9012/udp':9012,
       },
-      environment = None,
+      environment = [],
       network_mode = None
     )
   ])
@@ -189,7 +189,7 @@ def test_start_server_host_network(mock_client):
       detach = True,
       cap_add = ['NET_ADMIN'],
       ports = None,
-      environment = None,
+      environment = [],
       network_mode = 'host'
     )
   ])
@@ -212,7 +212,7 @@ def test_start_server_custom_login(mock_client):
       },
       volumes = [
         '/test/gamesettings/path:/gamesettings',
-        '/test/banlist.txt:/app/taserver/data/banlist.txt'
+        '/test/banlist.txt:/app/taserver/data/banlist.txt',
       ],
       detach = True,
       cap_add = ['NET_ADMIN'],
@@ -260,7 +260,7 @@ def test_start_server_custom_image(mock_client):
         '9002/tcp':9002,
         '9002/udp':9002,
       },
-      environment = None,
+      environment = [],
       network_mode = None
     )
   ])

@@ -59,6 +59,10 @@ def create_api(agent: Agent, tokens: Set[str]):
   def handle_status(auth=Depends(auth)):
     return agent.status()
 
+  @api.get('/iplog')
+  def handle_iplog(flush: bool = True, auth=Depends(auth)):
+    return agent.dump_iplog(flush=flush)
+
   @api.post('/banlist')
   def handle_update_banlist(ips: List[str], auth=Depends(auth)):
     def validate_ip(ip: str):

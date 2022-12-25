@@ -226,6 +226,7 @@ def test_app(
     host_manager=host_manager,
     status_manager=status_manager,
     regions=test_regions,
+    ip_log_db=None,
     loginservers=[]
   )
   top_level = FastAPI()

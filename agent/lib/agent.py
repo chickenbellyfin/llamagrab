@@ -8,6 +8,7 @@ import os
 import time
 from collections import namedtuple
 from typing import List, Mapping, Set
+import csv
 
 from loguru import logger
 
@@ -16,6 +17,12 @@ from common import concurrency, polling
 from common.hashing import md5
 
 AgentTask = namedtuple('AgentTask', 'action,expiry_time')
+
+def _ensure_file(path):
+  # create empty file if not exists
+  if not os.path.exists(path):
+    with open(path, 'w'):
+      pass
 
 class Agent:
 
@@ -30,6 +37,8 @@ class Agent:
   ):
     self.gamesettings_dir = os.path.join(data_dir, 'managed_gamesettings')
     self.banlist = os.path.join(data_dir, 'banlist.txt')
+    self.iplog = os.path.join(data_dir, 'iplog.tsv')
+    self.iplog_backup = os.path.join(data_dir, 'iplog_backup.tsv')
     self.active_servers_file = os.path.join(data_dir, 'active_servers.json')
     
     if max_concurrency is None:
@@ -40,20 +49,21 @@ class Agent:
       logger.info(f"Container start concurrency is set to {max_concurrency}")
     self.interval_secs = interval_secs
     self.container_start_time_secs = container_start_time_secs
-
-    # create empty banlist.txt
-    if not os.path.exists(self.banlist):
-      with open(self.banlist, 'w'):
-        pass
+    
+    _ensure_file(self.banlist)
+    _ensure_file(self.iplog)
+    _ensure_file(self.iplog_backup)
 
     # If agent is running inside a container, the gamesettings mount path for taserver must be
     # relative to the host machine
     if host_abs_data_dir:
       self.host_gamesettings_dir = os.path.join(host_abs_data_dir, 'managed_gamesettings')
       self.host_banlist = os.path.join(host_abs_data_dir, 'banlist.txt')
+      self.host_iplog = os.path.join(host_abs_data_dir, 'iplog.tsv')
     else:
       self.host_gamesettings_dir = self.gamesettings_dir
       self.host_banlist = self.banlist
+      self.host_iplog = self.iplog
 
     self.docker = docker
 
@@ -175,7 +185,8 @@ class Agent:
           abs_gamesettings=self.host_path_for(server_id), 
           abs_banlist=self.host_banlist, 
           hash=md5(active_servers[server_id]),
-          loginserver=active_servers[server_id].get('loginserver')
+          loginserver=active_servers[server_id].get('loginserver'),
+          abs_iplog=self.host_iplog
         )
 
         self.tasks[server_id] = AgentTask(action, time.time() + self.container_start_time_secs)
@@ -260,6 +271,32 @@ class Agent:
         statuses[server_id] = 'running'
       
     return statuses
+  
+  def dump_iplog(self, flush=True) -> List:
+    with open(self.iplog, 'r') as f:
+      tsv = csv.reader(f, delimiter="\t")
+      items = [
+        {
+          'label': line[0],
+          'timestamp': int(line[1]),
+          'user_id': int(line[2]),
+          'display_name': line[3],
+          'ip': line[4]
+        }
+        for line in tsv
+      ]
+    
+    if flush:
+      # clear the file
+      with open(self.iplog, 'w') as f:
+        pass
+
+    with open(self.iplog_backup, 'a') as f:
+      for item in items:
+        f.write(f"{json.dumps(item)}\n")
+
+    return items
+    
 
   def update_banlist(self, ips: List[str]):
     txt = ''
