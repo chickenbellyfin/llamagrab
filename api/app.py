@@ -13,7 +13,8 @@ from fastapi_login import LoginManager
 from loguru import logger
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from api import dependencies, flags
+from api import flags
+from api.dependencies import Dependencies
 from api.database import models, queries
 from api.database.database import Database, run_migrations
 from api.host_manager import HostManager
@@ -138,15 +139,12 @@ def create_app(
   regions: List[Region],
   loginservers: List[Loginserver]
 ) -> FastAPI:
-
-  dependencies.dependencies.set(
+  regions_dict = {
+    r.key: r for r in regions
+  }
+  dependencies = Dependencies(
     db_session=db_instance.SessionFactory,
     login_manager=login_manager,
-    host_manager=host_manager,
-    status_manager=status_manager,
-    ip_log_db=ip_log_db,
-    regions=regions,
-    loginservers=loginservers
   )
   flags.set_loginserver_urls([s.url for s in loginservers])
   app = FastAPI(
@@ -155,13 +153,43 @@ def create_app(
     openapi_tags=TAGS_METADATA,
     redoc_url=None
   )
-  app.include_router(account_api.router)
-  app.include_router(admin_api.router)
-  app.include_router(data_api.router)
-  app.include_router(server_api.router)
-  app.include_router(server_list_api.router)
-  app.include_router(site_admin_api.router)
-  app.include_router(ip_log_api.router)
+
+  app.include_router(account_api.build_router(
+    deps=dependencies,
+    host_manager=host_manager
+  ))
+
+  app.include_router(admin_api.build_router(
+    deps=dependencies
+  ))
+
+  app.include_router(data_api.build_router(
+    regions=regions_dict,
+    loginservers=loginservers
+  ))
+
+  app.include_router(server_api.build_router(
+    deps=dependencies,
+    status_manager=status_manager,
+    host_manager=host_manager,
+    regions=regions_dict
+  ))
+
+  app.include_router(server_list_api.build_router(
+    deps=dependencies, 
+    status_manager=status_manager, 
+    regions=regions_dict
+  ))
+
+  app.include_router(site_admin_api.build_router(
+    deps=dependencies,
+    host_manager=host_manager
+  ))
+
+  app.include_router(ip_log_api.build_router(
+    deps=dependencies,
+    ip_log_db=ip_log_db
+  ))
 
   return app
 

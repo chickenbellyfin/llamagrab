@@ -8,34 +8,16 @@ from sqlalchemy.orm.session import Session, sessionmaker
 
 from api import flags, permissions
 from api.database.models import User
-from api.host_manager import HostManager
-from api.schema.app_config import Loginserver, Region
-from api.server_status import ServerStatusManager
-from api.iplog import IPLogDatabase
+
 
 class Dependencies:
-  def __init__(self):
-    self._db_session = None
-    self.login_manager = None
-
-  def set(self,
+  def __init__(
+    self,
     db_session: sessionmaker ,
     login_manager: LoginManager,
-    host_manager: HostManager,
-    status_manager: ServerStatusManager,
-    ip_log_db: IPLogDatabase,
-    regions: List[Region],
-    loginservers: List[Loginserver]):
+  ): 
     self._db_session = db_session
     self.login_manager = login_manager
-    self._host_manager = host_manager
-    self.status_manager = status_manager
-    self.ip_log_db = ip_log_db
-    self.regions = {
-      r.key: r for r in regions
-    }
-    self.loginservers = loginservers
-
     # set of IPs which created an account
     self.created_account = set()
 
@@ -45,9 +27,6 @@ class Dependencies:
       yield session
     finally:
       session.close()
-
-  def host_manager(self) -> HostManager:
-    return self._host_manager
 
   def check_account_disabled_flags(self, user: User):
     with self._db_session() as db:
@@ -75,5 +54,3 @@ class Dependencies:
     if not permissions.is_super(user):
       raise HTTPException(status.HTTP_403_FORBIDDEN)
     return user
-
-dependencies = Dependencies()

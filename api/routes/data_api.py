@@ -4,14 +4,14 @@
 
 All endpoints in under the Data API are public, READ-ONLY, and don't require authentication
 """
-from typing import Dict
+from typing import Dict, List
 
 from fastapi.routing import APIRouter
 from pydantic import BaseModel
 
-from api.dependencies import dependencies as deps
+from api.schema.app_config import Loginserver, Region
 
-router = APIRouter()
+# from api.dependencies import dependencies as deps
 
 class RegionListResponse(BaseModel):
   __root__: Dict[str, str]
@@ -23,21 +23,30 @@ class RegionListResponse(BaseModel):
       }
     }
 
-@router.get('/data/regions', tags=['data'], response_model=RegionListResponse)
-async def get_regions() -> RegionListResponse:
-  """ Return a list of region codes and their human-friendly names"""
-  return {
-    region.key: region.name
-    for region in deps.regions.values()
-  }
-
-@router.get('/data/loginservers', tags=['data'])
-async def get_loginservers():
-  """ Return a list of allowed loginservers"""
-  return deps.loginservers
+def build_router(
+  regions: Dict[str, Region],
+  loginservers: List[Loginserver]
+) -> APIRouter:
+  router = APIRouter()
 
 
-@router.get('/status', tags=['data'])
-async def get_status() -> str:
-  """ Health check. Responds with `"ok"` if the service is healthy"""
-  return "ok"
+  @router.get('/data/regions', tags=['data'], response_model=RegionListResponse)
+  async def get_regions() -> RegionListResponse:
+    """ Return a list of region codes and their human-friendly names"""
+    return {
+      region.key: region.name
+      for region in regions.values()
+    }
+
+  @router.get('/data/loginservers', tags=['data'])
+  async def get_loginservers():
+    """ Return a list of allowed loginservers"""
+    return loginservers
+
+
+  @router.get('/status', tags=['data'])
+  async def get_status() -> str:
+    """ Health check. Responds with `"ok"` if the service is healthy"""
+    return "ok"
+  
+  return router
