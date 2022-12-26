@@ -7,8 +7,8 @@ from sqlalchemy.orm.session import Session
 
 from api import server_sharing
 from api.database import models, queries
+from api.database.database import Database
 from api.dependencies import Dependencies
-# from api.dependencies import dependencies as deps
 from api.schema import responses
 from api.schema.app_config import Region
 from api.schema.game_server_config import GameServerConfig
@@ -18,6 +18,7 @@ from api.server_status import ServerStatusManager
 
 def build_router(
   deps: Dependencies,
+  database: Database,
   status_manager: ServerStatusManager, 
   regions: Dict[str, Region]
 ) -> APIRouter:
@@ -43,7 +44,7 @@ def build_router(
   @router.get('/servers/user', tags=['server-list'])
   async def get_servers_for_user(
     user: models.User = Depends(deps.login),
-    db: Session = Depends(deps.db)
+    db: Session = Depends(database)
   ):
     """
     Get all servers which the requesting user owns or is an editor of
@@ -55,7 +56,7 @@ def build_router(
   @router.get('/servers/all', include_in_schema=False)
   async def get_all_servers_for_admin(
     admin: models.User = Depends(deps.login_admin),
-    db: Session = Depends(deps.db)
+    db: Session = Depends(database)
   ):
     """Get all servers for admin panel
     """
@@ -65,7 +66,7 @@ def build_router(
 
   @router.get('/servers/region_status', tags=['server-list'])
   async def get_region_status(
-    db: Session = Depends(deps.db)
+    db: Session = Depends(database)
   ):
     """
     Get all currently running servers for status page

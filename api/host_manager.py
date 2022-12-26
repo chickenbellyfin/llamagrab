@@ -1,20 +1,17 @@
 from collections import defaultdict
-import threading
-import time
-from threading import Event
-from typing import Dict, List, Union
+from typing import Dict, List
 
 import requests
 from loguru import logger
 from sqlalchemy.orm import Session
-from sqlalchemy.orm.session import sessionmaker
 
 from api import flags, lua
 from api.database import models, queries
+from api.database.database import Database
 from api.lua import LuaSettings
 from api.schema.app_config import Region
 from api.schema.game_server_config import GameServerConfig
-from common import polling, concurrency, hashing
+from common import concurrency, hashing, polling
 
 
 def get_lua_settings(db: Session) -> LuaSettings:
@@ -32,12 +29,12 @@ class HostManager:
   def __init__(self,
     regions: List[Region],
     port: int,
-    db_session: sessionmaker,
+    database: Database,
     rate_limit_secs=10,
     periodic_sync=3600 * 2 
   ):
     self.port = port
-    self.session = db_session
+    self.database = database
 
     self.regions: Dict[str, Region] = {
       r.key: r
@@ -71,7 +68,7 @@ class HostManager:
 
   @concurrency.synchronized
   def _do_sync(self):
-    with self.session() as db:
+    with self.database.session() as db:
       lua_settings = get_lua_settings(db)
       for region in self.regions.values():
         active_for_region = queries.get_active_servers(db, region.key)

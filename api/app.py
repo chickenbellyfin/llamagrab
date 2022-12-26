@@ -100,19 +100,20 @@ def load_config(argv: List[str]) -> AppConfig:
 def create_database(config: AppConfig):
   return Database(config.base_path)
 
-def create_host_manager(config: AppConfig, db: Database) -> HostManager:
+
+def create_host_manager(config: AppConfig, database: Database) -> HostManager:
   return HostManager(
     regions=config.regions,
     port=int(config.host_manager_port),
-    db_session=db.SessionFactory
+    database=database
   )
 
 
-def create_login_manager(config: AppConfig, db: Database) -> LoginManager:
+def create_login_manager(config: AppConfig, database: Database) -> LoginManager:
   # todo get a better login library
   def load_user(username: str) -> models.User:
-    with db.SessionFactory() as db_session:
-      user = queries.get_user(db_session, username)
+    with database.session as db:
+      user = queries.get_user(db, username)
       return user
 
   login_manager = LoginManager(config.login_secret, token_url='/api/login', default_expiry=timedelta(days=30))
@@ -120,8 +121,8 @@ def create_login_manager(config: AppConfig, db: Database) -> LoginManager:
   return login_manager
 
 
-def ensure_admin_user(db: Database):
-  with db.SessionFactory() as session:
+def ensure_admin_user(database: Database):
+  with database.session() as session:
     admin_user = queries.get_user(session, 'admin')
     if not admin_user:
       logger.info(f'Admin user does not exist, creating')
@@ -143,7 +144,7 @@ def create_app(
     r.key: r for r in regions
   }
   dependencies = Dependencies(
-    db_session=db_instance.SessionFactory,
+    database=db_instance,
     login_manager=login_manager,
   )
   flags.set_loginserver_urls([s.url for s in loginservers])
@@ -156,11 +157,13 @@ def create_app(
 
   app.include_router(account_api.build_router(
     deps=dependencies,
+    database=db_instance,
     host_manager=host_manager
   ))
 
   app.include_router(admin_api.build_router(
-    deps=dependencies
+    deps=dependencies,
+    database=db_instance
   ))
 
   app.include_router(data_api.build_router(
@@ -170,6 +173,7 @@ def create_app(
 
   app.include_router(server_api.build_router(
     deps=dependencies,
+    database=db_instance,
     status_manager=status_manager,
     host_manager=host_manager,
     regions=regions_dict
@@ -177,12 +181,14 @@ def create_app(
 
   app.include_router(server_list_api.build_router(
     deps=dependencies, 
+    database=db_instance,
     status_manager=status_manager, 
     regions=regions_dict
   ))
 
   app.include_router(site_admin_api.build_router(
     deps=dependencies,
+    database=db_instance,
     host_manager=host_manager
   ))
 
@@ -216,15 +222,8 @@ def main(argv: List[str]):
 
   login_manager = create_login_manager(config, db)
   host_manager = create_host_manager(config, db)
-  server_status_manager = ServerStatusManager(
-    host_manager
-  )
-
-  ip_log_db = IPLogDatabase(
-    base_path=base_path,
-    host_manager=host_manager
-  )
-
+  server_status_manager = ServerStatusManager(host_manager)
+  ip_log_db = IPLogDatabase(base_path=base_path, host_manager=host_manager)
   # Make sure the admin user exists
   ensure_admin_user(db)
 

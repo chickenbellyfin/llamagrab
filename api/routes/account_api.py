@@ -16,6 +16,7 @@ from sqlalchemy.orm.session import Session
 from api import flags
 from api.database import models
 from api.database import queries as db_queries
+from api.database.database import Database
 from api.dependencies import Dependencies
 from api.host_manager import HostManager
 # from api.dependencies import dependencies as deps
@@ -24,6 +25,7 @@ from api.schema.requests import UpdatePasswordRequest
 
 def build_router(
   deps: Dependencies,
+  database: Database,
   host_manager: HostManager
 ) -> APIRouter:
 
@@ -47,7 +49,7 @@ def build_router(
 
 
   @router.post('/account/login', tags=['account'])
-  async def login(login: requests.LoginRequest, db: Session = Depends(deps.db)):
+  async def login(login: requests.LoginRequest, db: Session = Depends(database)):
     """ Login to an account. Returns an access_token which must be included in the authorization
         header for most requests.
         Header is 'Authorization': 'Bearer $access_token'
@@ -74,7 +76,7 @@ def build_router(
   @router.get('/account/user', tags=['account'])
   async def get_user(
     user: models.User = Depends(deps.login),
-    db: Session = Depends(deps.db)):
+    db: Session = Depends(database)):
     """ Get the currently logged in user"""
     db_user = db.query(models.User).filter_by(id=user.id).first()
     return _to_account_response(db_user, db)
@@ -83,7 +85,7 @@ def build_router(
   @router.get('/accounts', include_in_schema=False)
   async def list_accounts(
     user: models.User = Depends(deps.login_admin),
-    db: Session = Depends(deps.db)) -> List[responses.UserAccount]:
+    db: Session = Depends(database)) -> List[responses.UserAccount]:
     """Get all user accounts with roles & limits. For admin panel use"""
     all_users = db.query(models.User).all()
     return [
@@ -94,7 +96,7 @@ def build_router(
   @router.get('/users', tags=['account'])
   async def list_users(
     user: models.User = Depends(deps.login),
-    db: Session = Depends(deps.db)
+    db: Session = Depends(database)
   ) -> List[responses.User]:
     """Get all usernames & ids"""
     all_users = db.query(models.User).all()
@@ -107,7 +109,7 @@ def build_router(
   async def change_password(
     request: UpdatePasswordRequest,
     user: models.User = Depends(deps.login),
-    db: Session = Depends(deps.db)):
+    db: Session = Depends(database)):
     """ Changes the account password. Must be logged in"""
     if not argon2.verify(request.current_password, user.password):
       raise InvalidCredentialsException
@@ -121,7 +123,7 @@ def build_router(
   async def set_tribes_name(
     request: requests.SetTribesUsernameRequest,
     user: models.User = Depends(deps.login),
-    db: Session = Depends(deps.db)):
+    db: Session = Depends(database)):
     user.tribes_username = request.tribes_username
     db.merge(user)
     db.commit()
@@ -134,7 +136,7 @@ def build_router(
     return request.client.host
 
   @router.post('/account/create', include_in_schema=False)
-  async def create_account(create_req: requests.AccountCreateRequest, request: Request, db: Session = Depends(deps.db)):
+  async def create_account(create_req: requests.AccountCreateRequest, request: Request, db: Session = Depends(database)):
     client_host = _get_ip(request)
     
     if flags.get_flag(db, 'disable_new_accounts'):
@@ -169,7 +171,7 @@ def build_router(
     deps.created_account.add(client_host)
 
   @router.delete('/account/{user_id}', include_in_schema=False)
-  async def delete_user(user_id: int, admin: models.User = Depends(deps.login_super), db: Session = Depends(deps.db)):
+  async def delete_user(user_id: int, admin: models.User = Depends(deps.login_super), db: Session = Depends(database)):
     user_to_delete = db_queries.user_by_id(db, user_id)
 
     if not user_to_delete:

@@ -134,7 +134,7 @@ def populate_db(
   server1_version1,
   server1_version2,
   server2_version1):
-  with inmemory_db.SessionFactory() as session:
+  with inmemory_db.session() as session:
     session.merge(user_1)
     session.merge(user_2)
     session.merge(user_admin)
@@ -188,9 +188,7 @@ def test_regions() -> List[Region]:
 
 @pytest.fixture
 def db_session(inmemory_db: database.Database):
-  session = inmemory_db.SessionFactory()
-  yield session
-  session.close()
+  return inmemory_db.session()
 
 @pytest.fixture
 def inmemory_db():

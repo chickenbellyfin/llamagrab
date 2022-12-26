@@ -18,11 +18,11 @@ class Database:
     db_url = f'sqlite:///{db_file_path}'
     # poolclass=StaticPool for inmemory sqlite (unit tests)
     #  https://stackoverflow.com/a/61085725
-    self.engine = create_engine(
+    self._engine = create_engine(
         db_url, connect_args={"check_same_thread": False}, poolclass=poolclass
     )
-    self.SessionFactory = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
-    Base.metadata.create_all(bind=self.engine)
+    self._SessionFactory = sessionmaker(autocommit=False, autoflush=False, bind=self._engine)
+    Base.metadata.create_all(bind=self._engine)
 
     # skip migrations if DB is newly created
     if db_is_new:
@@ -31,6 +31,16 @@ class Database:
         alembic_cfg.set_main_option('script_location', ALEMBIC_SCRIPT_LOCATION)
         alembic_cfg.set_main_option('sqlalchemy.url', db_url)
         command.stamp(alembic_cfg, 'head')
+  
+  def __call__(self):
+    session = self._SessionFactory()
+    try:
+      yield session
+    finally:
+      session.close()
+  
+  def session(self):
+    return self._SessionFactory()
 
 
 # https://stackoverflow.com/questions/24622170

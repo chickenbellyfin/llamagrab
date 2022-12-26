@@ -73,7 +73,7 @@ def test_sync_empty(monkeypatch, mock_requests: Mock):
       )
     ],
     port=TEST_PORT,
-    db_session=MagicMock()
+    database=MagicMock()
   )
   host_manager.sync()
 
@@ -126,7 +126,7 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
       )
     ],
     port=TEST_PORT,
-    db_session=MagicMock
+    database=MagicMock()
   )
   host_manager.sync()
 
@@ -167,7 +167,7 @@ def test_sync_rate_limit(monkeypatch, mock_requests: Mock):
       )
     ],
     port=TEST_PORT,
-    db_session=MagicMock(),
+    database=MagicMock(),
     rate_limit_secs=0 # don't rate limit syncs
   )
 

@@ -15,6 +15,7 @@ from sqlalchemy.orm.session import Session
 from api import permissions, server_history, server_sharing
 from api.database import models
 from api.database import queries as db_queries
+from api.database.database import Database
 from api.dependencies import Dependencies
 from api.host_manager import HostManager
 from api.schema import requests, responses
@@ -25,6 +26,7 @@ from api.server_status import ServerStatusManager
 
 def build_router(
   deps: Dependencies,
+  database: Database,
   status_manager: ServerStatusManager,
   host_manager: HostManager,
   regions: Dict[str, Region],
@@ -35,7 +37,7 @@ def build_router(
   def get_server(
     server_id: int,
     user: models.User = Depends(deps.login),
-    db: Session = Depends(deps.db)) -> models.Server:
+    db: Session = Depends(database)) -> models.Server:
     """
     Dependency function to get the server from server_id
     Raises 403 if the server does not belong to the requesting user
@@ -53,7 +55,7 @@ def build_router(
   async def create_server(
     request: requests.ServerCreateRequest,
     user: models.User = Depends(deps.login),
-    db: Session = Depends(deps.db)):
+    db: Session = Depends(database)):
     """ Create a new server"""
 
     if not permissions.can_create_server(db, user):
@@ -105,7 +107,7 @@ def build_router(
   @router.get('/server/{server_id}/settings', tags=['server'])
   async def get_server_settings(
     server: models.Server = Depends(get_server),
-    db: Session = Depends(deps.db)
+    db: Session = Depends(database)
   ):
     """ Get the settings for a server. These are high-level/infrastructure related settings.
         See /server/{server_id}/config for game settings
@@ -122,7 +124,7 @@ def build_router(
     request: requests.ServerSettingsUpdateRequest,
     user: models.User = Depends(deps.login),
     server: models.Server = Depends(get_server),
-    db: Session = Depends(deps.db)
+    db: Session = Depends(database)
   ):
     """ Set the settings for a server. These are high-level/infrastructure related settings.
         See /server/{server_id}/config for game settings
@@ -159,7 +161,7 @@ def build_router(
     game_server_config: GameServerConfig,
     user: models.User = Depends(deps.login),
     server: models.Server = Depends(get_server),
-    db: Session = Depends(deps.db)):
+    db: Session = Depends(database)):
     """ Set the game server configuration (Tribes settings) for a server"""
     if not permissions.can_write_server(db, user, server):
       raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN)
@@ -176,7 +178,7 @@ def build_router(
 
 
   @router.post('/server/{server_id}/start', tags=['server'])
-  async def start_server( server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
+  async def start_server( server: models.Server = Depends(get_server), db: Session = Depends(database)):
     """ Request to start a server. Status will be enabled=True immediatley, but the server may not be started immediatley.
         You should poll /api/server/{server_id}/status status to wait for the server to actually start."""
     server.enabled = True
@@ -185,7 +187,7 @@ def build_router(
 
 
   @router.post('/server/{server_id}/stop', tags=['server'])
-  async def stop_server(server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
+  async def stop_server(server: models.Server = Depends(get_server), db: Session = Depends(database)):
     """ Request to stop a server. Status will be enabled=False immediatley, but the server may not stop immediately.
         You should poll /api/server/{server_id}/status status to wait for the server to actually stop."""
     server.enabled = False
@@ -193,7 +195,7 @@ def build_router(
     host_manager.sync()
 
   @router.post('/server/{server_id}/restart', tags=['server'])
-  async def restart_server(server: models.Server = Depends(get_server), db: Session = Depends(deps.db)):
+  async def restart_server(server: models.Server = Depends(get_server), db: Session = Depends(database)):
     """ Restart a server. Server will be restart immediately on the host. If the server is already restarting, will
     return an error."""
     if deps.status_manager.get_server_status(server) != 'running':
@@ -205,7 +207,7 @@ def build_router(
   async def delete_server(
     user: models.User = Depends(deps.login),
     server: models.Server = Depends(get_server),
-    db: Session = Depends(deps.db)
+    db: Session = Depends(database)
   ):
     if server.user != user.id and user.tier != 'super':
       raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN)
@@ -223,7 +225,7 @@ def build_router(
   async def get_server_history(
     user: models.User = Depends(deps.login),
     server: models.Server = Depends(get_server),
-    db: Session = Depends(deps.db)
+    db: Session = Depends(database)
   ):
     """ Get all past versions of a server's settings"""
     return [
@@ -241,7 +243,7 @@ def build_router(
   async def get_server_version_diff(
     id: int,
     server: models.Server = Depends(get_server),
-    db: Session = Depends(deps.db)
+    db: Session = Depends(database)
   ) -> ServerVersionDetails:
     diff = server_history.get_diff(db, server, id)
 
