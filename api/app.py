@@ -112,7 +112,7 @@ def create_host_manager(config: AppConfig, database: Database) -> HostManager:
 def create_login_manager(config: AppConfig, database: Database) -> LoginManager:
   # todo get a better login library
   def load_user(username: str) -> models.User:
-    with database.session as db:
+    with database.session() as db:
       user = queries.get_user(db, username)
       return user
 
