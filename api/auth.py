@@ -1,17 +1,16 @@
-from typing import List
+from datetime import timedelta
 
 from fastapi import Request, status
 from fastapi.exceptions import HTTPException
 from fastapi.security.oauth2 import SecurityScopes
 from fastapi_login.fastapi_login import LoginManager
-from sqlalchemy.orm.session import Session, sessionmaker
 
 from api import flags, permissions
 from api.database.database import Database
 from api.database.models import User
 
 
-class Dependencies:
+class Auth:
   def __init__(
     self,
     login_manager: LoginManager,

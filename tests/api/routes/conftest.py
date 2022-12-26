@@ -9,6 +9,7 @@ from passlib.hash import argon2
 from sqlalchemy.pool import StaticPool
 
 from api import app
+from api.auth import Auth
 from api.database import database
 from api.database.models import (Server, ServerEditor, ServerVersion, User,
                                  UserLimits)
@@ -180,6 +181,13 @@ def mock_login_manager():
   return login_manager
 
 @pytest.fixture
+def test_auth(mock_login_manager, inmemory_db):
+  return Auth(
+    login_manager=mock_login_manager,
+    database=inmemory_db
+  )
+
+@pytest.fixture
 def test_regions() -> List[Region]:
   return [
     Region(key='region1', name="TestRegion1", host="http://r1url", token="r1token"),
@@ -213,14 +221,14 @@ def status_manager():
 
 @pytest.fixture
 def test_app(
-  mock_login_manager,
+  test_auth,
   inmemory_db,
   test_regions,
   host_manager,
   status_manager):
   api = app.create_app(
     db_instance=inmemory_db,
-    login_manager=mock_login_manager,
+    auth=test_auth,
     host_manager=host_manager,
     status_manager=status_manager,
     regions=test_regions,

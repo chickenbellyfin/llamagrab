@@ -14,17 +14,17 @@ from passlib.hash import argon2
 from sqlalchemy.orm.session import Session
 
 from api import flags
+from api.auth import Auth
 from api.database import models
 from api.database import queries as db_queries
 from api.database.database import Database
-from api.dependencies import Dependencies
 from api.host_manager import HostManager
-# from api.dependencies import dependencies as deps
 from api.schema import requests, responses
 from api.schema.requests import UpdatePasswordRequest
 
+
 def build_router(
-  deps: Dependencies,
+  auth: Auth,
   database: Database,
   host_manager: HostManager
 ) -> APIRouter:
@@ -60,12 +60,12 @@ def build_router(
     if not user:
       raise InvalidCredentialsException
     
-    deps.check_account_disabled_flags(user)
+    auth.check_account_disabled_flags(user)
     
     if not argon2.verify(login.password, user.password):
       raise InvalidCredentialsException
 
-    access_token = deps.login_manager.create_access_token(data=dict(sub=login.username))
+    access_token = auth.login_manager.create_access_token(data=dict(sub=login.username))
     # API will expect header:
     # Authorization: Bearer <access_token>
     return {
@@ -75,7 +75,7 @@ def build_router(
 
   @router.get('/account/user', tags=['account'])
   async def get_user(
-    user: models.User = Depends(deps.login),
+    user: models.User = Depends(auth.login),
     db: Session = Depends(database)):
     """ Get the currently logged in user"""
     db_user = db.query(models.User).filter_by(id=user.id).first()
@@ -84,7 +84,7 @@ def build_router(
 
   @router.get('/accounts', include_in_schema=False)
   async def list_accounts(
-    user: models.User = Depends(deps.login_admin),
+    user: models.User = Depends(auth.login_admin),
     db: Session = Depends(database)) -> List[responses.UserAccount]:
     """Get all user accounts with roles & limits. For admin panel use"""
     all_users = db.query(models.User).all()
@@ -95,7 +95,7 @@ def build_router(
 
   @router.get('/users', tags=['account'])
   async def list_users(
-    user: models.User = Depends(deps.login),
+    user: models.User = Depends(auth.login),
     db: Session = Depends(database)
   ) -> List[responses.User]:
     """Get all usernames & ids"""
@@ -108,7 +108,7 @@ def build_router(
   @router.post('/account/change_password', tags=['account'])
   async def change_password(
     request: UpdatePasswordRequest,
-    user: models.User = Depends(deps.login),
+    user: models.User = Depends(auth.login),
     db: Session = Depends(database)):
     """ Changes the account password. Must be logged in"""
     if not argon2.verify(request.current_password, user.password):
@@ -122,7 +122,7 @@ def build_router(
   @router.post('/account/set_tribes_name', tags=['account'])
   async def set_tribes_name(
     request: requests.SetTribesUsernameRequest,
-    user: models.User = Depends(deps.login),
+    user: models.User = Depends(auth.login),
     db: Session = Depends(database)):
     user.tribes_username = request.tribes_username
     db.merge(user)
@@ -145,7 +145,7 @@ def build_router(
 
     # only allow 1 account to be created from a client address
     # this only persists during the lifetime of the process but probably good enough
-    if client_host in deps.created_account:
+    if client_host in auth.created_account:
       logger.error(f'Client @ {client_host} tried to create extra account: {create_req.username}')
       raise HTTPException(
         status_code=http_status.HTTP_429_TOO_MANY_REQUESTS
@@ -168,10 +168,10 @@ def build_router(
     db.commit()
     logger.info(f'Client @ {client_host} created account: {new_user.username}')
     # record client created an account
-    deps.created_account.add(client_host)
+    auth.created_account.add(client_host)
 
   @router.delete('/account/{user_id}', include_in_schema=False)
-  async def delete_user(user_id: int, admin: models.User = Depends(deps.login_super), db: Session = Depends(database)):
+  async def delete_user(user_id: int, admin: models.User = Depends(auth.login_super), db: Session = Depends(database)):
     user_to_delete = db_queries.user_by_id(db, user_id)
 
     if not user_to_delete:

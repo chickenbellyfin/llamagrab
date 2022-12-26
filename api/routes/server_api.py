@@ -13,10 +13,10 @@ from fastapi.routing import APIRouter
 from sqlalchemy.orm.session import Session
 
 from api import permissions, server_history, server_sharing
+from api.auth import Auth
 from api.database import models
 from api.database import queries as db_queries
 from api.database.database import Database
-from api.dependencies import Dependencies
 from api.host_manager import HostManager
 from api.schema import requests, responses
 from api.schema.app_config import Region
@@ -24,8 +24,9 @@ from api.schema.game_server_config import GameServerConfig
 from api.schema.responses import ServerVersionChange, ServerVersionDetails
 from api.server_status import ServerStatusManager
 
+
 def build_router(
-  deps: Dependencies,
+  auth: Auth,
   database: Database,
   status_manager: ServerStatusManager,
   host_manager: HostManager,
@@ -36,7 +37,7 @@ def build_router(
 
   def get_server(
     server_id: int,
-    user: models.User = Depends(deps.login),
+    user: models.User = Depends(auth.login),
     db: Session = Depends(database)) -> models.Server:
     """
     Dependency function to get the server from server_id
@@ -54,7 +55,7 @@ def build_router(
   @router.put('/servers', status_code=http_status.HTTP_201_CREATED, tags=['server'])
   async def create_server(
     request: requests.ServerCreateRequest,
-    user: models.User = Depends(deps.login),
+    user: models.User = Depends(auth.login),
     db: Session = Depends(database)):
     """ Create a new server"""
 
@@ -122,7 +123,7 @@ def build_router(
   @router.post('/server/{server_id}/settings', tags=['server'])
   async def set_server_settings(
     request: requests.ServerSettingsUpdateRequest,
-    user: models.User = Depends(deps.login),
+    user: models.User = Depends(auth.login),
     server: models.Server = Depends(get_server),
     db: Session = Depends(database)
   ):
@@ -159,7 +160,7 @@ def build_router(
   @router.post('/server/{server_id}/config', tags=['server'])
   async def set_server_config(
     game_server_config: GameServerConfig,
-    user: models.User = Depends(deps.login),
+    user: models.User = Depends(auth.login),
     server: models.Server = Depends(get_server),
     db: Session = Depends(database)):
     """ Set the game server configuration (Tribes settings) for a server"""
@@ -198,14 +199,14 @@ def build_router(
   async def restart_server(server: models.Server = Depends(get_server), db: Session = Depends(database)):
     """ Restart a server. Server will be restart immediately on the host. If the server is already restarting, will
     return an error."""
-    if deps.status_manager.get_server_status(server) != 'running':
+    if auth.status_manager.get_server_status(server) != 'running':
       raise HTTPException(status_code=http_status.HTTP_400_BAD_REQUEST)
 
     host_manager.restart([server])
 
   @router.delete('/server/{server_id}', tags=['server'])
   async def delete_server(
-    user: models.User = Depends(deps.login),
+    user: models.User = Depends(auth.login),
     server: models.Server = Depends(get_server),
     db: Session = Depends(database)
   ):
@@ -223,7 +224,7 @@ def build_router(
 
   @router.get('/server/{server_id}/history', tags=['server'])
   async def get_server_history(
-    user: models.User = Depends(deps.login),
+    user: models.User = Depends(auth.login),
     server: models.Server = Depends(get_server),
     db: Session = Depends(database)
   ):

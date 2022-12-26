@@ -11,20 +11,20 @@ from loguru import logger
 from sqlalchemy.orm.session import Session
 
 from api import permissions
+from api.auth import Auth
 from api.database import models
 from api.database.database import Database
-from api.dependencies import Dependencies
 
 TOKEN_TTL_SECS = 60 * 60 * 24 # 1 day
 
 def build_router(
-  deps: Dependencies,
+  auth: Auth,
   database: Database
 ) -> APIRouter:
   router = APIRouter()
 
   @router.post('/admin/verify_user/{id_to_verify}', include_in_schema=False)
-  async def verify_user(id_to_verify: int, user: models.User = Depends(deps.login_admin), db: Session = Depends(database)):
+  async def verify_user(id_to_verify: int, user: models.User = Depends(auth.login_admin), db: Session = Depends(database)):
     user_to_verify = db.query(models.User).filter_by(id=id_to_verify).first()
     if not user_to_verify:
       raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND)
@@ -42,7 +42,7 @@ def build_router(
     db.commit()
 
   @router.post('/admin/make_admin/{id_to_admin}', include_in_schema=False)
-  async def make_admin(id_to_admin: int, user: models.User = Depends(deps.login_super), db: Session = Depends(database)):
+  async def make_admin(id_to_admin: int, user: models.User = Depends(auth.login_super), db: Session = Depends(database)):
     user_to_admin = db.query(models.User).filter_by(id=id_to_admin).first()
     if not user_to_admin:
       raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND)
@@ -61,7 +61,7 @@ def build_router(
 
 
   @router.delete('/admin/make_admin/{id_to_unadmin}', include_in_schema=False)
-  async def make_admin(id_to_unadmin: int, user: models.User = Depends(deps.login_super), db: Session = Depends(database)):
+  async def make_admin(id_to_unadmin: int, user: models.User = Depends(auth.login_super), db: Session = Depends(database)):
     user_to_unadmin = db.query(models.User).filter_by(id=id_to_unadmin).first()
     if not user_to_unadmin:
       raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND)

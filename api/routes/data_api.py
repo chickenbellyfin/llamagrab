@@ -11,7 +11,6 @@ from pydantic import BaseModel
 
 from api.schema.app_config import Loginserver, Region
 
-# from api.dependencies import dependencies as deps
 
 class RegionListResponse(BaseModel):
   __root__: Dict[str, str]

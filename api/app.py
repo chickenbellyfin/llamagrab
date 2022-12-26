@@ -9,21 +9,21 @@ import uvicorn.config
 import yaml
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi_login import LoginManager
+from fastapi_login.fastapi_login import LoginManager
 from loguru import logger
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from api import flags
-from api.dependencies import Dependencies
+from api.auth import Auth
 from api.database import models, queries
 from api.database.database import Database, run_migrations
 from api.host_manager import HostManager
-from api.routes import (account_api, admin_api, data_api, server_api,
-                        server_list_api, site_admin_api, ip_log_api)
+from api.iplog import IPLogDatabase
+from api.routes import (account_api, admin_api, data_api, ip_log_api,
+                        server_api, server_list_api, site_admin_api)
 from api.schema.app_config import AppConfig, Loginserver, Region
 from api.server_status import ServerStatusManager
 from common import metrics
-from api.iplog import IPLogDatabase
 
 DEFAULT_CONFIG_PATH = 'config/config.yaml'
 
@@ -133,7 +133,7 @@ def ensure_admin_user(database: Database):
 
 def create_app(
   db_instance: Database,
-  login_manager: LoginManager,
+  auth: Auth,
   host_manager: HostManager,
   status_manager: ServerStatusManager,
   ip_log_db: IPLogDatabase,
@@ -143,10 +143,6 @@ def create_app(
   regions_dict = {
     r.key: r for r in regions
   }
-  dependencies = Dependencies(
-    database=db_instance,
-    login_manager=login_manager,
-  )
   flags.set_loginserver_urls([s.url for s in loginservers])
   app = FastAPI(
     title="Llamagrab",
@@ -156,13 +152,13 @@ def create_app(
   )
 
   app.include_router(account_api.build_router(
-    deps=dependencies,
+    auth=auth,
     database=db_instance,
     host_manager=host_manager
   ))
 
   app.include_router(admin_api.build_router(
-    deps=dependencies,
+    auth=auth,
     database=db_instance
   ))
 
@@ -172,7 +168,7 @@ def create_app(
   ))
 
   app.include_router(server_api.build_router(
-    deps=dependencies,
+    auth=auth,
     database=db_instance,
     status_manager=status_manager,
     host_manager=host_manager,
@@ -180,20 +176,20 @@ def create_app(
   ))
 
   app.include_router(server_list_api.build_router(
-    deps=dependencies, 
+    auth=auth, 
     database=db_instance,
     status_manager=status_manager, 
     regions=regions_dict
   ))
 
   app.include_router(site_admin_api.build_router(
-    deps=dependencies,
+    auth=auth,
     database=db_instance,
     host_manager=host_manager
   ))
 
   app.include_router(ip_log_api.build_router(
-    deps=dependencies,
+    auth=auth,
     ip_log_db=ip_log_db
   ))
 
@@ -220,7 +216,10 @@ def main(argv: List[str]):
   # run DB migrations
   run_migrations(base_path)
 
-  login_manager = create_login_manager(config, db)
+  auth = Auth(
+    login_manager=create_login_manager(config, db),
+    database=db
+  )
   host_manager = create_host_manager(config, db)
   server_status_manager = ServerStatusManager(host_manager)
   ip_log_db = IPLogDatabase(base_path=base_path, host_manager=host_manager)
@@ -229,7 +228,7 @@ def main(argv: List[str]):
 
   api = create_app(
     db_instance=db,
-    login_manager=login_manager,
+    auth=auth,
     host_manager=host_manager,
     status_manager=server_status_manager,
     ip_log_db=ip_log_db,

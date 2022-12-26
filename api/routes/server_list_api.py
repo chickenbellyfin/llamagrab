@@ -6,18 +6,17 @@ from fastapi.routing import APIRouter
 from sqlalchemy.orm.session import Session
 
 from api import server_sharing
+from api.auth import Auth
 from api.database import models, queries
 from api.database.database import Database
-from api.dependencies import Dependencies
 from api.schema import responses
 from api.schema.app_config import Region
 from api.schema.game_server_config import GameServerConfig
 from api.server_status import ServerStatusManager
 
 
-
 def build_router(
-  deps: Dependencies,
+  auth: Auth,
   database: Database,
   status_manager: ServerStatusManager, 
   regions: Dict[str, Region]
@@ -43,7 +42,7 @@ def build_router(
 
   @router.get('/servers/user', tags=['server-list'])
   async def get_servers_for_user(
-    user: models.User = Depends(deps.login),
+    user: models.User = Depends(auth.login),
     db: Session = Depends(database)
   ):
     """
@@ -55,7 +54,7 @@ def build_router(
 
   @router.get('/servers/all', include_in_schema=False)
   async def get_all_servers_for_admin(
-    admin: models.User = Depends(deps.login_admin),
+    admin: models.User = Depends(auth.login_admin),
     db: Session = Depends(database)
   ):
     """Get all servers for admin panel
