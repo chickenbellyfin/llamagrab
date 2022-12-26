@@ -4,27 +4,6 @@ from sqlalchemy.orm import Session
 from api import server_sharing
 from api.database import models, queries
 
-"""
-Unverified:
-  - Can create 1 server
-  - Can not choose region
-  - Can not set server password, or server admins
-  - limit of 3 active servers of all unverified users, globally
-    - 2 most recently started servers will run
-
-Verified:
-  - Can create up to 5 servers, 2 active
-  - Can choose region, server password, and server admins
-  - passworded servers have a 6 hour limit & 24 hour cooldown
-
-Admin:
-  - Unlimited servers
-  - can verify users
-  - Can view all server data and is admin on all servers
-
-Super:
- - can create admins
-"""
 TIERS = {
   'unverified': 0,
   'verified': 1,
