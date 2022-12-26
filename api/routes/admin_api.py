@@ -15,7 +15,6 @@ from api.auth import Auth
 from api.database import models
 from api.database.database import Database
 
-TOKEN_TTL_SECS = 60 * 60 * 24 # 1 day
 
 def build_router(
   auth: Auth,
