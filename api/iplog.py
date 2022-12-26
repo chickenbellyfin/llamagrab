@@ -41,19 +41,40 @@ class IPLogDatabase():
     iplogs = self.host_manager.iplogs()
 
     if len(iplogs) > 0:
-      logger.info(f'Adding {len(iplogs)} entries to IP Logs')
+      logger.info(f'Merging {len(iplogs)} entries to IP Logs')
 
-    duplicate = 0
-    with self.SessionFactory() as db:
-      for iplog in iplogs:
-        if db.query(IPLogEntry).filter_by(**iplog).count() == 0:
-          db.add(IPLogEntry(**iplog))
+    added = 0
+    updated = 0
+    ignored = 0
+
+    for iplog in iplogs:
+      
+      # match existing by player id, name, ip, and server id (label)
+      filter_args = {
+        'user_id': iplog['user_id'],
+        'display_name': iplog['display_name'],
+        'ip': iplog['ip'],
+        'label': iplog['label']
+      }
+      
+
+      with self.SessionFactory() as db:
+        entry = db.query(IPLogEntry).filter_by(**filter_args).first()
+        if entry is not None:
+          # update timestamp (last seen) if its newer
+          if iplog['timestamp'] > entry.timestamp:
+            entry.timestamp = iplog['timestamp']
+            updated += 1
+          else:
+            ignored += 1
         else:
-          duplicate += 1
-      db.commit()
+          entry = IPLogEntry(**iplog)
+          db.add(entry)
+          added += 1
+        db.commit()
     
-    if duplicate > 0:
-      logger.warning(f'Ignored {duplicate} duplicate IP Log entries')
+    if added + updated + ignored > 0:
+      logger.info(f'Added {added}, Updated {updated}, Ignored {ignored}')
   
   def get(self) -> List[IPLogEntry]:
     with self.SessionFactory() as db:

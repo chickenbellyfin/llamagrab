@@ -13,7 +13,7 @@ const DATE_FORMAT: Intl.DateTimeFormatOptions = {
 };
 
 const DATE_FORMAT_SHORT: Intl.DateTimeFormatOptions = {
-  month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: '2-digit'
+  month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric',
 };
 
 
@@ -29,10 +29,21 @@ export default function IPLogAdminPage() {
 
   const columns = [
     { 
-      title: 'Timestamp',
+      title: 'Last Seen',
       dataIndex: 'timestamp',
       render: (timestamp: number) => {
-        return new Date(timestamp).toLocaleDateString('en-US', breakpoint.md ? DATE_FORMAT: DATE_FORMAT_SHORT);
+        return new Date(timestamp).toLocaleDateString('en-US', breakpoint.lg ? DATE_FORMAT: DATE_FORMAT_SHORT);
+      }
+    },
+    {
+      title: breakpoint.lg ? 'User ID' : 'UID',
+      dataIndex: 'user_id',
+      render: (user_id: number) => {
+        if (user_id >= 1000000) {
+          return `unvrf-${user_id-1000000}`
+        } else {
+          return user_id
+        }
       }
     },
     {
@@ -47,6 +58,11 @@ export default function IPLogAdminPage() {
           <a href={`https://whatismyipaddress.com/ip/${ip}`} target="_blank">{ip}</a>
         );
       }
+    },
+    
+    {
+      title: breakpoint.lg? 'Server ID' : 'SID',
+      dataIndex: 'label'
     }
   ];
   return (
