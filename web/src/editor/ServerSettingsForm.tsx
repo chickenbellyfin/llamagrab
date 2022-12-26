@@ -29,6 +29,8 @@ export default function ServerSettingsForm({ regions, settings, users, status, o
     }
   }
 
+  const isNew = status === undefined
+
   return (
     <Form
     labelCol={{span: 6}}
@@ -51,7 +53,7 @@ export default function ServerSettingsForm({ regions, settings, users, status, o
       label="Editors"
       extra="Other llamagrab users that can edit this server's settings">
       <Select
-        disabled={!(status && auth.permissions.canShareServer(status))}
+        disabled={!isNew && !(status && auth.permissions.canShareServer(status))}
         showSearch
         onChange={onEditorsChange}
         defaultValue={settings.editors || []}
