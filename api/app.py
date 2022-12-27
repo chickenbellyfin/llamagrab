@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 from datetime import timedelta
-from typing import List
+from typing import Dict, List
 
 import uvicorn
 import uvicorn.config
@@ -137,12 +137,9 @@ def create_app(
   host_manager: HostManager,
   status_manager: ServerStatusManager,
   ip_log_db: IPLogDatabase,
-  regions: List[Region],
+  regions: Dict[str, Region],
   loginservers: List[Loginserver]
 ) -> FastAPI:
-  regions_dict = {
-    r.key: r for r in regions
-  }
   flags.set_loginserver_urls([s.url for s in loginservers])
   app = FastAPI(
     title="Llamagrab",
@@ -163,7 +160,7 @@ def create_app(
   ))
 
   app.include_router(data_api.build_router(
-    regions=regions_dict,
+    regions=regions,
     loginservers=loginservers
   ))
 
@@ -172,14 +169,14 @@ def create_app(
     database=db_instance,
     status_manager=status_manager,
     host_manager=host_manager,
-    regions=regions_dict
+    regions=regions
   ))
 
   app.include_router(server_list_api.build_router(
     auth=auth, 
     database=db_instance,
     status_manager=status_manager, 
-    regions=regions_dict
+    regions=regions
   ))
 
   app.include_router(site_admin_api.build_router(

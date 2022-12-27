@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 
 class Region(BaseModel):
@@ -23,10 +23,18 @@ class AppConfig(BaseModel):
   status_polling_rate_secs: int = 60
   host_manager_port: int = 8999
 
-  regions: List[Region]
+  # in yaml, it should be a list of Region
+  regions: Dict[str, Region]
   loginservers: List[Loginserver]
 
   allowed_metrics_ips: Optional[List[str]]
+
+  @validator('regions', pre=True)
+  def regions_to_dict(cls, raw: List[Region]) -> Dict[str, Region]:
+    print(raw)
+    return {
+      region['key']: region for region in raw
+    }
 
   class Config:
     extra = 'forbid' # don't allow unkown attributes

@@ -27,7 +27,7 @@ class HostManager:
   """
 
   def __init__(self,
-    regions: List[Region],
+    regions: Dict[str, Region],
     port: int,
     database: Database,
     rate_limit_secs=10,
@@ -35,15 +35,10 @@ class HostManager:
   ):
     self.port = port
     self.database = database
-
-    self.regions: Dict[str, Region] = {
-      r.key: r
-      for r in regions
-    }
+    self.regions = regions
 
     self.last_status = {
-      r.key: None
-      for r in regions
+      r: None for r in regions
     }
 
     self.trigger_sync = polling.variable_rate(self._do_sync, periodic_sync, rate_limit_secs)

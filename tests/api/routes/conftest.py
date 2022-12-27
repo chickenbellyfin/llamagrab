@@ -189,10 +189,10 @@ def test_auth(mock_login_manager, inmemory_db):
 
 @pytest.fixture
 def test_regions() -> List[Region]:
-  return [
-    Region(key='region1', name="TestRegion1", host="http://r1url", token="r1token"),
-    Region(key='region2', name="TestRegion2", host="http://r2url", token="r2token")
-  ]
+  return {
+    'region1': Region(key='region1', name="TestRegion1", host="http://r1url", token="r1token"),
+    'region2': Region(key='region2', name="TestRegion2", host="http://r2url", token="r2token")
+  }
 
 @pytest.fixture
 def db_session(inmemory_db: database.Database):

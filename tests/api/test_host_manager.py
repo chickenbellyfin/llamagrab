@@ -64,14 +64,14 @@ def test_sync_empty(monkeypatch, mock_requests: Mock):
 
 
   host_manager = HostManager(
-    regions=[
-      Region(
+    regions={
+      'test_host': Region(
         key='test_host',
         name='Test Host',
         host='http://localhost',
         token='test_token'
       )
-    ],
+    },
     port=TEST_PORT,
     database=MagicMock()
   )
@@ -111,20 +111,20 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
   monkeypatch.setattr(lua, 'to_lua', mocked_lua)
 
   host_manager = HostManager(
-    regions=[
-      Region(
+    regions={
+      'region1': Region(
         key='region1',
         name='Region 1',
         host='hostname1',
         token='r1token'
       ),      
-      Region(
+      'region2': Region(
         key='region2',
         name='Region 2',
         host='hostname2',
         token='r2token'
       )
-    ],
+    },
     port=TEST_PORT,
     database=MagicMock()
   )
@@ -158,14 +158,14 @@ def test_sync_rate_limit(monkeypatch, mock_requests: Mock):
   monkeypatch.setattr(db_queries, "get_admin_tribes_usernames", lambda db: [])
 
   host_manager = HostManager(
-    regions=[
-      Region(
+    regions={
+      'test_host': Region(
         key='test_host',
         name='Test Host',
         host='localhost',
         token='test_token'
       )
-    ],
+    },
     port=TEST_PORT,
     database=MagicMock(),
     rate_limit_secs=0 # don't rate limit syncs
