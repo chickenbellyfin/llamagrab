@@ -58,7 +58,7 @@ def build_router(
   @router.delete('/admin/ip/ban/{id}', include_in_schema=False)
   async def remove_ban(id: int, user: models.User = Depends(auth.login_admin)):
     deleted = ip_log_db.remove_ban(id)
-    audit(user, f'removed {deleted}')
+    audit(user, f'deleted {deleted}')
   
   @router.post('/admin/ip/push_banlist', include_in_schema=False)
   async def push_banlist(user: models.User = Depends(auth.login_admin)):

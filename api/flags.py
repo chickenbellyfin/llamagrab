@@ -39,7 +39,7 @@ def get_flag(db: Session, key: str):
   flag = _query_flag(db, key) 
   return json.loads(flag.value)
 
-def set_flag(db: Session, key: str, value):
+def set_flag(db: Session, key: str, value) -> Flag:
   flag = _query_flag(db, key)
 
   if type(value) != FLAGS[key].flag_type:
@@ -49,6 +49,7 @@ def set_flag(db: Session, key: str, value):
 
   flag.value = json.dumps(value)  
   db.commit()
+  return flag
 
 def get_all_flags(db: Session):
   return {

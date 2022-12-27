@@ -28,8 +28,8 @@ def build_router(
     logger.info(
       f"User(id={user.id} username={user.username}) Set Flag {request.key} = {request.value} ({type(request.value)})")
     try:
-      flags.set_flag(db, request.key, request.value)
-      audit(user, f'set flag {request.key} = {request.value}')
+      flag = flags.set_flag(db, request.key, request.value)
+      audit(user, f'updated {flag}')
     except TypeError:
       raise HTTPException(http_status.HTTP_400_BAD_REQUEST)
 
@@ -46,7 +46,7 @@ def build_router(
   @router.post('/admin/site/restart_all', include_in_schema=False)
   async def restart_all(user: models.User = Depends(auth.login_admin), db: Session = Depends(database)):
     active = queries.get_active_servers(db)
-    logger.info(f"User(id={user.id}, username={user.username}) restarted all servers")
+    logger.info(f"{user} restarted all servers")
     host_manager.restart(active)
     audit(user, f'restarted all ({len(active)}) servers')
     return len(active)
@@ -54,7 +54,7 @@ def build_router(
   @router.post('/admin/site/restart_all/{region}', include_in_schema=False)
   async def restart_all(region: str, user: models.User = Depends(auth.login_admin), db: Session = Depends(database)):
     active = queries.get_active_servers(db, region = region)
-    logger.info(f"User(id={user.id}, username={user.username}) restarted all servers in {region}")
+    logger.info(f"{user} restarted all servers in {region}")
     host_manager.restart(active)    
     audit(user, f'restarted all ({len(active)}) servers in {region}')
     return len(active)
@@ -62,7 +62,7 @@ def build_router(
   @router.post('/admin/site/disable_all', include_in_schema=False)
   async def disable_all(user: models.User = Depends(auth.login_admin), db: Session = Depends(database)):
     active = queries.get_active_servers(db)
-    logger.info(f"User(id={user.id}, username={user.username}) disabled all servers")
+    logger.info(f"{user} disabled all servers")
     for server in active:
       server.enabled = False
     db.commit()
@@ -73,7 +73,7 @@ def build_router(
   @router.post('/admin/site/disable_all/{region}', include_in_schema=False)
   async def disable_all(region: str, user: models.User = Depends(auth.login_admin), db: Session = Depends(database)):
     active = queries.get_active_servers(db, region = region)
-    logger.info(f"User(id={user.id}, username={user.username}) disabled all servers in {region}")
+    logger.info(f"{user} disabled all servers in {region}")
     for server in active:
       server.enabled = False
     db.commit()

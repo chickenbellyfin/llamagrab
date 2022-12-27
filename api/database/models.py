@@ -76,6 +76,9 @@ class Flag(Base):
   key = Column(String, nullable=False, primary_key=True)
   value = Column(String)
 
+  def __str__(self):
+    return f'Flag(key={self.key} value={self.value})'
+
 class AuditLogEvent(Base):
   __tablename__ = 'audit_log'
   id = Column(Integer, primary_key=True, autoincrement=True)
