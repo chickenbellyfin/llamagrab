@@ -1,5 +1,5 @@
 import { getToken } from './auth';
-import { GameServerConfig, IPBan, IPLogEntry, Loginserver, ModProperty, RegionStatus, ServerSettings, ServerStatus, ServerVersion, ServerVersionDetails, User, UserAccount } from './domain';
+import { AuditLogEvent, GameServerConfig, IPBan, IPLogEntry, Loginserver, ModProperty, RegionStatus, ServerSettings, ServerStatus, ServerVersion, ServerVersionDetails, User, UserAccount } from './domain';
 
 function removeEmptyModProperties(items: ModProperty[] | undefined): ModProperty[] | undefined {
   // NOTE: do not change to `!=`, needs to also check for null
@@ -402,6 +402,12 @@ async function pushBanlist(): Promise<any> {
   })
 }
 
+async function getAuditLog(): Promise<AuditLogEvent[]> {
+  return doRequest({
+    path: '/api/admin/audit_log',
+  })
+}
+
 
 export const API = {
   Account: {
@@ -429,7 +435,8 @@ export const API = {
     getIPBans,
     createIPBan,
     removeIPBan,
-    pushBanlist
+    pushBanlist,
+    getAuditLog
   },
   Server: {
     getServerStatus,

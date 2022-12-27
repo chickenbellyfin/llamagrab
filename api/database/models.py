@@ -66,3 +66,12 @@ class Flag(Base):
   __tablename__ = 'flags'
   key = Column(String, nullable=False, primary_key=True)
   value = Column(String)
+
+class AuditLogEvent(Base):
+  __tablename__ = 'audit_log'
+  id = Column(Integer, primary_key=True, autoincrement=True)
+  timestamp = Column(Integer, nullable=False)
+  details = Column(String, nullable=False)
+  user_id = Column(Integer, nullable=False) # not FK since it can't be deleted
+  user_name = Column(String, nullable=False)
+  user_tier = Column(String, nullable=False)

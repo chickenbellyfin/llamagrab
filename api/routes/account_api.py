@@ -14,6 +14,7 @@ from passlib.hash import argon2
 from sqlalchemy.orm.session import Session
 
 from api import flags
+from api.audit import AuditLog
 from api.auth import Auth
 from api.database import models
 from api.database import queries as db_queries
@@ -26,7 +27,8 @@ from api.schema.requests import UpdatePasswordRequest
 def build_router(
   auth: Auth,
   database: Database,
-  host_manager: HostManager
+  host_manager: HostManager,
+  audit: AuditLog
 ) -> APIRouter:
 
   router = APIRouter()
@@ -127,6 +129,7 @@ def build_router(
     user.tribes_username = request.tribes_username
     db.merge(user)
     db.commit()
+    audit(user, f'updated tribes username to {request.tribes_username}')
 
 
   def _get_ip(request: Request):
@@ -169,6 +172,8 @@ def build_router(
     logger.info(f'Client @ {client_host} created account: {new_user.username}')
     # record client created an account
     auth.created_account.add(client_host)
+    
+    audit(new_user, 'account created')
 
   @router.delete('/account/{user_id}', include_in_schema=False)
   async def delete_user(user_id: int, admin: models.User = Depends(auth.login_super), db: Session = Depends(database)):
@@ -186,5 +191,8 @@ def build_router(
       db.delete(user_to_delete)
       db.commit()
     host_manager.sync()
+
+    server_ids = [server.id for server in servers_to_delete]
+    audit(admin, f'deleted user(id={user_to_delete.id} name={user_to_delete.username}), including servers={server_ids}')
   
   return router

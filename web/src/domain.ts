@@ -216,3 +216,10 @@ export type IPBan = {
  createdAt: number
  createdBy: number 
 }
+
+export type AuditLogEvent = {
+  timestamp: number
+  details: string
+  userId: number
+  userName: string
+}

@@ -20,6 +20,7 @@ import LandingPage from './pages/LandingPage';
 import RegionsPage from './pages/RegionsPage';
 import SiteAdminPage from './pages/admin/SiteAdminPage';
 import IPLogAdminPage from './pages/admin/IPLogAdminPage';
+import AuditLogAdminPage from './pages/admin/AuditLogAdminPage';
 
 const { Header, Content, Sider } = Layout;
 
@@ -114,7 +115,12 @@ function App () {
                     key: '/admin/iplogs',
                     label: 'IPs & Bans',
                     title: '', // disables tooltip on mobile
-                  }] : []
+                  }] : [],
+                  {
+                    key: '/admin/audit',
+                    label: 'Audit Log',
+                    title: '', // disables tooltip on mobile
+                  }, 
                 ]
               }] : []
             ]}/>
@@ -152,6 +158,7 @@ function App () {
               <Route path='/admin/users' element={<ProtectedRoute><UsersAdminPage/></ProtectedRoute>}/>
               <Route path='/admin/servers' element={<ProtectedRoute><ServersAdminPage/></ProtectedRoute>}/>
               <Route path='/admin/site' element={<ProtectedRoute><SiteAdminPage/></ProtectedRoute>}/>
+              <Route path='/admin/audit' element={<ProtectedRoute><AuditLogAdminPage/></ProtectedRoute>}/>
               </>
             }
             { auth.permissions.isSuper() &&

@@ -13,6 +13,7 @@ from fastapi.routing import APIRouter
 from sqlalchemy.orm.session import Session
 
 from api import permissions, server_history, server_sharing
+from api.audit import AuditLog
 from api.auth import Auth
 from api.database import models
 from api.database import queries as db_queries
@@ -31,6 +32,7 @@ def build_router(
   status_manager: ServerStatusManager,
   host_manager: HostManager,
   regions: Dict[str, Region],
+  audit: AuditLog
 
 ) -> APIRouter:
   router = APIRouter()
@@ -78,6 +80,7 @@ def build_router(
     server_sharing.set_server_editors(db, new_server, request.server_settings.editors or [])
     server_history.add_version(db, new_server)
 
+    audit(user, f'created server(id={new_server.id} name={new_server.name})')
     return responses.ServerStatus(
       id=new_server.id,
       owner=user.username,
@@ -133,8 +136,11 @@ def build_router(
     if not permissions.can_write_server(db, user, server):
       raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN)
 
+    new_editors = set(request.editors or [])
+    old_editors = set([u.id for u in server_sharing.get_server_editors(db, server)])
+    old_region = server.region
     # if editors was modified, check that the user has permission to share the server
-    editors_changed = set(server_sharing.get_server_editors(db, server)) != set(request.editors or [])
+    editors_changed = old_editors != new_editors
     if editors_changed and not permissions.can_share_server(user, server):
       raise HTTPException(
         status_code=http_status.HTTP_403_FORBIDDEN,
@@ -151,6 +157,14 @@ def build_router(
     server.region = request.region
     db.commit()
     host_manager.sync()
+
+    if old_region != request.region:
+      audit(user, f'updated region of server(id={server.id} name={server.name}) to {request.region}')
+    
+    if editors_changed:
+      added = list(new_editors - old_editors)
+      removed = list(old_editors - new_editors)
+      audit(user, f'updated editors of server(id={server.id} name={server.name}) added={added} removed={removed}')
 
   @router.get('/server/{server_id}/config', tags=['server'])
   async def get_server_config(server: models.Server = Depends(get_server)) -> GameServerConfig:
@@ -176,33 +190,37 @@ def build_router(
     server_history.add_version(db, server)
 
     host_manager.sync()
+    audit(user, f'updated configuration of server(id={server.id} name={server.name})')
 
 
   @router.post('/server/{server_id}/start', tags=['server'])
-  async def start_server( server: models.Server = Depends(get_server), db: Session = Depends(database)):
+  async def start_server( server: models.Server = Depends(get_server), db: Session = Depends(database), user: models.User = Depends(auth.login)):
     """ Request to start a server. Status will be enabled=True immediatley, but the server may not be started immediatley.
         You should poll /api/server/{server_id}/status status to wait for the server to actually start."""
     server.enabled = True
     db.commit()
     host_manager.sync()
+    audit(user, f'started server(id={server.id} name={server.name})')
 
 
   @router.post('/server/{server_id}/stop', tags=['server'])
-  async def stop_server(server: models.Server = Depends(get_server), db: Session = Depends(database)):
+  async def stop_server(server: models.Server = Depends(get_server), db: Session = Depends(database), user: models.User = Depends(auth.login)):
     """ Request to stop a server. Status will be enabled=False immediatley, but the server may not stop immediately.
         You should poll /api/server/{server_id}/status status to wait for the server to actually stop."""
     server.enabled = False
     db.commit()
     host_manager.sync()
+    audit(user, f'stopped server(id={server.id} name={server.name})')
 
   @router.post('/server/{server_id}/restart', tags=['server'])
-  async def restart_server(server: models.Server = Depends(get_server), db: Session = Depends(database)):
+  async def restart_server(server: models.Server = Depends(get_server), db: Session = Depends(database), user: models.User = Depends(auth.login)):
     """ Restart a server. Server will be restart immediately on the host. If the server is already restarting, will
     return an error."""
     if auth.status_manager.get_server_status(server) != 'running':
       raise HTTPException(status_code=http_status.HTTP_400_BAD_REQUEST)
 
     host_manager.restart([server])
+    audit(user, f'restarted server(id={server.id} name={server.name})')
 
   @router.delete('/server/{server_id}', tags=['server'])
   async def delete_server(
@@ -220,6 +238,7 @@ def build_router(
     db.delete(server)
     db.commit()
     host_manager.sync()
+    audit(user, f'deleted server(id={server.id} name={server.name}) ')
 
 
   @router.get('/server/{server_id}/history', tags=['server'])

@@ -5,6 +5,7 @@ from fastapi import Depends, HTTPException
 from fastapi import status as http_status
 from fastapi.routing import APIRouter
 from loguru import logger
+from api.audit import AuditLog
 
 from api.auth import Auth
 from api.database import models
@@ -19,7 +20,8 @@ class IPBanRequest(BaseModel):
 
 def build_router(
   auth: Auth,
-  ip_log_db: IPLogDatabase
+  ip_log_db: IPLogDatabase,
+  audit: AuditLog
 ) -> APIRouter:
   router = APIRouter()
 
@@ -50,13 +52,16 @@ def build_router(
       raise HTTPException(status_code=http_status.HTTP_400_BAD_REQUEST, detail=str(e))
     logger.info(f'Creating IP Ban for ip={ban.ip} and reason="{ban.reason}" by {user.id}')
     ip_log_db.create_ban(ban.ip, user.username, ban.reason)
+    audit(user, f'created IP ban ip={ban.ip} reason="{ban.reason}"')
 
   @router.delete('/admin/ip/ban/{id}', include_in_schema=False)
   async def remove_ban(id: int, user: models.User = Depends(auth.login_super)):
-    ip_log_db.remove_ban(id)
+    deleted = ip_log_db.remove_ban(id)
+    audit(user, f'removed IP ban ip={deleted.ip}')
   
   @router.post('/admin/ip/push_banlist', include_in_schema=False)
   async def push_banlist(user: models.User = Depends(auth.login_admin)):
     ip_log_db.push_banlist()
+    audit(user, 'triggered IP banlist push')
 
   return router

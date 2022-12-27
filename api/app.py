@@ -14,6 +14,7 @@ from loguru import logger
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from api import flags
+from api.audit import AuditLog
 from api.auth import Auth
 from api.database import models, queries
 from api.database.database import Database, run_migrations
@@ -138,7 +139,8 @@ def create_app(
   status_manager: ServerStatusManager,
   ip_log_db: IPLogDatabase,
   regions: Dict[str, Region],
-  loginservers: List[Loginserver]
+  loginservers: List[Loginserver],
+  audit: AuditLog
 ) -> FastAPI:
   flags.set_loginserver_urls([s.url for s in loginservers])
   app = FastAPI(
@@ -151,12 +153,14 @@ def create_app(
   app.include_router(account_api.build_router(
     auth=auth,
     database=db_instance,
-    host_manager=host_manager
+    host_manager=host_manager,
+    audit=audit
   ))
 
   app.include_router(admin_api.build_router(
     auth=auth,
-    database=db_instance
+    database=db_instance,
+    audit=audit
   ))
 
   app.include_router(data_api.build_router(
@@ -169,7 +173,8 @@ def create_app(
     database=db_instance,
     status_manager=status_manager,
     host_manager=host_manager,
-    regions=regions
+    regions=regions,
+    audit=audit
   ))
 
   app.include_router(server_list_api.build_router(
@@ -182,12 +187,14 @@ def create_app(
   app.include_router(site_admin_api.build_router(
     auth=auth,
     database=db_instance,
-    host_manager=host_manager
+    host_manager=host_manager,
+    audit=audit
   ))
 
   app.include_router(ip_log_api.build_router(
     auth=auth,
-    ip_log_db=ip_log_db
+    ip_log_db=ip_log_db,
+    audit=audit
   ))
 
   return app
@@ -212,7 +219,7 @@ def main(argv: List[str]):
   db = create_database(config)
   # run DB migrations
   run_migrations(base_path)
-
+  audit = AuditLog(db)
   auth = Auth(
     login_manager=create_login_manager(config, db),
     database=db
@@ -230,7 +237,8 @@ def main(argv: List[str]):
     status_manager=server_status_manager,
     ip_log_db=ip_log_db,
     regions=config.regions,
-    loginservers=config.loginservers
+    loginservers=config.loginservers,
+    audit=audit
   )
 
 

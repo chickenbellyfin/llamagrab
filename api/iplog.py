@@ -110,11 +110,13 @@ class IPLogDatabase():
     if push:
       self.push_banlist()
   
-  def remove_ban(self, id: int):
+  def remove_ban(self, id: int) -> IPBan:
     with self.SessionFactory() as db:
-      db.query(IPBan).filter_by(id = id).delete()
+      to_delete = db.query(IPBan).filter_by(id = id).first()
+      db.delete(to_delete)
       db.commit() 
-    self.push_banlist() 
+    self.push_banlist()
+    return to_delete
   
   def push_banlist(self):
     with self.SessionFactory() as db:
