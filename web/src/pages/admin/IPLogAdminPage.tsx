@@ -1,12 +1,15 @@
-import { CloudDownloadOutlined } from "@ant-design/icons";
-import { Button, Card, PageHeader, Space, Spin, Table, Typography } from "antd";
+import { CloudDownloadOutlined, DeleteOutlined, SyncOutlined } from "@ant-design/icons";
+import { Button, Card, Form, Input, message, PageHeader, Popconfirm, Space, Spin, Table, Tabs, Typography } from "antd";
+import { useForm } from "antd/lib/form/Form";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../../api";
 import ContentWrapper from "../../components/ContentWrapper";
-import { IPLogEntry } from "../../domain";
+import { IPBan, IPLogEntry } from "../../domain";
 import useLoader from "../../useLoader";
+
+const { TabPane } = Tabs
 
 const DATE_FORMAT: Intl.DateTimeFormatOptions = {
   weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: '2-digit'
@@ -16,16 +19,110 @@ const DATE_FORMAT_SHORT: Intl.DateTimeFormatOptions = {
   month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric',
 };
 
+function IPBansSection() {
+  const loader = useLoader(API.Admin.getIPBans)
+  const breakpoint = useBreakpoint()
+  
+  const [form] = Form.useForm()
 
+  const onFinish = async (values: any) => {
+    try {
+      await API.Admin.createIPBan(values.ip, values.reason)
+      form.resetFields()
+      message.success('IP Ban Added')
+    } catch (e) {
+      message.error(`${e}`)
+    } finally {
+      loader.invalidate()
+    }
+  }
 
-export default function IPLogAdminPage() {
-  const navigate = useNavigate()
+  const onDeleteBan = async (id: number) => {
+    try {
+      await API.Admin.removeIPBan(id)
+      message.success('Removed Ban')
+    } catch (e) {
+      message.error(`${e}`)
+    } finally {
+      loader.invalidate()
+    }
+  }
+
+  const columns = [
+    {
+      title: 'Date',
+      dataIndex: 'created_at',
+      render: (timestamp: number) => {
+        return new Date(timestamp * 1000).toLocaleDateString('en-US', breakpoint.lg ? DATE_FORMAT: DATE_FORMAT_SHORT);
+      }
+    },
+    {
+      title: 'By',
+      dataIndex: 'created_by'
+    },
+    {
+      title: 'IP',
+      dataIndex: 'ip'
+    },
+    {
+      title: 'Reason',
+      dataIndex: 'reason'
+    },
+    {
+      title: '',
+      dataIndex: 'id',
+      render: (id: number) => {
+        return (
+        <Popconfirm title="Are you sure?" onConfirm={() => onDeleteBan(id)}>
+          <Button size='small' danger icon={<DeleteOutlined/>}>{breakpoint.md && 'UNBAN'}</Button>
+        </Popconfirm>)
+      }
+    }
+  ]
+
+  return (<>
+
+    <Card style={{marginBottom: '10px'}} title="Create Ban">
+      <Form  labelCol={{span: 4}} wrapperCol={{span: 16}} form={form} onFinish={onFinish}>
+        <Form.Item 
+          name="ip" 
+          label="IP/Network" 
+          rules={[{
+            required: true,
+            pattern: /^([0-9]{1,3}\.){3}[0-9]{1,3}(\/[0-9]+)?$/
+          }]}>
+          <Input 
+            placeholder="0.0.0.0[/0]"/>
+        </Form.Item>
+        <Form.Item name="reason" label="Reason" rules={[{ required: true }]}>
+          <Input placeholder="Who? Why?"/>
+        </Form.Item>
+        <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
+          <Button type="primary" htmlType="submit">
+            Ban!
+          </Button>
+        </Form.Item>
+      </Form>
+    </Card>
+    
+    <Spin spinning={loader.initialLoad}>
+      <Table<IPBan>
+        rowKey='id'
+        pagination={false}
+        columns={columns}
+        dataSource={loader.value}
+        size='small'
+        />
+    </Spin>
+  </>)
+}
+
+function IPLogSection() {
   const breakpoint = useBreakpoint()
   const loader = useLoader(async () => {
     await API.Admin.fetchIPLogs()
     return await API.Admin.getIPLogs()
   }, []);
-  const [isFetching, setIsFetching] = useState(false)
 
   const columns = [
     { 
@@ -65,23 +162,10 @@ export default function IPLogAdminPage() {
       dataIndex: 'label'
     }
   ];
+
   return (
-    <ContentWrapper>
-      <PageHeader title={<span className="ui-title">IP Logs</span>} onBack={() => navigate('/')}/>
-
-      <Button
-        style={{marginBottom: '10px'}}
-        icon={<CloudDownloadOutlined/>}
-        disabled={isFetching}
-        onClick={async () => {
-          setIsFetching(true)
-          loader.invalidate()
-          setIsFetching(false)
-        }}>
-        Fetch
-      </Button> 
-
-      &nbsp;{ loader.value &&
+    <>
+      { loader.value &&
         <Typography.Text type="secondary">{loader.value?.length} Entries</Typography.Text>
       }
 
@@ -94,6 +178,27 @@ export default function IPLogAdminPage() {
           size='small'
           />
       </Spin>
+    </>
+  )
+
+}
+
+export default function IPLogAdminPage() {
+  const navigate = useNavigate()
+
+  return (
+    <ContentWrapper>
+      <PageHeader title={<span className="ui-title">Player IPs & Bans</span>} onBack={() => navigate('/')}/>
+
+      <Tabs defaultActiveKey='log'>
+        <TabPane tab="IP Logs" key='log'>
+          <IPLogSection/>
+        </TabPane>
+        <TabPane tab="Bans" key='bans'>
+          <IPBansSection/>
+        </TabPane>
+      </Tabs>
+
       
     </ContentWrapper>
   );

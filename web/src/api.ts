@@ -1,5 +1,5 @@
 import { getToken } from './auth';
-import { GameServerConfig, IPLogEntry, Loginserver, ModProperty, RegionStatus, ServerSettings, ServerStatus, ServerVersion, ServerVersionDetails, User, UserAccount } from './domain';
+import { GameServerConfig, IPBan, IPLogEntry, Loginserver, ModProperty, RegionStatus, ServerSettings, ServerStatus, ServerVersion, ServerVersionDetails, User, UserAccount } from './domain';
 
 function removeEmptyModProperties(items: ModProperty[] | undefined): ModProperty[] | undefined {
   // NOTE: do not change to `!=`, needs to also check for null
@@ -374,6 +374,34 @@ async function fetchIPLogs(): Promise<any> {
   })
 }
 
+async function getIPBans(): Promise<IPBan[]> {
+  return doRequest({
+    path: '/api/admin/ip/bans'
+  })
+}
+
+async function createIPBan(ip: string, reason: string): Promise<any> {
+  return doRequest({
+    method: 'POST',
+    path: '/api/admin/ip/ban',
+    body: JSON.stringify({ip, reason})
+  })
+}
+
+async function removeIPBan(id: number): Promise<any> {
+  return doRequest({
+    method: 'DELETE',
+    path: `/api/admin/ip/ban/${id}`
+  })
+}
+
+async function pushBanlist(): Promise<any> {
+  return doRequest({
+    method: 'POST',
+    path: '/api/admin/ip/push_banlist',
+  })
+}
+
 
 export const API = {
   Account: {
@@ -397,7 +425,11 @@ export const API = {
       disableAllServers
     },
     getIPLogs,
-    fetchIPLogs
+    fetchIPLogs,
+    getIPBans,
+    createIPBan,
+    removeIPBan,
+    pushBanlist
   },
   Server: {
     getServerStatus,

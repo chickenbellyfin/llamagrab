@@ -38,6 +38,18 @@ export default function SiteAdminPage() {
     }
   }
 
+  const onRequestPushBans = async () => {
+    setActionInProgress(true)
+    try {
+      await API.Admin.pushBanlist()
+      message.success("Re-pushed banlists")
+    } catch {
+      message.error("banlist push failed")
+    } finally {
+      setActionInProgress(false)
+    }
+  }
+
   const onRestartAll = async (region: string | undefined = undefined) => {
     setActionInProgress(true)
     try {
@@ -167,11 +179,17 @@ export default function SiteAdminPage() {
                 }
               </Space>
             </Form.Item>
+
+            <Form.Item 
+            label="Push Banlist"
+            extra="Re-push IP bans to all regions">
+                <Button type="primary" onClick={onRequestPushBans}>
+                    Push
+                </Button>
+            </Form.Item>
           </Form>
         </Card>
       </Spin>
-
-
     </ContentWrapper>
   );
 }

@@ -208,3 +208,11 @@ export type IPLogEntry = {
   displayName: string
   ip: string
 }
+
+export type IPBan = {
+ id: number
+ ip: string
+ reason: string
+ createdAt: number
+ createdBy: number 
+}

@@ -115,6 +115,11 @@ class HostManager:
       self._update_status(region, self._request(requests.get, region, '/api/status'))
     return self.last_status
   
+  def banlist(self, ips: List[str]):
+    logger.info(f'Pushing banlist with {len(ips)} items: {ips}')
+    for region in self.regions.values():
+      self._request(requests.post, region, '/api/banlist', ips)
+
   def iplogs(self):
     log = []
     for region in self.regions.values():

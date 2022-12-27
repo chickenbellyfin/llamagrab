@@ -3,9 +3,10 @@ from typing import List
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean
 from api.host_manager import HostManager
 from loguru import logger
+import time
 
 from common import polling
 
@@ -21,6 +22,13 @@ class IPLogEntry(Base):
   display_name = Column(String, nullable=False)
   ip = Column(String, nullable=False)
 
+class IPBan(Base):
+  __tablename__ = "ip_bans"
+  id = Column(Integer, primary_key=True, autoincrement=True)
+  ip = Column(String, nullable=False)
+  reason = Column(String)
+  created_at = Column(Integer, nullable=False)
+  created_by = Column(String, nullable=False) # no FK since its a separate DB
 
 class IPLogDatabase():
   def __init__(self, base_path, host_manager: HostManager, db_file_name='iplog.db'):
@@ -79,3 +87,38 @@ class IPLogDatabase():
   def get(self) -> List[IPLogEntry]:
     with self.SessionFactory() as db:
       return db.query(IPLogEntry).all()
+  
+  def get_bans(self) -> List[IPBan]:
+    with self.SessionFactory() as db:
+      return db.query(IPBan).all()
+
+  def create_ban(self, ip: str, created_by: str, reason: str = None):
+    push = True
+    with self.SessionFactory() as db:
+      if db.query(IPBan).filter_by(ip = ip).count() > 0:
+        logger.warning(f'IP Ban for {ip} already exists, skipping')
+        push = False
+      else:
+        db.add(IPBan(
+          ip=ip,
+          reason=reason,
+          created_at=int(time.time()),
+          created_by=created_by
+        ))
+        db.commit()
+        
+    if push:
+      self.push_banlist()
+  
+  def remove_ban(self, id: int):
+    with self.SessionFactory() as db:
+      db.query(IPBan).filter_by(id = id).delete()
+      db.commit() 
+    self.push_banlist() 
+  
+  def push_banlist(self):
+    with self.SessionFactory() as db:
+      bans = db.query(IPBan.ip).all()
+    ips = [b.ip for b in bans]
+    self.host_manager.banlist(ips)
+

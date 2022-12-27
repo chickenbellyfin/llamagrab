@@ -112,7 +112,7 @@ function App () {
                   },                
                   ... auth.permissions.isSuper() ? [{
                     key: '/admin/iplogs',
-                    label: 'IP Logs',
+                    label: 'IPs & Bans',
                     title: '', // disables tooltip on mobile
                   }] : []
                 ]
