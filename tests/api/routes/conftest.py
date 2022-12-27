@@ -220,12 +220,17 @@ def status_manager():
   return mock
 
 @pytest.fixture
+def mock_audit_log():
+  return MagicMock()
+
+@pytest.fixture
 def test_app(
   test_auth,
   inmemory_db,
   test_regions,
   host_manager,
-  status_manager):
+  status_manager,
+  mock_audit_log):
   api = app.create_app(
     db_instance=inmemory_db,
     auth=test_auth,
@@ -233,7 +238,8 @@ def test_app(
     status_manager=status_manager,
     regions=test_regions,
     ip_log_db=None,
-    loginservers=[]
+    loginservers=[],
+    audit=mock_audit_log
   )
   top_level = FastAPI()
   top_level.mount('/api', api)
