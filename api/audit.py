@@ -26,7 +26,7 @@ class AuditLog:
       )
       session.add(event)
       session.commit()
-      logger.info(f'Event: user(id={user.id} name={user.username}) {details}')
+      logger.info(f'Event: {user} {details}')
   
   def get(self) -> List[models.AuditLogEvent]:
     with self.database.session() as session:

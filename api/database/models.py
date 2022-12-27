@@ -16,6 +16,9 @@ class User(Base):
   servers = relationship("Server", back_populates='owner', foreign_keys='Server.user')
   limits = relationship("UserLimits", uselist=False)
 
+  def __str__(self):
+    return f'User(id={self.id} name={self.username})'
+
 class UserLimits(Base):
   __tablename__ = 'user_limits'
   id = Column(Integer, primary_key=True, autoincrement=True)
@@ -40,6 +43,9 @@ class Server(Base):
 
   owner: User = relationship("User", back_populates="servers", foreign_keys=[user])
 
+  def __str__(self):
+    return f'Server(id={self.id} name={self.name})'
+
 
 class ServerVersion(Base):
   __tablename__ = 'server_versions'
@@ -52,6 +58,9 @@ class ServerVersion(Base):
 
   server = relationship("Server", foreign_keys=[server_id])
   creator = relationship('User', foreign_keys=[created_by])
+
+  def __str__(self):
+    return f'ServerVersion(id={self.id})'
 
 class ServerEditor(Base):
   __tablename__ = 'server_editors'

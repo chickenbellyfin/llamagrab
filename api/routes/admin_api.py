@@ -41,7 +41,7 @@ def build_router(
     user_to_verify.limits.server_limit = 5
     user_to_verify.limits.active_limit = 2
     db.commit()
-    audit(user, f'updated user(id={user_to_verify.id} name={user_to_verify.username})\'s tier from unverified to verified')
+    audit(user, f'updated {user_to_verify}\'s tier from unverified to verified')
 
   @router.post('/admin/make_admin/{id_to_admin}', include_in_schema=False)
   async def make_admin(id_to_admin: int, user: models.User = Depends(auth.login_super), db: Session = Depends(database)):
@@ -61,7 +61,7 @@ def build_router(
     user_to_admin.limits.server_limit = None
     user_to_admin.limits.active_limit = None
     db.commit()
-    audit(user, f'updated user(id={user_to_admin.id} name={user_to_admin.username})\'s tier from {old_tier} to admin')
+    audit(user, f'updated {user_to_admin}\'s tier from {old_tier} to admin')
 
 
   @router.delete('/admin/make_admin/{id_to_unadmin}', include_in_schema=False)
@@ -81,7 +81,7 @@ def build_router(
     user_to_unadmin.limits.server_limit = 5
     user_to_unadmin.limits.active_limit = 2
     db.commit()
-    audit(user, f'updated user(id={user_to_unadmin.id} name={user_to_unadmin.username})\'s tier from admin to verified')
+    audit(user, f'updated {user_to_unadmin}\'s tier from admin to verified')
   
   @router.get('/admin/audit_log', include_in_schema=False)
   async def get_audit_log(user: models.User = Depends(auth.login_admin)):

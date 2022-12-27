@@ -51,13 +51,14 @@ def build_router(
     except ValueError as e:
       raise HTTPException(status_code=http_status.HTTP_400_BAD_REQUEST, detail=str(e))
     logger.info(f'Creating IP Ban for ip={ban.ip} and reason="{ban.reason}" by {user.id}')
-    ip_log_db.create_ban(ban.ip, user.username, ban.reason)
-    audit(user, f'created IP ban ip={ban.ip} reason="{ban.reason}"')
+    created = ip_log_db.create_ban(ban.ip, user.username, ban.reason)
+    if created is not None:
+      audit(user, f'created {created}')
 
   @router.delete('/admin/ip/ban/{id}', include_in_schema=False)
   async def remove_ban(id: int, user: models.User = Depends(auth.login_admin)):
     deleted = ip_log_db.remove_ban(id)
-    audit(user, f'removed IP ban ip={deleted.ip}')
+    audit(user, f'removed {deleted}')
   
   @router.post('/admin/ip/push_banlist', include_in_schema=False)
   async def push_banlist(user: models.User = Depends(auth.login_admin)):

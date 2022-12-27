@@ -38,7 +38,7 @@ def diff_game_server_config(old_config: GameServerConfig, new_config: GameServer
         }
   return diff
 
-def add_version(db: Session, server: models.Server) -> None:
+def add_version(db: Session, server: models.Server) -> models.ServerVersion:
   # Get the latest version for server or None
   previous = (
     db.query(models.ServerVersion)
@@ -59,16 +59,18 @@ def add_version(db: Session, server: models.Server) -> None:
 
     # don't record a version if nothing changed
     if num_changes == 0:
-      return
+      return None
 
-  db.add(models.ServerVersion(
+  new_version = models.ServerVersion(
     server_id = server.id,
     server_config= server.server_config,
     num_changes = num_changes,
     created_at = server.updated_at,
     created_by = server.updated_by
-  ))
+  )
+  db.add(new_version)
   db.commit()
+  return new_version
 
 def get_versions(db: Session, server: models.Server) -> List[models.ServerVersion]:
   return list(

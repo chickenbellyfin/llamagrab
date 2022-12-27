@@ -78,9 +78,9 @@ def build_router(
     db.add(new_server)
     db.commit()
     server_sharing.set_server_editors(db, new_server, request.server_settings.editors or [])
-    server_history.add_version(db, new_server)
+    version = server_history.add_version(db, new_server)
 
-    audit(user, f'created server(id={new_server.id} name={new_server.name})')
+    audit(user, f'created {new_server} with {version}')
     return responses.ServerStatus(
       id=new_server.id,
       owner=user.username,
@@ -159,12 +159,12 @@ def build_router(
     host_manager.sync()
 
     if old_region != request.region:
-      audit(user, f'updated region of server(id={server.id} name={server.name}) to {request.region}')
+      audit(user, f'updated region of {server} to {request.region}')
     
     if editors_changed:
       added = list(new_editors - old_editors)
       removed = list(old_editors - new_editors)
-      audit(user, f'updated editors of server(id={server.id} name={server.name}) added={added} removed={removed}')
+      audit(user, f'updated editors of {server} added={added} removed={removed}')
 
   @router.get('/server/{server_id}/config', tags=['server'])
   async def get_server_config(server: models.Server = Depends(get_server)) -> GameServerConfig:
@@ -187,10 +187,12 @@ def build_router(
     server.updated_by = user.id
     db.commit()
 
-    server_history.add_version(db, server)
+    version = server_history.add_version(db, server)
 
     host_manager.sync()
-    audit(user, f'updated configuration of server(id={server.id} name={server.name})')
+    
+    if version is not None:
+      audit(user, f'updated configuration of {server} to {version}')
 
 
   @router.post('/server/{server_id}/start', tags=['server'])
@@ -200,7 +202,7 @@ def build_router(
     server.enabled = True
     db.commit()
     host_manager.sync()
-    audit(user, f'started server(id={server.id} name={server.name})')
+    audit(user, f'started {server}')
 
 
   @router.post('/server/{server_id}/stop', tags=['server'])
@@ -210,7 +212,7 @@ def build_router(
     server.enabled = False
     db.commit()
     host_manager.sync()
-    audit(user, f'stopped server(id={server.id} name={server.name})')
+    audit(user, f'stopped {server}')
 
   @router.post('/server/{server_id}/restart', tags=['server'])
   async def restart_server(server: models.Server = Depends(get_server), db: Session = Depends(database), user: models.User = Depends(auth.login)):
@@ -220,7 +222,7 @@ def build_router(
       raise HTTPException(status_code=http_status.HTTP_400_BAD_REQUEST)
 
     host_manager.restart([server])
-    audit(user, f'restarted server(id={server.id} name={server.name})')
+    audit(user, f'restarted {server}')
 
   @router.delete('/server/{server_id}', tags=['server'])
   async def delete_server(
@@ -238,7 +240,7 @@ def build_router(
     db.delete(server)
     db.commit()
     host_manager.sync()
-    audit(user, f'deleted server(id={server.id} name={server.name}) ')
+    audit(user, f'deleted {server}')
 
 
   @router.get('/server/{server_id}/history', tags=['server'])

@@ -192,7 +192,7 @@ def build_router(
       db.commit()
     host_manager.sync()
 
-    server_ids = [server.id for server in servers_to_delete]
-    audit(admin, f'deleted user(id={user_to_delete.id} name={user_to_delete.username}), including servers={server_ids}')
+    servers_str = ', '.join(list(map(str, servers_to_delete)))
+    audit(admin, f'deleted {user_to_delete}, including servers {servers_str}')
   
   return router
