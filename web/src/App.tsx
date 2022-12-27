@@ -14,13 +14,13 @@ import SignupPage from './pages/SignupPage';
 import { Footer } from 'antd/lib/layout/layout';
 import { useState } from 'react';
 import { ReactComponent as adminLogo } from '../public/admin.svg';
+import AuditLogAdminPage from './pages/admin/AuditLogAdminPage';
+import IPLogAdminPage from './pages/admin/IPLogAdminPage';
 import ServersAdminPage from './pages/admin/ServersAdminPage';
+import SiteAdminPage from './pages/admin/SiteAdminPage';
 import UsersAdminPage from './pages/admin/UsersAdminPage';
 import LandingPage from './pages/LandingPage';
 import RegionsPage from './pages/RegionsPage';
-import SiteAdminPage from './pages/admin/SiteAdminPage';
-import IPLogAdminPage from './pages/admin/IPLogAdminPage';
-import AuditLogAdminPage from './pages/admin/AuditLogAdminPage';
 
 const { Header, Content, Sider } = Layout;
 
@@ -111,11 +111,11 @@ function App () {
                     label: 'Site',
                     title: '', // disables tooltip on mobile
                   },                
-                  ... auth.permissions.isSuper() ? [{
+                  {
                     key: '/admin/iplogs',
                     label: 'IPs & Bans',
                     title: '', // disables tooltip on mobile
-                  }] : [],
+                  },
                   {
                     key: '/admin/audit',
                     label: 'Audit Log',
@@ -159,10 +159,8 @@ function App () {
               <Route path='/admin/servers' element={<ProtectedRoute><ServersAdminPage/></ProtectedRoute>}/>
               <Route path='/admin/site' element={<ProtectedRoute><SiteAdminPage/></ProtectedRoute>}/>
               <Route path='/admin/audit' element={<ProtectedRoute><AuditLogAdminPage/></ProtectedRoute>}/>
-              </>
-            }
-            { auth.permissions.isSuper() &&
               <Route path='/admin/iplogs' element={<ProtectedRoute><IPLogAdminPage/></ProtectedRoute>}/>
+              </>
             }
 
             {/* Any paths not defined redirect to '/' */}

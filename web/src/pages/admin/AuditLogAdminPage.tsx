@@ -1,12 +1,9 @@
-import { CloudDownloadOutlined, DeleteOutlined, SyncOutlined } from "@ant-design/icons";
-import { Button, Card, Form, Input, message, PageHeader, Popconfirm, Space, Spin, Table, Tabs, Typography } from "antd";
-import { useForm } from "antd/lib/form/Form";
+import { PageHeader, Spin, Table, Tabs } from "antd";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../../api";
 import ContentWrapper from "../../components/ContentWrapper";
-import { AuditLogEvent, IPBan, IPLogEntry } from "../../domain";
+import { AuditLogEvent } from "../../domain";
 import useLoader from "../../useLoader";
 
 const { TabPane } = Tabs
@@ -23,7 +20,6 @@ const DATE_FORMAT_SHORT: Intl.DateTimeFormatOptions = {
 function AuditLogList() {
   const breakpoint = useBreakpoint()
   const loader = useLoader(API.Admin.getAuditLog);
-  console.log(loader.value)
   const columns = [
     { 
       title: 'Timestamp',
@@ -52,13 +48,11 @@ function AuditLogList() {
 
 }
 
-export default function IPLogAdminPage() {
+export default function AuditLogAdminPage() {
   const navigate = useNavigate()
-
   return (
     <ContentWrapper>
       <PageHeader title={<span className="ui-title">Audit Log</span>} onBack={() => navigate('/')}/>
-
       <AuditLogList/>
     </ContentWrapper>
   );

@@ -1,8 +1,6 @@
-import { CloudDownloadOutlined, DeleteOutlined, SyncOutlined } from "@ant-design/icons";
-import { Button, Card, Form, Input, message, PageHeader, Popconfirm, Space, Spin, Table, Tabs, Typography } from "antd";
-import { useForm } from "antd/lib/form/Form";
+import { DeleteOutlined } from "@ant-design/icons";
+import { Button, Card, Form, Input, message, PageHeader, Popconfirm, Spin, Table, Tabs, Typography } from "antd";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../../api";
 import ContentWrapper from "../../components/ContentWrapper";

@@ -26,13 +26,13 @@ def build_router(
   router = APIRouter()
 
   @router.get('/admin/ip/log', include_in_schema=False)
-  async def get_log(user: models.User = Depends(auth.login_super)):
+  async def get_log(user: models.User = Depends(auth.login_admin)):
     entries = ip_log_db.get()
     entries.sort(key=lambda t: t.timestamp, reverse=True)
     return entries
 
   @router.post('/admin/ip/fetch', include_in_schema=False)
-  async def fetch(user: models.User = Depends(auth.login_super)):
+  async def fetch(user: models.User = Depends(auth.login_admin)):
     ip_log_db._poll()
 
   @router.get('/admin/ip/bans', include_in_schema=False)
@@ -40,7 +40,7 @@ def build_router(
     return sorted(ip_log_db.get_bans(), key=lambda t: t.created_at, reverse=True)
 
   @router.post('/admin/ip/ban', include_in_schema=False)
-  async def create_ban(ban: IPBanRequest, user: models.User = Depends(auth.login_super)):
+  async def create_ban(ban: IPBanRequest, user: models.User = Depends(auth.login_admin)):
     try:
       network = ip_network(ban.ip)
       
@@ -55,7 +55,7 @@ def build_router(
     audit(user, f'created IP ban ip={ban.ip} reason="{ban.reason}"')
 
   @router.delete('/admin/ip/ban/{id}', include_in_schema=False)
-  async def remove_ban(id: int, user: models.User = Depends(auth.login_super)):
+  async def remove_ban(id: int, user: models.User = Depends(auth.login_admin)):
     deleted = ip_log_db.remove_ban(id)
     audit(user, f'removed IP ban ip={deleted.ip}')
   
