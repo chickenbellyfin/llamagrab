@@ -218,7 +218,7 @@ def build_router(
   async def restart_server(server: models.Server = Depends(get_server), db: Session = Depends(database), user: models.User = Depends(auth.login)):
     """ Restart a server. Server will be restart immediately on the host. If the server is already restarting, will
     return an error."""
-    if auth.status_manager.get_server_status(server) != 'running':
+    if status_manager.get_server_status(server) != 'running':
       raise HTTPException(status_code=http_status.HTTP_400_BAD_REQUEST)
 
     host_manager.restart([server])
