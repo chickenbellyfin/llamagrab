@@ -1,5 +1,5 @@
 import { DeleteOutlined } from "@ant-design/icons";
-import { Button, Card, Form, Input, message, PageHeader, Popconfirm, Spin, Table, Tabs, Typography } from "antd";
+import { Button, Card, Divider, Form, Input, message, PageHeader, Popconfirm, Spin, Table, Tabs, Typography } from "antd";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import { useNavigate } from "react-router-dom";
 import { API } from "../../api";
@@ -16,6 +16,27 @@ const DATE_FORMAT: Intl.DateTimeFormatOptions = {
 const DATE_FORMAT_SHORT: Intl.DateTimeFormatOptions = {
   month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric',
 };
+
+const INSTRUCTIONS = (
+  <>
+    <h1>README</h1>
+    This page allows us to block IPs or IP Ranges from gameservers. Adding/removing a rule here will apply to all servers within 10 seconds. There are some limitations compared to <code>/votekick</code>
+    <ul>
+      <li>This block only applies to servers on Llamagrab.</li>
+      <li>The offender can still join the loginserver and send DMs to anyone.</li>
+      <li>The offender may show up in the player list (but they will be unable to connect or play) </li>
+    </ul>
+    <h3>Range Bans</h3>
+    Plain IP addresses (e.g. 1.2.3.4) will work, but it is recommended to ban an IP range when possible.
+    <ol>
+      <li>Look for most recent entry (top) for the offender in the "IP Logs" tab.</li>
+      <li>Click on the "ARIN" link. On the new page, copy the CIDR. It will look something like:  1.2.3.4/16</li>
+      <li>Paste it in this form as the IP. Please include in a note about who is banned and why.</li>
+      <li>(Optional) Notify other admins in #admin</li>
+    </ol>
+    You may need to repeat these steps if the offender manages to change their IP. Leave the old bans in place if this happens.
+  </>
+);
 
 function IPBansSection() {
   const loader = useLoader(API.Admin.getIPBans)
@@ -82,6 +103,8 @@ function IPBansSection() {
 
     <Card style={{marginBottom: '10px'}} title="Create Ban">
       <Form  labelCol={{span: 4}} wrapperCol={{span: 16}} form={form} onFinish={onFinish}>
+          {INSTRUCTIONS}
+        <Divider></Divider>
         <Form.Item 
           name="ip" 
           label="IP/Network" 
@@ -146,11 +169,20 @@ function IPLogSection() {
       dataIndex: 'display_name',
     },
     {
-      title: 'IP',
+      title: 'IP/Geo',
       dataIndex: 'ip',
       render: (ip: string) => {
         return (
           <a href={`https://whatismyipaddress.com/ip/${ip}`} target="_blank">{ip}</a>
+        );
+      }
+    },
+    {
+      title: 'ARIN',
+      dataIndex: 'ip',
+      render: (ip: string) => {
+        return (
+          <a href={`https://search.arin.net/rdap/?query=${ip}`} target="_blank">ARIN</a>
         );
       }
     },
