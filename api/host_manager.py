@@ -65,25 +65,29 @@ class HostManager:
   def _do_sync(self):
     with self.database.session() as db:
       lua_settings = get_lua_settings(db)
-      for region in self.regions.values():
-        active_for_region = queries.get_active_servers(db, region.key)
-        # Note: even if a region has no active servers, we should still sync so that newly stopped
-        # servers are killed on the host
-        payload = {}
-        for server in active_for_region:
-          server_config = GameServerConfig.parse(server.server_config)
-          server_lua = lua.to_lua(server, server_config, lua_settings)
-          payload[server.id] = {
-            'lua': server_lua,
-            'loginserver': flags.get_flag(db, 'loginserver')
-          }
+      loginserver = flags.get_flag(db, 'loginserver')
+      active_per_region = {
+        key: queries.get_active_servers(db, region=key) for key in self.regions
+      }
 
-        message_hashed = { k: hashing.md5(payload[k]) for k in payload }
-        logger.info(f'Syncing configs to {region.name}@{region.host}:{self.port} {message_hashed}')
-        self._update_status(
-          region,
-          self._request(requests.post, region, '/api/sync', payload)
-        )
+    for region in self.regions.values():
+      # Note: even if a region has no active servers, we should still sync so that newly stopped
+      # servers are killed on the host
+      payload = {}
+      for server in active_per_region[region.key]:
+        server_config = GameServerConfig.parse(server.server_config)
+        server_lua = lua.to_lua(server, server_config, lua_settings)
+        payload[server.id] = {
+          'lua': server_lua,
+          'loginserver': loginserver
+        }
+
+      message_hashed = { k: hashing.md5(payload[k]) for k in payload }
+      logger.info(f'Syncing configs to {region.name}@{region.host}:{self.port} {message_hashed}')
+      self._update_status(
+        region,
+        self._request(requests.post, region, '/api/sync', payload)
+      )
 
   def sync(self):
     self.trigger_sync()

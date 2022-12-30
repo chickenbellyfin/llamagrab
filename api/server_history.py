@@ -59,7 +59,7 @@ def add_version(db: Session, server: models.Server) -> models.ServerVersion:
 
     # don't record a version if nothing changed
     if num_changes == 0:
-      return None
+      return previous
 
   new_version = models.ServerVersion(
     server_id = server.id,

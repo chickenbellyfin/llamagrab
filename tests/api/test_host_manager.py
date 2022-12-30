@@ -58,6 +58,7 @@ def mock_requests():
 def test_sync_empty(monkeypatch, mock_requests: Mock):
   monkeypatch.setattr(db_queries, "get_active_servers", lambda db,region: [])
   monkeypatch.setattr(db_queries, "get_admin_tribes_usernames", lambda db: [])
+  monkeypatch.setattr(flags, 'get_flag', lambda db,key: None)
 
   mock = MagicMock()
   monkeypatch.setattr(requests, 'post', lambda *a, **k: mock)
@@ -156,6 +157,7 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
 def test_sync_rate_limit(monkeypatch, mock_requests: Mock):
   monkeypatch.setattr(db_queries, 'get_active_servers', lambda db,region: [])
   monkeypatch.setattr(db_queries, "get_admin_tribes_usernames", lambda db: [])
+  monkeypatch.setattr(flags, 'get_flag', lambda db,key: None)
 
   host_manager = HostManager(
     regions={

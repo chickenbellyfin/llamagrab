@@ -177,7 +177,9 @@ def build_router(
     user: models.User = Depends(auth.login),
     server: models.Server = Depends(get_server),
     db: Session = Depends(database)):
-    """ Set the game server configuration (Tribes settings) for a server"""
+    """ Set the game server configuration (Tribes settings) for a server
+        Returns the new current version id (or the previous version id if there are no changes)
+    """
     if not permissions.can_write_server(db, user, server):
       raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN)
 
@@ -193,6 +195,9 @@ def build_router(
     
     if version is not None:
       audit(user, f'updated configuration of {server} to {version}')
+      
+    return version.id
+
 
 
   @router.post('/server/{server_id}/start', tags=['server'])

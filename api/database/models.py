@@ -4,6 +4,11 @@ from sqlalchemy.sql.schema import ForeignKey
 
 from .database import Base
 
+# NOTE:
+# - All tables with a autoincrement should have `__table_args__ = {'sqlite_autoincrement': True}`,
+#   which configures sqlite to never re-use autoincrement ids
+# - All relationships should have lazy=joined so that the object can be used outside of a session
+
 
 class User(Base):
   __tablename__ = 'users'
@@ -14,8 +19,8 @@ class User(Base):
   tier = Column(String, default='unverified')
   tribes_username = Column(String)
 
-  servers = relationship("Server", back_populates='owner', foreign_keys='Server.user')
-  limits = relationship("UserLimits", uselist=False)
+  servers = relationship("Server", back_populates='owner', foreign_keys='Server.user', lazy='joined')
+  limits = relationship("UserLimits", uselist=False, lazy='joined')
 
   def __str__(self):
     return f'User(id={self.id} name="{self.username}")'
@@ -28,7 +33,7 @@ class UserLimits(Base):
   server_limit = Column(Integer)
   active_limit = Column(Integer)
 
-  relationship('User', back_populates='limits')
+  relationship('User', back_populates='limits', lazy='joined')
 
 
 class Server(Base):
@@ -44,7 +49,7 @@ class Server(Base):
   updated_at = Column(Integer, nullable=False)
   updated_by = Column(Integer, ForeignKey('users.id'), nullable=False)
 
-  owner: User = relationship("User", back_populates="servers", foreign_keys=[user])
+  owner: User = relationship("User", back_populates="servers", foreign_keys=[user], lazy='joined')
 
   def __str__(self):
     return f'Server(id={self.id} name="{self.name}")'
@@ -60,8 +65,8 @@ class ServerVersion(Base):
   created_at = Column(Integer, nullable=False)
   created_by = Column(Integer, ForeignKey('users.id'), nullable=False)
 
-  server = relationship("Server", foreign_keys=[server_id])
-  creator = relationship('User', foreign_keys=[created_by])
+  server = relationship("Server", foreign_keys=[server_id], lazy='joined')
+  creator = relationship('User', foreign_keys=[created_by], lazy='joined')
 
   def __str__(self):
     return f'ServerVersion(id={self.id})'
@@ -73,8 +78,8 @@ class ServerEditor(Base):
   server_id = Column(Integer, ForeignKey('servers.id'), nullable=False)
   user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
 
-  server = relationship('Server', foreign_keys=[server_id])
-  user = relationship('User', foreign_keys=[user_id])
+  server = relationship('Server', foreign_keys=[server_id], lazy='joined')
+  user = relationship('User', foreign_keys=[user_id], lazy='joined')
 
 class Flag(Base):
   __tablename__ = 'flags'

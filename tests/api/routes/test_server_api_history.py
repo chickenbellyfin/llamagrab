@@ -50,7 +50,7 @@ def test_add_server_versions(test_client: TestClient, login_user_1):
   assert len(history_2.json()) == 3
 
 def test_server_diff_first(test_client: TestClient, db_session: Session, login_user_1):
-  # delete all versions so we know that the version id will be 1
+  # delete all versions so the version we create will be first
   db_session.query(ServerVersion).delete()
   db_session.commit()
 
@@ -70,18 +70,15 @@ def test_server_diff_first(test_client: TestClient, db_session: Session, login_u
   })
 
   assert set_response.status_code == status.HTTP_200_OK
+  version = set_response.json()
 
   # setting the config to the same value does not add to history
-  history_res = test_client.get('/api/server/0/history/1')
+  history_res = test_client.get(f'/api/server/0/history/{version}')
 
   assert history_res.status_code == status.HTTP_200_OK
   assert history_res.json() == {'changes': []}
 
 def test_server_diff(test_client: TestClient, db_session: Session, login_user_1):
-  # delete all versions so we know that the version id will be 2
-  db_session.query(ServerVersion).delete()
-  db_session.commit()
-
   set_response_1 = test_client.post('/api/server/0/config', json={
     'displayName': 'name1',
     'autoBalance': False,
@@ -114,9 +111,10 @@ def test_server_diff(test_client: TestClient, db_session: Session, login_user_1)
 
   assert set_response_1.status_code == status.HTTP_200_OK
   assert set_response_2.status_code == status.HTTP_200_OK
+  version = set_response_2.json()
 
   # setting the config to the same value does not add to history
-  history_res = test_client.get('/api/server/0/history/2')
+  history_res = test_client.get(f'/api/server/0/history/{version}')
 
   assert history_res.status_code == status.HTTP_200_OK
   history = history_res.json()
