@@ -7,6 +7,7 @@ from .database import Base
 
 class User(Base):
   __tablename__ = 'users'
+  __table_args__ = {'sqlite_autoincrement': True}
   id = Column(Integer, primary_key=True, autoincrement=True)
   username = Column(String, nullable=False, unique=True)
   password = Column(String, nullable=False) # hashed
@@ -17,10 +18,11 @@ class User(Base):
   limits = relationship("UserLimits", uselist=False)
 
   def __str__(self):
-    return f'User(id={self.id} name={self.username})'
+    return f'User(id={self.id} name="{self.username}")'
 
 class UserLimits(Base):
   __tablename__ = 'user_limits'
+  __table_args__ = {'sqlite_autoincrement': True}
   id = Column(Integer, primary_key=True, autoincrement=True)
   user_id = Column(Integer, ForeignKey('users.id'))
   server_limit = Column(Integer)
@@ -31,6 +33,7 @@ class UserLimits(Base):
 
 class Server(Base):
   __tablename__ = 'servers'
+  __table_args__ = {'sqlite_autoincrement': True}
   id = Column(Integer, primary_key=True, autoincrement=True)
   user = Column(Integer, ForeignKey('users.id'))
   name = Column(String, nullable=False)
@@ -44,11 +47,12 @@ class Server(Base):
   owner: User = relationship("User", back_populates="servers", foreign_keys=[user])
 
   def __str__(self):
-    return f'Server(id={self.id} name={self.name})'
+    return f'Server(id={self.id} name="{self.name}")'
 
 
 class ServerVersion(Base):
   __tablename__ = 'server_versions'
+  __table_args__ = {'sqlite_autoincrement': True}
   id = Column(Integer, primary_key=True, autoincrement=True)
   server_id = Column(Integer, ForeignKey('servers.id'), nullable=False)
   server_config = Column(String, nullable=False)
@@ -64,6 +68,7 @@ class ServerVersion(Base):
 
 class ServerEditor(Base):
   __tablename__ = 'server_editors'
+  __table_args__ = {'sqlite_autoincrement': True}
   id = Column(Integer, primary_key=True, autoincrement=True) # not used, required by sqlalchemy
   server_id = Column(Integer, ForeignKey('servers.id'), nullable=False)
   user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
@@ -81,6 +86,7 @@ class Flag(Base):
 
 class AuditLogEvent(Base):
   __tablename__ = 'audit_log'
+  __table_args__ = {'sqlite_autoincrement': True}
   id = Column(Integer, primary_key=True, autoincrement=True)
   timestamp = Column(Integer, nullable=False)
   details = Column(String, nullable=False)
