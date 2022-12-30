@@ -5,7 +5,7 @@ from alembic.config import Config
 from loguru import logger
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session, scoped_session, sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 
 ALEMBIC_SCRIPT_LOCATION = 'api/alembic'
 
@@ -21,7 +21,8 @@ class Database:
     self._engine = create_engine(
         db_url, connect_args={"check_same_thread": False}, poolclass=poolclass
     )
-    self._SessionFactory = scoped_session(sessionmaker(autocommit=False, autoflush=False, expire_on_commit=False, bind=self._engine))
+    self._SessionFactory = sessionmaker(autocommit=False, autoflush=False, expire_on_commit=False, bind=self._engine)
+
     Base.metadata.create_all(bind=self._engine)
 
     # skip migrations if DB is newly created

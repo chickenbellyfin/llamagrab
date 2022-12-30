@@ -24,6 +24,9 @@ from api.routes import (account_api, admin_api, data_api, ip_log_api,
                         server_api, server_list_api, site_admin_api)
 from api.schema.app_config import AppConfig, Loginserver, Region
 from api.server_status import ServerStatusManager
+from api.service import exceptions
+from api.service.account_service import AccountService
+from api.service.server_service import ServerService
 from common import metrics
 
 DEFAULT_CONFIG_PATH = 'config/config.yaml'
@@ -142,6 +145,8 @@ def create_app(
   loginservers: List[Loginserver],
   audit: AuditLog
 ) -> FastAPI:
+  servers = ServerService(db_instance, host_manager, status_manager, regions, audit)
+  accounts = AccountService(db_instance, auth, servers, host_manager, audit)
   flags.set_loginserver_urls([s.url for s in loginservers])
   app = FastAPI(
     title="Llamagrab",
@@ -153,9 +158,8 @@ def create_app(
   account_api.add_routes(
     app=app,
     auth=auth,
-    database=db_instance,
-    host_manager=host_manager,
-    audit=audit
+    accounts=accounts,
+    servers=servers
   )
 
   admin_api.add_routes(
@@ -174,11 +178,9 @@ def create_app(
   server_api.add_routes(
     app=app,
     auth=auth,
-    database=db_instance,
     status_manager=status_manager,
-    host_manager=host_manager,
     regions=regions,
-    audit=audit
+    servers=servers
   )
 
   server_list_api.add_routes(
@@ -200,9 +202,10 @@ def create_app(
   ip_log_api.add_routes(
     app=app,
     auth=auth,
-    ip_log_db=ip_log_db,
-    audit=audit
+    ip_log_db=ip_log_db
   )
+  
+  app.add_middleware(exceptions.ExceptionHandlerMiddleware)
 
   return app
 
@@ -233,7 +236,7 @@ def main(argv: List[str]):
   )
   host_manager = create_host_manager(config, db)
   server_status_manager = ServerStatusManager(host_manager)
-  ip_log_db = IPLogDatabase(base_path=base_path, host_manager=host_manager)
+  ip_log_db = IPLogDatabase(base_path=base_path, host_manager=host_manager, audit=audit)
   # Make sure the admin user exists
   ensure_admin_user(db)
 

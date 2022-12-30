@@ -115,7 +115,6 @@ def test_server_diff(test_client: TestClient, db_session: Session, login_user_1)
 
   # setting the config to the same value does not add to history
   history_res = test_client.get(f'/api/server/0/history/{version}')
-
   assert history_res.status_code == status.HTTP_200_OK
   history = history_res.json()
   assert len(history['changes']) == 2

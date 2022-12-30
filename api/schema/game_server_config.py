@@ -1,4 +1,5 @@
 import json
+from enum import Enum
 from typing import Any, List, Optional
 
 from fastapi_camelcase import CamelModel as BaseModel
@@ -7,6 +8,9 @@ from pydantic import validator
 from api.schema import validations
 
 
+class GameType(str, Enum):
+  tribes_ascend_ootb = 'tribes_ascend_ootb'
+  tribes_ascend_goty = 'tribes_ascend_goty'
 class ModProperty(BaseModel):
   name: str
   value: Any

@@ -1,7 +1,8 @@
-from enum import Enum
 from typing import List, Optional, Union
 
 from fastapi_camelcase import CamelModel as BaseModel
+
+from api.schema.game_server_config import GameType
 
 
 class UserLimits(BaseModel):
@@ -25,9 +26,7 @@ class User(BaseModel):
   id: int
   username: str
 
-class GameType(str, Enum):
-  tribes_ascend_ootb = 'tribes_ascend_ootb'
-  tribes_ascend_goty = 'tribes_ascend_goty'
+
 
 # Used for server list
 class ServerStatus(BaseModel):
