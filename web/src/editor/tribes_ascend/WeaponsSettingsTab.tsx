@@ -50,7 +50,7 @@ export default function WeaponsSettingsTab ({ config, updateCallbacks }: GameSer
         onChange={update('heavyWeaponBans')}/>
 
       <Divider orientation='left'>Item Properties</Divider>
-      <Form.Item wrapperCol={{offset: 2}}>
+      <Form.Item wrapperCol={{/*empty wrapper col makes it 100% width*/}}>
         <ItemPropertiesList configItemProperties={config.itemProperties} onChange={update('itemProperties')}/>
       </Form.Item>
       <Form.Item label='AoE Size Multiplier' extra='Multiplier affecting the size of all Area-of-Effect explosions'>

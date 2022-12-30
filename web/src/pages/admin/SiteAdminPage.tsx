@@ -1,4 +1,4 @@
-import { Button, Card, Form, message, PageHeader, Popconfirm, Select, Space, Spin, Switch } from "antd";
+import { Button, Card, Col, Form, message, PageHeader, Popconfirm, Row, Select, Space, Spin, Switch } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../../api";
@@ -160,23 +160,27 @@ export default function SiteAdminPage() {
             <Form.Item 
               label="Disable All Servers"
               extra="Stop all enabled servers.">
-              <Space direction="horizontal">
-                <Popconfirm 
-                title="All servers will be shut down and must be manually started. Are you sure?"
-                onConfirm={() => onDisableAll()}>
-                  <Button type="primary" danger>Disable</Button>
-                </Popconfirm>
+              <Row gutter={[8,8]}>
+                <Col>
+                  <Popconfirm 
+                  title="All servers will be shut down and must be manually started. Are you sure?"
+                  onConfirm={() => onDisableAll()}>
+                    <Button type="primary" danger>Disable</Button>
+                  </Popconfirm>
+                </Col>
 
                 { regionsLoader.value && 
                   Object.entries(regionsLoader.value).map(([id, name]) => (
-                    <Popconfirm 
-                    title={`All servers in ${name} shut down and must be manually started. Are you sure?`}
-                    onConfirm={() => onDisableAll(id)}>
+                    <Col>
+                      <Popconfirm 
+                      title={`All servers in ${name} shut down and must be manually started. Are you sure?`}
+                      onConfirm={() => onDisableAll(id)}>
                       <Button danger>"{name}" Only</Button>
-                    </Popconfirm>
+                      </Popconfirm>
+                    </Col>
                   ))
                 }
-              </Space>
+              </Row>
             </Form.Item>
 
             <Form.Item 

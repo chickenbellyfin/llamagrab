@@ -97,7 +97,7 @@ export default function PlayerSettingsTab (
 
 
       <Divider orientation='left'>Class Properties</Divider>
-      <Form.Item wrapperCol={{offset: 2}}>
+      <Form.Item wrapperCol={{}}>
         <Space direction='vertical' style={{width: '100%'}}>
         <ClassProperties classLabel='Light' classProperties={config.lightClassProperties} onChange={update('lightClassProperties')}/>
         <ClassProperties classLabel='Medium' classProperties={config.mediumClassProperties} onChange={update('mediumClassProperties')}/>

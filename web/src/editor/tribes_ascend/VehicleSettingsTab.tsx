@@ -89,7 +89,7 @@ export default function VehicleSettingsTab ({ config, updateCallbacks }: GameSer
       </Form.Item>
 
       <Divider orientation='left'>Vehicle Properties</Divider>
-      <Form.Item wrapperCol={{offset: 2}}>
+      <Form.Item wrapperCol={{/*empty wrapper col makes it 100% width*/}}>
         <Space direction='vertical' style={{width: '100%'}}>
         <VehicleProperties vehicleLabel='Grav Cycle' vehicleProperties={config.gravCycleProperties} onChange={update('gravCycleProperties')}/>
         <VehicleProperties vehicleLabel='Shrike' vehicleProperties={config.shrikeProperties} onChange={update('shrikeProperties')}/>
@@ -98,7 +98,7 @@ export default function VehicleSettingsTab ({ config, updateCallbacks }: GameSer
       </Form.Item>
 
       <Divider orientation='left'>Vehicle Weapon Properties</Divider>
-      <Form.Item wrapperCol={{offset: 2}}>
+      <Form.Item wrapperCol={{/*empty wrapper col makes it 100% width*/}}>
         <VehicleWeaponPropertiesSection properties={config.vehicleWeaponProperties} onChange={update('vehicleWeaponProperties')}/>
       </Form.Item>
 

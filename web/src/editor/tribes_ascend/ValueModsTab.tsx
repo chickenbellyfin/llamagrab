@@ -18,7 +18,7 @@ export default function ValueModsTab (
     >
 
       <Divider orientation='left'>Class Value Mods</Divider>
-      <Form.Item wrapperCol={{offset: 2}}>
+      <Form.Item wrapperCol={{/*empty wrapper col makes it 100% width*/}}>
         <Space direction='vertical' style={{width: '100%'}}>
         <ClassValueMods classLabel='Light' classProperties={config.lightValueMods} onChange={update('lightValueMods')}/>
         <ClassValueMods classLabel='Medium' classProperties={config.mediumValueMods} onChange={update('mediumValueMods')}/>
