@@ -6,7 +6,7 @@ All endpoints in under the Data API are public, READ-ONLY, and don't require aut
 """
 from typing import Dict, List
 
-from fastapi.routing import APIRouter
+from fastapi import FastAPI
 from pydantic import BaseModel
 
 from api.schema.app_config import Loginserver, Region
@@ -22,14 +22,14 @@ class RegionListResponse(BaseModel):
       }
     }
 
-def build_router(
+def add_routes(
+  app: FastAPI,
   regions: Dict[str, Region],
   loginservers: List[Loginserver]
-) -> APIRouter:
-  router = APIRouter()
+):
 
 
-  @router.get('/data/regions', tags=['data'], response_model=RegionListResponse)
+  @app.get('/data/regions', tags=['data'], response_model=RegionListResponse)
   async def get_regions() -> RegionListResponse:
     """ Return a list of region codes and their human-friendly names"""
     return {
@@ -37,15 +37,14 @@ def build_router(
       for region in regions.values()
     }
 
-  @router.get('/data/loginservers', tags=['data'])
+  @app.get('/data/loginservers', tags=['data'])
   async def get_loginservers():
     """ Return a list of allowed loginservers"""
     return loginservers
 
 
-  @router.get('/status', tags=['data'])
+  @app.get('/status', tags=['data'])
   async def get_status() -> str:
     """ Health check. Responds with `"ok"` if the service is healthy"""
     return "ok"
-  
-  return router
+

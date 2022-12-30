@@ -38,18 +38,6 @@ test_server2 = Server(
 EMPTY_SYNC_MESSAGE = {}
 
 
-def wait_for(assertion: Callable[[], bool], wait_time=1, interval=0.001) -> Tuple[float, int]:
-  """ wait for assertion to be true, if timeout assert false"""
-  start_time = time.time()
-  tries = 0
-  while time.time() - start_time < wait_time:
-    tries += 1
-    result = assertion()
-    if result:
-      return (time.time() - start_time, tries)
-    time.sleep(interval)
-  return (time.time() - start_time, tries)
-
 @pytest.fixture
 def mock_requests():
   with patch('api.host_manager.requests') as mock:
@@ -76,9 +64,8 @@ def test_sync_empty(monkeypatch, mock_requests: Mock):
     port=TEST_PORT,
     database=MagicMock()
   )
-  host_manager.sync()
+  host_manager._do_sync()
 
-  wait_for(lambda: mock_requests.called)
   mock_requests.assert_has_calls([
     call.post(
       'http://localhost:23456/api/sync',
@@ -129,9 +116,8 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
     port=TEST_PORT,
     database=MagicMock()
   )
-  host_manager.sync()
+  host_manager._do_sync()
 
-  wait_for(lambda: mock_requests.call_count == 2)
   mock_requests.assert_has_calls([
     call.post(
       'hostname1:23456/api/sync',
@@ -152,41 +138,3 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
     call.post().json().items(),
     call.post().json().items().__iter__()
   ])
-
-
-def test_sync_rate_limit(monkeypatch, mock_requests: Mock):
-  monkeypatch.setattr(db_queries, 'get_active_servers', lambda db,region: [])
-  monkeypatch.setattr(db_queries, "get_admin_tribes_usernames", lambda db: [])
-  monkeypatch.setattr(flags, 'get_flag', lambda db,key: None)
-
-  host_manager = HostManager(
-    regions={
-      'test_host': Region(
-        key='test_host',
-        name='Test Host',
-        host='localhost',
-        token='test_token'
-      )
-    },
-    port=TEST_PORT,
-    database=MagicMock(),
-    rate_limit_secs=0 # don't rate limit syncs
-  )
-
-  calls = []
-  def add_syncs(*args, **kwargs):
-    # server manager is blocked, request 100 syncs
-    if len(calls) == 0:
-      for i in range(100):
-        host_manager.sync()
-    calls.append(call(*args, **kwargs))
-
-  mock_requests.post.side_effect = add_syncs
-
-  host_manager.sync()
-
-  wait_for(lambda: len(calls) > 2, wait_time=2)
-  assert calls == [
-    call('localhost:23456/api/sync', json=EMPTY_SYNC_MESSAGE, headers={'Token': 'test_token'}),
-    call('localhost:23456/api/sync', json=EMPTY_SYNC_MESSAGE, headers={'Token': 'test_token'})
-  ]

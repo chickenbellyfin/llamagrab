@@ -69,8 +69,8 @@ def run_migrations_online():
         with context.begin_transaction():
             context.run_migrations()
 
-
-if context.is_offline_mode():
-    run_migrations_offline()
-else:
-    run_migrations_online()
+if __name__ == '__main__':
+    if context.is_offline_mode():
+        run_migrations_offline()
+    else:
+        run_migrations_online()

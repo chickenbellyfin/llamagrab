@@ -6,7 +6,7 @@ Endpoints in the Server API require user authentication.
 import time
 from typing import Dict
 
-from fastapi import Depends
+from fastapi import Depends, FastAPI
 from fastapi import status as http_status
 from fastapi.exceptions import HTTPException
 from fastapi.routing import APIRouter
@@ -26,7 +26,8 @@ from api.schema.responses import ServerVersionChange, ServerVersionDetails
 from api.server_status import ServerStatusManager
 
 
-def build_router(
+def add_routes(
+  app: FastAPI,
   auth: Auth,
   database: Database,
   status_manager: ServerStatusManager,
@@ -34,8 +35,7 @@ def build_router(
   regions: Dict[str, Region],
   audit: AuditLog
 
-) -> APIRouter:
-  router = APIRouter()
+):
 
   def get_server(
     server_id: int,
@@ -54,7 +54,7 @@ def build_router(
 
     return server
 
-  @router.put('/servers', status_code=http_status.HTTP_201_CREATED, tags=['server'])
+  @app.put('/servers', status_code=http_status.HTTP_201_CREATED, tags=['server'])
   async def create_server(
     request: requests.ServerCreateRequest,
     user: models.User = Depends(auth.login),
@@ -92,7 +92,7 @@ def build_router(
       is_private=request.server_config.password is not None
     )
 
-  @router.get('/server/{server_id}/status', tags=['server'])
+  @app.get('/server/{server_id}/status', tags=['server'])
   async def get_server_status(server: models.Server = Depends(get_server)):
     """ Get the current status of a server"""
     config = GameServerConfig.parse(server.server_config)
@@ -108,7 +108,7 @@ def build_router(
       is_private=config.password is not None
     )
 
-  @router.get('/server/{server_id}/settings', tags=['server'])
+  @app.get('/server/{server_id}/settings', tags=['server'])
   async def get_server_settings(
     server: models.Server = Depends(get_server),
     db: Session = Depends(database)
@@ -123,7 +123,7 @@ def build_router(
       editors=[user.id for user in editors]
     )
 
-  @router.post('/server/{server_id}/settings', tags=['server'])
+  @app.post('/server/{server_id}/settings', tags=['server'])
   async def set_server_settings(
     request: requests.ServerSettingsUpdateRequest,
     user: models.User = Depends(auth.login),
@@ -166,12 +166,12 @@ def build_router(
       removed = list(old_editors - new_editors)
       audit(user, f'updated editors of {server} added={added} removed={removed}')
 
-  @router.get('/server/{server_id}/config', tags=['server'])
+  @app.get('/server/{server_id}/config', tags=['server'])
   async def get_server_config(server: models.Server = Depends(get_server)) -> GameServerConfig:
     """ Get the game server configuration (Tribes settings) for a server"""
     return GameServerConfig.parse(server.server_config)
 
-  @router.post('/server/{server_id}/config', tags=['server'])
+  @app.post('/server/{server_id}/config', tags=['server'])
   async def set_server_config(
     game_server_config: GameServerConfig,
     user: models.User = Depends(auth.login),
@@ -200,7 +200,7 @@ def build_router(
 
 
 
-  @router.post('/server/{server_id}/start', tags=['server'])
+  @app.post('/server/{server_id}/start', tags=['server'])
   async def start_server( server: models.Server = Depends(get_server), db: Session = Depends(database), user: models.User = Depends(auth.login)):
     """ Request to start a server. Status will be enabled=True immediatley, but the server may not be started immediatley.
         You should poll /api/server/{server_id}/status status to wait for the server to actually start."""
@@ -210,7 +210,7 @@ def build_router(
     audit(user, f'started {server}')
 
 
-  @router.post('/server/{server_id}/stop', tags=['server'])
+  @app.post('/server/{server_id}/stop', tags=['server'])
   async def stop_server(server: models.Server = Depends(get_server), db: Session = Depends(database), user: models.User = Depends(auth.login)):
     """ Request to stop a server. Status will be enabled=False immediatley, but the server may not stop immediately.
         You should poll /api/server/{server_id}/status status to wait for the server to actually stop."""
@@ -219,7 +219,7 @@ def build_router(
     host_manager.sync()
     audit(user, f'stopped {server}')
 
-  @router.post('/server/{server_id}/restart', tags=['server'])
+  @app.post('/server/{server_id}/restart', tags=['server'])
   async def restart_server(server: models.Server = Depends(get_server), db: Session = Depends(database), user: models.User = Depends(auth.login)):
     """ Restart a server. Server will be restart immediately on the host. If the server is already restarting, will
     return an error."""
@@ -229,7 +229,7 @@ def build_router(
     host_manager.restart([server])
     audit(user, f'restarted {server}')
 
-  @router.delete('/server/{server_id}', tags=['server'])
+  @app.delete('/server/{server_id}', tags=['server'])
   async def delete_server(
     user: models.User = Depends(auth.login),
     server: models.Server = Depends(get_server),
@@ -248,7 +248,7 @@ def build_router(
     audit(user, f'deleted {server}')
 
 
-  @router.get('/server/{server_id}/history', tags=['server'])
+  @app.get('/server/{server_id}/history', tags=['server'])
   async def get_server_history(
     user: models.User = Depends(auth.login),
     server: models.Server = Depends(get_server),
@@ -266,7 +266,7 @@ def build_router(
       ) for s in server_history.get_versions(db, server)
     ]
 
-  @router.get('/server/{server_id}/history/{id}')
+  @app.get('/server/{server_id}/history/{id}')
   async def get_server_version_diff(
     id: int,
     server: models.Server = Depends(get_server),
@@ -280,5 +280,3 @@ def build_router(
         for k, v in diff.items()
       ]
     )
-
-  return router

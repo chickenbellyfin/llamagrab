@@ -150,52 +150,59 @@ def create_app(
     redoc_url=None
   )
 
-  app.include_router(account_api.build_router(
+  account_api.add_routes(
+    app=app,
     auth=auth,
     database=db_instance,
     host_manager=host_manager,
     audit=audit
-  ))
+  )
 
-  app.include_router(admin_api.build_router(
+  admin_api.add_routes(
+    app=app,
     auth=auth,
     database=db_instance,
     audit=audit
-  ))
+  )
 
-  app.include_router(data_api.build_router(
+  data_api.add_routes(
+    app=app,
     regions=regions,
     loginservers=loginservers
-  ))
+  )
 
-  app.include_router(server_api.build_router(
+  server_api.add_routes(
+    app=app,
     auth=auth,
     database=db_instance,
     status_manager=status_manager,
     host_manager=host_manager,
     regions=regions,
     audit=audit
-  ))
+  )
 
-  app.include_router(server_list_api.build_router(
+  server_list_api.add_routes(
+    app=app,
     auth=auth, 
     database=db_instance,
     status_manager=status_manager, 
     regions=regions
-  ))
+  )
 
-  app.include_router(site_admin_api.build_router(
+  site_admin_api.add_routes(
+    app=app,
     auth=auth,
     database=db_instance,
     host_manager=host_manager,
     audit=audit
-  ))
+  )
 
-  app.include_router(ip_log_api.build_router(
+  ip_log_api.add_routes(
+    app=app,
     auth=auth,
     ip_log_db=ip_log_db,
     audit=audit
-  ))
+  )
 
   return app
 

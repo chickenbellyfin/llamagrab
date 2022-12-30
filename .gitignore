@@ -1,5 +1,6 @@
 .pytest_cache/
 data/
+prof/
 **/*.log
 **/.venv
 **/__pycache__

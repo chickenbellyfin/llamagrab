@@ -1,8 +1,7 @@
 
-from fastapi import Depends
+from fastapi import Depends, FastAPI
 from fastapi import status as http_status
 from fastapi.exceptions import HTTPException
-from fastapi.routing import APIRouter
 from loguru import logger
 from sqlalchemy.orm.session import Session
 
@@ -15,15 +14,14 @@ from api.host_manager import HostManager
 from api.schema.requests import SetFlagRequest
 
 
-def build_router(
+def add_routes(
+  app: FastAPI,
   auth: Auth,
   database: Database,
   host_manager: HostManager,
   audit: AuditLog
-) -> APIRouter:
-  router = APIRouter()
-
-  @router.post('/admin/site/flag', include_in_schema=False)
+):
+  @app.post('/admin/site/flag', include_in_schema=False)
   async def set_flag(request: SetFlagRequest, user: models.User = Depends(auth.login_admin), db: Session = Depends(database)):
     logger.info(
       f"User(id={user.id} username={user.username}) Set Flag {request.key} = {request.value} ({type(request.value)})")
@@ -33,17 +31,17 @@ def build_router(
     except TypeError:
       raise HTTPException(http_status.HTTP_400_BAD_REQUEST)
 
-  @router.get('/admin/site/flags', include_in_schema=False)
+  @app.get('/admin/site/flags', include_in_schema=False)
   async def get_flags(user: models.User = Depends(auth.login_admin), db: Session = Depends(database)):
     return flags.get_all_flags(db)
 
-  @router.post('/admin/site/request_sync', include_in_schema=False)
+  @app.post('/admin/site/request_sync', include_in_schema=False)
   async def request_sync(user: models.User = Depends(auth.login_admin)):
     logger.info(f"User(id={user.id}, username={user.username}) requested sync")
     host_manager.sync()
     audit(user, f'requested a sync')
 
-  @router.post('/admin/site/restart_all', include_in_schema=False)
+  @app.post('/admin/site/restart_all', include_in_schema=False)
   async def restart_all(user: models.User = Depends(auth.login_admin), db: Session = Depends(database)):
     active = queries.get_active_servers(db)
     logger.info(f"{user} restarted all servers")
@@ -51,7 +49,7 @@ def build_router(
     audit(user, f'restarted all ({len(active)}) servers')
     return len(active)
 
-  @router.post('/admin/site/restart_all/{region}', include_in_schema=False)
+  @app.post('/admin/site/restart_all/{region}', include_in_schema=False)
   async def restart_all(region: str, user: models.User = Depends(auth.login_admin), db: Session = Depends(database)):
     active = queries.get_active_servers(db, region = region)
     logger.info(f"{user} restarted all servers in {region}")
@@ -59,7 +57,7 @@ def build_router(
     audit(user, f'restarted all ({len(active)}) servers in {region}')
     return len(active)
 
-  @router.post('/admin/site/disable_all', include_in_schema=False)
+  @app.post('/admin/site/disable_all', include_in_schema=False)
   async def disable_all(user: models.User = Depends(auth.login_admin), db: Session = Depends(database)):
     active = queries.get_active_servers(db)
     logger.info(f"{user} disabled all servers")
@@ -70,7 +68,7 @@ def build_router(
     audit(user, f'disabled all ({len(active)}) servers')
     return len(active)
 
-  @router.post('/admin/site/disable_all/{region}', include_in_schema=False)
+  @app.post('/admin/site/disable_all/{region}', include_in_schema=False)
   async def disable_all(region: str, user: models.User = Depends(auth.login_admin), db: Session = Depends(database)):
     active = queries.get_active_servers(db, region = region)
     logger.info(f"{user} disabled all servers in {region}")
@@ -80,6 +78,3 @@ def build_router(
     host_manager.sync()
     audit(user, f'disabled all ({len(active)}) servers in {region}')
     return len(active)
-  
-  return router
-

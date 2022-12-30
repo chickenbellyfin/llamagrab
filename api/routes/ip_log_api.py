@@ -1,45 +1,44 @@
 
+from ipaddress import ip_network
 from typing import Optional
-from fastapi import Depends, HTTPException
 
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi import status as http_status
-from fastapi.routing import APIRouter
+from fastapi_camelcase import CamelModel as BaseModel
 from loguru import logger
-from api.audit import AuditLog
 
+from api.audit import AuditLog
 from api.auth import Auth
 from api.database import models
 from api.iplog import IPLogDatabase
-from fastapi_camelcase import CamelModel as BaseModel
-from ipaddress import ip_network
 
 
 class IPBanRequest(BaseModel):
   ip: str
   reason: Optional[str]
 
-def build_router(
+def add_routes(
+  app: FastAPI,
   auth: Auth,
   ip_log_db: IPLogDatabase,
   audit: AuditLog
-) -> APIRouter:
-  router = APIRouter()
+):
 
-  @router.get('/admin/ip/log', include_in_schema=False)
+  @app.get('/admin/ip/log', include_in_schema=False)
   async def get_log(user: models.User = Depends(auth.login_admin)):
     entries = ip_log_db.get()
     entries.sort(key=lambda t: t.timestamp, reverse=True)
     return entries
 
-  @router.post('/admin/ip/fetch', include_in_schema=False)
+  @app.post('/admin/ip/fetch', include_in_schema=False)
   async def fetch(user: models.User = Depends(auth.login_admin)):
     ip_log_db._poll()
 
-  @router.get('/admin/ip/bans', include_in_schema=False)
+  @app.get('/admin/ip/bans', include_in_schema=False)
   async def get_bans():
     return sorted(ip_log_db.get_bans(), key=lambda t: t.created_at, reverse=True)
 
-  @router.post('/admin/ip/ban', include_in_schema=False)
+  @app.post('/admin/ip/ban', include_in_schema=False)
   async def create_ban(ban: IPBanRequest, user: models.User = Depends(auth.login_admin)):
     try:
       network = ip_network(ban.ip)
@@ -55,14 +54,12 @@ def build_router(
     if created is not None:
       audit(user, f'created {created}')
 
-  @router.delete('/admin/ip/ban/{id}', include_in_schema=False)
+  @app.delete('/admin/ip/ban/{id}', include_in_schema=False)
   async def remove_ban(id: int, user: models.User = Depends(auth.login_admin)):
     deleted = ip_log_db.remove_ban(id)
     audit(user, f'deleted {deleted}')
   
-  @router.post('/admin/ip/push_banlist', include_in_schema=False)
+  @app.post('/admin/ip/push_banlist', include_in_schema=False)
   async def push_banlist(user: models.User = Depends(auth.login_admin)):
     ip_log_db.push_banlist()
     audit(user, 'triggered IP banlist push')
-
-  return router

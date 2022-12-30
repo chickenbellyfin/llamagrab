@@ -3,10 +3,9 @@
 All endpoints in under the Admin API require the authenticated user to have a role of 'admin' or higher
 """
 
-from fastapi import Depends
+from fastapi import Depends, FastAPI
 from fastapi import status as http_status
 from fastapi.exceptions import HTTPException
-from fastapi.routing import APIRouter
 from loguru import logger
 from sqlalchemy.orm.session import Session
 
@@ -17,14 +16,14 @@ from api.database import models
 from api.database.database import Database
 
 
-def build_router(
+def add_routes(
+  app: FastAPI,
   auth: Auth,
   database: Database,
   audit: AuditLog
-) -> APIRouter:
-  router = APIRouter()
+):
 
-  @router.post('/admin/verify_user/{id_to_verify}', include_in_schema=False)
+  @app.post('/admin/verify_user/{id_to_verify}', include_in_schema=False)
   async def verify_user(id_to_verify: int, user: models.User = Depends(auth.login_admin), db: Session = Depends(database)):
     user_to_verify = db.query(models.User).filter_by(id=id_to_verify).first()
     if not user_to_verify:
@@ -43,7 +42,7 @@ def build_router(
     db.commit()
     audit(user, f'updated {user_to_verify}\'s tier from unverified to verified')
 
-  @router.post('/admin/make_admin/{id_to_admin}', include_in_schema=False)
+  @app.post('/admin/make_admin/{id_to_admin}', include_in_schema=False)
   async def make_admin(id_to_admin: int, user: models.User = Depends(auth.login_super), db: Session = Depends(database)):
     user_to_admin = db.query(models.User).filter_by(id=id_to_admin).first()
     if not user_to_admin:
@@ -64,7 +63,7 @@ def build_router(
     audit(user, f'updated {user_to_admin}\'s tier from {old_tier} to admin')
 
 
-  @router.delete('/admin/make_admin/{id_to_unadmin}', include_in_schema=False)
+  @app.delete('/admin/make_admin/{id_to_unadmin}', include_in_schema=False)
   async def make_admin(id_to_unadmin: int, user: models.User = Depends(auth.login_super), db: Session = Depends(database)):
     user_to_unadmin = db.query(models.User).filter_by(id=id_to_unadmin).first()
     if not user_to_unadmin:
@@ -83,8 +82,7 @@ def build_router(
     db.commit()
     audit(user, f'updated {user_to_unadmin}\'s tier from admin to verified')
   
-  @router.get('/admin/audit_log', include_in_schema=False)
+  @app.get('/admin/audit_log', include_in_schema=False)
   async def get_audit_log(user: models.User = Depends(auth.login_admin)):
     return sorted(audit.get(), key=lambda t: t.timestamp, reverse=True)
 
-  return router

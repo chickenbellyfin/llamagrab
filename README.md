@@ -84,6 +84,11 @@ $ (cd web && yarn test --ci)
 
 # Using coverage.py
 $ coverage run && coverage report
+
+# pytest profiling
+$ apt-get install graphviz
+$ python -m pytest --profile-svg
+$ xdg-open prof/combined.svg
 ```
 
 ## Release

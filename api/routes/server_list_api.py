@@ -1,8 +1,7 @@
 
 from typing import Dict, List
 
-from fastapi import Depends
-from fastapi.routing import APIRouter
+from fastapi import Depends, FastAPI
 from sqlalchemy.orm.session import Session
 
 from api import server_sharing
@@ -15,14 +14,13 @@ from api.schema.game_server_config import GameServerConfig
 from api.server_status import ServerStatusManager
 
 
-def build_router(
+def add_routes(
+  app: FastAPI,
   auth: Auth,
   database: Database,
   status_manager: ServerStatusManager, 
   regions: Dict[str, Region]
-) -> APIRouter:
-  router = APIRouter()
-
+):
 
   def server_status_list(servers: List[models.Server], db: Session) -> List[responses.ServerStatus]:
     return [
@@ -40,7 +38,7 @@ def build_router(
       for s in servers
     ]
 
-  @router.get('/servers/user', tags=['server-list'])
+  @app.get('/servers/user', tags=['server-list'])
   async def get_servers_for_user(
     user: models.User = Depends(auth.login),
     db: Session = Depends(database)
@@ -52,7 +50,7 @@ def build_router(
     shared_servers = server_sharing.get_shared_servers(db, user)
     return server_status_list(servers + shared_servers, db)
 
-  @router.get('/servers/all', include_in_schema=False)
+  @app.get('/servers/all', include_in_schema=False)
   async def get_all_servers_for_admin(
     admin: models.User = Depends(auth.login_admin),
     db: Session = Depends(database)
@@ -63,7 +61,7 @@ def build_router(
     return server_status_list(servers, db)
 
 
-  @router.get('/servers/region_status', tags=['server-list'])
+  @app.get('/servers/region_status', tags=['server-list'])
   async def get_region_status(
     db: Session = Depends(database)
   ):
@@ -79,5 +77,3 @@ def build_router(
       for region in regions.values()
     ]
     return region_status
-  
-  return router

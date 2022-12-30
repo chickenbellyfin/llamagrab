@@ -4,10 +4,9 @@ Enpoints in the Account API are for login & user account management.
 """
 from typing import List
 
-from fastapi import Depends, Request
+from fastapi import Depends, Request, FastAPI
 from fastapi import status as http_status
 from fastapi.exceptions import HTTPException
-from fastapi.routing import APIRouter
 from fastapi_login.exceptions import InvalidCredentialsException
 from loguru import logger
 from passlib.hash import argon2
@@ -24,14 +23,13 @@ from api.schema import requests, responses
 from api.schema.requests import UpdatePasswordRequest
 
 
-def build_router(
+def add_routes(
+  app: FastAPI,
   auth: Auth,
   database: Database,
   host_manager: HostManager,
   audit: AuditLog
-) -> APIRouter:
-
-  router = APIRouter()
+):
 
   def _to_account_response(user: models.User, db: Session):
     """
@@ -50,7 +48,7 @@ def build_router(
     )
 
 
-  @router.post('/account/login', tags=['account'])
+  @app.post('/account/login', tags=['account'])
   async def login(login: requests.LoginRequest, db: Session = Depends(database)):
     """ Login to an account. Returns an access_token which must be included in the authorization
         header for most requests.
@@ -75,7 +73,7 @@ def build_router(
     }
 
 
-  @router.get('/account/user', tags=['account'])
+  @app.get('/account/user', tags=['account'])
   async def get_user(
     user: models.User = Depends(auth.login),
     db: Session = Depends(database)):
@@ -84,7 +82,7 @@ def build_router(
     return _to_account_response(db_user, db)
 
 
-  @router.get('/accounts', include_in_schema=False)
+  @app.get('/accounts', include_in_schema=False)
   async def list_accounts(
     user: models.User = Depends(auth.login_admin),
     db: Session = Depends(database)) -> List[responses.UserAccount]:
@@ -95,7 +93,7 @@ def build_router(
       for u in all_users
     ]
 
-  @router.get('/users', tags=['account'])
+  @app.get('/users', tags=['account'])
   async def list_users(
     user: models.User = Depends(auth.login),
     db: Session = Depends(database)
@@ -107,7 +105,7 @@ def build_router(
       for u in all_users
     ]
 
-  @router.post('/account/change_password', tags=['account'])
+  @app.post('/account/change_password', tags=['account'])
   async def change_password(
     request: UpdatePasswordRequest,
     user: models.User = Depends(auth.login),
@@ -121,7 +119,7 @@ def build_router(
     db.commit()
 
 
-  @router.post('/account/set_tribes_name', tags=['account'])
+  @app.post('/account/set_tribes_name', tags=['account'])
   async def set_tribes_name(
     request: requests.SetTribesUsernameRequest,
     user: models.User = Depends(auth.login),
@@ -138,7 +136,7 @@ def build_router(
         return forwarded.split(",")[0]
     return request.client.host
 
-  @router.post('/account/create', include_in_schema=False)
+  @app.post('/account/create', include_in_schema=False)
   async def create_account(create_req: requests.AccountCreateRequest, request: Request, db: Session = Depends(database)):
     client_host = _get_ip(request)
     
@@ -175,7 +173,7 @@ def build_router(
     
     audit(new_user, 'account created')
 
-  @router.delete('/account/{user_id}', include_in_schema=False)
+  @app.delete('/account/{user_id}', include_in_schema=False)
   async def delete_user(user_id: int, admin: models.User = Depends(auth.login_super), db: Session = Depends(database)):
     user_to_delete = db_queries.user_by_id(db, user_id)
 
@@ -195,4 +193,3 @@ def build_router(
     servers_str = ', '.join(list(map(str, servers_to_delete)))
     audit(admin, f'deleted {user_to_delete}, including servers {servers_str}')
   
-  return router

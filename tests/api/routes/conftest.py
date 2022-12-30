@@ -16,13 +16,19 @@ from api.database.models import (Server, ServerEditor, ServerVersion, User,
 from api.schema.app_config import Region
 from api.schema.game_server_config import GameServerConfig
 
+password_hashes = {
+  'testpassword': argon2.hash('testpassword'),
+  'testpassword2': argon2.hash('testpassword2'),
+  'testadminpassword': argon2.hash('testadminpassword'),
+  'testsuperpassword': argon2.hash('testsuperpassword'),
+}
 
 @pytest.fixture
 def user_1():
   return User(
     id=0,
     username='testuser',
-    password=argon2.hash('testpassword'),
+    password=password_hashes['testpassword'],
     tier='verified',
     limits=UserLimits(server_limit=1, active_limit=1)
   )
@@ -32,7 +38,7 @@ def user_2():
   return User(
     id=1,
     username='testuser2',
-    password=argon2.hash('testpassword2'),
+    password=password_hashes['testpassword2'],
     tier='unverified',
     limits=UserLimits(server_limit=1, active_limit=1)
   )
@@ -43,7 +49,7 @@ def user_admin():
   return User(
     id=2,
     username='testadmin',
-    password=argon2.hash('testadminpassword'),
+    password=password_hashes['testadminpassword'],
     tier='admin',
     limits=UserLimits(server_limit=-1, active_limit=-1)
   )
@@ -53,7 +59,7 @@ def user_super():
   return User(
     id=3,
     username='testsuper',
-    password=argon2.hash('testsuperpassword'),
+    password=password_hashes['testsuperpassword'],
     tier='super',
     limits=UserLimits(server_limit=-1, active_limit=-1)
   )
@@ -125,7 +131,7 @@ def server2_version1(server2: Server):
 
 @pytest.fixture(autouse=True)
 def populate_db(
-  inmemory_db,
+  inmemory_db: database.Database,
   user_1,
   user_2,
   user_admin,
@@ -136,16 +142,16 @@ def populate_db(
   server1_version2,
   server2_version1):
   with inmemory_db.session() as session:
-    session.merge(user_1)
-    session.merge(user_2)
-    session.merge(user_admin)
-    session.merge(user_super)
-    session.merge(server1)
-    session.merge(server2)
-    session.merge(server1_version1)
-    session.merge(server1_version2)
-    session.merge(server2_version1)
-    session.merge(ServerEditor(server_id=0, user_id=1))
+    session.add(user_1)
+    session.add(user_2)
+    session.add(user_admin)
+    session.add(user_super)
+    session.add(server1)
+    session.add(server2)
+    session.add(server1_version1)
+    session.add(server1_version2)
+    session.add(server2_version1)
+    session.add(ServerEditor(server_id=0, user_id=1))
     session.commit()
 
 
