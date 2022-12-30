@@ -65,8 +65,8 @@ class ServerVersion(Base):
   created_at = Column(Integer, nullable=False)
   created_by = Column(Integer, ForeignKey('users.id'), nullable=False)
 
-  server = relationship("Server", foreign_keys=[server_id], lazy='joined')
-  creator = relationship('User', foreign_keys=[created_by], lazy='joined')
+  server: Server = relationship("Server", foreign_keys=[server_id], lazy='joined')
+  creator: User = relationship('User', foreign_keys=[created_by], lazy='joined')
 
   def __str__(self):
     return f'ServerVersion(id={self.id})'

@@ -18,8 +18,6 @@ class Auth:
   ): 
     self._database = database
     self.login_manager = login_manager
-    # set of IPs which created an account
-    self.created_account = set()
 
 
   def check_account_disabled_flags(self, user: User):

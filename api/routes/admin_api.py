@@ -35,7 +35,6 @@ def add_routes(
         detail='User is already verified'
       )
 
-    logger.info(f'User {user_to_verify.id} was verified by {user.id}')
     user_to_verify.tier = 'verified'
     user_to_verify.limits.server_limit = 5
     user_to_verify.limits.active_limit = 2
@@ -75,7 +74,6 @@ def add_routes(
         detail='User is not an admin'
       )
 
-    logger.info(f'User {id_to_unadmin} was made non-admin by {user.id}')
     user_to_unadmin.tier = 'verified'
     user_to_unadmin.limits.server_limit = 5
     user_to_unadmin.limits.active_limit = 2

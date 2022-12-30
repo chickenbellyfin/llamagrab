@@ -1,8 +1,11 @@
 from fastapi import status
 from fastapi.testclient import TestClient
 from sqlalchemy.orm.session import Session
+from api.database.database import Database
 
 from api.database.models import Server, ServerEditor, ServerVersion, User
+from api.host_manager import HostManager
+from api.server_status import ServerStatusManager
 
 
 def _remove_nones(obj: dict):
@@ -138,14 +141,28 @@ def test_start_server(test_client: TestClient, db_session: Session, login_user_1
   assert response.status_code == status.HTTP_200_OK
   assert db_session.query(Server).filter_by(id=0).first().enabled
 
-def test_stop_server(test_client: TestClient, db_session: Session, login_user_1: User, should_sync):
-  server = db_session.query(Server).filter_by(id=0).first()
-  server.status = 'running'
-  db_session.commit()
+def test_stop_server(test_client: TestClient, login_user_1: User, should_sync, inmemory_db: Database):
+  with inmemory_db.session() as db:
+    server = db.query(Server).filter_by(id=0).first()
+    server.enabled = True
+    db.commit()
 
   response = test_client.post('/api/server/0/stop')
+  with inmemory_db.session() as db:
+    assert response.status_code == status.HTTP_200_OK
+    assert not db.query(Server).filter_by(id=0).first().enabled
+
+def test_restart_server(test_client: TestClient, login_user_1: User, host_manager: HostManager, status_manager: ServerStatusManager):
+  status_manager.get_server_status.return_value = 'running'
+  response = test_client.post('/api/server/0/restart')
   assert response.status_code == status.HTTP_200_OK
-  assert not db_session.query(Server).filter_by(id=0).first().enabled
+  host_manager.restart.assert_called_once()
+
+def test_restart_server_not_running(test_client: TestClient, login_user_1: User, host_manager: HostManager, status_manager: ServerStatusManager):
+  #status_manager.get_server_status.return_value = 'running'
+  response = test_client.post('/api/server/0/restart')
+  assert response.status_code == status.HTTP_400_BAD_REQUEST
+  host_manager.restart.assert_not_called()
 
 def test_delete_server(test_client: TestClient, db_session: Session, login_user_1: User, should_sync):
   response = test_client.delete('/api/server/0')
