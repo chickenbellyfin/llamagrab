@@ -35,7 +35,7 @@ def add_routes(
     ip_log_db._poll()
 
   @app.get('/admin/ip/bans', include_in_schema=False)
-  async def get_bans():
+  async def get_bans(user: models.User = Depends(auth.login_admin)):
     return sorted(ip_log_db.get_bans(), key=lambda t: t.created_at, reverse=True)
 
   @app.post('/admin/ip/ban', include_in_schema=False)
