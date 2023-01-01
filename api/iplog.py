@@ -44,6 +44,7 @@ class IPLogDatabase():
     Base.metadata.create_all(bind=self.engine)
     self.SessionFactory = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=self.engine, expire_on_commit=False))
     self.interval_secs = 3600
+    self.banlist_file_path = os.path.join(base_path, 'banlist.txt')
 
     polling.fixed_rate(self._poll, self.interval_secs)
 
@@ -131,3 +132,9 @@ class IPLogDatabase():
     ips = [b.ip for b in bans]
     self.host_manager.banlist(ips)
 
+    # write banlist file locally
+    txt = ''
+    for ip in ips:
+      txt += f'{ip}\n'
+    with open(self.banlist_file_path, 'w') as f:
+      f.write(txt)
