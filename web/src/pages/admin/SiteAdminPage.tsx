@@ -1,4 +1,4 @@
-import { Button, Card, Col, Form, message, PageHeader, Popconfirm, Row, Select, Space, Spin, Switch } from "antd";
+import { Button, Card, Col, Form, message, PageHeader, Popconfirm, Row, Select, Spin, Switch } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../../api";
@@ -138,23 +138,27 @@ export default function SiteAdminPage() {
             <Form.Item 
               label="Restart All Servers"
               extra="Force re-create all servers with their current config. (Do Not Spam)">
-              <Space direction="horizontal">
-                <Popconfirm 
-                title="All servers will be restarted immediately."
-                onConfirm={() => onRestartAll()}>
-                  <Button type="primary" danger>Restart</Button>
-                </Popconfirm>
+              <Row gutter={[8,8]}>
+                <Col>
+                  <Popconfirm 
+                  title="All servers will be restarted immediately."
+                  onConfirm={() => onRestartAll()}>
+                    <Button type="primary" danger>Restart</Button>
+                  </Popconfirm>
+                </Col>
                 
                 { regionsLoader.value && 
                   Object.entries(regionsLoader.value).map(([id, name]) => (
-                    <Popconfirm 
-                    title={`All servers in ${name} will be restarted immediately.`}
-                    onConfirm={() => onRestartAll(id)}>
-                      <Button danger>"{name}" Only</Button>
-                    </Popconfirm>
+                    <Col>
+                      <Popconfirm 
+                      title={`All servers in ${name} will be restarted immediately.`}
+                      onConfirm={() => onRestartAll(id)}>
+                        <Button danger>"{name}" Only</Button>
+                      </Popconfirm>
+                    </Col>
                   ))
                 }
-              </Space>
+              </Row>
             </Form.Item>
 
             <Form.Item 
