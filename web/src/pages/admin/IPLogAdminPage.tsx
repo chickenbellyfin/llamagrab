@@ -133,6 +133,7 @@ function IPBansSection() {
         columns={columns}
         dataSource={loader.value}
         size='small'
+        scroll={{x: true}}
         />
     </Spin>
   </>)

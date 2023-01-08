@@ -31,7 +31,6 @@ class AppConfig(BaseModel):
 
   @validator('regions', pre=True)
   def regions_to_dict(cls, raw: List[Region]) -> Dict[str, Region]:
-    print(raw)
     return {
       region['key']: region for region in raw
     }
