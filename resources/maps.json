@@ -170,6 +170,55 @@
     "isCustom": true
   },
   {
+    "key": "ctf_eclipse",
+    "name": "Eclipse",
+    "gameMode": "CTF",
+    "lua": "TrCTF-Eclipse",
+    "isCustom": true
+  },
+  {
+    "key": "ctf_polaris",
+    "name": "Polaris",
+    "gameMode": "CTF",
+    "lua": "TrCTF-Polaris",
+    "isCustom": true
+  },
+  {
+    "key": "ctf_oceanus",
+    "name": "Oceanus",
+    "gameMode": "CTF",
+    "lua": "TrCTF-Oceanus",
+    "isCustom": true
+  },
+  {
+    "key": "ctf_meridian",
+    "name": "Meridian",
+    "gameMode": "CTF",
+    "lua": "TrCTF-Meridian",
+    "isCustom": true
+  },
+  {
+    "key": "ctf_ascent",
+    "name": "Ascent",
+    "gameMode": "CTF",
+    "lua": "TrCTF-Ascent",
+    "isCustom": true
+  },
+  {
+    "key": "ctf_crash",
+    "name": "Crash",
+    "gameMode": "CTF",
+    "lua": "TrCTF-Crash",
+    "isCustom": true
+  },
+  {
+    "key": "ctf_treacherous_pass",
+    "name": "Treacherous Pass",
+    "gameMode": "CTF",
+    "lua": "TrCTF-TreacherousPass",
+    "isCustom": true
+  },
+  {
     "key": "arena_walledin",
     "name": "Walled In",
     "gameMode": "Arena",
@@ -216,6 +265,13 @@
     "name": "Elysian Battleground",
     "gameMode": "Arena",
     "lua": "TrArena-ElysianBattleground",
+    "isCustom": true
+  },
+  {
+    "key": "arena_ruins",
+    "name": "Ruins",
+    "gameMode": "Arena",
+    "lua": "TrArena-Ruins",
     "isCustom": true
   },
   {

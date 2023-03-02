@@ -10,6 +10,6 @@ loguru
 passlib
 pyyaml
 requests
-sqlalchemy
+sqlalchemy==1.4.46
 uvicorn
 prometheus_client
