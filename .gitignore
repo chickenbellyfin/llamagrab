@@ -1,3 +1,4 @@
+**/.DS_Store    
 .pytest_cache/
 data/
 prof/
@@ -8,3 +9,5 @@ prof/
 static/
 htmlcov/
 .coverage
+**/banlist.txt
+**/*.db
