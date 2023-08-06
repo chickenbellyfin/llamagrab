@@ -1,8 +1,8 @@
 import os
-from typing import List
+from typing import List, Optional
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, Integer, String
 from api.database.models import User
 from api.host_manager import HostManager
@@ -11,6 +11,8 @@ import time
 from api import permissions
 from api.service import exceptions
 from api.audit import AuditLog
+from sqlalchemy.orm import Mapped, mapped_column
+
 
 from ipaddress import ip_network
 
@@ -22,19 +24,19 @@ Base = declarative_base()
 class IPLogEntry(Base):
   __tablename__ = 'iplogs'
   id = Column(Integer, primary_key=True, autoincrement=True)
-  timestamp = Column(Integer, nullable=False)
-  label = Column(String, nullable=False)
-  user_id = Column(Integer, nullable=False)
-  display_name = Column(String, nullable=False)
-  ip = Column(String, nullable=False)
+  timestamp: Mapped[int]
+  label: Mapped[str]
+  user_id: Mapped[int]
+  display_name: Mapped[str]
+  ip: Mapped[str] 
 
 class IPBan(Base):
   __tablename__ = "ip_bans"
-  id = Column(Integer, primary_key=True, autoincrement=True)
-  ip = Column(String, nullable=False)
-  reason = Column(String)
-  created_at = Column(Integer, nullable=False)
-  created_by = Column(String, nullable=False) # no FK since its a separate DB
+  id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+  ip: Mapped[str]
+  reason: Mapped[Optional[str]]
+  created_at: Mapped[int]
+  created_by: Mapped[str] # no FK since its a separate DB
 
   def __str__(self):
     return f'IPBan(ip={self.ip} reason="{self.reason}")'

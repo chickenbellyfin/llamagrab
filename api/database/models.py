@@ -1,6 +1,8 @@
-from sqlalchemy import Boolean, Column, Integer, String
+from typing import Optional
+from sqlalchemy import Boolean, Column, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
 
 from .database import Base
 
@@ -13,14 +15,25 @@ from .database import Base
 class User(Base):
   __tablename__ = 'users'
   __table_args__ = {'sqlite_autoincrement': True}
-  id = Column(Integer, primary_key=True, autoincrement=True)
-  username = Column(String, nullable=False, unique=True)
-  password = Column(String, nullable=False) # hashed
-  tier = Column(String, default='unverified')
-  tribes_username = Column(String)
+  id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+  username: Mapped[str] = mapped_column(unique=True)
+  password: Mapped[str] # hashed
+  tier: Mapped[str] = mapped_column(default='unverified')
+  tribes_username: Mapped[Optional[str]]
 
-  servers = relationship("Server", back_populates='owner', foreign_keys='Server.user', lazy='joined')
-  limits = relationship("UserLimits", uselist=False, lazy='joined')
+  servers = relationship(
+    "Server", 
+    back_populates='owner', 
+    foreign_keys='Server.user', 
+    lazy='joined',
+    cascade="all, delete"
+  )
+  limits = relationship(
+    "UserLimits", 
+    uselist=False, 
+    lazy='joined',
+    cascade="all, delete"
+  )
 
   def __str__(self):
     return f'User(id={self.id} name="{self.username}")'
@@ -28,10 +41,10 @@ class User(Base):
 class UserLimits(Base):
   __tablename__ = 'user_limits'
   __table_args__ = {'sqlite_autoincrement': True}
-  id = Column(Integer, primary_key=True, autoincrement=True)
-  user_id = Column(Integer, ForeignKey('users.id'))
-  server_limit = Column(Integer)
-  active_limit = Column(Integer)
+  id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+  user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+  server_limit: Mapped[Optional[int]]
+  active_limit: Mapped[Optional[int]]
 
   relationship('User', back_populates='limits', lazy='joined')
 
@@ -39,17 +52,17 @@ class UserLimits(Base):
 class Server(Base):
   __tablename__ = 'servers'
   __table_args__ = {'sqlite_autoincrement': True}
-  id = Column(Integer, primary_key=True, autoincrement=True)
-  user = Column(Integer, ForeignKey('users.id'))
-  name = Column(String, nullable=False)
-  region = Column(String)
-  enabled = Column(Boolean, default=False, nullable=False)
-  game = Column(String, nullable=False)
-  server_config = Column(String)
-  updated_at = Column(Integer, nullable=False)
-  updated_by = Column(Integer, ForeignKey('users.id'), nullable=False)
+  id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+  user: Mapped[int] = mapped_column(ForeignKey('users.id'))
+  name: Mapped[str]
+  region: Mapped[str]
+  enabled: Mapped[bool] = mapped_column(default=False)
+  game: Mapped[str]
+  server_config: Mapped[str]
+  updated_at: Mapped[int]
+  updated_by: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
-  owner: User = relationship("User", back_populates="servers", foreign_keys=[user], lazy='joined')
+  owner: Mapped[User] = relationship("User", back_populates="servers", foreign_keys=[user], lazy='joined')
 
   def __str__(self):
     return f'Server(id={self.id} name="{self.name}")'
@@ -58,15 +71,15 @@ class Server(Base):
 class ServerVersion(Base):
   __tablename__ = 'server_versions'
   __table_args__ = {'sqlite_autoincrement': True}
-  id = Column(Integer, primary_key=True, autoincrement=True)
-  server_id = Column(Integer, ForeignKey('servers.id'), nullable=False)
-  server_config = Column(String, nullable=False)
-  num_changes = Column(Integer, nullable=False)
-  created_at = Column(Integer, nullable=False)
-  created_by = Column(Integer, ForeignKey('users.id'), nullable=False)
+  id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+  server_id: Mapped[int] = mapped_column(ForeignKey('servers.id'))
+  server_config: Mapped[str]
+  num_changes: Mapped[int]
+  created_at: Mapped[int] 
+  created_by: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
-  server: Server = relationship("Server", foreign_keys=[server_id], lazy='joined')
-  creator: User = relationship('User', foreign_keys=[created_by], lazy='joined')
+  server: Mapped[Server] = relationship("Server", foreign_keys=[server_id], lazy='joined')
+  creator: Mapped[User] = relationship('User', foreign_keys=[created_by], lazy='joined')
 
   def __str__(self):
     return f'ServerVersion(id={self.id})'
@@ -74,17 +87,17 @@ class ServerVersion(Base):
 class ServerEditor(Base):
   __tablename__ = 'server_editors'
   __table_args__ = {'sqlite_autoincrement': True}
-  id = Column(Integer, primary_key=True, autoincrement=True) # not used, required by sqlalchemy
-  server_id = Column(Integer, ForeignKey('servers.id'), nullable=False)
-  user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+  id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True) # not used, required by sqlalchemy
+  server_id: Mapped[int] = mapped_column(ForeignKey('servers.id'))
+  user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
   server = relationship('Server', foreign_keys=[server_id], lazy='joined')
   user = relationship('User', foreign_keys=[user_id], lazy='joined')
 
 class Flag(Base):
   __tablename__ = 'flags'
-  key = Column(String, nullable=False, primary_key=True)
-  value = Column(String)
+  key: Mapped[str] = mapped_column(primary_key=True)
+  value: Mapped[str]
 
   def __str__(self):
     return f'Flag(key={self.key} value={self.value})'
@@ -92,9 +105,9 @@ class Flag(Base):
 class AuditLogEvent(Base):
   __tablename__ = 'audit_log'
   __table_args__ = {'sqlite_autoincrement': True}
-  id = Column(Integer, primary_key=True, autoincrement=True)
-  timestamp = Column(Integer, nullable=False)
-  details = Column(String, nullable=False)
-  user_id = Column(Integer, nullable=False) # not FK since it can't be deleted
-  user_name = Column(String, nullable=False)
-  user_tier = Column(String, nullable=False)
+  id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+  timestamp: Mapped[int]
+  details: Mapped[str]
+  user_id: Mapped[int] # not FK since it can't be deleted
+  user_name: Mapped[str]
+  user_tier: Mapped[str]
