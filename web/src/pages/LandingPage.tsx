@@ -20,25 +20,6 @@ const dividerStyle: React.CSSProperties = {
   margin: '20px 0px 20px 0px'
 };
 
-function WilderzoneButton() {
-  return (
-    <a target='_blank' href='https://wilderzone.live'>
-      <Button
-        className='discord-button'
-        type='primary'
-        size='large'
-        style={{
-          backgroundColor: colors.popoverBackground.hex,
-          border: 'none',
-          fontWeight: 500
-        }}
-      >
-        {/* <Icon component={HonorLogo}/> */}
-        WILDERZONE.LIVE
-      </Button>
-    </a>
-  );
-}
 
 interface LandingSectionProps {
   title: string
@@ -140,19 +121,6 @@ export default function LandingPage() {
           }
         </Row>
       </LandingSection>
-      <LandingSection title='join us on'>
-        <Row justify='center' gutter={[16, 16]} wrap>
-          {/* <Col style={{textAlign:'center'}}>
-            <span className='secondary-label'>get the scoop</span><br/>
-            <WilderzoneButton/>
-          </Col> */}
-          <Col style={{textAlign:'center'}}>
-            {/* <span className='secondary-label'>join us on</span><br/> */}
-            <DiscordButton/>
-          </Col>
-        </Row>
-      </LandingSection>
-
       <LandingSection title='Status'>
         <RegionStatusSection/>
       </LandingSection>
