@@ -41,11 +41,6 @@ export default function AppHeader(props: AppHeaderProps) {
 
         <Space direction="horizontal" size='middle' style={{float:'right'}}>
 
-          { (auth.user || location.pathname !== '/') &&
-            // Discord button is only shown in header if the user is not on the landing page
-            <DiscordButton size='middle' responsive/>
-          }
-
           {auth.user &&
             // user settings only shown if user is logged in
             <Tooltip title='Settings'>
