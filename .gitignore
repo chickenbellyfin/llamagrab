@@ -11,3 +11,4 @@ htmlcov/
 .coverage
 **/banlist.txt
 **/*.db
+.vscode

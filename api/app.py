@@ -13,7 +13,7 @@ from fastapi_login.fastapi_login import LoginManager
 from loguru import logger
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from api import flags
+from api import flags, web_app
 from api.audit import AuditLog
 from api.auth import Auth
 from api.database import models, queries
@@ -261,7 +261,18 @@ def main(argv: List[str]):
 
   api.add_middleware(metrics.HTTPMetricsMiddleware, route_prefix='/api')
 
-  uvicorn.run(
+  # Instead of uvicorn.run, use UvicornBackgroundServer to run non-blocking in a new thread
+  # This allows us to start fastapi and sanic, whereas normally they would both block the main thread
+  # uvicorn.run(
+  #   app,
+  #   host='0.0.0.0',
+  #   port=config.port,
+  #   log_config=None,
+  #   proxy_headers=True,
+  #   forwarded_allow_ips="*" # allows uvicorn to access log with IPs forwarded by reverse proxy (caddy)
+  # )
+  from api.uvicorn_background_server import UvicornBackgroundServer
+  uvicorn_config = uvicorn.Config(
     app,
     host='0.0.0.0',
     port=config.port,
@@ -269,6 +280,21 @@ def main(argv: List[str]):
     proxy_headers=True,
     forwarded_allow_ips="*" # allows uvicorn to access log with IPs forwarded by reverse proxy (caddy)
   )
+  api_server = UvicornBackgroundServer(config=uvicorn_config)
+  api_server.run_nonblocking()
+
+  web_app.start(
+    db_instance=db,
+    auth=auth,
+    host_manager=host_manager,
+    status_manager=server_status_manager,
+    ip_log_db=ip_log_db,
+    regions=config.regions,
+    loginservers=config.loginservers,
+    audit=audit
+  )
+
+  api_server.kill()
 
 
 if __name__ == '__main__':

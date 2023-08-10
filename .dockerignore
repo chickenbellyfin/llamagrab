@@ -8,3 +8,5 @@ data/
 docs/
 web/build
 web/node_modules
+web2/node_modules
+web/static

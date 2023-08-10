@@ -1,0 +1,18 @@
+{% set icon_class, color_class = {
+    'running': ('bi-play-circle', 'has-text-success'),
+    'starting': ('bi-clock pulse', 'has-text-warning'),
+    'restarting': ('bi-arrow-clockwise pulse', 'has-text-warning'),
+    'stopping': ('bi-clock pulse', 'has-text-warning'),
+    'disabled': ('bi-pause-circle', 'has-text-light-grey'),
+    'offline': ('bi-x-circle', 'has-text-danger'),
+    'unknown': ('bi-question-circle', 'has-text-light-grey')
+    }[status]
+ %}
+ <span class="icon-text">
+    <span class="icon">
+      <i class="bi {{ icon_class }} {{ color_class }}"></i>
+    </span>
+    {% if label == true %}
+    <span>{{ status|capitalize }}</span>
+    {% endif %}
+</span>

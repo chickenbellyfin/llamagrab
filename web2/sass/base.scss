@@ -1,0 +1,46 @@
+@charset "utf-8";
+
+// vars
+$lg-background: #2f343c;
+$lg-nav-background: #404854;
+$lg-component-background: #383e47;
+$lg-component-background-dark: #24282e;
+$lg-border: #22272d;
+$lg-text: hsla(0,0,100%,.85);
+$lg-text-faded: hsla(0,0,100%,.60);
+$lg-primary: #1d84e3;
+
+$lg-font: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+
+// bulma vars
+$primary: $lg-primary;
+$body-background-color: $lg-background;
+
+$family-sans-serif: $lg-font;
+$text: $lg-text;
+$text-light: $lg-text;
+$text-strong: $lg-text;
+
+$link: $lg-text-faded;
+$link-hover: $primary;
+$border: $lg-border;
+$border-light: $lg-border;
+
+$scheme-main: $lg-component-background;
+$scheme-main-bis: $lg-component-background-dark;
+
+
+$navbar-item-color: $lg-text-faded;
+$navbar-background-color: $lg-nav-background;
+$table-head-background-color: hsla(0,0,0,30%);
+
+$section-padding: 2rem 1rem;
+
+// bootstrap-icons vars
+// $bootstrap-icons-font-dir: "/static/fonts";
+$bootstrap-icons-font-src: url("/static/fonts/bootstrap-icons.woff2") format("woff2"),
+                           url("/static/fonts/bootstrap-icons.woff?") format("woff") !default;
+
+
+@import "../node_modules/bootstrap-icons/font/bootstrap-icons.scss";
+@import "../node_modules/bulma/bulma.sass";

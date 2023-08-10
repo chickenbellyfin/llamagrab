@@ -17,6 +17,19 @@ COPY resources resources
 WORKDIR /app/web
 RUN yarn build
 
+# Build web2
+FROM --platform=$BUILDPLATFORM node:lts as build_web2
+WORKDIR /app/web2
+COPY web2/package.json package.json
+COPY web2/yarn.lock yarn.lock
+RUN yarn install
+
+WORKDIR /app
+COPY web2 web2
+
+WORKDIR /app/web2
+RUN yarn build
+
 # Build python app
 FROM python:3-slim
 WORKDIR /app
@@ -29,6 +42,9 @@ COPY common common
 COPY config config
 COPY resources resources
 COPY --from=build_web /app/web/build /app/static
+
+# web2
+COPY --from=build_web2 /app/web2 web2
 
 RUN mv config/config_docker.yaml config/config.yaml
 

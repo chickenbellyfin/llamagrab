@@ -1,0 +1,41 @@
+<div class="card lg-server-card m-3">
+    <header class="card-header">
+        <p class="card-header-title">
+          {{ server.name }}
+        </p>
+      </header>
+    <div class="card-content">
+
+      <table class="table is-fullwidth descriptions">
+        <tr class="descriptions-title">
+          <td>Status</td>
+          <td>Region</td>
+          <td>Game Type</td>
+        </tr>
+        <tr>
+          <td>{% with status=server.status, label=true %}{% include 'components/server_status.html' %}{% endwith %}</td>
+          <td>{{ server.region_name }}</td>
+          <td>
+            {{ 
+              {
+                'tribes_ascend_ootb': 'OOTB',
+                'tribes_ascend_goty': 'GOTY',
+              }[server.game] 
+            }}
+          </td>
+        </tr>
+        </table>
+
+    </div>
+    <footer class="card-footer">
+      <a href="#" class="card-footer-item">
+        <i class="icon bi-play-circle"></i>START
+      </a>
+      <a href="#" class="card-footer-item">
+        <i class="icon bi-arrow-clockwise"></i> RESTART
+      </a>
+      <a href="#" class="card-footer-item">
+        <i class="icon bi-pencil"></i>EDIT
+      </a>
+    </footer>
+</div>

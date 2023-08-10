@@ -1,0 +1,80 @@
+{% extends 'base/page.html' %}
+{% block content %}
+<section class="section">
+  <h1 class="title">Server Card</h1>
+  <div class="container">
+    <div class="is-flex-direction-row is-flex-wrap-wrap	is-justify-content-flex-start">
+        {%for server in servers %}
+            <div class="is-inline-flex">
+                    {% with server=server %}{% include 'components/server_card.html' %}{% endwith %}
+            </div>
+        {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+    <h1 class="title">Region Status</h1>
+    <div class="region">
+        <h1 class="subtitle">NA Central</h1>
+        {% for server in running %}
+            <div class="mt-2">
+                {% with status=server.status %}{% include 'components/server_status.html' %}{% endwith %}
+                {{ server.name }}
+            </div>
+        {% endfor %}
+    </div>
+
+</section>
+
+<section class="section">
+  <h1 class="title">Admin / Servers</h1>
+  <table class="table is-hoverable">
+    <thead>
+      <td class="is-hidden-touch">id</td>
+      <td>Name</td>
+      <td>Status</td>
+      <td>Region</td>
+      <td>Owner</td>
+    </thead>
+    <tbody>
+        {% for server in servers %}
+            <tr>
+            <td class="is-hidden-touch">1</td>
+            <td>{{ server.name }}</td>
+            <td>
+                {% with status=server.status %}{% include 'components/server_status.html' %}{% endwith %}
+            </td>
+            <td>{{ server.region }}</td>
+            <td>{{ server.owner }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section class="section">
+  <h1 class="title">Admin / Users</h1>
+  <table class="table is-hoverable">
+    <thead>
+      <td class="is-hidden-touch">id</td>
+      <td>Name</td>
+      <td>Tier</td>
+      <td>Servers / Max </td>
+    </thead>
+    <tbody>
+        {% for user in users %}
+            <tr>
+            <td class="is-hidden-touch">{{ user.id }}</td>
+            <td>{{ user.name }}</td>
+            <td>
+                {% with tier=user.tier %}{% include 'components/user_tier.html' %}{% endwith %}
+            </td>
+            <td>{{ user.limit }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+{% endblock %}

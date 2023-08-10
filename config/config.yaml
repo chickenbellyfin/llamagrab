@@ -16,10 +16,10 @@ regions:
     name: 'Local Agent'
     host: 'http://localhost'
     token: 'test_token'
-  # - key: central_us
-  #   name: 'NA Central'
-  #   host: 'http://central'
-  #   token: 'central_token'
+  - key: central_us
+    name: 'NA Central'
+    host: 'http://central'
+    token: 'central_token'
   # - key: west_us
   #   name: 'NA West'
   #   host: 'http://central'

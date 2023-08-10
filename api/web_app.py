@@ -1,0 +1,68 @@
+from datetime import datetime
+from typing import Dict, List
+from httpx import Auth
+from sanic import Request, Sanic
+from sanic_ext import Config
+
+from api.audit import AuditLog
+
+from api.database.database import Database
+from api.host_manager import HostManager
+from api.iplog import IPLogDatabase
+from api.schema.app_config import Loginserver, Region
+from api.server_status import ServerStatusManager
+from api.service.account_service import AccountService
+from api.service.server_service import ServerService
+from api.views import admin_views, views, test_views, login_views
+
+def start(
+  db_instance: Database,
+  auth: Auth,
+  host_manager: HostManager,
+  status_manager: ServerStatusManager,
+  ip_log_db: IPLogDatabase,
+  regions: Dict[str, Region],
+  loginservers: List[Loginserver],
+  audit: AuditLog,
+  port=8080
+):
+  servers = ServerService(db_instance, host_manager, status_manager, regions, audit)
+  accounts = AccountService(db_instance, auth, servers, host_manager, audit)
+
+  app = Sanic('llamagrab-ssr')
+  app.extend(config=Config(templating_path_to_templates='web2/templates'))
+  
+  app.static('/static', 'web2/static')
+
+  @app.on_request
+  async def add_current_year(request: Request):
+    request.ctx.current_year = datetime.now().year
+
+  login_views.add_views(
+    app=app,
+    auth=auth,
+    accounts=accounts
+  )
+
+  views.add_views(
+    app=app,
+    accounts=accounts,
+    servers=servers,
+    database=db_instance,
+    regions=regions,
+    status_manager=status_manager
+  )
+
+  admin_views.add_views(
+    app=app,
+    accounts=accounts,
+    servers=servers,
+    database=db_instance,
+    regions=regions,
+    status_manager=status_manager,
+    audit=audit
+  )
+
+  test_views.add_views(app=app)
+
+  app.run(host="0.0.0.0", port=8080, single_process=True, debug=True)

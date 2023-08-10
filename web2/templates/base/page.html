@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/static/css/llamagrab.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        // Check for click events on the navbar burger icon
+        $(".navbar-burger").click(function () {
+          // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+          $(".navbar-burger").toggleClass("is-active");
+          $(".navbar-menu").toggleClass("is-active");
+        });
+      });
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+          <span id="logo-text" class="icon-text has-text-link">
+            <span class="icon">{% include "assets/gen.svg" %}</span>
+            <span>LLAMAGRAB</span>
+          </span>
+        </a>
+
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div class="navbar-menu">
+        {% if request.ctx.user is not none %}
+        <div class="navbar-start">
+          <a href="/" class="navbar-item">
+            <span class="icon-text">
+              <span class="icon">
+                <i class="bi bi-hdd-rack-fill"></i>
+              </span>
+              <span>Servers</span>
+            </span>
+          </a>
+
+          <a href="/regions" class="navbar-item">
+            <span class="icon-text">
+              <span class="icon">
+                <i class="bi bi-globe2"></i>
+              </span>
+              <span>Regions</span>
+            </span>
+          </a>
+
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              <span class="icon-text">
+                <span class="icon">
+                  <i class="bi bi-eye-fill"></i>
+                </span>
+                <span>Admin</span>
+              </span>
+            </a>
+
+            <div class="navbar-dropdown">
+              <a href="/admin/users" class="navbar-item">Users</a>
+              <a href="/admin/servers" class="navbar-item">Servers</a>
+              <a href="/admin/site" class="navbar-item">Site</a>
+              <a href="/admin/iplogs" class="navbar-item">IPs & Bans</a>
+              <a href="/admin/audit" class="navbar-item">Audit Log</a>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="navbar-end">
+          {% if request.ctx.user is not none %}
+          <a href="/settings" class="navbar-item is-uppercase">
+            <span class="icon-text">
+              <span class="icon">
+                <i class="bi bi-gear-fill"></i>
+              </span>
+              <span>{{request.ctx.user.username}}</span>
+            </span>
+          </a>
+          {% else %}
+          <a href="/login" class="navbar-item is-uppercase">
+            <span>Login</span>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+
+    <section class="section">
+      {% block content %}
+      {% endblock %}
+    </section>
+    <footer class="footer mt-auto">
+      <div class="content has-text-centered">
+        <p>
+          &copy; 2021-{{ request.ctx.current_year }} <a href='mailto:admin@llamagrab.net'>admin@llamagrab.net</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

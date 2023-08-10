@@ -6,6 +6,7 @@ fastapi-login
 fastapi-users[sqlalchemy]
 fastapi==0.88.0
 httpx
+Jinja2
 loguru
 passlib
 pyyaml
@@ -13,3 +14,6 @@ requests
 sqlalchemy
 uvicorn
 prometheus_client
+python-dateutil
+sanic
+sanic_ext
