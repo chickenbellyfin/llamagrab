@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict, List
 from httpx import Auth
-from sanic import Request, Sanic
+from sanic import Sanic
 from sanic_ext import Config
 
 from api.audit import AuditLog
@@ -31,12 +31,8 @@ def start(
 
   app = Sanic('llamagrab-ssr')
   app.extend(config=Config(templating_path_to_templates='web2/templates'))
-  
   app.static('/static', 'web2/static')
-
-  @app.on_request
-  async def add_current_year(request: Request):
-    request.ctx.current_year = datetime.now().year
+  app.ctx.current_year = datetime.now().year # used for page footer
 
   login_views.add_views(
     app=app,
@@ -63,6 +59,8 @@ def start(
     audit=audit
   )
 
-  test_views.add_views(app=app)
+  test_views.add_views(app=app) # TODO remove
 
+  # TODO config to disable single_process (check that host manager etc only runs once)
+  # TODO config to set debug=False
   app.run(host="0.0.0.0", port=8080, single_process=True, debug=True)

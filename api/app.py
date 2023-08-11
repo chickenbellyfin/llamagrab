@@ -255,7 +255,7 @@ def main(argv: List[str]):
   app = FastAPI(docs_url=None, redoc_url=None)
   metrics.expose(app, allowed_ips=config.allowed_metrics_ips)
   app.mount('/api', api)
-  # For deployment, the API serve also serves the static web app
+  # For deployment, the API server also serves the static web app
   if config.serve_static is not None:
     app.mount('/', SPAStaticFiles(directory=config.serve_static, html=True), name='webapp')
 
@@ -272,15 +272,14 @@ def main(argv: List[str]):
   #   forwarded_allow_ips="*" # allows uvicorn to access log with IPs forwarded by reverse proxy (caddy)
   # )
   from api.uvicorn_background_server import UvicornBackgroundServer
-  uvicorn_config = uvicorn.Config(
+  api_server = UvicornBackgroundServer(config=uvicorn.Config(
     app,
     host='0.0.0.0',
     port=config.port,
     log_config=None,
     proxy_headers=True,
     forwarded_allow_ips="*" # allows uvicorn to access log with IPs forwarded by reverse proxy (caddy)
-  )
-  api_server = UvicornBackgroundServer(config=uvicorn_config)
+  ))
   api_server.run_nonblocking()
 
   web_app.start(
