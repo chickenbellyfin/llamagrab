@@ -36,6 +36,7 @@ WORKDIR /app
 
 COPY api/requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip freeze > pip-freeze.txt
 
 COPY api api
 COPY common common
@@ -44,7 +45,8 @@ COPY resources resources
 COPY --from=build_web /app/web/build /app/static
 
 # web2
-COPY --from=build_web2 /app/web2 web2
+COPY web2 web2
+COPY --from=build_web2 /app/web2/static web2/static
 
 RUN mv config/config_docker.yaml config/config.yaml
 
