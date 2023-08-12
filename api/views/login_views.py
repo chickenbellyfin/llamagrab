@@ -1,6 +1,6 @@
 
 
-
+from loguru import logger
 from sanic import Request, Sanic, response
 from sanic_ext import render
 
@@ -13,6 +13,7 @@ def add_views(
     app: Sanic,
     auth: Auth,
     accounts: AccountService,
+    secure_cookie=True,
 ):
   @app.on_request
   async def extract_auth(request: Request):
@@ -33,14 +34,13 @@ def add_views(
     # res = response.redirect('/')
     username = request.form.get('username')
     password = request.form.get('password')
-    
     try:
       token = accounts.create_auth_token(username, password)
     except exceptions.UnauthorizedException:
       return await render('login.html', context={'unauthorized': True})
     
     res = response.redirect('/')
-    res.cookies.add_cookie('llamagrab_token', token)
+    res.add_cookie(key='llamagrab_token', value=token, secure=secure_cookie)
     return res
   
   @app.post('/logout')

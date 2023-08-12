@@ -29,6 +29,9 @@ class AppConfig(BaseModel):
 
   allowed_metrics_ips: Optional[List[str]]
 
+  # for sanic
+  secure_cookie: bool = True
+
   @validator('regions', pre=True)
   def regions_to_dict(cls, raw: List[Region]) -> Dict[str, Region]:
     return {

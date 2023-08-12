@@ -290,7 +290,8 @@ def main(argv: List[str]):
     ip_log_db=ip_log_db,
     regions=config.regions,
     loginservers=config.loginservers,
-    audit=audit
+    audit=audit,
+    secure_cookie=config.secure_cookie
   )
 
   api_server.kill()

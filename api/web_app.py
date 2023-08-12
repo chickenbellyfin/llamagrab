@@ -24,7 +24,8 @@ def start(
   regions: Dict[str, Region],
   loginservers: List[Loginserver],
   audit: AuditLog,
-  port=8080
+  port=8080,
+  secure_cookie=True
 ):
   servers = ServerService(db_instance, host_manager, status_manager, regions, audit)
   accounts = AccountService(db_instance, auth, servers, host_manager, audit)
@@ -37,7 +38,8 @@ def start(
   login_views.add_views(
     app=app,
     auth=auth,
-    accounts=accounts
+    accounts=accounts,
+    secure_cookie=secure_cookie
   )
 
   views.add_views(
