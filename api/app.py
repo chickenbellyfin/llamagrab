@@ -8,10 +8,8 @@ import uvicorn
 import uvicorn.config
 import yaml
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
 from fastapi_login.fastapi_login import LoginManager
 from loguru import logger
-from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from api import flags, web_app
 from api.audit import AuditLog
@@ -20,6 +18,9 @@ from api.database import models, queries
 from api.database.database import Database, run_migrations
 from api.host_manager import HostManager
 from api.iplog import IPLogDatabase
+from api.lib.fastapi_spa_static_files import SPAStaticFiles
+from api.lib.loguru_intercept_handler import InterceptHandler
+from api.lib.uvicorn_background_server import UvicornBackgroundServer
 from api.routes import (account_api, admin_api, data_api, ip_log_api,
                         server_api, server_list_api, site_admin_api)
 from api.schema.app_config import AppConfig, Loginserver, Region
@@ -51,45 +52,7 @@ TAGS_METADATA = [
   },
 ]
 
-# https://loguru.readthedocs.io/en/stable/overview.html#entirely-compatible-with-standard-logging
-class InterceptHandler(logging.Handler):
-    def emit(self, record):
-        # Get corresponding Loguru level if it exists
-        try:
-            level = logger.level(record.levelname).name
-        except ValueError:
-            level = record.levelno
-
-        # Find caller from where originated the logged message
-        frame, depth = sys._getframe(6), 6
-        while frame.f_code.co_filename == logging.__file__:
-            frame = frame.f_back
-            depth += 1
-
-        logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
-
 logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
-
-# https://stackoverflow.com/a/68363904
-class SPAStaticFiles(StaticFiles):
-  async def get_response(self, path: str, scope):
-      is_index = False
-      if path == '.' or path == 'index.html':
-        is_index = True
-      try:
-        response = await super().get_response(path, scope)
-      except StarletteHTTPException as ex:
-        if ex.status_code == 404:
-          is_index = True
-          response = await super().get_response('.', scope)
-        else:
-          raise ex
-
-      # for SPAs, index should never be cached
-      if is_index:
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-      return response
-
 
 def load_config(argv: List[str]) -> AppConfig:
   config_path = DEFAULT_CONFIG_PATH
@@ -271,7 +234,6 @@ def main(argv: List[str]):
   #   proxy_headers=True,
   #   forwarded_allow_ips="*" # allows uvicorn to access log with IPs forwarded by reverse proxy (caddy)
   # )
-  from api.uvicorn_background_server import UvicornBackgroundServer
   api_server = UvicornBackgroundServer(config=uvicorn.Config(
     app,
     host='0.0.0.0',
