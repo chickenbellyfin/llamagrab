@@ -1,9 +1,64 @@
 {% extends 'base/page.html' %}
 {% block content %}
 <section class="section">
+
   <h1 class="title is-4 is-uppercase page-title">User Settings</h1>
-  <form action="/logout", method="POST">
-    <input type="submit" class="button is-danger" value="Log Out"/>
-  </form>
+  <div class="columns is-centered">
+    <div class="column is-two-thirds-desktop p-5">
+
+      <form action="/logout", method="POST" class="is-clearfix">
+        <input type="submit" class="button is-danger is-pulled-right" value="Log Out"/>
+      </form>
+
+      <form action="/set_tribes_username" method="POST" class="box mt-5">
+        <h1 class="title is-5">Tribes Username</h1>
+
+        <div class="field mt-5">
+          <label class="label">Tribes Username</label>
+          <div class="control">
+            <input class="input" type="text" name="tribes_username" value="{{request.ctx.user.tribes_username}}" placeholder="Without [Clan] Tag">
+          </div>
+        </div>
+
+      
+        <input type="submit" value="Update Profile" class="button is-primary"/>
+      </form>
+
+      <form action="/change_password" method="POST" class="box mt-5">
+        <h1 class="title is-5">Change Password</h1>
+        <div class="field">
+          <label class="label">Current Password</label>
+          <div class="control has-icons-left">
+            <input class="input" type="password" name="password" placeholder="********">
+            <span class="icon is-small is-left"><i class="bi-lock"></i></span>
+          </div>
+          {% if 'auth' in request.ctx.query_args %}<p class="help is-danger">Incorrect password</p>{% endif %}
+        </div>
+        <div class="field mt-5">
+          <label class="label">New Password</label>
+          <div class="control has-icons-left">
+            <input class="input" type="password" name="new_password" placeholder="********">
+            <span class="icon is-small is-left"><i class="bi-lock"></i></span>
+          </div>
+        </div>
+        {% if 'invalid' in request.ctx.query_args %}<p class="help is-danger">Password must be 8-32 characters</p>{% endif %}
+
+    
+        <div class="field">
+          <label class="label">Confirm New Password</label>
+          <div class="control has-icons-left">
+            <input class="input" type="password" name="confirm_password" placeholder="********">
+            <span class="icon is-small is-left"><i class="bi-lock"></i></span>
+          </div>
+        </div>
+        {% if 'not_confirmed' in request.ctx.query_args %}<p class="help is-danger">New passwords must match</p>{% endif %}
+      
+        <input type="submit" value="Change Passowrd" class="button is-primary"/>
+      </form>
+
+    </div>
+  </div>
 </section>
+
+
 {% endblock %}

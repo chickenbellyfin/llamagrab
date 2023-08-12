@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict, List
 from httpx import Auth
-from sanic import Sanic
+from sanic import Request, Sanic
 from sanic_ext import Config
 
 from api.audit import AuditLog
@@ -35,6 +35,11 @@ def start(
   app.static('/favicon.ico', 'web2/favicon.ico', name="favicon")
   app.static('/static', 'web2/static', name="static")
   app.ctx.current_year = datetime.now().year # used for page footer
+
+  # make query params available as a dict in request.ctx
+  @app.on_request
+  async def query_arg_map(request: Request):
+    request.ctx.query_args = { k: v for k, v in request.query_args }
 
   login_views.add_views(
     app=app,

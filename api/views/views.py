@@ -1,5 +1,5 @@
 from typing import Dict
-from sanic import Request, Sanic
+from sanic import Request, Sanic, response
 from sanic_ext import render
 from api.database.database import Database
 from api.schema.app_config import Region
@@ -7,7 +7,13 @@ from api.schema.game_server_config import GameServerConfig
 from api.server_status import ServerStatusManager
 from api.service.account_service import AccountService
 from api.service.server_service import ServerService
+from api.service import exceptions
+from api.schema import validations
 
+from urllib.parse import urlencode
+
+def query(**kwargs):
+   return '?' + urlencode(kwargs) if len(kwargs) else ''
 
 def add_views(
     app: Sanic,
@@ -41,3 +47,27 @@ def add_views(
     @app.get('/settings')
     async def get_settings(request: Request):
        return await render('pages/settings.html')
+
+    @app.post('/set_tribes_username')
+    async def post_change_tribes_username(request: Request):
+       tribes_username = request.form.get('tribes_username')
+       accounts.set_tribes_username(tribes_username, request.ctx.user)
+       return response.redirect('/settings')
+    
+    @app.post('/change_password')
+    async def post_change_password(request: Request):
+      current_password = request.form.get('password')
+      new_password = request.form.get('new_password')
+      confirm_new_password = request.form.get('confirm_password')
+      
+      if not new_password == confirm_new_password:
+         return response.redirect('/settings' + query(not_confirmed=1))
+
+      try:
+         accounts.set_password(new_password, current_password, request.ctx.user)
+      except exceptions.UnauthorizedException:
+         return response.redirect('/settings' + query(auth=1))
+      except exceptions.BadArgumentsException:
+         return response.redirect('/settings' + query(invalid=1))
+      render()
+      return response.redirect('/settings')

@@ -10,6 +10,7 @@ from api.database.models import User, UserLimits
 from api.host_manager import HostManager
 from api.service import exceptions
 from api.service.server_service import ServerService
+from api.schema import validations
 
 
 class AccountService:
@@ -84,7 +85,12 @@ class AccountService:
 
 
   def set_password(self, new_password: str, current_password: str, user: User):
-    if not argon2.verify(current_password, user.password):
+    try:
+      validations.validate_password(new_password)
+    except ValueError as e:
+      raise exceptions.BadArgumentsException('New password is not valid')
+
+    if current_password is None or not argon2.verify(current_password, user.password):
       raise exceptions.UnauthorizedException('Current password is not correct')
     
     with self.database.session() as db:
