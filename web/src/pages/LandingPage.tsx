@@ -1,10 +1,8 @@
 import Icon, { CloudServerOutlined, ControlOutlined, SafetyCertificateOutlined, ThunderboltOutlined } from '@ant-design/icons';
-import { Button, Col, Divider, Row, Typography } from 'antd';
+import { Col, Divider, Row, Typography } from 'antd';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
 import { PropsWithChildren } from 'react';
 import { ReactComponent as logo } from '../../public/gen.svg';
-import colors from '../colors';
-import DiscordButton from '../components/DiscordButton';
 import RegionStatusSection from '../components/RegionStatusSection';
 
 

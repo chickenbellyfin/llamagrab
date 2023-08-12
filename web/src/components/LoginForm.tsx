@@ -98,5 +98,4 @@ export default function LoginForm(props: LoginFormProps) {
       </Link>
     </>
   );
-
 }

@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ReactComponent as logo } from '../../public/gen.svg';
 import { useAuth } from "../auth";
-import DiscordButton from "./DiscordButton";
 import LoginForm from './LoginForm';
 
 const { Header } = Layout;

@@ -1,5 +1,5 @@
 import { RollbackOutlined } from "@ant-design/icons";
-import { Button, Col, Collapse, Popconfirm, Row, Spin, Table, Tag } from "antd";
+import { Button, Col, Collapse, Popconfirm, Row, Spin, Tag } from "antd";
 import { useState } from "react";
 import { API } from "../api";
 import colors from "../colors";

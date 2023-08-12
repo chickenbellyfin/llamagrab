@@ -1,4 +1,4 @@
-import { DeleteOutlined, EditOutlined, LinkOutlined, PlayCircleOutlined, PoweroffOutlined, SyncOutlined } from "@ant-design/icons"
+import { EditOutlined, LinkOutlined, PlayCircleOutlined, PoweroffOutlined, SyncOutlined } from "@ant-design/icons"
 import { Card, Col, Descriptions, Divider, message, Popconfirm, Row, Spin, Tooltip } from "antd"
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
