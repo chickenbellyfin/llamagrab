@@ -1,9 +1,9 @@
 {% extends 'base/page.html' %}
 {% block content %}
-<h1 class="title is-uppercase">User Settings</h1>
-
-<form action="/logout", method="POST">
-  <input type="submit" class="button is-danger" value="Log Out"/>
-</form>
-
+<section class="section">
+  <h1 class="title is-4 is-uppercase page-title">User Settings</h1>
+  <form action="/logout", method="POST">
+    <input type="submit" class="button is-danger" value="Log Out"/>
+  </form>
+</section>
 {% endblock %}

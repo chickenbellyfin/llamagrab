@@ -1,0 +1,42 @@
+{% extends 'base/page.html' %}
+{% block content %}
+<section class="section is-medium">
+  <div class="columns is-centered">
+    <div class="column is-half-desktop box p-5">
+      <h1 class="title is-4">Create Account</h1>
+      <form action="/signup", method="POST">
+        <div class="field">
+          <p class="control has-icons-left has-icons-right">
+            <input class="input" name="username" type="text" placeholder="Username">
+            <span class="icon is-small is-left">
+              <i class="bi-person"></i>
+            </span>
+          </p>
+        </div>
+        <div class="field">
+          <p class="control has-icons-left">
+            <input class="input" name="password" type="password" placeholder="Password">
+            <span class="icon is-small is-left">
+              <i class="bi-lock"></i>
+            </span>
+          </p>
+        </div>
+        <div class="field">
+            <p class="control has-icons-left">
+              <input class="input" name="confirm_password" type="password" placeholder="Confirm Password">
+              <span class="icon is-small is-left">
+                <i class="bi-lock"></i>
+              </span>
+            </p>
+          </div>
+        <div class="field">
+          <p class="control">
+            <input class="button is-primary" type="submit" value="Create Account"/>
+          </p>
+        </div>
+      </form>
+      <br/><a href="/login">Have an Account? Login</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

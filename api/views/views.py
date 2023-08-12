@@ -20,7 +20,7 @@ def add_views(
     @app.get("/")
     async def get_index(request: Request):
       if not request.ctx.user:
-          return await render("landing.html")
+          return await render("pages/landing.html")
       else:
         with database.session() as db:
           server_list = servers.get_owned_servers(request.ctx.user) + servers.get_shared_servers(request.ctx.user)

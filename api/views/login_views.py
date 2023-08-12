@@ -27,7 +27,7 @@ def add_views(
   
   @app.get('/login')
   async def get_login(request: Request):
-    return await render('login.html')
+    return await render('pages/login.html')
   
   @app.post('/login')
   async def post_login(request: Request):
@@ -42,6 +42,10 @@ def add_views(
     res = response.redirect('/')
     res.add_cookie(key='llamagrab_token', value=token, secure=secure_cookie)
     return res
+  
+  @app.get('/signup')
+  async def get_signup(request: Request):
+    return await render('pages/signup.html')
   
   @app.post('/logout')
   async def post_logout(request: Request):

@@ -1,26 +1,28 @@
 {% extends 'base/page.html' %}
 {% block content %}
-<h1 class="title">User Management</h1>
-<div class="table-container">
-  <table class="table is-fullwidth is-hoverable">
-    <thead>
-      <td class="is-hidden-touch">id</td>
-      <td>Name</td>
-      <td>Tier</td>
-      <td>Servers / Max </td>
-    </thead>
-    <tbody>
-      {% for user in accounts %}
-      <tr>
-        <td class="is-hidden-touch">{{ user.id }}</td>
-        <td>{{ user.username }}</td>
-        <td>
-          {% with tier=user.tier %}{% include 'components/user_tier.html' %}{% endwith %}
-        </td>
-        <td>{{ user.server_count }} / {{ user.limits.server_limit if user.limits.server_limit is not none else '∞' }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+<section class="section">
+  <h1 class="title is-4 is-uppercase page-title">User Management</h1>
+  <div class="table-container">
+    <table class="table is-fullwidth is-hoverable">
+      <thead>
+        <td class="is-hidden-touch">id</td>
+        <td>Name</td>
+        <td>Tier</td>
+        <td>Servers / Max </td>
+      </thead>
+      <tbody>
+        {% for user in accounts %}
+        <tr>
+          <td class="is-hidden-touch">{{ user.id }}</td>
+          <td>{{ user.username }}</td>
+          <td>
+            {% with tier=user.tier %}{% include 'components/user_tier.html' %}{% endwith %}
+          </td>
+          <td>{{ user.server_count }} / {{ user.limits.server_limit if user.limits.server_limit is not none else '∞' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
 {% endblock %}

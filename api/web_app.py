@@ -32,7 +32,8 @@ def start(
 
   app = Sanic('llamagrab-ssr')
   app.extend(config=Config(templating_path_to_templates='web2/templates'))
-  app.static('/static', 'web2/static')
+  app.static('/favicon.ico', 'web2/favicon.ico', name="favicon")
+  app.static('/static', 'web2/static', name="static")
   app.ctx.current_year = datetime.now().year # used for page footer
 
   login_views.add_views(
