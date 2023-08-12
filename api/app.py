@@ -257,7 +257,3 @@ def main(argv: List[str]):
   )
 
   api_server.kill()
-
-
-if __name__ == '__main__':
-  main(sys.argv)
