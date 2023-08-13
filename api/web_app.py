@@ -13,7 +13,7 @@ from api.schema.app_config import Loginserver, Region
 from api.server_status import ServerStatusManager
 from api.service.account_service import AccountService
 from api.service.server_service import ServerService
-from api.views import admin_views, views, test_views, login_views
+from api.views import admin_views, views, test_views, login_views, settings_views
 
 def start(
   db_instance: Database,
@@ -65,6 +65,11 @@ def start(
     regions=regions,
     status_manager=status_manager,
     audit=audit
+  )
+
+  settings_views.add_views(
+    app=app,
+    accounts=accounts
   )
 
   test_views.add_views(app=app) # TODO remove
