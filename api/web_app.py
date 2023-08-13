@@ -38,7 +38,7 @@ def start(
 
   # make query params available as a dict in request.ctx
   @app.on_request
-  async def query_arg_map(request: Request):
+  async def global_request_context(request: Request):
     request.ctx.query_args = { k: v for k, v in request.query_args }
 
   login_views.add_views(

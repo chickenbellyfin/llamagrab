@@ -1,9 +1,9 @@
 from typing import Dict, Union
 from sanic import Request, Sanic
 from api.audit import AuditLog
-from sanic_ext import render
 from api.database import models
 from api.database.database import Database
+from api.lib.jinja2_fragments import render
 from api.schema.app_config import Region
 from api.schema.game_server_config import GameServerConfig
 from api.server_status import ServerStatusManager
@@ -11,6 +11,8 @@ from api.service.account_service import AccountService
 from api.service.server_service import ServerService
 from datetime import datetime
 from dateutil import parser
+
+from api.views.util import if_htmx
 
 
 def format_date(date: Union[str, datetime]) -> str:
@@ -35,7 +37,11 @@ def add_views(
       user.server_count = len(servers.get_owned_servers(user))
       all_users.append(user)
 
-    return await render("pages/admin/users.html", context={"accounts": all_users})
+    return await render(
+      "pages/admin/users.html", 
+      context={"accounts": all_users},
+      block=if_htmx('content')
+    )
 
   @app.get("/admin/servers")
   async def get_servers(request: Request):
@@ -51,7 +57,7 @@ def add_views(
             GameServerConfig.parse(s.server_config).password is not None
         )
 
-      return await render("pages/admin/servers.html", context={"servers": servers})
+      return await render("pages/admin/servers.html", context={"servers": servers}, block=if_htmx('content'))
 
   @app.get("/admin/audit")
   async def get_audit_log(request: Request):
@@ -59,12 +65,12 @@ def add_views(
     for item in audit_log:
       item.formatted_date = format_date(datetime.fromtimestamp(item.timestamp))
     audit_log.sort(key=lambda i: i.timestamp, reverse=True)
-    return await render("pages/admin/audit.html", context={"audit_log": audit_log})
+    return await render("pages/admin/audit.html", context={"audit_log": audit_log}, block=if_htmx('content'))
 
   @app.get("/admin/site")
   async def get_site_settings(request: Request):
-    return await render("pages/admin/site.html")
+    return await render("pages/admin/site.html", block=if_htmx('content'))
 
   @app.get("/admin/iplogs")
   async def get_iplogs(request: Request):
-    return await render("pages/admin/iplogs.html")
+    return await render("pages/admin/iplogs.html", block=if_htmx('content'))

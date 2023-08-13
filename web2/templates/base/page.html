@@ -3,6 +3,7 @@
   <head>
     <title>Llamagrab Web2</title>
     <link rel="stylesheet" href="/static/css/llamagrab.css">
+    <script src="https://unpkg.com/htmx.org@1.9.4" integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js"></script>
     <script type="text/javascript">
       $(document).ready(function () {
@@ -36,7 +37,7 @@
       <div class="navbar-menu">
         {% if request.ctx.user is not none %}
         <div class="navbar-start">
-          <a href="/" class="navbar-item">
+          <a href="/" class="navbar-item" hx-boost="true" hx-target="#content">
             <span class="icon-text">
               <span class="icon">
                 <i class="bi bi-hdd-rack-fill"></i>
@@ -45,7 +46,7 @@
             </span>
           </a>
 
-          <a href="/regions" class="navbar-item">
+          <a href="/regions" class="navbar-item" hx-boost="true" hx-target="#content">
             <span class="icon-text">
               <span class="icon">
                 <i class="bi bi-globe2"></i>
@@ -65,11 +66,11 @@
             </a>
 
             <div class="navbar-dropdown">
-              <a href="/admin/users" class="navbar-item">Users</a>
-              <a href="/admin/servers" class="navbar-item">Servers</a>
-              <a href="/admin/site" class="navbar-item">Site</a>
-              <a href="/admin/iplogs" class="navbar-item">IPs & Bans</a>
-              <a href="/admin/audit" class="navbar-item">Audit Log</a>
+              <a href="/admin/users" class="navbar-item" hx-boost="true" hx-target="#content">Users</a>
+              <a href="/admin/servers" class="navbar-item" hx-boost="true" hx-target="#content">Servers</a>
+              <a href="/admin/site" class="navbar-item" hx-boost="true" hx-target="#content">Site</a>
+              <a href="/admin/iplogs" class="navbar-item" hx-boost="true" hx-target="#content">IPs & Bans</a>
+              <a href="/admin/audit" class="navbar-item" hx-boost="true" hx-target="#content">Audit Log</a>
             </div>
           </div>
         </div>
@@ -77,7 +78,7 @@
 
         <div class="navbar-end">
           {% if request.ctx.user is not none %}
-          <a href="/settings" class="navbar-item is-uppercase">
+          <a href="/settings" class="navbar-item is-uppercase" hx-boost="true" hx-target="#content">
             <span class="icon-text">
               <span class="icon">
                 <i class="bi bi-gear-fill"></i>
@@ -94,9 +95,10 @@
       </div>
     </nav>
 
-    <!-- <section class="section"> -->
+    <div id="content">
       {% block content %}
       {% endblock %}
+    </div>
     <!-- </section> -->
     <footer class="footer mt-auto">
       <div class="content has-text-centered">

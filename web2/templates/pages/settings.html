@@ -6,11 +6,12 @@
   <div class="columns is-centered">
     <div class="column is-two-thirds-desktop p-5">
 
-      <form action="/logout", method="POST" class="is-clearfix">
+      <form  action="/logout", method="POST" class="is-clearfix">
         <input type="submit" class="button is-danger is-pulled-right" value="Log Out"/>
       </form>
-
-      <form action="/set_tribes_username" method="POST" class="box mt-5">
+      
+      {% block tribes_username %}
+      <form id="change_username_form"  class="box mt-5">
         <h1 class="title is-5">Tribes Username</h1>
 
         <div class="field mt-5">
@@ -19,20 +20,28 @@
             <input class="input" type="text" name="tribes_username" value="{{request.ctx.user.tribes_username}}" placeholder="Without [Clan] Tag">
           </div>
         </div>
-
-      
-        <input type="submit" value="Update Profile" class="button is-primary"/>
+        
+        <input type="submit" value="Update Profile" class="button is-primary"
+          hx-trigger="click"
+          hx-post="/set_tribes_username"
+          hx-target="#change_username_form"
+          hx-include="#change_username_form"
+          hx-swap="outerHTML"
+        />
       </form>
-
-      <form action="/change_password" method="POST" class="box mt-5">
-        <h1 class="title is-5">Change Password</h1>
+      {% endblock %}
+      
+      {% block change_password %}
+      {% if errors is undefined %}{% set errors = {} %}{% endif %}
+      <form id="change_password_form" class="box mt-5">
+        <h1 class="title is-5">Change Password {{t}}</h1>
         <div class="field">
           <label class="label">Current Password</label>
           <div class="control has-icons-left">
             <input class="input" type="password" name="password" placeholder="********">
             <span class="icon is-small is-left"><i class="bi-lock"></i></span>
           </div>
-          {% if 'auth' in request.ctx.query_args %}<p class="help is-danger">Incorrect password</p>{% endif %}
+          {% if  errors['wrong_password'] %}<p class="help is-danger">Incorrect password</p>{% endif %}
         </div>
         <div class="field mt-5">
           <label class="label">New Password</label>
@@ -41,7 +50,7 @@
             <span class="icon is-small is-left"><i class="bi-lock"></i></span>
           </div>
         </div>
-        {% if 'invalid' in request.ctx.query_args %}<p class="help is-danger">Password must be 8-32 characters</p>{% endif %}
+        {% if errors['invalid_new_password'] %}<p class="help is-danger">Password must be 8-32 characters</p>{% endif %}
 
     
         <div class="field">
@@ -51,10 +60,17 @@
             <span class="icon is-small is-left"><i class="bi-lock"></i></span>
           </div>
         </div>
-        {% if 'not_confirmed' in request.ctx.query_args %}<p class="help is-danger">New passwords must match</p>{% endif %}
+        {% if errors['not_confirmed'] %}<p class="help is-danger">New passwords must match</p>{% endif %}
       
-        <input type="submit" value="Change Passowrd" class="button is-primary"/>
+        <input value="Change Password" class="button is-primary"
+          hx-trigger="click"
+          hx-post="/change_password"
+          hx-target="#change_password_form"
+          hx-include="#change_password_form"
+          hx-swap="outerHTML"
+        />
       </form>
+      {% endblock %}
 
     </div>
   </div>

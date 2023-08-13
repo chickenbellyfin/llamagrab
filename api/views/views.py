@@ -1,6 +1,5 @@
 from typing import Dict
 from sanic import Request, Sanic, response
-from sanic_ext import render
 from api.database.database import Database
 from api.schema.app_config import Region
 from api.schema.game_server_config import GameServerConfig
@@ -9,8 +8,12 @@ from api.service.account_service import AccountService
 from api.service.server_service import ServerService
 from api.service import exceptions
 from api.schema import validations
+from api.lib.jinja2_fragments import render
+from loguru import logger
 
 from urllib.parse import urlencode
+
+from api.views.util import if_htmx
 
 def query(**kwargs):
    return '?' + urlencode(kwargs) if len(kwargs) else ''
@@ -38,36 +41,46 @@ def add_views(
         return await render(
           "pages/home.html",
           context={"servers": server_list},
+          block=if_htmx('content')
         )
     
     @app.get("/regions")
     async def get_regions(request: Request):
-      return await render("pages/regions.html")
+      return await render("pages/regions.html", block=if_htmx('content'))
     
     @app.get('/settings')
     async def get_settings(request: Request):
-       return await render('pages/settings.html')
+       return await render('pages/settings.html', block=if_htmx('content'))
 
     @app.post('/set_tribes_username')
     async def post_change_tribes_username(request: Request):
        tribes_username = request.form.get('tribes_username')
        accounts.set_tribes_username(tribes_username, request.ctx.user)
-       return response.redirect('/settings')
+       return await render(
+         'pages/settings.html',
+         block='tribes_username'
+       )
     
     @app.post('/change_password')
     async def post_change_password(request: Request):
       current_password = request.form.get('password')
       new_password = request.form.get('new_password')
       confirm_new_password = request.form.get('confirm_password')
-      
-      if not new_password == confirm_new_password:
-         return response.redirect('/settings' + query(not_confirmed=1))
 
-      try:
-         accounts.set_password(new_password, current_password, request.ctx.user)
-      except exceptions.UnauthorizedException:
-         return response.redirect('/settings' + query(auth=1))
-      except exceptions.BadArgumentsException:
-         return response.redirect('/settings' + query(invalid=1))
-      render()
-      return response.redirect('/settings')
+      errors = {}
+
+      if new_password == confirm_new_password:
+        try:
+          accounts.set_password(new_password, current_password, request.ctx.user)
+        except exceptions.UnauthorizedException:
+          errors['wrong_password'] = True
+        except exceptions.BadArgumentsException:
+          errors['invalid_new_password'] = True
+      else:
+        errors['not_confirmed'] = True
+      logger.info(errors)
+      return await render(
+         'pages/settings.html', 
+         block='change_password',
+         context={'errors': errors}
+      )

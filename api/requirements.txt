@@ -7,6 +7,7 @@ fastapi-users[sqlalchemy]
 fastapi==0.88.0
 httpx
 Jinja2
+jinja2-fragments
 loguru
 passlib
 pyyaml

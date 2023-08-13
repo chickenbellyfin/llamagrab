@@ -1,6 +1,5 @@
 import logging
 import os
-import sys
 from datetime import timedelta
 from typing import Dict, List
 
