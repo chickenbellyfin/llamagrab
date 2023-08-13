@@ -7,6 +7,14 @@ def validate_password(v: str) -> str:
     raise ValueError('Password must be 8-32 characters')
   return v
 
+
+def check_password(v: str) -> bool:
+  try:
+    validate_password(v)
+    return True
+  except:
+    return False
+
 def validate_tribes_username(v):
   # length 2-15 chars
   # https://github.com/Griffon26/taserver/blob/master/login_server/player/player.py#L40

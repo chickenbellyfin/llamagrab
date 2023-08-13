@@ -11,7 +11,7 @@
       </form>
       
       {% block tribes_username %}
-      <form id="change_username_form"  class="box mt-5">
+      <form id="change_username_form"  class="box mt-5" hx-target="this" hx-swap="outerHTML">
         <h1 class="title is-5">Tribes Username</h1>
 
         <div class="field mt-5">
@@ -24,57 +24,79 @@
         <input type="submit" value="Update Profile" class="button is-primary"
           hx-trigger="click"
           hx-post="/settings/set_tribes_username"
-          hx-target="#change_username_form"
           hx-include="#change_username_form"
-          hx-swap="outerHTML"
         />
+        {% if success %}<p class="help is-success">Tribes Username Updated</p>{% endif %}
       </form>
       {% endblock %}
       
       {% block change_password %}
       {% if errors is undefined %}{% set errors = {} %}{% endif %}
-      <form id="change_password_form" class="box mt-5">
+      <form id="change_password_form" class="box mt-5" hx-target="this" hx-swap="outerHTML">
         <h1 class="title is-5">Change Password {{t}}</h1>
+        
         <div class="field">
           <label class="label">Current Password</label>
           <div class="control has-icons-left">
-            <input class="input" type="password" name="password" placeholder="********">
+            <input 
+              class="input" 
+              type="password" 
+              name="password" 
+              placeholder="********" 
+              hx-post="/settings/validate_password_form"
+              value="{{request.form.get('password', '')}}"
+            >
             <span class="icon is-small is-left"><i class="bi-lock"></i></span>
           </div>
+          {% if  errors['invalid_current'] %}<p class="help is-danger">Password must be 8-32 characters</p>{% endif %}
           {% if  errors['wrong_password'] %}<p class="help is-danger">Incorrect password</p>{% endif %}
         </div>
+
         <div class="field mt-5">
           <label class="label">New Password</label>
           <div class="control has-icons-left">
-            <input class="input" type="password" name="new_password" placeholder="********">
+            <input 
+              class="input" 
+              type="password" 
+              name="new_password" 
+              placeholder="********"
+              hx-post="/settings/validate_password_form"
+              value="{{request.form.get('new_password', '')}}"
+            >
             <span class="icon is-small is-left"><i class="bi-lock"></i></span>
           </div>
+          {% if errors['invalid_new'] %}<p class="help is-danger">Password must be 8-32 characters</p>{% endif %}
         </div>
-        {% if errors['invalid_new_password'] %}<p class="help is-danger">Password must be 8-32 characters</p>{% endif %}
 
     
         <div class="field">
           <label class="label">Confirm New Password</label>
           <div class="control has-icons-left">
-            <input class="input" type="password" name="confirm_password" placeholder="********">
+            <input 
+              class="input" 
+              type="password" 
+              name="confirm_password" 
+              placeholder="********"
+              hx-post="/settings/validate_password_form"
+              value="{{request.form.get('confirm_password', '')}}"
+            >
             <span class="icon is-small is-left"><i class="bi-lock"></i></span>
           </div>
+          {% if errors['not_confirmed'] %}<p class="help is-danger">New passwords must match</p>{% endif %}
         </div>
-        {% if errors['not_confirmed'] %}<p class="help is-danger">New passwords must match</p>{% endif %}
       
         <input value="Change Password" class="button is-primary"
           hx-trigger="click"
           hx-post="/settings/change_password"
-          hx-target="#change_password_form"
           hx-include="#change_password_form"
-          hx-swap="outerHTML"
+          {% if not valid %} disabled {% endif %}
         />
+        {% if success %}<p class="help is-success">Password Updated</p>{% endif %}
+
       </form>
       {% endblock %}
 
     </div>
   </div>
 </section>
-
-
 {% endblock %}

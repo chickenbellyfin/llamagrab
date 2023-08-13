@@ -30,7 +30,7 @@ regions:
   #   token: ''
 
 # how frequently to poll the agent for status in each region
-status_polling_rate_secs: 300
+status_polling_rate_secs: 3000
 
 loginservers:
   - name: Server
