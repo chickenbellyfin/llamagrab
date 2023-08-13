@@ -2,11 +2,12 @@
 
 from loguru import logger
 from sanic import Request, Sanic, response
-from sanic_ext import render
 
 from api.auth import Auth
+from api.lib.jinja2_fragments import render
 from api.service.account_service import AccountService
 from api.service import exceptions
+from api.views.util import if_htmx
 
 
 def add_views(
@@ -27,7 +28,7 @@ def add_views(
   
   @app.get('/login')
   async def get_login(request: Request):
-    return await render('pages/login.html')
+    return await render('pages/login.html', block=if_htmx('content'))
   
   @app.post('/login')
   async def post_login(request: Request):
@@ -45,7 +46,7 @@ def add_views(
   
   @app.get('/signup')
   async def get_signup(request: Request):
-    return await render('pages/signup.html')
+    return await render('pages/signup.html', block=if_htmx('content'))
   
   @app.post('/logout')
   async def post_logout(request: Request):
