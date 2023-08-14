@@ -26,59 +26,39 @@ def add_views(
       context={'success': True}
     )
   
-
-  def get_change_password_errors(request: Request):
-    current_password = request.form.get('password')
-    new_password = request.form.get('new_password')
-    confirm_new_password = request.form.get('confirm_password')
-
-    errors = {}
-
-    if not validations.check_password(current_password):
-      errors['invalid_current'] = True
-    if not validations.check_password(new_password):
-      errors['invalid_new'] = True
-    if new_password != confirm_new_password:
-      errors['not_confirmed'] = True
-    
-    return errors
-
-  
-  @app.post('/settings/validate_password_form')
-  async def post_validate_pass(request: Request):
-    errors = get_change_password_errors(request)
-    return await render(
-        'pages/settings.html', 
-        block='change_password',
-        context={
-          'errors': errors,
-          'valid': len(errors) == 0
-        }
-    )
-
-  
   @app.post('/settings/change_password')
   async def post_change_password(request: Request):
     current_password = request.form.get('password')
     new_password = request.form.get('new_password')
+    confirm_new_password = request.form.get('confirm_password')
+    should_submit = not request.args.get('validate_only') == 'true'
 
-    errors = get_change_password_errors(request)
+    errors = set()
 
-    try:
-      accounts.set_password(new_password, current_password, request.ctx.user)
-    except exceptions.UnauthorizedException:
-      errors['wrong_password'] = True
-    except exceptions.BadArgumentsException:
-      errors['invalid_new'] = True
+    if not validations.check_password(current_password):
+      errors.add('invalid_current')
+    if not validations.check_password(new_password):
+      errors.add('invalid_new')
+    if new_password != confirm_new_password:
+      errors.add('not_confirmed')
 
-    if len(errors) == 0:
-      request.form.clear()
+    success = False
+    if len(errors) == 0 and should_submit:
+      try:
+        accounts.set_password(new_password, current_password, request.ctx.user)
+        request.form.clear()
+        success = True
+      except exceptions.UnauthorizedException:
+        errors.add('wrong_password')
+      except exceptions.BadArgumentsException:
+        errors.add('invalid_new')
 
     return await render(
       'pages/settings.html', 
       block='change_password',
       context={
         'errors': errors,
-        'success': len(errors) == 0
+        'valid': len(errors) == 0,
+        'success': success
       }
     )

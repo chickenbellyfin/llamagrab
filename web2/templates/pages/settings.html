@@ -43,13 +43,13 @@
               type="password" 
               name="password" 
               placeholder="********" 
-              hx-post="/settings/validate_password_form"
+              hx-post="/settings/change_password?validate_only=true"
               value="{{request.form.get('password', '')}}"
             >
             <span class="icon is-small is-left"><i class="bi-lock"></i></span>
           </div>
-          {% if  errors['invalid_current'] %}<p class="help is-danger">Password must be 8-32 characters</p>{% endif %}
-          {% if  errors['wrong_password'] %}<p class="help is-danger">Incorrect password</p>{% endif %}
+          {% if  'invalid_current' in errors %}<p class="help is-danger">Password must be 8-32 characters</p>{% endif %}
+          {% if  'wrong_password' in errors %}<p class="help is-danger">Incorrect password</p>{% endif %}
         </div>
 
         <div class="field mt-5">
@@ -60,12 +60,12 @@
               type="password" 
               name="new_password" 
               placeholder="********"
-              hx-post="/settings/validate_password_form"
+              hx-post="/settings/change_password?validate_only=true"
               value="{{request.form.get('new_password', '')}}"
             >
             <span class="icon is-small is-left"><i class="bi-lock"></i></span>
           </div>
-          {% if errors['invalid_new'] %}<p class="help is-danger">Password must be 8-32 characters</p>{% endif %}
+          {% if 'invalid_new' in errors %}<p class="help is-danger">Password must be 8-32 characters</p>{% endif %}
         </div>
 
     
@@ -77,12 +77,12 @@
               type="password" 
               name="confirm_password" 
               placeholder="********"
-              hx-post="/settings/validate_password_form"
+              hx-post="/settings/change_password?validate_only=true"
               value="{{request.form.get('confirm_password', '')}}"
             >
             <span class="icon is-small is-left"><i class="bi-lock"></i></span>
           </div>
-          {% if errors['not_confirmed'] %}<p class="help is-danger">New passwords must match</p>{% endif %}
+          {% if 'not_confirmed' in errors %}<p class="help is-danger">New passwords must match</p>{% endif %}
         </div>
       
         <input value="Change Password" class="button is-primary"
