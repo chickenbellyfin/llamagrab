@@ -1,0 +1,34 @@
+<div class="columns is-centered">
+  {% for region in regions %}
+  <div class="column is-narrow">
+    <div class="region">
+      <div class="mt-1 columns is-mobile">
+        <div class="column is-narrow is-align-items-center is-flex">
+          <span class="icon">
+            {% set icon_class = 'bi-check-circle-fill has-text-success' if region.online else 'bi-x-circle-fill has-text-danger'%}
+            <i class="bi is-size-3 is-vcentered {{icon_class}}"></i>
+          </span>
+        </div>
+        <div class="column">
+          <div class="title is-6">{{ region.region_name }}</div>
+          <div class="subtitle is-7 is-uppercase faded">Region</div>
+        </div>
+      </div>
+
+      {% if not region.servers %}
+      <div class="has-text-centered faded">
+        <i class="faded is-centered">No Active Servers</i>
+      </div>
+      {% endif %}
+      {% for server in region.servers %}
+      <div class="mt-4 is-size-6 no-overflow">
+        <span>
+          {% with status=server.status %}{% include 'components/server_status.html' %}{% endwith %}
+          {{ server.name }}
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>

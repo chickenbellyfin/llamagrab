@@ -16,7 +16,19 @@
 <section class="section">
     <h1 class="title">Region Status</h1>
     <div class="region">
-        <h1 class="subtitle">NA Central</h1>
+        <div class="columns is-mobile">
+          <div class="column is-narrow is-align-items-center is-flex">
+            <span class="icon">
+              {% set online = false %}
+              {% set icon_class = 'bi-check-circle-fill has-text-success' if online else 'bi-x-circle-fill has-text-danger'%}
+              <i class="bi is-size-3 is-vcentered {{icon_class}}"></i>
+            </span>
+          </div>
+          <div class="column">
+            <div class="title is-6">NA Central</div>
+            <div class="subtitle is-7 is-uppercase faded">Region</div>
+          </div>
+        </div>
         {% for server in running %}
             <div class="mt-2">
                 {% with status=server.status %}{% include 'components/server_status.html' %}{% endwith %}
@@ -27,54 +39,6 @@
 
 </section>
 
-<section class="section">
-  <h1 class="title">Admin / Servers</h1>
-  <table class="table is-hoverable">
-    <thead>
-      <td class="is-hidden-touch">id</td>
-      <td>Name</td>
-      <td>Status</td>
-      <td>Region</td>
-      <td>Owner</td>
-    </thead>
-    <tbody>
-        {% for server in servers %}
-            <tr>
-            <td class="is-hidden-touch">1</td>
-            <td>{{ server.name }}</td>
-            <td>
-                {% with status=server.status %}{% include 'components/server_status.html' %}{% endwith %}
-            </td>
-            <td>{{ server.region }}</td>
-            <td>{{ server.owner }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-  </table>
-</section>
 
-<section class="section">
-  <h1 class="title">Admin / Users</h1>
-  <table class="table is-hoverable">
-    <thead>
-      <td class="is-hidden-touch">id</td>
-      <td>Name</td>
-      <td>Tier</td>
-      <td>Servers / Max </td>
-    </thead>
-    <tbody>
-        {% for user in users %}
-            <tr>
-            <td class="is-hidden-touch">{{ user.id }}</td>
-            <td>{{ user.name }}</td>
-            <td>
-                {% with tier=user.tier %}{% include 'components/user_tier.html' %}{% endwith %}
-            </td>
-            <td>{{ user.limit }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-  </table>
-</section>
 
 {% endblock %}

@@ -1,5 +1,6 @@
 from typing import Dict
 from sanic import Request, Sanic, response
+from api.database import queries
 from api.database.database import Database
 from api.schema.app_config import Region
 from api.schema.game_server_config import GameServerConfig
@@ -13,7 +14,7 @@ from loguru import logger
 
 from urllib.parse import urlencode
 
-from api.views.util import if_htmx
+from api.views.util import if_htmx, server_status_list, region_statuses
 
 def query(**kwargs):
    return '?' + urlencode(kwargs) if len(kwargs) else ''
@@ -29,22 +30,30 @@ def add_views(
   @app.get("/")
   async def get_index(request: Request):
     if not request.ctx.user:
-        return await render("pages/landing.html")
+      return await render(
+        "pages/landing.html", 
+        context={'regions': region_statuses(status_manager, regions, database)}
+      )
     else:
       with database.session() as db:
-        server_list = servers.get_owned_servers(request.ctx.user) + servers.get_shared_servers(request.ctx.user)
-
-      for s in server_list:
-        s.region_name = regions[s.region].name if s.region in regions else s.region
-        s.status = status_manager.get_server_status(s)
-        s.is_private = GameServerConfig.parse(s.server_config).password is not None
+        status_list = server_status_list(
+          servers.get_owned_servers(request.ctx.user) + servers.get_shared_servers(request.ctx.user), 
+          status_manager, 
+          regions,
+          db
+        )
+        
       return await render(
         "pages/home.html",
-        context={"servers": server_list},
+        context={"servers": status_list},
         block=if_htmx('content')
       )
   
   @app.get("/regions")
   async def get_regions(request: Request):
-    return await render("pages/regions.html", block=if_htmx('content'))
+    return await render(
+      "pages/regions.html", 
+      block=if_htmx('content'),
+      context={'regions': region_statuses(status_manager, regions, database)}
+    )
     
