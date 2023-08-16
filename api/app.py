@@ -197,7 +197,7 @@ def main(argv: List[str]):
     database=db
   )
   host_manager = create_host_manager(config, db)
-  server_status_manager = ServerStatusManager(host_manager)
+  server_status_manager = ServerStatusManager(host_manager, min_polling_rate=config.status_polling_rate_secs)
   ip_log_db = IPLogDatabase(base_path=base_path, host_manager=host_manager, audit=audit)
   # Make sure the admin user exists
   ensure_admin_user(db)

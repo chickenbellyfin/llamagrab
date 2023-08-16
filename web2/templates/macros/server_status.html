@@ -1,3 +1,4 @@
+{% macro server_status(status, label=false) %}
 {% set icon_class, color_class = {
     'running': ('bi-check-circle', 'has-text-success'),
     'starting': ('bi-clock pulse', 'has-text-warning'),
@@ -7,8 +8,8 @@
     'offline': ('bi-x-circle', 'has-text-danger'),
     'unknown': ('bi-question-circle', 'has-text-light-grey')
     }[status]
- %}
- <span class="icon-text">
+%}
+<span class="icon-text">
     <span class="icon">
       <i class="bi {{ icon_class }} {{ color_class }}"></i>
     </span>
@@ -16,3 +17,4 @@
     <span>{{ status|capitalize }}</span>
     {% endif %}
 </span>
+{% endmacro %}

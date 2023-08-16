@@ -31,8 +31,8 @@
         </div>
         {% for server in running %}
             <div class="mt-2">
-                {% with status=server.status %}{% include 'components/server_status.html' %}{% endwith %}
-                {{ server.name }}
+                {{ server_status(server.status) }}
+                {{ server_name(server.name) }}
             </div>
         {% endfor %}
     </div>

@@ -1,8 +1,10 @@
+{% macro user_tier(tier) %}
 {% set tag_color = {
     'super': 'is-danger',
     'admin': 'is-primary',
     'verified': 'is-success',
     'unverified': 'is-dark',
     }[tier]
- %}
-<span class="tag is-uppercase {{ tag_color }}">{{ user.tier }}</span>
+%}
+<span class="tag is-uppercase {{ tag_color }}">{{ tier }}</span>
+{% endmacro %}

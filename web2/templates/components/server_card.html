@@ -17,7 +17,7 @@
         <td>Game Type</td>
       </tr>
       <tr>
-        <td>{% with status=server.status, label=true %}{% include 'components/server_status.html' %}{% endwith %}</td>
+        <td>{{ server_status(server.status, true) }}</td>
         <td>{{ server.region_name }}</td>
         <td>
           {{

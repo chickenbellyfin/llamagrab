@@ -23,8 +23,8 @@
       {% for server in region.servers %}
       <div class="mt-4 is-size-6 no-overflow">
         <span>
-          {% with status=server.status %}{% include 'components/server_status.html' %}{% endwith %}
-          {{ server.name }}
+          {{ server_status(server.status )}}
+          {{ server_name(server.name, server.is_private) }}
         </span>
       </div>
       {% endfor %}

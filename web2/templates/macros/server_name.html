@@ -1,0 +1,6 @@
+{% macro server_name(name, is_private) %}
+<span class="no-overflow">
+    {% if is_private %}<i class="icon bi-lock"></i>{% endif %}
+    {{ name }}
+</span>
+{% endmacro %}

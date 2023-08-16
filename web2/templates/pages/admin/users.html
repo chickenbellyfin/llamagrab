@@ -16,7 +16,7 @@
           <td class="is-hidden-touch">{{ user.id }}</td>
           <td>{{ user.username }}</td>
           <td>
-            {% with tier=user.tier %}{% include 'components/user_tier.html' %}{% endwith %}
+            {{ user_tier(user.tier) }}
           </td>
           <td>{{ user.server_count }} / {{ user.limits.server_limit if user.limits.server_limit is not none else '∞' }}</td>
         </tr>
