@@ -1,0 +1,10 @@
+{% macro icon(name, label=None, class="") %}
+<span class="icon-text is-flex-wrap-nowrap">
+    <span class="icon">
+      <i class="bi {{ 'bi-' ~ name }} {{ class }}"></i>
+    </span>
+    {% if label %}
+    <span>{{ label }}</span>
+    {% endif %}
+</span>
+{% endmacro %}

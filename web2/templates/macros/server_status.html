@@ -1,20 +1,13 @@
 {% macro server_status(status, label=false) %}
-{% set icon_class, color_class = {
-    'running': ('bi-check-circle', 'has-text-success'),
-    'starting': ('bi-clock pulse', 'has-text-warning'),
-    'restarting': ('bi-arrow-clockwise spin', 'has-text-warning'),
-    'stopping': ('bi-clock pulse', 'has-text-warning'),
-    'disabled': ('bi-pause-circle', 'has-text-light-grey'),
-    'offline': ('bi-x-circle', 'has-text-danger'),
-    'unknown': ('bi-question-circle', 'has-text-light-grey')
+{% set icon_class, class = {
+    'running': ('check-circle', 'has-text-success'),
+    'starting': ('clock', 'pulse has-text-warning'),
+    'restarting': ('arrow-clockwise', 'spin has-text-warning'),
+    'stopping': ('clock', 'pulse has-text-warning'),
+    'disabled': ('pause-circle', 'has-text-light-grey'),
+    'offline': ('x-circle', 'has-text-danger'),
+    'unknown': ('question-circle', 'has-text-light-grey')
     }[status]
 %}
-<span class="icon-text">
-    <span class="icon">
-      <i class="bi {{ icon_class }} {{ color_class }}"></i>
-    </span>
-    {% if label == true %}
-    <span>{{ status|capitalize }}</span>
-    {% endif %}
-</span>
+{{ icon(icon_class, label=status.capitalize() if label else None,class=class) }}
 {% endmacro %}

@@ -39,31 +39,16 @@
         {% if request.ctx.user is not none %}
         <div class="navbar-start">
           <a href="/" class="navbar-item" hx-boost="true" hx-target="#content">
-            <span class="icon-text">
-              <span class="icon">
-                <i class="bi bi-hdd-rack-fill"></i>
-              </span>
-              <span>Servers</span>
-            </span>
+            {{ icon('hdd-rack-fill', 'Servers') }}
           </a>
 
           <a href="/regions" class="navbar-item" hx-boost="true" hx-target="#content">
-            <span class="icon-text">
-              <span class="icon">
-                <i class="bi bi-globe2"></i>
-              </span>
-              <span>Regions</span>
-            </span>
+            {{ icon('globe2', 'Regions' )}}
           </a>
 
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
-              <span class="icon-text">
-                <span class="icon">
-                  <i class="bi bi-eye-fill"></i>
-                </span>
-                <span>Admin</span>
-              </span>
+              {{ icon('eye-fill', 'Admin' )}}
             </a>
 
             <div class="navbar-dropdown">
@@ -80,12 +65,7 @@
         <div class="navbar-end">
           {% if request.ctx.user is not none %}
           <a href="/settings" class="navbar-item is-uppercase" hx-boost="true" hx-target="#content">
-            <span class="icon-text">
-              <span class="icon">
-                <i class="bi bi-gear-fill"></i>
-              </span>
-              <span>{{request.ctx.user.username}}</span>
-            </span>
+            {{ icon('gear-fill', request.ctx.user.username) }}
           </a>
           {% else %}
           <a href="/login" class="navbar-item is-uppercase"  hx-boost="true" hx-target="#content">

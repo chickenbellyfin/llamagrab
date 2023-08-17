@@ -29,7 +29,7 @@
 }
 .descriptions { font-size: .9rem; }
 .descriptions-title { color: $lg-text-faded; }
-.descriptions td { border: 0; }
+.descriptions td { border: 0; text-wrap: no-wrap; }
 
 .pulse {
     animation: pulse 1.5s infinite;
@@ -53,7 +53,7 @@
     background-color: $navbar-background-color;
 }
 #landing-title .landing-title-logo {
-    color: $lg-primary; //primary blue
+    color: $primary; //primary blue
     filter: drop-shadow(0px 0px 10px #1d84e344);
 }
 #landing-title .landing-title-text { 
