@@ -29,7 +29,7 @@
 }
 .descriptions { font-size: .9rem; }
 .descriptions-title { color: $lg-text-faded; }
-.descriptions td { border: 0; text-wrap: no-wrap; }
+.descriptions td { border: 0; text-wrap: nowrap; }
 
 .pulse {
     animation: pulse 1.5s infinite;
