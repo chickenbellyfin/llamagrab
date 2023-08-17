@@ -38,7 +38,7 @@ def add_views(
     try:
       token = accounts.create_auth_token(username, password)
     except exceptions.UnauthorizedException:
-      return await render('login.html', context={'unauthorized': True})
+      return await render('pages/login.html', context={'unauthorized': True})
     
     res = response.redirect('/')
     res.add_cookie(key='llamagrab_token', value=token, secure=secure_cookie)

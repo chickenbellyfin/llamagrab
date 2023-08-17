@@ -1,3 +1,4 @@
+{% from 'macros/icon.html' import icon %}
 {% macro server_status(status, label=false) %}
 {% set icon_class, class = {
     'running': ('check-circle', 'has-text-success'),
