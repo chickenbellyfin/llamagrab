@@ -1,22 +1,18 @@
 from typing import Dict
+from urllib.parse import urlencode
+
+from loguru import logger
 from sanic import Request, Sanic, response
-from api.database import queries
+
 from api.database.database import Database
+from api.lib.jinja2_fragments import render
 from api.schema.app_config import Region
-from api.schema.game_server_config import GameServerConfig
 from api.server_status import ServerStatusManager
 from api.service.account_service import AccountService
 from api.service.server_service import ServerService
-from api.service import exceptions
-from api.schema import validations
-from api.lib.jinja2_fragments import render
-from loguru import logger
-import json
-from api.views.htmx import toast, if_htmx
+from api.views.htmx import if_htmx, toast
+from api.views.util import region_statuses, server_status_list
 
-from urllib.parse import urlencode
-
-from api.views.util import server_status_list, region_statuses
 
 def query(**kwargs):
    return '?' + urlencode(kwargs) if len(kwargs) else ''

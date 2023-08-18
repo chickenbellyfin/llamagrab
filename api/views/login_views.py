@@ -1,12 +1,10 @@
-
-
 from loguru import logger
 from sanic import Request, Sanic, response
 
 from api.auth import Auth
 from api.lib.jinja2_fragments import render
-from api.service.account_service import AccountService
 from api.service import exceptions
+from api.service.account_service import AccountService
 from api.views.htmx import if_htmx
 
 

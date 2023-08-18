@@ -1,12 +1,14 @@
 import os
 from datetime import datetime
 from typing import Dict, List
-from httpx import Auth
-from sanic import Request, Sanic
-import sanic_ext
-from collections import namedtuple
-from api.audit import AuditLog
 
+import sanic_ext
+from httpx import Auth
+from jinja2.runtime import Macro
+from loguru import logger
+from sanic import Request, Sanic
+
+from api.audit import AuditLog
 from api.database.database import Database
 from api.host_manager import HostManager
 from api.iplog import IPLogDatabase
@@ -14,9 +16,8 @@ from api.schema.app_config import Loginserver, Region
 from api.server_status import ServerStatusManager
 from api.service.account_service import AccountService
 from api.service.server_service import ServerService
-from api.views import admin_views, views, test_views, login_views, settings_views
-from loguru import logger
-from jinja2.runtime import Macro
+from api.views import (admin_views, login_views, settings_views, test_views,
+                       views)
 from common import polling
 
 macro_file_mtimes = {}

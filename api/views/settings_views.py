@@ -1,11 +1,12 @@
-from sanic import Request, Sanic
-from api.service.account_service import AccountService
-from api.service import exceptions
-from api.lib.jinja2_fragments import render
 from loguru import logger
-from api.schema import validations
+from sanic import Request, Sanic
 
+from api.lib.jinja2_fragments import render
+from api.schema import validations
+from api.service import exceptions
+from api.service.account_service import AccountService
 from api.views.htmx import if_htmx
+
 
 def add_views(
   app: Sanic,

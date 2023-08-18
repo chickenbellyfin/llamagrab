@@ -1,16 +1,14 @@
 from typing import Dict, List
-from sanic import Request
+
+from sqlalchemy.orm import Session
+
 from api.database import models, queries
 from api.database.database import Database
 from api.schema import responses
 from api.schema.app_config import Region
 from api.schema.game_server_config import GameServerConfig
-from sqlalchemy.orm import Session
-
 from api.server_status import ServerStatusManager
 
-def if_htmx(value):
-    return value if Request.get_current().headers.get('hx-request') else None
 
 def server_status_list(
         servers: List[models.Server], 
