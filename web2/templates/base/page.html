@@ -14,11 +14,24 @@
           $(".navbar-burger").toggleClass("is-active");
           $(".navbar-menu").toggleClass("is-active");
         });
+
+        document.body.addEventListener("toast", function(evt){
+          var toast = document.createElement('div');
+          const eventType = evt.detail.type == "success" ? "is-success" : "is-danger";
+          toast.className = `notification ${eventType}`;
+          toast.textContent = evt.detail.message;
+          toast.setAttribute('remove-me', '2s');
+          document.getElementById('toast-container').appendChild(toast);
+          setTimeout(() => { toast.remove() }, 2000)
+        })
       });
+
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
+    <div id="toast-container">
+    </div>
     <nav class="navbar is-spaced" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="/">

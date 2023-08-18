@@ -11,10 +11,12 @@ from api.service import exceptions
 from api.schema import validations
 from api.lib.jinja2_fragments import render
 from loguru import logger
+import json
+from api.views.htmx import toast, if_htmx
 
 from urllib.parse import urlencode
 
-from api.views.util import if_htmx, server_status_list, region_statuses
+from api.views.util import server_status_list, region_statuses
 
 def query(**kwargs):
    return '?' + urlencode(kwargs) if len(kwargs) else ''
@@ -56,4 +58,16 @@ def add_views(
       block=if_htmx('content'),
       context={'regions': region_statuses(status_manager, regions, database)}
     )
+  
+  @app.get("/toast")
+  async def get_toast(request: Request):
+    res = response.empty()
+    import random
+    t = random.choice([
+      ('success', 'yay!'),
+      ('error', 'Oh no!')
+    ])
+    toast(res, t[0],t[1])
+    return res
+
     

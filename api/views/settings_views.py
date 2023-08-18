@@ -5,7 +5,7 @@ from api.lib.jinja2_fragments import render
 from loguru import logger
 from api.schema import validations
 
-from api.views.util import if_htmx
+from api.views.htmx import if_htmx
 
 def add_views(
   app: Sanic,

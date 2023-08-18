@@ -7,7 +7,7 @@ from api.auth import Auth
 from api.lib.jinja2_fragments import render
 from api.service.account_service import AccountService
 from api.service import exceptions
-from api.views.util import if_htmx
+from api.views.htmx import if_htmx
 
 
 def add_views(

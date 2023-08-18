@@ -62,3 +62,26 @@
     opacity: '95%'; 
     letter-spacing: 3.5px;
 }  
+
+#toast-container {
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, 0);
+    z-index: 999;
+}
+
+#toast-container>div {
+    padding: .3rem 1rem;
+    font-size: .9em;
+    margin: .5em;
+    transition: .3s;
+    box-shadow: $shadow;
+    animation: fade 2s ease;
+}
+
+@keyframes fade {
+    0% { opacity:0%; }
+    10% { opacity:100%; }
+    90% { opacity:100%; }
+    100% { opacity: 0%; }
+}

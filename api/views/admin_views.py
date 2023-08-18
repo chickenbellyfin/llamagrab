@@ -12,7 +12,7 @@ from api.service.server_service import ServerService
 from datetime import datetime
 from dateutil import parser
 
-from api.views.util import if_htmx
+from api.views.htmx import if_htmx
 
 
 def format_date(date: Union[str, datetime]) -> str:
