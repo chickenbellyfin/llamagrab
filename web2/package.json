@@ -9,7 +9,7 @@
       "sass": "^1.64.2"
     },
     "scripts": {
-      "copydeps": "copyfiles -u 4 node_modules/bootstrap-icons/font/fonts/* static/fonts",
+      "copydeps": "copyfiles -u 4 node_modules/bootstrap-icons/font/fonts/* static/fonts && copyfiles -u 1 public/* static/",
       "dev": "yarn run copydeps && sass --watch sass:static/css",
       "build": "yarn run copydeps && sass sass:static/css"
     }
