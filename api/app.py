@@ -10,11 +10,12 @@ from fastapi import FastAPI
 from fastapi_login.fastapi_login import LoginManager
 from loguru import logger
 
-from api import flags, web_app
+from api import web_app
 from api.audit import AuditLog
 from api.auth import Auth
 from api.database import models, queries
 from api.database.database import Database, run_migrations
+from api.flags import Flags
 from api.host_manager import HostManager
 from api.iplog import IPLogDatabase
 from api.lib.fastapi_spa_static_files import SPAStaticFiles
@@ -67,11 +68,12 @@ def create_database(config: AppConfig):
   return Database(config.base_path)
 
 
-def create_host_manager(config: AppConfig, database: Database) -> HostManager:
+def create_host_manager(config: AppConfig, database: Database, flags: Flags) -> HostManager:
   return HostManager(
     regions=config.regions,
     port=int(config.host_manager_port),
-    database=database
+    database=database,
+    flags=flags
   )
 
 
@@ -105,11 +107,11 @@ def create_app(
   ip_log_db: IPLogDatabase,
   regions: Dict[str, Region],
   loginservers: List[Loginserver],
-  audit: AuditLog
+  audit: AuditLog,
+  flags: Flags
 ) -> FastAPI:
   servers = ServerService(db_instance, host_manager, status_manager, regions, audit)
-  accounts = AccountService(db_instance, auth, servers, host_manager, audit)
-  flags.set_loginserver_urls([s.url for s in loginservers])
+  accounts = AccountService(db_instance, auth, servers, host_manager, flags, audit)
   app = FastAPI(
     title="Llamagrab",
     description=DESCRIPTION,
@@ -158,7 +160,8 @@ def create_app(
     auth=auth,
     database=db_instance,
     host_manager=host_manager,
-    audit=audit
+    audit=audit,
+    flags=flags
   )
 
   ip_log_api.add_routes(
@@ -192,11 +195,13 @@ def main(argv: List[str]):
   # run DB migrations
   run_migrations(base_path)
   audit = AuditLog(db)
+  flags = Flags(db, audit, config.loginservers)
   auth = Auth(
     login_manager=create_login_manager(config, db),
-    database=db
+    database=db,
+    flags=flags
   )
-  host_manager = create_host_manager(config, db)
+  host_manager = create_host_manager(config, db, flags)
   server_status_manager = ServerStatusManager(host_manager, min_polling_rate=config.status_polling_rate_secs)
   ip_log_db = IPLogDatabase(base_path=base_path, host_manager=host_manager, audit=audit)
   # Make sure the admin user exists
@@ -210,7 +215,8 @@ def main(argv: List[str]):
     ip_log_db=ip_log_db,
     regions=config.regions,
     loginservers=config.loginservers,
-    audit=audit
+    audit=audit,
+    flags=flags
   )
 
 

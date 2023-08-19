@@ -1,16 +1,17 @@
 from loguru import logger
 from passlib.hash import argon2
 
-from api import flags, permissions
+from api import permissions
 from api.audit import AuditLog
 from api.auth import Auth
 from api.database import queries
 from api.database.database import Database
 from api.database.models import User, UserLimits
+from api.flags import Flags
 from api.host_manager import HostManager
+from api.schema import validations
 from api.service import exceptions
 from api.service.server_service import ServerService
-from api.schema import validations
 
 
 class AccountService:
@@ -20,12 +21,14 @@ class AccountService:
     auth: Auth,
     servers: ServerService,
     host_manager: HostManager,
+    flags: Flags,
     audit: AuditLog
   ):
     self.database = database
     self.auth = auth
     self.servers = servers
     self.host_mananger = host_manager
+    self.flags = flags
     self.audit = audit
     
     # set of IPs which created an account
@@ -56,7 +59,7 @@ class AccountService:
 
     with self.database.session() as db:
 
-      if flags.get_flag(db, 'disable_new_accounts'):
+      if self.flags.get_flag('disable_new_accounts'):
         logger.info(f"Blocked new account from IP {source_ip} because flag disable_new_accounts is enabled")
         raise exceptions.PermissionsException()
       

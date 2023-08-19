@@ -6,8 +6,10 @@ server.run_nonblocking()
 # <blocking call>
 server.kill()
 """
-import uvicorn
 from threading import Thread
+
+import uvicorn
+
 
 class UvicornBackgroundServer(uvicorn.Server):
   def install_signal_handlers(self):

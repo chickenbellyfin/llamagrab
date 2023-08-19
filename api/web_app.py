@@ -10,6 +10,7 @@ from sanic import Request, Sanic
 
 from api.audit import AuditLog
 from api.database.database import Database
+from api.flags import Flags
 from api.host_manager import HostManager
 from api.iplog import IPLogDatabase
 from api.schema.app_config import Loginserver, Region
@@ -60,9 +61,9 @@ def start(
   port=8080,
   secure_cookie=True
 ):
+  flags = Flags(db_instance, audit, loginservers)
   servers = ServerService(db_instance, host_manager, status_manager, regions, audit)
-  accounts = AccountService(db_instance, auth, servers, host_manager, audit)
-
+  accounts = AccountService(db_instance, auth, servers, host_manager, flags, audit)
   app = Sanic('llamagrab-ssr')
   app.extend(config=sanic_ext.Config(
     templating_path_to_templates='web2/templates',
@@ -102,7 +103,9 @@ def start(
     database=db_instance,
     regions=regions,
     status_manager=status_manager,
-    audit=audit
+    audit=audit,
+    loginservers=loginservers,
+    flags=flags
   )
 
   settings_views.add_views(

@@ -5,9 +5,10 @@ import requests
 from loguru import logger
 from sqlalchemy.orm import Session
 
-from api import flags, lua
+from api import lua
 from api.database import models, queries
 from api.database.database import Database
+from api.flags import Flags
 from api.lua import LuaSettings
 from api.schema.app_config import Region
 from api.schema.game_server_config import GameServerConfig
@@ -30,11 +31,13 @@ class HostManager:
     regions: Dict[str, Region],
     port: int,
     database: Database,
+    flags: Flags,
     rate_limit_secs=10,
     periodic_sync=3600 * 2 
   ):
     self.port = port
     self.database = database
+    self.flags = flags
     self.regions = regions
 
     self.last_status = {
@@ -65,10 +68,10 @@ class HostManager:
   def _do_sync(self):
     with self.database.session() as db:
       lua_settings = get_lua_settings(db)
-      loginserver = flags.get_flag(db, 'loginserver')
       active_per_region = {
         key: queries.get_active_servers(db, region=key) for key in self.regions
       }
+    loginserver = self.flags.get_flag('loginserver')
 
     for region in self.regions.values():
       # Note: even if a region has no active servers, we should still sync so that newly stopped

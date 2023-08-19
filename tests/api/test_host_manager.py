@@ -1,11 +1,9 @@
-import time
-from typing import Callable, Tuple
 from unittest.mock import MagicMock, Mock, call, patch
 
 import pytest
 import requests
 
-from api import flags, lua
+from api import lua
 from api.database import queries as db_queries
 from api.database.models import Server
 from api.host_manager import HostManager
@@ -46,7 +44,7 @@ def mock_requests():
 def test_sync_empty(monkeypatch, mock_requests: Mock):
   monkeypatch.setattr(db_queries, "get_active_servers", lambda db,region: [])
   monkeypatch.setattr(db_queries, "get_admin_tribes_usernames", lambda db: [])
-  monkeypatch.setattr(flags, 'get_flag', lambda db,key: None)
+  # monkeypatch.setattr(flags, 'get_flag', lambda db,key: None)
 
   mock = MagicMock()
   monkeypatch.setattr(requests, 'post', lambda *a, **k: mock)
@@ -58,11 +56,12 @@ def test_sync_empty(monkeypatch, mock_requests: Mock):
         key='test_host',
         name='Test Host',
         host='http://localhost',
-        token='test_token'
+        token='test_token',
       )
     },
     port=TEST_PORT,
-    database=MagicMock()
+    database=MagicMock(),
+    flags=MagicMock()
   )
   host_manager._do_sync()
 
@@ -91,7 +90,9 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
 
   monkeypatch.setattr(db_queries, 'get_active_servers', mocked_active_servers)
   monkeypatch.setattr(db_queries, "get_admin_tribes_usernames", lambda db: [])
-  monkeypatch.setattr(flags, 'get_flag', lambda db,key: None)
+  # monkeypatch.setattr(flags, 'get_flag', lambda db,key: None)
+  mock_flags = MagicMock()
+  mock_flags.get_flag.return_value = None
 
   def mocked_lua(server, config, lua_settings):
     return name_to_test_lua[config.display_name]
@@ -114,7 +115,8 @@ def test_sync_multiple(monkeypatch, mock_requests: Mock):
       )
     },
     port=TEST_PORT,
-    database=MagicMock()
+    database=MagicMock(),
+    flags=mock_flags
   )
   host_manager._do_sync()
 

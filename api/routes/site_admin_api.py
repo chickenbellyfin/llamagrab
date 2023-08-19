@@ -5,11 +5,11 @@ from fastapi.exceptions import HTTPException
 from loguru import logger
 from sqlalchemy.orm.session import Session
 
-from api import flags
 from api.audit import AuditLog
 from api.auth import Auth
 from api.database import models, queries
 from api.database.database import Database
+from api.flags import Flags
 from api.host_manager import HostManager
 from api.schema.requests import SetFlagRequest
 
@@ -19,21 +19,19 @@ def add_routes(
   auth: Auth,
   database: Database,
   host_manager: HostManager,
-  audit: AuditLog
+  audit: AuditLog,
+  flags: Flags,
 ):
   @app.post('/admin/site/flag', include_in_schema=False)
-  async def set_flag(request: SetFlagRequest, user: models.User = Depends(auth.login_admin), db: Session = Depends(database)):
-    logger.info(
-      f"User(id={user.id} username={user.username}) Set Flag {request.key} = {request.value} ({type(request.value)})")
+  async def set_flag(request: SetFlagRequest, user: models.User = Depends(auth.login_admin)):
     try:
-      flag = flags.set_flag(db, request.key, request.value)
-      audit(user, f'updated {flag}')
+      flags.set_flag(request.key, request.value, user)
     except TypeError:
       raise HTTPException(http_status.HTTP_400_BAD_REQUEST)
 
   @app.get('/admin/site/flags', include_in_schema=False)
-  async def get_flags(user: models.User = Depends(auth.login_admin), db: Session = Depends(database)):
-    return flags.get_all_flags(db)
+  async def get_flags(user: models.User = Depends(auth.login_admin)):
+    return flags.get_all_flags(user)
 
   @app.post('/admin/site/request_sync', include_in_schema=False)
   async def request_sync(user: models.User = Depends(auth.login_admin)):

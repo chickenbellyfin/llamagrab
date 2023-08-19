@@ -13,6 +13,7 @@ from api.auth import Auth
 from api.database import database
 from api.database.models import (Server, ServerEditor, ServerVersion, User,
                                  UserLimits)
+from api.flags import Flags
 from api.schema.app_config import Region
 from api.schema.game_server_config import GameServerConfig
 
@@ -187,10 +188,15 @@ def mock_login_manager():
   return login_manager
 
 @pytest.fixture
-def test_auth(mock_login_manager, inmemory_db):
+def test_flags(inmemory_db, mock_audit_log):
+  return Flags(inmemory_db, mock_audit_log, [])
+
+@pytest.fixture
+def test_auth(mock_login_manager, inmemory_db, test_flags):
   return Auth(
     login_manager=mock_login_manager,
-    database=inmemory_db
+    database=inmemory_db,
+    flags=test_flags
   )
 
 @pytest.fixture
@@ -236,7 +242,8 @@ def test_app(
   test_regions,
   host_manager,
   status_manager,
-  mock_audit_log):
+  mock_audit_log,
+  test_flags):
   api = app.create_app(
     db_instance=inmemory_db,
     auth=test_auth,
@@ -245,7 +252,8 @@ def test_app(
     regions=test_regions,
     ip_log_db=None,
     loginservers=[],
-    audit=mock_audit_log
+    audit=mock_audit_log,
+    flags=test_flags
   )
   top_level = FastAPI()
   top_level.mount('/api', api)

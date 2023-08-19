@@ -5,9 +5,10 @@ from fastapi.exceptions import HTTPException
 from fastapi.security.oauth2 import SecurityScopes
 from fastapi_login.fastapi_login import LoginManager
 
-from api import flags, permissions
+from api import permissions
 from api.database.database import Database
 from api.database.models import User
+from api.flags import Flags
 
 
 class Auth:
@@ -15,16 +16,18 @@ class Auth:
     self,
     login_manager: LoginManager,
     database: Database,
+    flags: Flags
   ): 
     self._database = database
     self.login_manager = login_manager
+    self.flags = flags
 
 
   def check_account_disabled_flags(self, user: User):
     with self._database.session() as session:
-      if not permissions.is_verified(user) and flags.get_flag(session, 'disable_unverified_accounts'):
+      if not permissions.is_verified(user) and self.flags.get_flag('disable_unverified_accounts'):
         raise HTTPException(status.HTTP_403_FORBIDDEN)
-      elif not permissions.is_admin(user) and flags.get_flag(session, 'disable_non_admin_accounts'):
+      elif not permissions.is_admin(user) and self.flags.get_flag('disable_non_admin_accounts'):
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
 

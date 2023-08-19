@@ -1,7 +1,52 @@
 {% extends 'base/page.html' %}
+
 {% block content %}
 <section class="section">
     <h1 class="title is-4 is-uppercase page-title">Site Settings</h1>
-    <button hx-get="/toast">ASDF</button>
+    <div class="columns is-centered">
+        <div class="column is-two-thirds-desktop p-5">
+            <div class="box mt-5" hx-indicator="this">
+                <h1 class="title is-5">Flags</h1>
+                {% block site_flags %}
+                <form id="site_flags" hx-target="this" hx-swap="outerHTML">
+                    
+                    {% macro flag_toggle(name, label, help=none) %}
+                    <div class="field">
+                        <input 
+                            id="{{ name }}" 
+                            class="switch is-rounded" 
+                            type="checkbox" 
+                            name="{{ name }}" 
+                            {{ "checked" if flags[name] else "" }}
+                            hx-post="/admin/site/flags" 
+                            >
+                        <label for="{{ name }}">{{ label }}</label>
+                        {% if help %}<p class="help">{{help}}</p>{% endif %}
+                    </div>
+                    {% endmacro %}
+
+                    {{ flag_toggle('disable_new_accounts', 'Disable New Accounts')}}
+                    {{ flag_toggle('disable_unverified_accounts', 'Disable Un-Verified Users', help="All unverified-tier users will be unable to log in or make changes." )}}
+                    {{ flag_toggle('disable_non_admin_accounts', 'Disable Non-Admin Users', help="All users other than Admin+ (including unverified) will be unable to log in or make changes." )}}
+                    
+                    <hr/>
+                    {% call field_horizontal('Loginserver') %}
+                    <div class="select">
+                        <select id='loginserver' name="loginserver" value="{{ flags['loginserver'] }}" hx-post="/admin/site/flags">
+                            {% for loginserver in loginservers %}
+                                <option value="{{ loginserver.url }}" {{ "selected" if loginserver.url == flags['loginserver'] else ""}}>
+                                    {{ loginserver.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <p class="help">Set the loginserver URL for all servers. Must "Request Sync" after changing this setting</p>
+                    {% endcall %}
+
+                {% endblock %}
+            </div>
+        </div>
+    </div>    
+
 </section>
 {% endblock %}

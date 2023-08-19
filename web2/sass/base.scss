@@ -35,7 +35,7 @@ $navbar-background-color: $lg-nav-background;
 $navbar-padding-vertical: .5rem;
 $table-head-background-color: hsla(0deg,0%,0%,30%);
 
-$hr-background-color: $lg-text-faded;
+$hr-background-color: hsla(0deg,0%,100%,10%);
 
 $section-padding: 2rem 1rem;
 
@@ -47,3 +47,4 @@ $bootstrap-icons-font-src: url("/static/fonts/bootstrap-icons.woff2") format("wo
 
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons.scss";
 @import "../node_modules/bulma/bulma.sass";
+@import "../node_modules/bulma-switch/src/sass/index.sass";

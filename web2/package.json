@@ -1,17 +1,17 @@
 {
-    "name": "llamagrab",
-    "dependencies": {
-      "bootstrap-icons": "^1.10.5",
-      "bulma": "^0.9.4"
-    },
-    "devDependencies": {
-      "copyfiles": "^2.4.1",
-      "sass": "^1.64.2"
-    },
-    "scripts": {
-      "copydeps": "copyfiles -u 4 node_modules/bootstrap-icons/font/fonts/* static/fonts && copyfiles -u 1 public/* static/",
-      "dev": "yarn run copydeps && sass --watch sass:static/css",
-      "build": "yarn run copydeps && sass sass:static/css"
-    }
+  "name": "llamagrab",
+  "dependencies": {
+    "bootstrap-icons": "^1.10.5",
+    "bulma": "^0.9.4",
+    "bulma-switch": "^2.0.4"
+  },
+  "devDependencies": {
+    "copyfiles": "^2.4.1",
+    "sass": "^1.64.2"
+  },
+  "scripts": {
+    "copydeps": "copyfiles -u 4 node_modules/bootstrap-icons/font/fonts/* static/fonts && copyfiles -u 1 public/* static/",
+    "dev": "yarn run copydeps && sass --watch sass:static/css",
+    "build": "yarn run copydeps && sass sass:static/css"
   }
-  
+}
