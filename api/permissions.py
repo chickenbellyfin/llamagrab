@@ -11,6 +11,9 @@ TIERS = {
   'super': 3
 }
 
+def is_any(user: models.User) -> bool:
+  return True
+
 def is_verified(user: models.User) -> bool:
   return TIERS[user.tier] >= TIERS['verified']
 

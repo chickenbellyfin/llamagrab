@@ -1,4 +1,5 @@
 from typing import Dict, List
+from sanic import Request
 
 from sqlalchemy.orm import Session
 
@@ -8,7 +9,8 @@ from api.schema import responses
 from api.schema.app_config import Region
 from api.schema.game_server_config import GameServerConfig
 from api.server_status import ServerStatusManager
-
+from api.service import exceptions
+from api import permissions
 
 def server_status_list(
         servers: List[models.Server], 
@@ -44,3 +46,28 @@ def region_statuses(
         }
         for region in regions.values()
       ]
+
+def _check_user(user: models.User, permissions_func):
+    if not user:
+       raise exceptions.UnauthorizedException()
+    if not permissions_func(user):
+       raise exceptions.PermissionsException()
+
+def requires_login(func):
+  async def wrapped(request: Request):
+    _check_user(request.ctx.user, permissions.is_any)
+    return await func(request)
+  return wrapped
+
+def requires_admin(func):
+  async def wrapped(request: Request):
+    _check_user(request.ctx.user, permissions.is_admin)
+    return await func(request)
+  return wrapped
+  
+def requires_super(func):
+  async def wrapped(request: Request):
+    _check_user(request.ctx.user, permissions.is_super)
+    return await func(request)
+  return wrapped
+   

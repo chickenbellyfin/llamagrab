@@ -86,6 +86,10 @@
     100% { opacity: 0%; }
 }
 
+.htmx-request {
+    position: relative;
+}
+
 .htmx-request::after {
     background: rgba($color: (#000), $alpha: 0.3);
     background-image: url('/static/oval.svg');

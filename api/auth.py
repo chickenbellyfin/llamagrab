@@ -32,11 +32,13 @@ class Auth:
 
 
   async def login(self, request: Request, security_scopes: SecurityScopes = None) -> User:
+    """ DEPRECATED: FastAPI """
     user = await self.login_manager(request, security_scopes)
     self.check_account_disabled_flags(user)
     return user
 
   async def login_admin(self, request: Request, security_scopes: SecurityScopes = None) -> User:
+    """ DEPRECATED: FastAPI """
     user = await self.login_manager(request, security_scopes)
     self.check_account_disabled_flags(user)
     if not permissions.is_admin(user):
@@ -44,6 +46,7 @@ class Auth:
     return user
 
   async def login_super(self, request: Request, security_scopes: SecurityScopes = None) -> User:
+    """ DEPRECATED: FastAPI """
     user = await self.login_manager(request, security_scopes)
     self.check_account_disabled_flags(user)
     if not permissions.is_super(user):

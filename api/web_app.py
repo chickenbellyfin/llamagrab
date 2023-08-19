@@ -17,8 +17,9 @@ from api.schema.app_config import Loginserver, Region
 from api.server_status import ServerStatusManager
 from api.service.account_service import AccountService
 from api.service.server_service import ServerService
-from api.views import (admin_views, login_views, settings_views, test_views,
+from api.views import (login_views, settings_views, test_views,
                        views)
+from api.views.admin import admin_views, site
 from common import polling
 
 macro_file_mtimes = {}
@@ -107,6 +108,8 @@ def start(
     loginservers=loginservers,
     flags=flags
   )
+
+  site.add_views(app, servers, db_instance, regions, host_manager, audit,flags,loginservers)
 
   settings_views.add_views(
     app=app,

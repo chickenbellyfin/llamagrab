@@ -4,7 +4,7 @@
 <section class="section">
     <h1 class="title is-4 is-uppercase page-title">Site Settings</h1>
     <div class="columns is-centered">
-        <div class="column is-two-thirds-desktop p-5">
+        <div class="column is-three-quarters-desktop p-5">
             <div class="box mt-5" hx-indicator="this">
                 <h1 class="title is-5">Flags</h1>
                 {% block site_flags %}
@@ -42,7 +42,36 @@
                     </div>
                     <p class="help">Set the loginserver URL for all servers. Must "Request Sync" after changing this setting</p>
                     {% endcall %}
+                </form>
+                {% endblock %}
+            </div>
 
+            <div class="box mt-5" hx-indicator="this">
+                <h1 class="title is-5">Actions</h1>
+                {% block site_actions %}
+                <div id="site_actions" hx-swap="outerHTML">
+                    {% call field_horizontal('Request Sync') %}
+                        <button class="button is-primary" hx-post="/admin/site/request_sync" hx-target="#site_actions">Sync</button>
+                        <p class="help">Re-generate all server configs. Will update & restart any mismatching servers.</p>
+                    {% endcall %}
+    
+                    {% call field_horizontal('Restart All Servers') %}
+                        <button class="button is-danger"  hx-post="/admin/site/restart_all" hx-target="#site_actions">Restart</button>
+                        <p class="help">Force re-create all servers with their current config. (Do Not Spam)</p>
+                    {% endcall %}
+    
+                    {% call field_horizontal('Disable All Servers') %}
+                    <button class="button is-danger"  hx-post="/admin/site/disable_all" hx-target="#site_actions">Disable</button>
+                    <p class="help">Stop all enabled servers.</p>
+                    {% endcall %}
+    
+                    {#
+                    {% call field_horizontal('Push Banlist') %}
+                    <button class="button is-primary">Push</button>
+                    <p class="help">Re-push IP bans to all regions.</p>
+                    {% endcall %}
+                    #}
+                </div>
                 {% endblock %}
             </div>
         </div>

@@ -19,6 +19,7 @@ class UnauthorizedException(Exception):
   pass
 
 
+
 class ExceptionHandlerMiddleware(BaseHTTPMiddleware):
 
     def __init__(self, app):
