@@ -45,9 +45,9 @@ class ServerService:
     with self.database.session() as db:
       return self._get_server(server_id, user, db)
 
-  def get_server_status(self, server_id, user):
+  def get_server_status(self, server_id):
     with self.database.session() as db:
-      server = self._get_server(server_id, user, db)
+      server = queries.get_server(db, server_id)
       return responses.ServerStatus(
         id=server.id,
         owner=queries.user_by_id(db, server.user).username,

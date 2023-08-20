@@ -30,15 +30,13 @@ def add_views(
     if not request.ctx.user:
       return await render(
         "pages/landing.html", 
-        context={'regions': region_statuses(status_manager, regions, database)}
+        context={'regions': region_statuses(servers, status_manager, regions, database)}
       )
     else:
       with database.session() as db:
         status_list = server_status_list(
-          servers.get_owned_servers(request.ctx.user) + servers.get_shared_servers(request.ctx.user), 
-          status_manager, 
-          regions,
-          db
+          servers,
+          servers.get_owned_servers(request.ctx.user) + servers.get_shared_servers(request.ctx.user)
         )
         
       return await render(
@@ -52,14 +50,14 @@ def add_views(
     return await render(
       "pages/regions.html", 
       block=if_htmx('content'),
-      context={'regions': region_statuses(status_manager, regions, database)}
+      context={'regions': region_statuses(servers, status_manager, regions, database)}
     )
   
   @app.get("/region_status")
   async def get_region_status(request: Request):
     return await render(
       "components/region_status.html",
-      context={'regions': region_statuses(status_manager, regions, database)}
+      context={'regions': region_statuses(servers, status_manager, regions, database)}
     )
   
   @app.post('/server/start')

@@ -11,29 +11,17 @@ from api.schema.game_server_config import GameServerConfig
 from api.server_status import ServerStatusManager
 from api.service import exceptions
 from api import permissions
+from api.service.server_service import ServerService
 
 
 def server_status_list(
-        servers: List[models.Server], 
-        status_manager: ServerStatusManager,
-        regions: Dict[str, Region],
-        db: Session) -> List[responses.ServerStatus]:
-    return [
-      responses.ServerStatus(
-        id=s.id,
-        owner=queries.user_by_id(db, s.user).username,
-        name=s.name,
-        region=s.region,
-        region_name=regions[s.region].name if s.region in regions else s.region,
-        enabled=s.enabled,
-        status=status_manager.get_server_status(s),
-        game=s.game,
-        is_private=GameServerConfig.parse(s.server_config).password is not None
-      )
-      for s in servers
-    ]
+        server_service: ServerService,
+        servers: List[models.Server]
+) -> List[responses.ServerStatus]:
+    return [ server_service.get_server_status(s.id) for s in servers ]
 
 def region_statuses(
+    servers: ServerService,
     status_manager: ServerStatusManager,
     regions: Dict[str, Region],
     database: Database
@@ -43,7 +31,7 @@ def region_statuses(
         {
           'region_name': region.name,
           'online': status_manager.get_region_status(region.key),
-          'servers': server_status_list(queries.get_active_servers(db, region.key), status_manager, regions, db)
+          'servers': server_status_list(servers, queries.get_active_servers(db, region.key))
         }
         for region in regions.values()
       ]
