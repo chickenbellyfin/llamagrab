@@ -4,37 +4,7 @@
     <link rel="icon" href="/favicon.ico"/>
     <title>Llamagrab Web2</title>
     <link rel="stylesheet" href="/static/css/llamagrab.css">
-    <script src="https://unpkg.com/htmx.org@1.9.4" integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js"></script>
-    <script type="text/javascript">
-      $(document).ready(function () {
-        // Check for click events on the navbar burger icon
-        $(".navbar-burger").click(function () {
-          // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-          $(".navbar-burger").toggleClass("is-active");
-          $(".navbar-menu").toggleClass("is-active");
-        });
-
-        $(".navbar-menu a").click(function(event){
-          console.log(event);
-          $(".navbar-menu").removeClass("is-active");
-          $(".navbar-burger").removeClass("is-active");
-          event.target.blur();
-          
-        })
-
-        document.body.addEventListener("toast", function(evt){
-          var toast = document.createElement('div');
-          const eventType = evt.detail.type == "success" ? "is-success" : "is-danger";
-          toast.className = `notification ${eventType}`;
-          toast.textContent = evt.detail.message;
-          toast.setAttribute('remove-me', '2s');
-          document.getElementById('toast-container').appendChild(toast);
-          setTimeout(() => { toast.remove() }, 2000)
-        })
-      });
-
-    </script>
+    <script src="/static/index.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
@@ -48,30 +18,25 @@
             <span>LLAMAGRAB</span>
           </span>
         </a>
-
         <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
         </a>
       </div>
-
       <div class="navbar-menu"  hx-indicator="#content">
         {% if request.ctx.user is not none %}
         <div class="navbar-start">
           <a href="/" class="navbar-item" hx-boost="true" hx-target="#content">
             {{ icon('hdd-rack-fill', 'Servers') }}
           </a>
-
           <a href="/regions" class="navbar-item" hx-boost="true" hx-target="#content">
             {{ icon('globe2', 'Regions' )}}
           </a>
-
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
               {{ icon('eye-fill', 'Admin' )}}
             </a>
-
             <div class="navbar-dropdown">
               <a href="/admin/users" class="navbar-item" hx-boost="true" hx-target="#content">Users</a>
               <a href="/admin/servers" class="navbar-item" hx-boost="true" hx-target="#content">Servers</a>
@@ -82,7 +47,6 @@
           </div>
         </div>
         {% endif %}
-
         <div class="navbar-end">
           {% if request.ctx.user is not none %}
           <a href="/settings" class="navbar-item is-uppercase" hx-boost="true" hx-target="#content">
