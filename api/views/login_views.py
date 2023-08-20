@@ -49,5 +49,6 @@ def add_views(
   @app.post('/logout')
   async def post_logout(request: Request):
     res = response.redirect('/')
-    res.cookies.delete_cookie('llamagrab_token')
+    #res.delete_cookie('llamagrab_token') # TODO figure out why this doesn't work when secure_cookie=False
+    res.add_cookie('llamagrab_token', '', secure=secure_cookie)
     return res
