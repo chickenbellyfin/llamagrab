@@ -4,13 +4,12 @@
   <h1 class="title is-4 is-uppercase page-title">Server List</h1>
   <div class="columns is-mobile is-multiline is-centered">
     {%for server in servers %}
-    <div class="column is-narrow p-0">
+    <div class="column is-narrow">
       {% with server=server %}
       {% include 'components/server_card.html' %}
       {% endwith %}
     </div>
     {% endfor %}
-  
   </div>
 </section>
 {% endblock %}

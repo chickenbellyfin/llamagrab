@@ -1,4 +1,4 @@
-<div class="card lg-server-card m-3" hx-indicator="this" hx-target="this" hx-swap="outerHTML">
+<div class="card lg-server-card" hx-indicator="this" hx-target="this" hx-swap="outerHTML">
   <header class="card-header">
     <p class="card-header-title">{{ server.name }}</p>
   </header>
@@ -15,19 +15,31 @@
         <td>{{ {'tribes_ascend_ootb': 'OOTB','tribes_ascend_goty': 'GOTY'}[server.game] }}</td>
       </tr>
     </table>
+    {% if is_admin %}
+    <table class="table is-fullwidth descriptions">
+      <tr class="descriptions-title">
+        <td>id</td>
+        <td>Owner</td>
+      </tr>
+      <tr>
+        <td>{{ server.id }}</td>
+        <td>{{ server.owner }}</td>
+      </tr>
+    </table>
+    {% endif %}
   </div>
-  <footer class="card-footer is-uppercase">
+  <footer class="card-footer is-uppercase" hx-vals='{"id":{{server.id}}, "is_admin":"{{is_admin|default(false)}}"}'>
     {% if server.enabled %}
-    <a class="card-footer-item" hx-post="/components/server_card/stop" hx-vals='{"id":{{server.id}}}'>
+    <a class="card-footer-item" hx-post="/components/server_card/stop" >
       {{ icon('power', 'stop') }}
     </a>
     {% else %}
-    <a class="card-footer-item"  hx-post="/components/server_card/start"  hx-vals='{"id":{{server.id}}}'>
+    <a class="card-footer-item"  hx-post="/components/server_card/start">
       {{ icon('play-circle', 'start') }}
     </a>
     {% endif %}
     {% if server.enabled and server.status == 'running' %}
-    <a class="card-footer-item" hx-post="/components/server_card/restart" hx-vals='{"id":{{server.id}}}'>
+    <a class="card-footer-item" hx-post="/components/server_card/restart">
       {{ icon('arrow-clockwise', 'restart') }}
     </a>
     {% endif %}

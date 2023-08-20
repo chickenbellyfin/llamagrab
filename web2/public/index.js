@@ -17,6 +17,11 @@ $(function () {
     
   })
 
+  // dismiss all modals
+  $(document).on('click', '.modal-background', function(event) {
+    $(event.target.closest('.modal')).removeClass('is-active');
+  });
+
   // Listen for `Hx-Trigger: {"toast": ...}` from the server and show a popup at the top of the screen
   document.body.addEventListener("toast", function(evt){
     var toast = document.createElement('div');

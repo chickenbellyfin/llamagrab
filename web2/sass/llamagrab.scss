@@ -22,11 +22,7 @@
     text-overflow: ellipsis; 
     overflow: hidden;
 }
-    
-.lg-server-card {
-    max-width: 360px;
-    min-width: 300px;
-}
+
 .descriptions { font-size: .9rem; }
 .descriptions-title { color: $lg-text-faded; }
 .descriptions td { border: 0; text-wrap: nowrap; }

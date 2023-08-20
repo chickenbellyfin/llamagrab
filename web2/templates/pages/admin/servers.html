@@ -13,7 +13,7 @@
       </thead>
       <tbody>
           {% for server in servers %}
-              <tr>
+              <tr id='{{server.id}}' hx-get='/admin/servers' hx-target="#content" hx-indicator="#content">
               <td class="is-hidden-touch">{{ server.id }}</td>
               <td>
                 {{ server_name(server.name, server.is_private) }}
@@ -28,5 +28,14 @@
       </tbody>
     </table>
   </div>
+  {% if modal_server %}
+  <div class="modal is-active is-clipped">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+      {% with server=modal_server, is_admin=true %}{% include 'components/server_card.html' %}{% endwith %}
+    </div>
+    <button class="modal-close is-large" aria-label="close"></button>
+  </div>
+  {% endif %}
 </section>
 {% endblock %}
