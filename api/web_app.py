@@ -8,18 +8,16 @@ from jinja2.runtime import Macro
 from loguru import logger
 from sanic import Request, Sanic
 
+import api.views
 from api.audit import AuditLog
 from api.database.database import Database
 from api.flags import Flags
 from api.host_manager import HostManager
 from api.iplog import IPLogDatabase
-from api.schema.app_config import Loginserver, Region
+from api.schema.app_config import AppConfig, Loginserver, Region
 from api.server_status import ServerStatusManager
 from api.service.account_service import AccountService
 from api.service.server_service import ServerService
-from api.views import (login_views, settings_views, test_views,
-                       views)
-from api.views.admin import admin_views, site
 from common import polling
 
 macro_file_mtimes = {}
@@ -59,8 +57,8 @@ def start(
   regions: Dict[str, Region],
   loginservers: List[Loginserver],
   audit: AuditLog,
+  config: AppConfig,
   port=8080,
-  secure_cookie=True
 ):
   flags = Flags(db_instance, audit, loginservers)
   servers = ServerService(db_instance, host_manager, status_manager, regions, audit)
@@ -83,43 +81,21 @@ def start(
   async def global_request_context(request: Request):
     request.ctx.query_args = { k: v for k, v in request.query_args }
 
-  login_views.add_views(
-    app=app,
-    auth=auth,
-    accounts=accounts,
-    secure_cookie=secure_cookie
-  )
-
-  views.add_views(
+  api.views.add_views(**dict(
     app=app,
     accounts=accounts,
     servers=servers,
     database=db_instance,
     regions=regions,
-    status_manager=status_manager
-  )
-
-  admin_views.add_views(
-    app=app,
-    accounts=accounts,
-    servers=servers,
-    database=db_instance,
-    regions=regions,
+    host_manager=host_manager,
     status_manager=status_manager,
     audit=audit,
     loginservers=loginservers,
-    flags=flags
-  )
-
-  site.add_views(app, servers, db_instance, regions, host_manager, audit,flags,loginservers)
-
-  settings_views.add_views(
-    app=app,
-    accounts=accounts
-  )
-
-  test_views.add_views(app=app) # TODO remove
+    flags=flags,
+    auth=auth,
+    config=config
+  ))
 
   # TODO config to disable single_process (check that host manager etc only runs once)
   # TODO config to set debug=False
-  app.run(host="0.0.0.0", port=8080, single_process=True, debug=True, motd=False)
+  app.run(host="0.0.0.0", port=port, single_process=True, debug=True, motd=False)

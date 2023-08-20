@@ -258,7 +258,7 @@ def main(argv: List[str]):
     regions=config.regions,
     loginservers=config.loginservers,
     audit=audit,
-    secure_cookie=config.secure_cookie
+    config=config
   )
 
   api_server.kill()

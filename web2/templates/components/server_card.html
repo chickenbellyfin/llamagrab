@@ -18,16 +18,16 @@
   </div>
   <footer class="card-footer is-uppercase">
     {% if server.enabled %}
-    <a class="card-footer-item" hx-post="/server/stop" hx-vals='{"id":{{server.id}}}'>
+    <a class="card-footer-item" hx-post="/components/server_card/stop" hx-vals='{"id":{{server.id}}}'>
       {{ icon('power', 'stop') }}
     </a>
     {% else %}
-    <a class="card-footer-item"  hx-post="/server/start"  hx-vals='{"id":{{server.id}}}'>
+    <a class="card-footer-item"  hx-post="/components/server_card/start"  hx-vals='{"id":{{server.id}}}'>
       {{ icon('play-circle', 'start') }}
     </a>
     {% endif %}
     {% if server.enabled and server.status == 'running' %}
-    <a class="card-footer-item" hx-post="/server/restart" hx-vals='{"id":{{server.id}}}'>
+    <a class="card-footer-item" hx-post="/components/server_card/restart" hx-vals='{"id":{{server.id}}}'>
       {{ icon('arrow-clockwise', 'restart') }}
     </a>
     {% endif %}

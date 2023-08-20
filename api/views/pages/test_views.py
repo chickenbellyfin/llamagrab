@@ -2,10 +2,7 @@ from sanic import Request, Sanic
 from sanic_ext import render
 
 
-def add_views(
-    app: Sanic,
-):
-    
+def add_views(app: Sanic, **kwargs):
   @app.get('/testpage')
   async def testpage(request: Request):
     return await render(

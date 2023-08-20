@@ -3,17 +3,13 @@ from sanic import Request, Sanic, response
 
 from api.auth import Auth
 from api.lib.jinja2_fragments import render
+from api.schema.app_config import AppConfig
 from api.service import exceptions
 from api.service.account_service import AccountService
 from api.views.htmx import if_htmx
 
 
-def add_views(
-    app: Sanic,
-    auth: Auth,
-    accounts: AccountService,
-    secure_cookie=True,
-):
+def add_views(app: Sanic, auth: Auth, accounts: AccountService, config: AppConfig, **kwargs):
   @app.on_request
   async def extract_auth(request: Request):
     token = request.cookies.get('llamagrab_token')
@@ -39,7 +35,7 @@ def add_views(
       return await render('pages/login.html', context={'unauthorized': True})
     
     res = response.redirect('/')
-    res.add_cookie(key='llamagrab_token', value=token, secure=secure_cookie)
+    res.add_cookie(key='llamagrab_token', value=token, secure=config.secure_cookie)
     return res
   
   @app.get('/signup')
@@ -50,5 +46,5 @@ def add_views(
   async def post_logout(request: Request):
     res = response.redirect('/')
     #res.delete_cookie('llamagrab_token') # TODO figure out why this doesn't work when secure_cookie=False
-    res.add_cookie('llamagrab_token', '', secure=secure_cookie)
+    res.add_cookie('llamagrab_token', '', secure=config.secure_cookie)
     return res

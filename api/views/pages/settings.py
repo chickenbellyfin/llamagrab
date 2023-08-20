@@ -8,10 +8,7 @@ from api.service.account_service import AccountService
 from api.views.htmx import if_htmx
 
 
-def add_views(
-  app: Sanic,
-  accounts: AccountService
-):
+def add_views(app: Sanic, accounts: AccountService, **kwargs):
 
   @app.get('/settings')
   async def get_settings(request: Request):

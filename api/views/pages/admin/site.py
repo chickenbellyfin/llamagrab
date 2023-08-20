@@ -16,13 +16,12 @@ from api.views.htmx import if_htmx, toast
 
 def add_views(
   app: Sanic,
-  servers: ServerService,
   database: Database,
-  regions: Dict[str, Region],
   host_manager: HostManager,
   audit: AuditLog,
   flags: Flags,
-  loginservers: List[Loginserver]
+  loginservers: List[Loginserver],
+  **kwargs
 ):
 
   @app.get("/admin/site")

@@ -210,6 +210,10 @@ class ServerService:
       server = self._get_server(server_id, user, db)
       return server_history.get_diff(db, server, version_id)
   
+  def get_all_servers(self) -> List[Server]:
+    with self.database.session() as db:
+      return db.query(Server).all()
+
   def get_owned_servers(self, user: User):
     with self.database.session() as db:
       return queries.get_servers(db, user)
