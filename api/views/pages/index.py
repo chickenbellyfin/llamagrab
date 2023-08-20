@@ -3,7 +3,6 @@ from typing import Dict
 from loguru import logger
 from sanic import Request, Sanic
 
-from api.database.database import Database
 from api.lib.jinja2_fragments import render
 from api.schema.app_config import Region
 from api.server_status import ServerStatusManager

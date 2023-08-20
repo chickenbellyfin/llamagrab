@@ -4,8 +4,6 @@ from loguru import logger
 from sanic import Request, Sanic
 
 from api.audit import AuditLog
-from api.database import queries
-from api.database.database import Database
 from api.flags import Flags
 from api.host_manager import HostManager
 from api.iplog import IPLogDatabase
