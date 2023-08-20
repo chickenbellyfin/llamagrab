@@ -12,6 +12,7 @@ from api.server_status import ServerStatusManager
 from api.service import exceptions
 from api import permissions
 
+
 def server_status_list(
         servers: List[models.Server], 
         status_manager: ServerStatusManager,

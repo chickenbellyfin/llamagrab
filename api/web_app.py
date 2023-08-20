@@ -70,6 +70,8 @@ def start(
     templating_path_to_templates='web2/templates',
     templating_enable_async=False
   ))
+  app.ext.environment.lstrip_blocks = True
+  app.ext.environment.trim_blocks = True
   app.static('/favicon.ico', 'web2/favicon.ico', name="favicon")
   app.static('/static', 'web2/static', name="static")
   app.ctx.current_year = datetime.now().year # used for page footer

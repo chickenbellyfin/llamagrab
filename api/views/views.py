@@ -55,15 +55,30 @@ def add_views(
       context={'regions': region_statuses(status_manager, regions, database)}
     )
   
-  @app.get("/toast")
-  async def get_toast(request: Request):
-    res = response.empty()
-    import random
-    t = random.choice([
-      ('success', 'yay!'),
-      ('error', 'Oh no!')
-    ])
-    toast(res, t[0],t[1])
+  @app.post('/server/start')
+  async def start_server(request: Request):
+    server_id = int(request.form.get('id'))
+    servers.start_server(server_id, request.ctx.user)
+    server = servers.get_server_status(server_id, request.ctx.user)
+    res = await render("components/server_card.html", context={'server': server})
+    toast(res, message=f'Started {server.name}')
     return res
-
+  
+  @app.post('/server/stop')
+  async def stop_server(request: Request):
+    server_id = int(request.form.get('id'))
+    servers.stop_server(server_id, request.ctx.user)
+    server = servers.get_server_status(server_id, request.ctx.user)
+    res = await render("components/server_card.html", context={'server': server})
+    toast(res, message=f'Stopped {server.name}')
+    return res
+  
+  @app.post('/server/restart')
+  async def restart_server(request: Request):
+    server_id = int(request.form.get('id'))
+    servers.restart_server(server_id, request.ctx.user)
+    server = servers.get_server_status(server_id, request.ctx.user)
+    res = await render("components/server_card.html", context={'server': server})
+    toast(res, message=f'Restarting {server.name}')
+    return res
     

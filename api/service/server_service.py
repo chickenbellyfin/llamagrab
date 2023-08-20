@@ -10,6 +10,7 @@ from api.database import queries
 from api.database.database import Database
 from api.database.models import Server, User, ServerEditor
 from api.host_manager import HostManager
+from api.schema import responses
 from api.schema.app_config import Region
 from api.schema.game_server_config import GameServerConfig, GameType
 from api.server_status import ServerStatusManager
@@ -43,6 +44,21 @@ class ServerService:
   def get_server(self, server_id, user):
     with self.database.session() as db:
       return self._get_server(server_id, user, db)
+
+  def get_server_status(self, server_id, user):
+    with self.database.session() as db:
+      server = self._get_server(server_id, user, db)
+      return responses.ServerStatus(
+        id=server.id,
+        owner=queries.user_by_id(db, server.user).username,
+        name=server.name,
+        region=server.region,
+        region_name=self.regions[server.region].name if server.region in self.regions else server.region,
+        enabled=server.enabled,
+        status=self.status_manager.get_server_status(server),
+        game=server.game,
+        is_private=GameServerConfig.parse(server.server_config).password is not None
+      )
 
   def create_server(
     self, 
