@@ -45,7 +45,6 @@ def add_views(
       raw_value = request.form.get(trigger)
     else:
       raw_value = None
-    logger.info(f't={trigger}, v={raw_value},  f={request.form}')
 
     success = False
 
@@ -72,13 +71,7 @@ def add_views(
         'loginservers': loginservers
       }
     )
-
-    toast(
-      res, 
-      'success' if success else 'error',
-      'Flag Updated' if success else 'Failed to update flag'
-    )
-
+    toast(res, success, 'Flag Updated' if success else 'Failed to update flag')
     return res
   
 
@@ -88,7 +81,7 @@ def add_views(
     audit(request.ctx.user, f'requested a sync')
     
     res = await render("pages/admin/site.html", block='site_actions')
-    toast(res, 'success', 'Sync Requested')
+    toast(res, message='Sync Requested')
     return res
   
   @app.post('/admin/site/restart_all')
@@ -100,7 +93,7 @@ def add_views(
     audit(request.ctx.user, f'restarted all ({len(active)}) servers')
     
     res = await render("pages/admin/site.html", block='site_actions')
-    toast(res, 'success', f'restarted {len(active)} servers')
+    toast(res, message=f'Restarted {len(active)} servers')
     return res
 
   @app.post('/admin/site/disable_all')
@@ -115,6 +108,6 @@ def add_views(
     audit(request.ctx.user, f'disabled all ({len(active)}) servers')
     
     res = await render("pages/admin/site.html", block='site_actions')
-    toast(res, 'success', f'Disabled {len(active)} servers')
+    toast(res, message=f'Disabled {len(active)} servers')
     return res
   
