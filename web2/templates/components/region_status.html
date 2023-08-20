@@ -1,4 +1,4 @@
-<div class="columns is-centered">
+<div class="columns is-centered" hx-get="/region_status" hx-target="this" hx-swap="outerHTML" hx-indicator="none" hx-trigger="every 10s">
   {% for region in regions %}
   <div class="column is-narrow">
     <div class="region">

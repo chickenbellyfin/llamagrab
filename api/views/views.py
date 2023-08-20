@@ -55,6 +55,13 @@ def add_views(
       context={'regions': region_statuses(status_manager, regions, database)}
     )
   
+  @app.get("/region_status")
+  async def get_region_status(request: Request):
+    return await render(
+      "components/region_status.html",
+      context={'regions': region_statuses(status_manager, regions, database)}
+    )
+  
   @app.post('/server/start')
   async def start_server(request: Request):
     server_id = int(request.form.get('id'))
