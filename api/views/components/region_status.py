@@ -15,8 +15,7 @@ def add_views(
     app: Sanic, 
     servers: ServerService, 
     status_manager: ServerStatusManager, 
-    regions: Dict[str, Region], 
-    database: Database,
+    regions: Dict[str, Region],
     **kwargs
 ):
       
@@ -24,5 +23,5 @@ def add_views(
   async def get_region_status(request: Request):
     return await render(
       "components/region_status.html",
-      context={'regions': region_statuses(servers, status_manager, regions, database)}
+      context={'regions': region_statuses(servers, status_manager, regions)}
     )

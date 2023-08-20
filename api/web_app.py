@@ -85,7 +85,6 @@ def start(
     app=app,
     accounts=accounts,
     servers=servers,
-    database=db_instance,
     regions=regions,
     host_manager=host_manager,
     status_manager=status_manager,

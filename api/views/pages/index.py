@@ -9,13 +9,12 @@ from api.schema.app_config import Region
 from api.server_status import ServerStatusManager
 from api.service.server_service import ServerService
 from api.views.htmx import if_htmx
-from api.views.util import region_statuses, server_status_list
+from api.views.util import region_statuses
 
 
 def add_views(
   app: Sanic,
   servers: ServerService,
-  database: Database,
   regions: Dict[str, Region],
   status_manager: ServerStatusManager,
   **kwargs
@@ -25,15 +24,13 @@ def add_views(
     if not request.ctx.user:
       return await render(
         "pages/landing.html", 
-        context={'regions': region_statuses(servers, status_manager, regions, database)}
+        context={'regions': region_statuses(servers, status_manager, regions)}
       )
     else:
-      with database.session() as db:
-        status_list = server_status_list(
-          servers,
-          servers.get_owned_servers(request.ctx.user) + servers.get_shared_servers(request.ctx.user)
-        )
-        
+      status_list = servers.get_server_status(
+        servers.get_owned_servers(request.ctx.user) + servers.get_shared_servers(request.ctx.user)
+      )
+      logger.info(status_list)
       return await render(
         "pages/home.html",
         context={"servers": status_list},

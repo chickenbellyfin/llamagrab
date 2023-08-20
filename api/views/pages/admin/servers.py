@@ -9,7 +9,7 @@ from api.views.htmx import if_htmx
 def add_views(app: Sanic, servers: ServerService, **kwargs):
   @app.get("/admin/servers")
   async def get_servers(request: Request):
-    all_servers = [servers.get_server_status(s.id) for s in servers.get_all_servers()]
+    all_servers = servers.get_server_status(servers.get_all_servers())
     return await render(
       "pages/admin/servers.html",
       block=if_htmx('content'),

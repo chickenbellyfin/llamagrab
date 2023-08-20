@@ -1,4 +1,5 @@
-from typing import Dict, List
+from typing import List
+
 from loguru import logger
 from sanic import Request, Sanic
 
@@ -8,15 +9,14 @@ from api.database.database import Database
 from api.flags import Flags
 from api.host_manager import HostManager
 from api.lib.jinja2_fragments import render
-from api.schema.app_config import Loginserver, Region
-
+from api.schema.app_config import Loginserver
 from api.service.server_service import ServerService
 from api.views.htmx import if_htmx, toast
 
 
 def add_views(
   app: Sanic,
-  database: Database,
+  servers: ServerService,
   host_manager: HostManager,
   audit: AuditLog,
   flags: Flags,
@@ -26,8 +26,7 @@ def add_views(
 
   @app.get("/admin/site")
   async def get_site_settings(request: Request):
-    with database.session() as db:
-      flag_values = flags.get_all_flags(request.ctx.user)
+    flag_values = flags.get_all_flags(request.ctx.user)
     return await render(
       "pages/admin/site.html", 
       block=if_htmx('content'),
@@ -85,9 +84,7 @@ def add_views(
   
   @app.post('/admin/site/restart_all')
   async def post_restart_all(request: Request):
-    with database.session() as db:
-      active = queries.get_active_servers(db)
-
+    active = servers.get_active_servers()
     host_manager.restart(active)
     audit(request.ctx.user, f'restarted all ({len(active)}) servers')
     
@@ -97,11 +94,9 @@ def add_views(
 
   @app.post('/admin/site/disable_all')
   async def post_disable_all(request: Request):
-    with database.session() as db:
-      active = queries.get_active_servers(db)
-      for server in active:
-        server.enabled = False
-      db.commit()
+    active = servers.get_active_servers()
+    for server in active:
+      servers.stop_server(server.id, request.ctx.user)
 
     host_manager.sync()
     audit(request.ctx.user, f'disabled all ({len(active)}) servers')

@@ -1,5 +1,5 @@
 import time
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from loguru import logger
 from sqlalchemy.orm import Session
@@ -24,7 +24,7 @@ class ServerService:
     host_manager: HostManager, 
     status_manager: ServerStatusManager,
     regions: Dict[str, Region],
-    audit: AuditLog
+    audit: AuditLog,
   ):
     self.database = database
     self.host_manager = host_manager
@@ -40,17 +40,11 @@ class ServerService:
       raise exceptions.PermissionsException()
     else:
       return server
-
-  def get_server(self, server_id, user):
-    with self.database.session() as db:
-      return self._get_server(server_id, user, db)
-
-  def get_server_status(self, server_id):
-    with self.database.session() as db:
-      server = queries.get_server(db, server_id)
-      return responses.ServerStatus(
+  
+  def _get_server_status(self, server: Server, db: Session) -> responses.ServerStatus:
+    return responses.ServerStatus(
         id=server.id,
-        owner=queries.user_by_id(db, server.user).username,
+        owner=server.owner.username,
         name=server.name,
         region=server.region,
         region_name=self.regions[server.region].name if server.region in self.regions else server.region,
@@ -59,6 +53,17 @@ class ServerService:
         game=server.game,
         is_private=GameServerConfig.parse(server.server_config).password is not None
       )
+
+  def get_server(self, server_id, user):
+    with self.database.session() as db:
+      return self._get_server(server_id, user, db)
+
+  def get_server_status(self, servers: Union[Server, List[Server]]):
+    with self.database.session() as db:
+      if type(servers) == list:
+        return [self._get_server_status(s, db) for s in servers]
+      else:
+        return self._get_server_status(servers, db)
 
   def create_server(
     self, 
@@ -213,6 +218,10 @@ class ServerService:
   def get_all_servers(self) -> List[Server]:
     with self.database.session() as db:
       return db.query(Server).all()
+  
+  def get_active_servers(self, region: str = None, user: User = None) -> List[Server]:
+    with self.database.session() as db:
+      return queries.get_active_servers(db, region, user)
 
   def get_owned_servers(self, user: User):
     with self.database.session() as db:
