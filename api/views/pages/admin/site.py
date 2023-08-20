@@ -8,6 +8,7 @@ from api.database import queries
 from api.database.database import Database
 from api.flags import Flags
 from api.host_manager import HostManager
+from api.iplog import IPLogDatabase
 from api.lib.jinja2_fragments import render
 from api.schema.app_config import Loginserver
 from api.service.server_service import ServerService
@@ -18,6 +19,7 @@ def add_views(
   app: Sanic,
   servers: ServerService,
   host_manager: HostManager,
+  ip_log_db: IPLogDatabase,
   audit: AuditLog,
   flags: Flags,
   loginservers: List[Loginserver],
@@ -45,7 +47,6 @@ def add_views(
       raw_value = None
 
     success = False
-
     if trigger in flags.FLAGS:
       flag_type = flags.FLAGS[trigger].flag_type
       if flag_type == bool:
@@ -77,7 +78,6 @@ def add_views(
   async def post_request_sync(request: Request):
     host_manager.sync()
     audit(request.ctx.user, f'requested a sync')
-    
     res = await render("pages/admin/site.html", block='site_actions')
     toast(res, message='Sync Requested')
     return res
@@ -87,7 +87,6 @@ def add_views(
     active = servers.get_active_servers()
     host_manager.restart(active)
     audit(request.ctx.user, f'restarted all ({len(active)}) servers')
-    
     res = await render("pages/admin/site.html", block='site_actions')
     toast(res, message=f'Restarted {len(active)} servers')
     return res
@@ -100,8 +99,13 @@ def add_views(
 
     host_manager.sync()
     audit(request.ctx.user, f'disabled all ({len(active)}) servers')
-    
     res = await render("pages/admin/site.html", block='site_actions')
     toast(res, message=f'Disabled {len(active)} servers')
     return res
   
+  @app.post('/admin/site/push_banlist')
+  async def post_push_banlist(request: Request):
+    ip_log_db.push_banlist(request.ctx.user)
+    res = await render("pages/admin/site.html", block='site_actions')
+    toast(res, message=f'Pushed Banlist')
+    return res

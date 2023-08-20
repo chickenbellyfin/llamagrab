@@ -49,15 +49,15 @@
             <div class="box mt-5" hx-indicator="this">
                 <h1 class="title is-5">Actions</h1>
                 {% block site_actions %}
-                <div id="site_actions" hx-swap="outerHTML">
+                <div id="site_actions" hx-target="this" hx-swap="outerHTML">
                     {% call field_horizontal('Request Sync') %}
-                        <button class="button is-primary" hx-post="/admin/site/request_sync" hx-target="#site_actions">Sync</button>
-                        <p class="help">Re-generate all server configs. Will update & restart any mismatching servers.</p>
+                    <button class="button is-primary" hx-post="/admin/site/request_sync" hx-target="#site_actions">Sync</button>
+                    <p class="help">Re-generate all server configs. Will update & restart any mismatching servers.</p>
                     {% endcall %}
     
                     {% call field_horizontal('Restart All Servers') %}
-                        <button class="button is-danger"  hx-post="/admin/site/restart_all" hx-target="#site_actions">Restart</button>
-                        <p class="help">Force re-create all servers with their current config. (Do Not Spam)</p>
+                    <button class="button is-danger"  hx-post="/admin/site/restart_all" hx-target="#site_actions">Restart</button>
+                    <p class="help">Force re-create all servers with their current config. (Do Not Spam)</p>
                     {% endcall %}
     
                     {% call field_horizontal('Disable All Servers') %}
@@ -65,12 +65,10 @@
                     <p class="help">Stop all enabled servers.</p>
                     {% endcall %}
     
-                    {#
                     {% call field_horizontal('Push Banlist') %}
-                    <button class="button is-primary">Push</button>
+                    <button class="button is-primary" hx-post="/admin/site/push_banlist">Push</button>
                     <p class="help">Re-push IP bans to all regions.</p>
                     {% endcall %}
-                    #}
                 </div>
                 {% endblock %}
             </div>
