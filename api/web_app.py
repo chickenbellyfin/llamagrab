@@ -88,6 +88,7 @@ def start(
     regions=regions,
     host_manager=host_manager,
     status_manager=status_manager,
+    ip_log_db=ip_log_db,
     audit=audit,
     loginservers=loginservers,
     flags=flags,

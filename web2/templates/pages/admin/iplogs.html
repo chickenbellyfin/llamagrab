@@ -2,5 +2,30 @@
 {% block content %}
 <section class="section">
     <h1 class="title is-4 is-uppercase page-title">Player IPs & Bans</h1>
+    <span class="faded">{{iplogs|length}} entries in the last 2 weeks</span>
+    <div class="table-container">
+        <table class="table is-fullwidth is-hoverable">
+          <thead>
+            <td>Last Seen</td>
+            <td>User ID</td>
+            <td>Username</td>
+            <td>IP/Geo</td>
+            <td>ARIN</td>
+            <td>Server ID</td>
+          </thead>
+          <tbody>
+              {% for entry in iplogs %}
+                  <tr>
+                    <td>{{entry.formatted_date}}</td>
+                    <td>{{ "unvrf-" ~ (entry.user_id - 1000000) if entry.user_id >= 1000000 else entry.user_id }}</td>
+                    <td>{{entry.display_name}}</td>
+                    <td><a href="https://whatismyipaddress.com/ip/{{entry.ip}}" target="_blank">{{ icon('box-arrow-up-right', entry.ip) }}</a></td>
+                    <td><a href="https://search.arin.net/rdap/?query={{entry.ip}}" target="_blank">{{icon('box-arrow-up-right', 'ARIN')}}</a></td>
+                    <td>{{entry.label}}</td>
+                  </tr>
+              {% endfor %}
+          </tbody>
+        </table>
+      </div>
 </section>
 {% endblock %}

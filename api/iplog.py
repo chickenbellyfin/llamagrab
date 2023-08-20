@@ -106,10 +106,10 @@ class IPLogDatabase():
     self._check_admin(user)
     self._poll()
 
-  def get(self, user: User) -> List[IPLogEntry]:
+  def get(self, user: User, since_ms = 0) -> List[IPLogEntry]:
     self._check_admin(user)
     with self.SessionFactory() as db:
-      return db.query(IPLogEntry).all()
+      return db.query(IPLogEntry).filter(IPLogEntry.timestamp >= since_ms).all()
   
   def get_bans(self, user: User) -> List[IPBan]:
     self._check_admin(user)

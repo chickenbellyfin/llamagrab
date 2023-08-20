@@ -1,4 +1,6 @@
-from typing import Dict
+from datetime import datetime
+from typing import Dict, Union
+from dateutil import parser
 
 from sanic import Request
 
@@ -9,6 +11,9 @@ from api.server_status import ServerStatusManager
 from api.service import exceptions
 from api.service.server_service import ServerService
 
+
+def format_date(timestamp: int) -> str:
+  return datetime.fromtimestamp(timestamp).strftime("%a %b %d %Y %H:%M:%S %p")
 
 def region_statuses(
     servers: ServerService,
