@@ -8,9 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-    <div id="toast-container">
-    </div>
-    <nav class="navbar is-spaced" role="navigation" aria-label="main navigation">
+    <div id="toast-container"></div>
+    <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="/">
           <span id="logo-text" class="icon-text has-text-link">
@@ -18,35 +17,8 @@
             <span>LLAMAGRAB</span>
           </span>
         </a>
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
       </div>
       <div class="navbar-menu"  hx-indicator="#content">
-        {% if request.ctx.user is not none %}
-        <div class="navbar-start">
-          <a href="/" class="navbar-item" hx-boost="true" hx-target="#content">
-            {{ icon('hdd-rack-fill', 'Servers') }}
-          </a>
-          <a href="/regions" class="navbar-item" hx-boost="true" hx-target="#content">
-            {{ icon('globe2', 'Regions' )}}
-          </a>
-          <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">
-              {{ icon('eye-fill', 'Admin' )}}
-            </a>
-            <div class="navbar-dropdown">
-              <a href="/admin/users" class="navbar-item" hx-boost="true" hx-target="#content">Users</a>
-              <a href="/admin/servers" class="navbar-item" hx-boost="true" hx-target="#content">Servers</a>
-              <a href="/admin/site" class="navbar-item" hx-boost="true" hx-target="#content">Site</a>
-              <a href="/admin/iplogs" class="navbar-item" hx-boost="true" hx-target="#content">IPs & Bans</a>
-              <a href="/admin/audit" class="navbar-item" hx-boost="true" hx-target="#content">Audit Log</a>
-            </div>
-          </div>
-        </div>
-        {% endif %}
         <div class="navbar-end">
           {% if request.ctx.user is not none %}
           <a href="/settings" class="navbar-item is-uppercase" hx-boost="true" hx-target="#content">
@@ -60,16 +32,47 @@
         </div>
       </div>
     </nav>
-    <div id="content" class="is-relative">
-      {% block content %}
-      {% endblock %}
-    </div>
-    <footer class="footer mt-auto">
-      <div class="content has-text-centered">
-        <p>
-          &copy; 2021-{{ request.app.ctx.current_year }} <a href='mailto:admin@llamagrab.net' class="is-underlined">admin@llamagrab.net</a>
-        </p>
+    {% if request.ctx.user is not none %}
+    <aside id='side-menu' class="menu" hx-indicator="#content">
+      <ul class="menu-list">
+        <li>
+          <a href="/" class="navbar-item" hx-boost="true" hx-target="#content">{{ icon('hdd-rack-fill', 'Servers') }}</a>
+        </li>
+        <li>
+          <a href="/regions" class="navbar-item" hx-boost="true" hx-target="#content">
+            {{ icon('globe2', 'Regions' )}}
+          </a>
+        </li>
+      </ul>
+      <ul class="menu-list">
+        <li><a>{{ icon('eye-fill', 'Admin' )}}</a></li>
+        <li>
+          <ul>
+            <li><a href="/admin/users" class="navbar-item" hx-boost="true" hx-target="#content">Users</a></li>
+            <li><a href="/admin/servers" class="navbar-item" hx-boost="true" hx-target="#content">Servers</a></li>
+            <li><a href="/admin/site" class="navbar-item" hx-boost="true" hx-target="#content">Site</a></li>
+            <li><a href="/admin/iplogs" class="navbar-item" hx-boost="true" hx-target="#content">IPs & Bans</a></li>
+            <li><a href="/admin/audit" class="navbar-item" hx-boost="true" hx-target="#content">Audit Log</a></li>
+          </ul>
+        </li>
+      </ul>
+      <div id="expand-button">
+        {{icon('list')}}
       </div>
-    </footer>
+    </aside>
+    {% endif %}
+    <div id="main-layout" class="{{'loggedin' if request.ctx.user else ''}}">
+      <div id="content" class="is-relative">
+        {% block content %}
+        {% endblock %}
+      </div>
+      <footer class="footer mt-auto">
+        <div class="content has-text-centered">
+          <p>
+            &copy; 2021-{{ request.app.ctx.current_year }} <a href='mailto:admin@llamagrab.net' class="is-underlined">admin@llamagrab.net</a>
+          </p>
+        </div>
+      </footer>
+    </div>
   </body>
 </html>

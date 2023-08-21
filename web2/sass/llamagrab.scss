@@ -105,8 +105,69 @@ body {
     min-height: 100vh;
     display:flex;
     flex-direction:column;
+    height: 100vh;
+    overflow: hidden;
 }
 
 #content {
     flex-grow: 1;
+}
+
+#side-menu {
+    background-color: $navbar-background-color;
+    width: $lg-sidebar-width;
+    height: 100%;
+    position: fixed;
+    top: 3.25rem;
+    padding-top: 1em;
+    transition: $lg-sidebar-transistion;
+    left: 0;
+    z-index: 10;
+
+    @include until($tablet) {
+        left: calc(-1 * $lg-sidebar-width);
+    }
+}
+
+#side-menu.active {
+    @include until($tablet) {
+        left: 0;
+    }
+}
+
+#side-menu #expand-button {
+    visibility: hidden;
+    color: $lg-text-faded;
+    background-color: $lg-nav-background;
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.5rem;
+    position: absolute;
+    left: $lg-sidebar-width;
+    top: 5rem;
+    border-top-right-radius: $radius;
+    border-bottom-right-radius: $radius;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    @include until($tablet) {
+        visibility: visible;
+    }
+
+}
+
+#main-layout {
+    overflow-y:auto;
+   // margin-left: $lg-sidebar-width;
+    margin-top: 3.25rem;
+    transition: $lg-sidebar-transistion;
+
+}
+
+#main-layout.loggedin {
+    margin-left: $lg-sidebar-width;
+    @include until($tablet) {
+        margin-left: 0px;
+    }
 }

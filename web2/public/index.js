@@ -2,22 +2,17 @@ import 'htmx.org';
 import $ from 'jquery';
 
 $(function () {
-  // Check for click events on the navbar burger icon
-  $(".navbar-burger").click(function () {
-    // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-    $(".navbar-burger").toggleClass("is-active");
-    $(".navbar-menu").toggleClass("is-active");
+  // slide side-menu in and out on mobile
+  $('#expand-button').on('click', function(event) {
+    $('#side-menu').toggleClass('active');
   });
 
-  // when nav menu is clicked on mobile, hide it
-  $(".navbar-menu a").click(function(event){
-    $(".navbar-menu").removeClass("is-active");
-    $(".navbar-burger").removeClass("is-active");
-    event.target.blur(); 
-    
+  // close side-menu when a link is clicked
+  $('#side-menu a').on('click', function(event){
+    $('#side-menu').removeClass('active');
   })
 
-  // dismiss all modals
+  // dismiss all modals when background is clicked
   $(document).on('click', '.modal-background', function(event) {
     $(event.target.closest('.modal')).removeClass('is-active');
   });

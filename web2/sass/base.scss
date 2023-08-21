@@ -10,6 +10,9 @@ $lg-text: hsla(0deg,0%,100%,85%);
 $lg-text-faded: hsla(0deg,0%,100%,60%);
 $lg-primary: #1d84e3; 
 
+$lg-sidebar-width: 240px;
+$lg-sidebar-transistion: .2s;
+
 $lg-font: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
 
 // bulma vars
@@ -33,6 +36,7 @@ $scheme-main-bis: $lg-component-background-dark;
 $navbar-item-color: $lg-text-faded;
 $navbar-background-color: $lg-nav-background;
 $navbar-padding-vertical: .5rem;
+$navbar-breakpoint: 0px; // never hide navbar-end
 $table-head-background-color: hsla(0deg,0%,0%,30%);
 
 $hr-background-color: hsla(0deg,0%,100%,10%);
@@ -41,6 +45,11 @@ $section-padding: 2rem 1rem;
 
 $footer-background-color: transparent;
 $footer-padding: 2rem 1.5rem 2rem;
+
+$menu-item-color: $lg-text-faded;
+$menu-item-hover-background-color: #0001;
+$menu-list-border-left: none;
+$menu-list-link-padding: .5em 2em;
 
 // bootstrap-icons vars
 // $bootstrap-icons-font-dir: "/static/fonts";
