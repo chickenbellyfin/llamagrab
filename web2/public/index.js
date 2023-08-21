@@ -18,13 +18,10 @@ $(function () {
   });
 
   // Listen for `Hx-Trigger: {"toast": ...}` from the server and show a popup at the top of the screen
-  document.body.addEventListener("toast", function(evt){
-    var toast = document.createElement('div');
-    const eventType = evt.detail.type == "success" ? "is-success" : "is-danger";
-    toast.className = `notification ${eventType}`;
-    toast.textContent = evt.detail.message;
-    toast.setAttribute('remove-me', '2s');
-    document.getElementById('toast-container').appendChild(toast);
-    setTimeout(() => { toast.remove() }, 2000)
-  })
+  $(document).on('toast', function(event) {
+    const eventClass = event.detail.type == "success" ? "is-success" : "is-danger";
+    const toast = $(`<div class="notification ${eventClass}">${event.detail.message}</div>`);
+    $('#toast-container').append(toast);
+    setTimeout(() => {toast.remove()}, 3000);
+  });
 });
