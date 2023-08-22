@@ -1,10 +1,10 @@
 {% extends 'base/page.html' %}
 {% block content %}
-<section class="section" hx-get="/" hx-trigger="every 10s" hx-swap="outerHTML" hx-indicator="">
+<section class="section" hx-get="/" hx-trigger="every 10s" hx-swap="outerHTML" hx-indicator="output">
   <h1 class="title is-4 is-uppercase page-title">Server List</h1>
   <div class="columns is-mobile is-multiline is-centered">
     {%for server in servers %}
-    <div class="column is-narrow">
+    <div class="column is-narrow home-card">
       {% with server=server %}
       {% include 'components/server_card.html' %}
       {% endwith %}
