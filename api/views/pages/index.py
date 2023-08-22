@@ -29,7 +29,6 @@ def add_views(
       status_list = servers.get_server_status(
         servers.get_owned_servers(request.ctx.user) + servers.get_shared_servers(request.ctx.user)
       )
-      logger.info(status_list)
       return await render(
         "pages/home.html",
         context={"servers": status_list},
