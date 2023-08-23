@@ -1,0 +1,50 @@
+<div class="modal is-active is-clipped">
+  <div class="modal-background"></div>
+  <div class="modal-content">
+    <div class="card lg-server-card" hx-indicator="this" hx-target="this" hx-swap="outerHTML">
+      <header class="card-header">
+        <p class="card-header-title">{{ user.username }}</p>
+      </header>
+      <div class="card-content">
+        <table class="table is-fullwidth descriptions">
+          <tr class="descriptions-title">
+            <td>id</td>
+            <td>Tier</td>
+            <td>Servers / Max</td>
+          </tr>
+          <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user_tier(user.tier) }}</td>
+            <td>{{ user.server_count }} / {{ user.limits.server_limit if user.limits.server_limit is not none else '∞' }}</td>
+          </tr>
+        </table>
+        <table class="table is-fullwidth descriptions">
+          <tr class="descriptions-title">
+            <td>Tribes Username</td>
+          </tr>
+          <tr>
+            <td>{{ user.tribes_username if user.tribes_username else 'not set'}}</td>
+          </tr>
+        </table>
+      </div>
+      <footer class="card-footer is-uppercase" hx-vals='{ "id":{{user.id}} }"}'>
+       {% if user.tier == 'unverified' %}
+        <a class="card-footer-item" hx-post="/components/user_card/verify" >
+          {{ icon('check2', 'Verify User') }}
+        </a>
+        {% elif user.tier == 'verified' %}
+        <a class="card-footer-item"  hx-post="/components/user_card/make_admin">
+          {{ icon('person-up', 'Make Admin') }}
+        </a>
+        {% elif user.tier == 'admin' %}
+        <a class="card-footer-item" hx-post="/components/server_card/restart">
+          {{ icon('person-down', 'Remove Admin') }}
+        </a>
+        {% endif %}
+        <a href="#" class="card-footer-item">
+          {{ icon('trash3', 'Delete User') }}
+        </a>
+      </footer>
+    </div>
+  </div>
+</div>

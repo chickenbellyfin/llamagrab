@@ -124,5 +124,8 @@ class AccountService:
   def all(self):
     with self.database.session() as db:
       return db.query(User).all()
-
+  
+  def get(self, user_id) -> User:
+    with self.database.session() as db:
+      return queries.user_by_id(db, user_id)
 

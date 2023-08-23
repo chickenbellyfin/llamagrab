@@ -20,3 +20,10 @@ def add_views(app: Sanic, accounts: AccountService, servers: ServerService, **kw
       context={"accounts": all_users},
       block=if_htmx('content')
     )
+  
+  @app.get('/admin/users/user_card')
+  async def get_user_card(request: Request):
+    return await render(
+      "components/user_card_modal.html", 
+      context={'user':accounts.get(int(request.headers.get('hx-trigger')))}
+    )

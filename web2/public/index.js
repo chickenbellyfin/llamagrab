@@ -14,7 +14,7 @@ $(function () {
 
   // dismiss all modals when background is clicked
   $(document).on('click', '.modal-background', function(event) {
-    $(event.target.closest('.modal')).removeClass('is-active');
+    $(event.target.closest('.modal')).remove();
   });
 
   // Listen for `Hx-Trigger: {"toast": ...}` from the server and show a popup at the top of the screen
