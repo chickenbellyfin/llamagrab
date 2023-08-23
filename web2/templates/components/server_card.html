@@ -15,7 +15,7 @@
         <td>{{ {'tribes_ascend_ootb': 'OOTB','tribes_ascend_goty': 'GOTY'}[server.game] }}</td>
       </tr>
     </table>
-    {% if is_admin %}
+    {% if admin_mode %}
     <table class="table is-fullwidth descriptions">
       <tr class="descriptions-title">
         <td>id</td>
@@ -28,7 +28,7 @@
     </table>
     {% endif %}
   </div>
-  <footer class="card-footer is-uppercase" hx-vals='{"id":{{server.id}}, "is_admin":"{{is_admin|default(false)}}"}'>
+  <footer class="card-footer is-uppercase" hx-vals='{"id":{{server.id}}, "admin_mode":"{{admin_mode|default(false)}}"}'>
     {% if server.enabled %}
     <a class="card-footer-item" hx-post="/components/server_card/stop" >
       {{ icon('power', 'stop') }}

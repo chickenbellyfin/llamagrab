@@ -9,10 +9,10 @@ def add_views(app: Sanic, servers: ServerService, **kwargs):
   
   async def _server_action(request: Request, func, toast_message_format: str):
     server_id = int(request.form.get('id'))
-    is_admin = request.form.get("is_admin").lower() == 'true'
+    admin_mode = request.form.get("admin_mode").lower() == 'true'
     func(server_id, request.ctx.user)
     server = servers.get_server_status(servers.get_server(server_id, request.ctx.user))
-    res = await render("components/server_card.html", context={'server': server, 'is_admin': is_admin})
+    res = await render("components/server_card.html", context={'server': server, 'admin_mode': admin_mode})
     toast(res, message=toast_message_format % server.name)
     return res
 

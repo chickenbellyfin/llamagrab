@@ -24,5 +24,5 @@ def add_views(app: Sanic, servers: ServerService, **kwargs):
     ))
     return await render(
       "components/server_card_modal.html", 
-      context={'server': server, 'is_admin': True}
+      context={'server': server, 'admin_mode': True}
     )

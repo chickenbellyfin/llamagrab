@@ -1,6 +1,6 @@
 <div class="modal is-active is-clipped">
   <div class="modal-background"></div>
   <div class="modal-content">
-    {% with server=server %}{% include 'components/server_card.html' %}{% endwith %}
+    {% with server=server, admin_mode=admin_mode %}{% include 'components/server_card.html' %}{% endwith %}
   </div>
 </div>
