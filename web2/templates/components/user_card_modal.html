@@ -1,7 +1,7 @@
-<div class="modal is-active is-clipped">
+<div class="modal is-active is-clipped" hx-target="this" hx-swap="outerHTML">
   <div class="modal-background"></div>
   <div class="modal-content">
-    <div class="card lg-server-card" hx-indicator="this" hx-target="this" hx-swap="outerHTML">
+    <div class="card lg-server-card"  hx-indicator="this">
       <header class="card-header">
         <p class="card-header-title">{{ user.username }}</p>
       </header>
@@ -27,23 +27,26 @@
           </tr>
         </table>
       </div>
-      <footer class="card-footer is-uppercase" hx-vals='{ "id":{{user.id}} }"}'>
+      <footer class="card-footer is-uppercase" hx-vals='{ "id":{{user.id}} }'>
        {% if user.tier == 'unverified' %}
-        <a class="card-footer-item" hx-post="/components/user_card/verify" >
-          {{ icon('check2', 'Verify User') }}
-        </a>
-        {% elif user.tier == 'verified' %}
-        <a class="card-footer-item"  hx-post="/components/user_card/make_admin">
-          {{ icon('person-up', 'Make Admin') }}
-        </a>
-        {% elif user.tier == 'admin' %}
-        <a class="card-footer-item" hx-post="/components/server_card/restart">
-          {{ icon('person-down', 'Remove Admin') }}
-        </a>
+          <a class="card-footer-item" hx-post="/admin/users/user_card/verify" >
+            {{ icon('check2', 'Verify User') }}
+          </a>
+        {% elif user.tier == 'verified' and is_super(request.ctx.user) %}
+          <a class="card-footer-item"  hx-post="/admin/users/user_card/make_admin">
+            {{ icon('person-up', 'Make Admin') }}
+          </a>
+        {% elif user.tier == 'admin' and is_super(request.ctx.user) %}
+          <a class="card-footer-item" hx-post="/admin/users/user_card/remove_admin">
+            {{ icon('person-down', 'Remove Admin') }}
+          </a>
         {% endif %}
-        <a href="#" class="card-footer-item">
-          {{ icon('trash3', 'Delete User') }}
-        </a>
+
+        {% if not is_super(user) and is_super(request.ctx.user)%}
+          <a href="#" class="card-footer-item">
+            {{ icon('trash3', 'Delete User') }}
+          </a>
+        {% endif %}
       </footer>
     </div>
   </div>

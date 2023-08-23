@@ -19,6 +19,7 @@ from api.server_status import ServerStatusManager
 from api.service.account_service import AccountService
 from api.service.server_service import ServerService
 from common import polling
+from api import permissions
 
 macro_file_mtimes = {}
 
@@ -75,6 +76,9 @@ def start(
   app.ctx.current_year = datetime.now().year # used for page footer
 
   _load_all_jinja_macros('web2/templates/macros', app.ext.environment, poll=True)
+  app.ext.environment.globals['is_verified'] = permissions.is_verified
+  app.ext.environment.globals['is_admin'] = permissions.is_admin
+  app.ext.environment.globals['is_super'] = permissions.is_super
 
   # make query params available as a dict in request.ctx
   @app.on_request

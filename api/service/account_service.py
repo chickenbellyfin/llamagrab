@@ -34,6 +34,10 @@ class AccountService:
     # set of IPs which created an account
     self.account_create_ips = set()
   
+  def _check_admin(self, user: User):
+    if not permissions.is_admin(user):
+      raise exceptions.PermissionsException()
+    
   def _check_super(self, user: User):
     if not permissions.is_super(user):
       raise exceptions.PermissionsException()
@@ -128,4 +132,46 @@ class AccountService:
   def get(self, user_id) -> User:
     with self.database.session() as db:
       return queries.user_by_id(db, user_id)
+  
+  def verify_user(self, id_to_verify: int, user: User):
+    self._check_admin(user)
 
+    with self.database.session() as db:
+      user_to_verify = queries.user_by_id(db, id_to_verify)
+      if permissions.is_verified(user_to_verify):
+        raise exceptions.BadArgumentsException()
+      
+      user_to_verify.tier = 'verified'
+      user_to_verify.limits.server_limit = 5
+      user_to_verify.limits.active_limit = 2
+      db.commit()
+    self.audit(user, f'updated {user_to_verify}\'s tier from unverified to verified')
+
+  def make_admin(self, id_to_admin: int, user: User):
+    self._check_super(user)
+
+    with self.database.session() as db:
+      user_to_admin = queries.user_by_id(db, id_to_admin)
+      if permissions.is_admin(user_to_admin):
+        raise exceptions.BadArgumentsException()
+      old_tier = user_to_admin.tier
+      user_to_admin.tier = 'admin'
+      user_to_admin.limits.server_limit = None
+      user_to_admin.limits.active_limit = None
+      db.commit()
+    self.audit(user, f'updated {user_to_admin}\'s tier from {old_tier} to admin')
+  
+  def make_not_admin(self, id_to_unadmin: int, user: User):
+    self._check_super(user)
+
+    with self.database.session() as db:
+      user_to_unadmin = queries.user_by_id(db, id_to_unadmin)
+      if not permissions.is_admin(user_to_unadmin) or permissions.is_super(user_to_unadmin):
+        raise exceptions.BadArgumentsException()
+      
+      old_tier = user_to_unadmin.tier
+      user_to_unadmin.tier = 'verified'
+      user_to_unadmin.limits.server_limit = 5
+      user_to_unadmin.limits.active_limit = 2
+      db.commit()
+    self.audit(user, f'updated {user_to_unadmin}\'s tier from {old_tier} to verified')
