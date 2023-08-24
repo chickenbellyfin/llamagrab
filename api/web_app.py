@@ -20,6 +20,7 @@ from api.service.account_service import AccountService
 from api.service.server_service import ServerService
 from common import polling
 from api import permissions
+from api.views.htmx import is_htmx
 
 macro_file_mtimes = {}
 
@@ -84,6 +85,11 @@ def start(
   @app.on_request
   async def global_request_context(request: Request):
     request.ctx.query_args = { k: v for k, v in request.query_args }
+
+  @app.on_response
+  async def fragment_cache_control(request, response):
+    if is_htmx():
+      response.headers['Cache-Control'] = 'no-store'
 
   api.views.add_views(**dict(
     app=app,

@@ -19,3 +19,4 @@ def toast(response: HTTPResponse, is_success: bool = True, message: str = None):
   response.headers.add(
     "Hx-Trigger", json.dumps({"toast": {"type": toast_type, "message": message}})
   )
+
