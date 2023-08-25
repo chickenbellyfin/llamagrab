@@ -5,6 +5,12 @@
     <div class="column is-half-desktop box p-5">
       <h1 class="title is-4">Login</h1>
       <form action="/login", method="POST">
+        {% if request.ctx.query_args['newaccount'] %}
+        <div class="notification is-success">
+         <b>{{ icon('check-circle-fill', 'Account Created!')}}</b><br/>
+         Please Log In
+        </div>
+        {% endif %}
         <div class="field">
           <p class="control has-icons-left has-icons-right">
             <input class="input" name="username" type="text" placeholder="Username">
@@ -30,7 +36,7 @@
           </p>
         </div>
       </form>
-      <br/><a href="/signup"  hx-boost="true" hx-target="#content">New? Create Account</a>
+      <br/><a href="/signup" hx-boost="true" hx-target="#content">New? Create Account</a>
     </div>
   </div>
 </section>

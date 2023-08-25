@@ -1,41 +1,44 @@
 {% extends 'base/page.html' %}
 {% block content %}
-<section class="section is-medium">
+<section class="section is-medium" hx-target="this" hx-swap="outerHTML">
   <div class="columns is-centered">
     <div class="column is-half-desktop box p-5">
       <h1 class="title is-4">Create Account</h1>
       <form action="/signup", method="POST">
         <div class="field">
           <p class="control has-icons-left has-icons-right">
-            <input class="input" name="username" type="text" placeholder="Username">
+            <input class="input" name="username" type="text" placeholder="Username" value="{{form.username.data}}" hx-post="/signup?validate_only=true">
             <span class="icon is-small is-left">
               <i class="bi-person"></i>
             </span>
           </p>
+          {{ form_errors(form, 'username') }}
         </div>
         <div class="field">
           <p class="control has-icons-left">
-            <input class="input" name="password" type="password" placeholder="Password">
+            <input class="input" name="password" type="password" placeholder="Password" value="{{form.password.data}}" hx-post="/signup?validate_only=true">
             <span class="icon is-small is-left">
               <i class="bi-lock"></i>
             </span>
           </p>
+          {{ form_errors(form, 'password') }}
         </div>
         <div class="field">
             <p class="control has-icons-left">
-              <input class="input" name="confirm_password" type="password" placeholder="Confirm Password">
+              <input class="input" name="confirm_password" type="password" value="{{form.confirm_password.data}}" hx-post="/signup?validate_only=true" placeholder="Confirm Password">
               <span class="icon is-small is-left">
                 <i class="bi-lock"></i>
               </span>
             </p>
+          {{ form_errors(form, 'confirm_password') }}
           </div>
         <div class="field">
           <p class="control">
-            <input class="button is-primary" type="submit" value="Create Account"/>
+            <input class="button is-primary" type="submit" value="Create Account" {{'disabled' if not valid}}/>
           </p>
         </div>
       </form>
-      <br/><a href="/login" hx-boost="true" hx-target="#content">Have an Account? Login</a>
+      <br/><a href="/login" hx-boost="true" hx-target="#content" hx-swap="innerHTML">Have an Account? Login</a>
     </div>
   </div>
 </section>

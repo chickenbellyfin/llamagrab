@@ -73,7 +73,7 @@ class AccountService:
         logger.error(f'Client @ {source_ip} tried to create extra account: {username}')
         raise exceptions.LimitException()
       
-      if queries.get_user(db, username) != None:
+      if self.username_exists(username):
         raise exceptions.BadArgumentsException("User already exists")
       
       logger.info(f"Creating new user {username}")
@@ -132,6 +132,10 @@ class AccountService:
   def get(self, user_id) -> User:
     with self.database.session() as db:
       return queries.user_by_id(db, user_id)
+  
+  def username_exists(self, username):
+    with self.database.session() as db:
+      return queries.get_user(db, username) != None
   
   def verify_user(self, id_to_verify: int, user: User):
     self._check_admin(user)
