@@ -40,16 +40,16 @@
           <div class="control has-icons-left">
             <input 
               class="input" 
+              id="password"
               type="password" 
               name="password" 
               placeholder="********" 
               hx-post="/settings/change_password?validate_only=true"
-              value="{{request.form.get('password', '')}}"
+              value="{{form.password.data}}"
             >
             <span class="icon is-small is-left"><i class="bi-lock"></i></span>
           </div>
-          {% if  'invalid_current' in errors %}<p class="help is-danger">Password must be 8-32 characters</p>{% endif %}
-          {% if  'wrong_password' in errors %}<p class="help is-danger">Incorrect password</p>{% endif %}
+          {{ form_errors(form, 'password') }}
         </div>
 
         <div class="field mt-5">
@@ -58,14 +58,15 @@
             <input 
               class="input" 
               type="password" 
+              id="new_password"
               name="new_password" 
               placeholder="********"
               hx-post="/settings/change_password?validate_only=true"
-              value="{{request.form.get('new_password', '')}}"
+              value="{{form.new_password.data}}"
             >
             <span class="icon is-small is-left"><i class="bi-lock"></i></span>
           </div>
-          {% if 'invalid_new' in errors %}<p class="help is-danger">Password must be 8-32 characters</p>{% endif %}
+          {{ form_errors(form, 'new_password') }}
         </div>
 
     
@@ -75,23 +76,24 @@
             <input 
               class="input" 
               type="password" 
+              id="confirm_password"
               name="confirm_password" 
               placeholder="********"
               hx-post="/settings/change_password?validate_only=true"
-              value="{{request.form.get('confirm_password', '')}}"
+              value="{{form.confirm_password.data}}"
             >
             <span class="icon is-small is-left"><i class="bi-lock"></i></span>
           </div>
-          {% if 'not_confirmed' in errors %}<p class="help is-danger">New passwords must match</p>{% endif %}
+          {{ form_errors(form, 'confirm_password') }}
         </div>
       
         <input value="Change Password" class="button is-primary"
           hx-trigger="click"
           hx-post="/settings/change_password"
           hx-include="#change_password_form"
-          {% if not valid %} disabled {% endif %}
+          {{ 'disabled' if not valid }}
         />
-        {% if success %}<p class="help is-success">Password Updated</p>{% endif %}
+        {% if changed %}<p class="help is-success">Password Updated</p>{% endif %}
 
       </form>
       {% endblock %}

@@ -7,28 +7,22 @@
       <form action="/signup", method="POST">
         <div class="field">
           <p class="control has-icons-left has-icons-right">
-            <input class="input" name="username" type="text" placeholder="Username" value="{{form.username.data}}" hx-post="/signup?validate_only=true">
-            <span class="icon is-small is-left">
-              <i class="bi-person"></i>
-            </span>
+            <input class="input" id="username" name="username" type="text" placeholder="Username" value="{{form.username.data}}" hx-post="/signup?validate_only=true">
+            <span class="icon is-small is-left"><i class="bi-person"></i></span>
           </p>
           {{ form_errors(form, 'username') }}
         </div>
         <div class="field">
           <p class="control has-icons-left">
-            <input class="input" name="password" type="password" placeholder="Password" value="{{form.password.data}}" hx-post="/signup?validate_only=true">
-            <span class="icon is-small is-left">
-              <i class="bi-lock"></i>
-            </span>
+            <input class="input" id="password" name="password" type="password" placeholder="Password" value="{{form.password.data}}" hx-post="/signup?validate_only=true">
+            <span class="icon is-small is-left"><i class="bi-lock"></i></span>
           </p>
           {{ form_errors(form, 'password') }}
         </div>
         <div class="field">
             <p class="control has-icons-left">
-              <input class="input" name="confirm_password" type="password" value="{{form.confirm_password.data}}" hx-post="/signup?validate_only=true" placeholder="Confirm Password">
-              <span class="icon is-small is-left">
-                <i class="bi-lock"></i>
-              </span>
+              <input class="input" id="confirm_password" name="confirm_password" type="password" value="{{form.confirm_password.data}}" hx-post="/signup?validate_only=true" placeholder="Confirm Password">
+              <span class="icon is-small is-left"><i class="bi-lock"></i></span>
             </p>
           {{ form_errors(form, 'confirm_password') }}
           </div>
