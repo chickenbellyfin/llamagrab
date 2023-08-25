@@ -4,8 +4,7 @@
     "bootstrap-icons": "^1.10.5",
     "bulma": "^0.9.4",
     "bulma-switch": "^2.0.4",
-    "htmx.org": "^1.9.4",
-    "jquery": "^3.7.0"
+    "htmx.org": "^1.9.4"
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",
