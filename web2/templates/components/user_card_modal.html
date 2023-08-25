@@ -1,5 +1,5 @@
 <div class="modal is-active is-clipped" hx-target="this" hx-swap="outerHTML">
-  <div class="modal-background"></div>
+  <div class="modal-background" hx-on:click="this.closest('.modal').remove()"></div>
   <div class="modal-content">
     <div class="card lg-server-card"  hx-indicator="this">
       <header class="card-header">

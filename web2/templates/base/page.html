@@ -9,6 +9,7 @@
   </head>
   <body>
     <div id="toast-container"></div>
+    <div id="modal-container"></div>
     <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="/">
@@ -56,7 +57,7 @@
           </ul>
         </li>
       </ul>
-      <div id="expand-button">
+      <div id="expand-button" hx-on:click="document.getElementById('side-menu').classList.toggle('active')">
         {{icon('list')}}
       </div>
     </aside>

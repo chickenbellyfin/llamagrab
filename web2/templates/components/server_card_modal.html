@@ -1,5 +1,5 @@
 <div class="modal is-active is-clipped">
-  <div class="modal-background"></div>
+  <div class="modal-background" hx-on:click="this.closest('.modal').remove()"></div>
   <div class="modal-content">
     {% with server=server, admin_mode=admin_mode %}{% include 'components/server_card.html' %}{% endwith %}
   </div>

@@ -13,7 +13,7 @@
       </thead>
       <tbody>
           {% for server in servers %}
-              <tr id='{{server.id}}' hx-get='/admin/servers/server_card' hx-target="body" hx-swap="beforeend" hx-indicator="#content">
+              <tr id='{{server.id}}' hx-get='/admin/servers/server_card' hx-target="#modal-container" hx-indicator="#content">
               <td class="is-hidden-touch">{{ server.id }}</td>
               <td>
                 {{ server_name(server.name, server.is_private) }}
