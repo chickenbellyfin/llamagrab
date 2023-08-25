@@ -7,12 +7,11 @@
     "htmx.org": "^1.9.4"
   },
   "devDependencies": {
-    "copyfiles": "^2.4.1",
     "esbuild": "^0.19.2",
     "sass": "^1.64.2"
   },
   "scripts": {
-    "copydeps": "copyfiles -u 4 node_modules/bootstrap-icons/font/fonts/* static/fonts && copyfiles -u 1 public/* static/",
+    "copydeps": "mkdir -p static/fonts && cp node_modules/bootstrap-icons/font/fonts/* static/fonts/ && cp public/* static/",
     "dev": "yarn run copydeps && esbuild public/index.js --bundle --watch=forever --outfile=static/index.js & sass --watch sass:static/css & ",
     "build": "yarn run copydeps && sass sass:static/css && esbuild public/index.js --bundle --minify --outfile=static/index.js"
   }
