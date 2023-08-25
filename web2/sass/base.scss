@@ -38,7 +38,8 @@ $navbar-background-color: $lg-nav-background;
 $navbar-breakpoint: 0px; // never hide navbar-end
 $table-head-background-color: hsla(0deg,0%,0%,30%);
 
-$hr-background-color: hsla(0deg,0%,100%,10%);
+$hr-background-color: $border;
+$hr-height: 1px;
 
 $section-padding: 2rem 1rem;
 
@@ -53,6 +54,8 @@ $menu-list-link-padding: .5em 2em;
 $card-shadow: none;
 $card-header-shadow: none;
 $card-content-padding: 1em;
+
+$box-shadow: none;
 
 // bootstrap-icons vars
 // $bootstrap-icons-font-dir: "/static/fonts";
