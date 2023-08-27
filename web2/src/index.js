@@ -1,4 +1,7 @@
 import 'htmx.org';
+import Tagify from '@yaireo/tagify'
+
+window.Tagify = Tagify
 
 document.addEventListener("DOMContentLoaded", function(){
   // close side-menu when a link is clicked

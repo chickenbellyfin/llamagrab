@@ -5,6 +5,7 @@ New web UI for llamagrab which is server-side rendered.
 - [htmx](https://htmx.org/) for interactivity
 - [bulma](https://bulma.io/) for styles/layout
 - [bootstrap-icons](https://icons.getbootstrap.com/)
+- [Tagify](https://yaireo.github.io/tagify/)
 
 ```
 yarn install
@@ -26,7 +27,7 @@ python3 -m api
 ### Code
 
 - `public/` - assets which are copied into `static/` at build time to be served
-- `sass/` - styles
+- `src/` - JS, SASS styles (compiled into `static/`)
 - `templates/` - jinja templates sources rendered by llamagrab web server
 
 #### Jinja templates vs macros
