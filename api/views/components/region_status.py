@@ -1,11 +1,10 @@
 
 from typing import Dict
 
+from jinja2_fragments.sanic import render
 from sanic import Request, Sanic
-from api.database.database import Database
-from api.lib.jinja2_fragments import render
-from api.schema.app_config import Region
 
+from api.schema.app_config import Region
 from api.server_status import ServerStatusManager
 from api.service.server_service import ServerService
 from api.views.util import region_statuses

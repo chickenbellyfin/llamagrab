@@ -1,5 +1,5 @@
+from jinja2_fragments.sanic import render
 from sanic import Request, Sanic
-from api.lib.jinja2_fragments import render
 
 from api.service.server_service import ServerService
 from api.views.htmx import toast

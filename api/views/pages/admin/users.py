@@ -1,6 +1,6 @@
+from jinja2_fragments.sanic import render
 from loguru import logger
 from sanic import Request, Sanic
-from api.lib.jinja2_fragments import render
 
 from api.service.account_service import AccountService
 from api.service.server_service import ServerService

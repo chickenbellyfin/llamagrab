@@ -1,5 +1,6 @@
 from typing import List
 
+from jinja2_fragments.sanic import render
 from loguru import logger
 from sanic import Request, Sanic
 
@@ -7,7 +8,6 @@ from api.audit import AuditLog
 from api.flags import Flags
 from api.host_manager import HostManager
 from api.iplog import IPLogDatabase
-from api.lib.jinja2_fragments import render
 from api.schema.app_config import Loginserver
 from api.service.server_service import ServerService
 from api.views.htmx import if_htmx, toast

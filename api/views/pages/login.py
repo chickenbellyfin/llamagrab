@@ -1,14 +1,14 @@
+from jinja2_fragments.sanic import render
 from loguru import logger
 from sanic import Request, Sanic, response
+from wtforms import Form, StringField, ValidationError, validators
 
 from api.auth import Auth
-from api.lib.jinja2_fragments import render
 from api.schema.app_config import AppConfig
 from api.service import exceptions
 from api.service.account_service import AccountService
 from api.views.htmx import if_htmx
 
-from wtforms import Form, StringField, validators, ValidationError
 
 class SignupForm(Form):
   username = StringField(default='', validators=[validators.Length(min=4, max=20), validators.Regexp('^[a-zA-Z0-9_]+$')])

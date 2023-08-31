@@ -2,11 +2,11 @@ from datetime import datetime
 from typing import Union
 
 from dateutil import parser
+from jinja2_fragments.sanic import render
 from loguru import logger
 from sanic import Request, Sanic
 
 from api.audit import AuditLog
-from api.lib.jinja2_fragments import render
 from api.views.htmx import if_htmx
 
 

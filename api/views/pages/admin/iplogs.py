@@ -1,11 +1,12 @@
+import time
+
+from jinja2_fragments.sanic import render
 from loguru import logger
 from sanic import Request, Sanic
-from api.iplog import IPLogDatabase
 
-from api.lib.jinja2_fragments import render
+from api.iplog import IPLogDatabase
 from api.views.htmx import if_htmx
 from api.views.util import format_date
-import time
 
 TWO_WEEKS = 2 * 7 * 24 * 60 * 60
 

@@ -1,9 +1,9 @@
 from typing import Dict
 
+from jinja2_fragments.sanic import render
 from loguru import logger
 from sanic import Request, Sanic
 
-from api.lib.jinja2_fragments import render
 from api.schema.app_config import Region
 from api.server_status import ServerStatusManager
 from api.service.account_service import AccountService

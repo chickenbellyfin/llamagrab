@@ -1,11 +1,12 @@
+from jinja2_fragments.sanic import render
 from loguru import logger
 from sanic import Request, Sanic
+from wtforms import Form, StringField, ValidationError, validators
 
-from api.lib.jinja2_fragments import render
 from api.service import exceptions
 from api.service.account_service import AccountService
 from api.views.htmx import if_htmx
-from wtforms import Form, StringField, validators, ValidationError
+
 
 class ChangePasswordForm(Form):
   password = StringField(default='')

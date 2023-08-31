@@ -1,7 +1,7 @@
+from jinja2_fragments.sanic import render
 from loguru import logger
 from sanic import Request, Sanic
 
-from api.lib.jinja2_fragments import render
 from api.service.server_service import ServerService
 from api.views.htmx import if_htmx, is_htmx
 
