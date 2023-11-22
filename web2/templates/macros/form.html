@@ -1,16 +1,55 @@
-{% macro field_horizontal(label) %}
+{% macro field_horizontal(label, unit=none, help=none) %}
 <div class="field is-horizontal">
-  <div class="field-label">
+  <div class="field-label is-normal">
     <label class="label">{{ label }}</label>
   </div>
   <div class="field-body">
-    <div class="field">
+    <div class="field {% if unit %}has-addons{% endif %}">
       <div class="control">
         {{ caller() }}
+        {% if help %}<p class="help">{{help}}</p>{% endif %}
       </div>
+      {% if unit is not none %}
+      <p class="control">
+        <a class="button is-static">
+          {{unit}}
+        </a>
+      </p>
+      {% endif %}
     </div>
   </div>
 </div>
+{% endmacro %}
+
+{% macro field_text(name, label, placeholder="") %}
+{% call field_horizontal(label) %}
+<input class="input" type="text" placeholder="{{ placeholder }}">
+{%endcall%}
+{% endmacro %}
+
+{% macro field_password(name, label, placeholder="") %}
+{% call field_horizontal(label) %}
+<input class="input" type="password" placeholder="{{ placeholder }}">
+{%endcall%}
+{% endmacro %}
+
+{% macro field_number(name, label, placeholder="", unit=none, help=none) %}
+{% call field_horizontal(label, unit=unit, help=help) %}
+<input class="input" type="number" placeholder="{{ placeholder }}">
+{%endcall%}
+{% endmacro %}
+
+{% macro field_boolean(name, label, help=none) %}
+{% call field_horizontal(label, help=help) %}
+<input 
+id="{{ name }}" 
+class="switch is-rounded" 
+type="checkbox" 
+name="{{ name }}" 
+checked
+>
+<label for="{{ name }}"></label>
+{%endcall%}
 {% endmacro %}
 
 {% macro form_errors(form, field) %}

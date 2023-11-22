@@ -5,44 +5,16 @@
   <div class="card">
     <header class="card-header"><p class="card-header-title">Server Settings</p></header>
     <div class="card-content">
-      {% call field_horizontal('Region') %}
-      <div class="select">
-        <select>
-          {% for region in regions.values() %}
-          <option value="{{ region.key }}">{{ region.name }}</option>
-          {% endfor %}
-        </select>
+      <div class="container is-max-desktop">
+        {% include 'editor/server_settings_form.html' %}
       </div>
-      {% endcall %}
-
-      {% call field_horizontal('Editors') %}
-      <input name='editors' class='input' placeholder='Search...' value=''>
-      <p class="help">Other llamagrab users that can edit this server's settings</p>
-      {% endcall %}
     </div>
   </div>
   <div class="card mt-5">
     <header class="card-header"><p class="card-header-title">Game Settings</p></header>
     <div class="card-content">
-      <br/><br/>
+      {% include 'editor/tribes_ascend/tribes_ascend_editor_form.html' %}
     </div>
   </div>
-
-  <script>
-    var input = document.querySelector('input[name="editors"]');
-    const usernames =  [{%for user in users%}"{{user.username }}",{% endfor %}];
-    const count = {{users|length}};
-    // init Tagify script on the above inputs
-    tagify = new Tagify(input, {
-      whitelist:  usernames, 
-      enforceWhitelist : true,
-      maxTags: 10,
-      dropdown: {
-        maxItems: count,
-        enabled: 0,
-        closeOnSelect: false
-      }
-    })
-  </script>
 </section>
 {% endblock %}

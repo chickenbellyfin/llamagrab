@@ -1,0 +1,14 @@
+{% call field_horizontal('Region') %}
+<div class="select">
+  <select>
+    {% for region in regions.values() %}
+    <option value="{{ region.key }}">{{ region.name }}</option>
+    {% endfor %}
+  </select>
+</div>
+{% endcall %}
+
+{% call field_horizontal('Editors') %}
+<input name='editors' class='input' placeholder='Search...' value=''>
+<p class="help">Other llamagrab users that can edit this server's settings</p>
+{% endcall %}

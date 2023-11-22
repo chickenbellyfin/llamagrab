@@ -1,0 +1,16 @@
+<h1 class="title is-5">Time Settings</h1>
+{{ field_number(name='time_limit', label='Time Limit', unit='mins', placeholder=25) }}
+{{ field_number(name='overtime_limit', label='Overtime Limit', unit='mins', placeholder=10) }}
+{{ field_number(name='warmup_time', label='Warmup Time', unit='secs', placeholder=20) }}
+{{ field_number(name='respawn_time', label='Respawn Time', unit='secs', placeholder=5) }}
+{{ field_number(name='sniper_respawn_delay', label='Sniper Respawn Delay', unit='secs', placeholder=0, help="Additional respawn time incurred when the player has a sniper rifle") }}
+{{ field_number(name='ammo_pickup_lifespan', label='Ammo Pickup Lifespan', unit='secs', placeholder=15) }}
+{{ field_number(name='ctf_flag_timeout', label='CTF Flag Timeout', unit='secs', placeholder=40) }}
+
+<h1 class="title is-5">Scoring</h1>
+{{ field_number(name='ctf_cap_limit', label='CTF Cap Limit', unit='caps', placeholder=5) }}
+{{ field_number(name='tdm_kill_limit', label='TDM Kill Limit', unit='kills', placeholder=100) }}
+{{ field_number(name='arena_lives', label='Arena Lives', unit='lives', placeholder=25, help='Number of lives per round in Arena') }}
+{{ field_number(name='rabbit_score_limit', label='Rabbit Score Limit', unit='caps', placeholder=100) }}
+{{ field_number(name='cah_score_limit', label='CaH Score Limit', unit='points', placeholder=50, help='Score to win in Capture and Hold') }}
+{{ field_boolean(name='ctf_blits_all_flags_move', label='CTF Blitz All Flags Move')}}

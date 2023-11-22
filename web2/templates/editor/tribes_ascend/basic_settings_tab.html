@@ -1,0 +1,11 @@
+
+{{ field_text(name='display_name', label='Name') }}
+
+{{ field_text(name='description', label='Description') }}
+
+{{ field_password(name='password', label='Password') }}
+
+{% call field_horizontal('Server Admins') %}
+<input name='admins' class='input' placeholder='Enter community server usernames...' value=''>
+<p class="help">These players can start, end, and switch maps using TAMods</p>
+{% endcall %}

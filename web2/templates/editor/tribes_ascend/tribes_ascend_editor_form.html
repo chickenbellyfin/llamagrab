@@ -1,0 +1,54 @@
+<div class="tabs">
+  <ul>
+    <li class="tab is-active" onclick="switchTab(event, 'tab-basic-settings')" ><a>Basic Settings</a></li>
+    <li class="tab" onclick="switchTab(event, 'tab-game-settings')"><a>Game Settings</a></li>
+    <li class="tab" onclick="switchTab(event, 'tab-team-settings')"><a>Team Settings</a></li>
+    <li class="tab" onclick="switchTab(event, 'tab-map-rotation')"><a>Map Rotation</a></li>
+    <li class="tab" onclick="switchTab(event, 'tab-player-classes')"><a>Player/Classes</a></li>
+    <li class="tab" onclick="switchTab(event, 'tab-weapons')"><a>Weapons</a></li>
+    <li class="tab" onclick="switchTab(event, 'tab-vehicles')"><a>Vehicles</a></li>
+    <li class="tab" onclick="switchTab(event, 'tab-value-mods')"><a>Value Mods</a></li>
+  </ul>
+</div>
+
+<div class="container is-max-desktop">
+  <div style="display:unset;" class="tab-content" id="tab-basic-settings">{% include 'editor/tribes_ascend/basic_settings_tab.html' %}</div>
+  <div style="display:none;" class="tab-content" id="tab-game-settings">{% include 'editor/tribes_ascend/game_settings_tab.html' %}</div>
+  <div style="display:none;" class="tab-content" id="tab-team-settings">{% include 'editor/tribes_ascend/team_settings_tab.html' %}</div>
+  <div style="display:none;" class="tab-content" id="tab-map-rotation">{% include 'editor/tribes_ascend/map_rotation_tab.html' %}</div>
+  <div style="display:none;" class="tab-content" id="tab-player-classes">{% include 'editor/tribes_ascend/player_classes_tab.html' %}</div>
+  <div style="display:none;" class="tab-content" id="tab-weapons">{% include 'editor/tribes_ascend/weapons_tab.html' %}</div>
+  <div style="display:none;" class="tab-content" id="tab-vehicles">{% include 'editor/tribes_ascend/vehicles_tab.html' %}</div>
+  <div style="display:none;" class="tab-content" id="tab-value-mods">{% include 'editor/tribes_ascend/value_mods_tab.html' %}</div>
+</div>
+
+<script>
+  var input = document.querySelector('input[name="editors"]');
+  const usernames =  [{%for user in users%}"{{user.username }}",{% endfor %}];
+  const count = {{users|length}};
+  // init Tagify script on the above inputs
+  tagify = new Tagify(input, {
+    whitelist:  usernames, 
+    enforceWhitelist : true,
+    maxTags: 10,
+    dropdown: {
+      maxItems: count,
+      enabled: 0,
+      closeOnSelect: false
+    }
+  });
+</script>
+<script>
+  function switchTab(event, contentTab) {
+    console.log(event, contentTab);
+    for (let item of document.getElementsByClassName("tab")) {
+      item.className = item.className.replace('is-active', '').trim();
+    }
+    for (let item of document.getElementsByClassName("tab-content")) {
+      item.style.display = "none";
+    }
+    event.currentTarget.className += ' is-active';
+    document.getElementById(contentTab).style.display = "";
+
+  }
+</script>
