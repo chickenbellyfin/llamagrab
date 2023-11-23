@@ -1,7 +1,7 @@
 {% extends 'base/page.html' %}
 {% block content %}
 <section class="section">
-    <h1 class="title is-4 is-uppercase page-title">Player IPs & Bans</h1>
+  {{ page_header('Player IPs & Bans')}}
     <span class="faded">{{iplogs|length}} entries in the last 2 weeks</span>
     <div class="table-container">
         <table class="table is-fullwidth is-hoverable">
