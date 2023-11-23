@@ -2,7 +2,12 @@
 {% block content %}
 <section class="section">
   {% call page_header('Edit '~config.display_name) %}
-  <button class="button is-small is-primary">
+  <button 
+    class="button is-small is-primary"
+    hx-trigger="click"
+    hx-post="/edit_server/{{server.id}}"
+    hx-include="#edit_server_form, #server_settings_form"
+    hx-swap="none">
     <span class="icon is-small"><i class="bi bi-floppy"></i></span>
     <span>Save</span>
   </button>
@@ -11,14 +16,18 @@
     <header class="card-header"><p class="card-header-title">Server Settings</p></header>
     <div class="card-content">
       <div class="container is-max-desktop">
-        {% include 'editor/server_settings_form.html' %}
+        <form id="server_settings_form">
+          {% include 'editor/server_settings_form.html' %}
+        </form>
       </div>
     </div>
   </div>
   <div class="card mt-5">
     <header class="card-header"><p class="card-header-title">Game Settings</p></header>
     <div class="card-content">
+      <form id="edit_server_form">
       {% include 'editor/tribes_ascend/tribes_ascend_editor_form.html' %}
+      </form>
     </div>
   </div>
   <br/>

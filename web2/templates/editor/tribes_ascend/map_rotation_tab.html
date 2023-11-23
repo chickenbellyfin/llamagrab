@@ -1,1 +1,30 @@
-Map Rotation Tab Content
+{{ field_boolean(name='map_voting', value=config.map_voting, label='Map Voting') }}
+
+{% call field_horizontal(label='Game Modes', help="You can have multiple game modes on a server") %}
+<div class="field">
+    <label class="checkbox">
+      <input type="checkbox" name="game_modes" value="ctf">
+      CTF
+    </label>
+    <label class="checkbox">
+      <input type="checkbox" name="game_modes" value="arena">
+      Arena
+    </label>
+    <label class="checkbox">
+      <input type="checkbox" name="game_modes" value="tdm">
+      TDM
+    </label>
+    <label class="checkbox">
+      <input type="checkbox" name="game_modes" value="rabbit">
+      Rabbit
+    </label>
+    <label class="checkbox">
+      <input type="checkbox" name="game_modes" value="blitz">
+      Blitz
+    </label>
+    <label class="checkbox">
+      <input type="checkbox" name="game_modes" value="cah">
+      CaH
+    </label>
+</div> 
+{% endcall %}

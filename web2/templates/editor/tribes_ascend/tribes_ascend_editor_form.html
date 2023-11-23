@@ -23,22 +23,6 @@
 </div>
 
 <script>
-  var input = document.querySelector('input[name="editors"]');
-  const usernames =  [{%for user in users%}"{{user.username }}",{% endfor %}];
-  const count = {{users|length}};
-  // init Tagify script on the above inputs
-  tagify = new Tagify(input, {
-    whitelist:  usernames, 
-    enforceWhitelist : true,
-    maxTags: 10,
-    dropdown: {
-      maxItems: count,
-      enabled: 0,
-      closeOnSelect: false
-    }
-  });
-</script>
-<script>
   function switchTab(event, contentTab) {
     console.log(event, contentTab);
     for (let item of document.getElementsByClassName("tab")) {

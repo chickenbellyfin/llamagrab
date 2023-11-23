@@ -169,6 +169,18 @@ nav {
     td { white-space: nowrap; }
 }
 
-// .label {
-//     font-size: $label-size !important;
-// }
+.field.is-radio-button-group {
+    @extend .has-addons;
+    .button {
+        &:has(> input[type=radio]:checked) {
+            @extend .is-primary;
+        }
+    }
+    input[type=radio] {
+        appearance: none;
+    }
+}
+
+.checkbox {
+    margin-right: .5em;
+}

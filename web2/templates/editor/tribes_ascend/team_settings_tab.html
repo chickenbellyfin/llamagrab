@@ -1,1 +1,38 @@
-Team Settings Tab Content
+{{ field_number(name='max_players', value=config.max_players, label='Max Players', placeholder=32, help='Maximum players in the server') }}
+
+{% call field_horizontal(label='Team Assign Type') %}
+<div class="field is-radio-button-group">
+  <p class="control">
+    <label class="button">
+      <input type="radio" name="team_assign_type" value="balanced" {{ 'checked' if config.team_assign_type == 'balanced' else '' }}>Balanced
+    </label>
+  </p>
+  
+  <p class="control">
+    <label class="button">
+      <input type="radio" name="team_assign_type" value="unbalanced" {{ 'checked' if config.team_assign_type == 'unbalanced' else '' }}>Unbalanced
+    </label>
+  </p>
+
+  <p class="control">
+    <label class="button">
+      <input type="radio" name="team_assign_type" value="auto" {{ 'checked' if config.team_assign_type == 'auto' else '' }}>Auto Assign
+    </label>
+  </p>
+</div> 
+{% endcall %}
+
+{{ field_boolean(name='auto_balance', value=config.auto_balance, label='Auto Balance')}}
+{{ field_boolean(name='friendly_fire', value=config.friendly_fire, label='Friendly Fire')}}
+
+{{ field_number(name='friendly_fire_multiplier', value=config.friendly_fire_multiplier, label='Friendly Fire Multiplier') }}
+{{ field_number(name='friendly_damage_kick_limit', value=config.friendly_damage_kick_limit, label='Friendly Damage Kick Limit', placeholder='0 (no limit)') }}
+{{ field_number(name='friendly_kill_kick_limit', value=config.friendly_kill_kick_limit, label='Friendly Kill Kick Limit', placeholder='0 (no limit)') }}
+
+{{ field_number(name='base_destruction_kick_limit', value=config.base_destruction_kick_limit, label='Base Destruction Kick Limit', placeholder='0 (no limit)') }}
+
+{{ field_number(name='light_count_limit', value=config.light_count_limit, label='Light Limit', help='Maximum light players per team', placeholder='32') }}
+{{ field_number(name='medium_count_limit', value=config.medium_count_limit, label='Medium Limit', help='Maximum medium players per team', placeholder='32') }}
+{{ field_number(name='heavy_count_limit', value=config.heavy_count_limit, label='Heavy Limit', help='Maximum heavy players per team', placeholder='32') }}
+
+{{ field_boolean(name='naked_spawn', value=config.friendly_fire, label='Naked Spawn', help='Whether players should spawn naked (as lights without their loadout)') }}
