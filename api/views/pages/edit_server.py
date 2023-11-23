@@ -3,6 +3,7 @@ from typing import Dict
 from jinja2_fragments.sanic import render
 from loguru import logger
 from sanic import Request, Sanic
+from api.schema import responses
 
 from api.schema.app_config import Region
 from api.server_status import ServerStatusManager
@@ -20,15 +21,23 @@ def add_views(
   status_manager: ServerStatusManager,
   **kwargs
 ):
-  @app.get("/create_server")
-  async def create_server(request: Request):
+  @app.get("/edit_server/<server_id>")
+  async def edit_server(request: Request, server_id: int):
+    server = servers.get_server(server_id, request.ctx.user)
+    editors = servers.get_server_editors(server_id, request.ctx.user)
+    config = servers.get_config(server_id, request.ctx.user)
+    settings = responses.ServerSettings(
+      region=server.region,
+      game=server.game,
+      editors=[user.id for user in editors]
+    )
     return await render(
-      "pages/create_server.html", 
+      "pages/edit_server.html", 
       block=if_htmx('content'),
       context={
         'regions': regions,
         'users': accounts.all(),
-        'config': {}
+        'config': config,
       }
     )
     

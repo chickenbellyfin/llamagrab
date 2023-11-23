@@ -1,4 +1,4 @@
-from . import admin, index, login, regions, settings, test_views, create_server
+from . import admin, index, login, regions, settings, test_views, create_server, edit_server
 
 
 def add_views(**kwargs):
@@ -8,5 +8,6 @@ def add_views(**kwargs):
     settings.add_views(**kwargs)
     test_views.add_views(**kwargs)
     create_server.add_views(**kwargs)
+    edit_server.add_views(**kwargs)
 
     admin.add_views(**kwargs)

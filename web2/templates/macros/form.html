@@ -21,33 +21,29 @@
 </div>
 {% endmacro %}
 
-{% macro field_text(name, label, placeholder="") %}
+{% macro field_text(name, label, value='', placeholder="") %}
+{% set value = '' if value is none else value %}
 {% call field_horizontal(label) %}
-<input class="input" type="text" placeholder="{{ placeholder }}">
+<input  id="{{ name }}" name="{{ name }}" class="input" type="text" placeholder="{{ placeholder }}" value="{{value}}"">
 {%endcall%}
 {% endmacro %}
 
-{% macro field_password(name, label, placeholder="") %}
+{% macro field_password(name, label, value='', placeholder="") %}
+{% set value = '' if value is none else value %}
 {% call field_horizontal(label) %}
-<input class="input" type="password" placeholder="{{ placeholder }}">
+<input  id="{{ name }}" name="{{ name }}" class="input" type="password" placeholder="{{ placeholder }}" value="{{value}}">
 {%endcall%}
 {% endmacro %}
 
-{% macro field_number(name, label, placeholder="", unit=none, help=none) %}
+{% macro field_number(name, label, value='', placeholder="", unit=none, help=none) %}
 {% call field_horizontal(label, unit=unit, help=help) %}
-<input class="input" type="number" placeholder="{{ placeholder }}">
+<input  id="{{ name }}" name="{{ name }}" class="input" type="number" placeholder="{{ placeholder }}" value="{{value}}">
 {%endcall%}
 {% endmacro %}
 
-{% macro field_boolean(name, label, help=none) %}
+{% macro field_boolean(name, label, value=false, help=none) %}
 {% call field_horizontal(label, help=help) %}
-<input 
-id="{{ name }}" 
-class="switch is-rounded" 
-type="checkbox" 
-name="{{ name }}" 
-checked
->
+<input id="{{ name }}" name="{{ name }}" class="switch is-rounded" type="checkbox"  {{ "checked" if value else ""}}>
 <label for="{{ name }}"></label>
 {%endcall%}
 {% endmacro %}

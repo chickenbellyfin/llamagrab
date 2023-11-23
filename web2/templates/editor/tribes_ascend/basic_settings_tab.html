@@ -1,9 +1,9 @@
 
-{{ field_text(name='display_name', label='Name') }}
+{{ field_text(name='display_name', label='Name', value=config.display_name) }}
 
-{{ field_text(name='description', label='Description') }}
+{{ field_text(name='description', label='Description', value=config.description) }}
 
-{{ field_password(name='password', label='Password') }}
+{{ field_password(name='password', label='Password', value=config.password) }}
 
 {% call field_horizontal('Server Admins') %}
 <input name='admins' class='input' placeholder='Enter community server usernames...' value=''>

@@ -1,7 +1,7 @@
 {% extends 'base/page.html' %}
 {% block content %}
 <section class="section">
-  {% call page_header('Create New Server') %}
+  {% call page_header('Edit '~config.display_name) %}
   <button class="button is-small is-primary">
     <span class="icon is-small"><i class="bi bi-floppy"></i></span>
     <span>Save</span>
@@ -21,5 +21,11 @@
       {% include 'editor/tribes_ascend/tribes_ascend_editor_form.html' %}
     </div>
   </div>
+  <br/>
+
+  <code style="margin-top: 2em; background: #222;">
+    {{ config }}
+  </code>
+
 </section>
 {% endblock %}

@@ -28,22 +28,22 @@
     </table>
     {% endif %}
   </div>
-  <footer class="card-footer is-uppercase" hx-vals='{"id":{{server.id}}, "admin_mode":"{{admin_mode|default(false)}}"}'>
+  <footer class="card-footer is-uppercase">
     {% if server.enabled %}
-    <a class="card-footer-item" hx-post="/components/server_card/stop" >
+    <a class="card-footer-item" hx-post="/components/server_card/stop" hx-vals='{"id":{{server.id}}, "admin_mode":"{{admin_mode|default(false)}}"}'>
       {{ icon('power', 'stop') }}
     </a>
     {% else %}
-    <a class="card-footer-item"  hx-post="/components/server_card/start">
+    <a class="card-footer-item"  hx-post="/components/server_card/start" hx-vals='{"id":{{server.id}}, "admin_mode":"{{admin_mode|default(false)}}"}'>
       {{ icon('play-circle', 'start') }}
     </a>
     {% endif %}
     {% if server.enabled and server.status == 'running' %}
-    <a class="card-footer-item" hx-post="/components/server_card/restart">
+    <a class="card-footer-item" hx-post="/components/server_card/restart" hx-vals='{"id":{{server.id}}, "admin_mode":"{{admin_mode|default(false)}}"}'>
       {{ icon('arrow-clockwise', 'restart') }}
     </a>
     {% endif %}
-    <a href="#" class="card-footer-item">
+    <a href="/edit_server/{{server.id}}" class="card-footer-item" hx-boost="true" hx-target="#content" hx-swap="innerHTML" hx-on:click="this.closest('.modal').remove()">
       {{ icon('pencil', 'edit') }}
     </a>
   </footer>

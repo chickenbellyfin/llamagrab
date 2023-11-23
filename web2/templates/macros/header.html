@@ -1,0 +1,15 @@
+{% macro page_header(title, back='/') %}
+<div class="columns is-mobile">
+  <div class="column">
+    <h1 class="title is-5 is-uppercase page-title">
+      {% if back %}<a href="{{ back }}" hx-boost="true" hx-target="#content" hx-swap="innerHTML">{{ icon('arrow-left') }}</a>{% endif %}
+      {{ title }}
+    </h1>
+  </div>
+  {% if caller %}
+  <div class="column is-narrow">
+    {{ caller() }}
+  </div>
+  {% endif %}
+</div>
+{% endmacro %}
