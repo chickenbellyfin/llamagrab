@@ -1,21 +1,18 @@
 import os
+import time
+from ipaddress import ip_network
 from typing import List, Optional
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, Integer, String
+
+from loguru import logger
+from sqlalchemy import Column, Integer, create_engine, desc
+from sqlalchemy.orm import (Mapped, declarative_base, mapped_column,
+                            scoped_session, sessionmaker)
+
+from api import permissions
+from api.audit import AuditLog
 from api.database.models import User
 from api.host_manager import HostManager
-from loguru import logger
-import time
-from api import permissions
 from api.service import exceptions
-from api.audit import AuditLog
-from sqlalchemy.orm import Mapped, mapped_column
-
-
-from ipaddress import ip_network
-
 from common import polling
 
 Base = declarative_base()
@@ -109,7 +106,7 @@ class IPLogDatabase():
   def get(self, user: User) -> List[IPLogEntry]:
     self._check_admin(user)
     with self.SessionFactory() as db:
-      return db.query(IPLogEntry).all()
+      return db.query(IPLogEntry).order_by(desc(IPLogEntry.timestamp)).limit(1000).all()
   
   def get_bans(self, user: User) -> List[IPBan]:
     self._check_admin(user)

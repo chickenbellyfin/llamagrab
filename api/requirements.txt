@@ -1,7 +1,7 @@
 alembic
 argon2_cffi
 attrs
-fastapi-camelcase
+fastapi-camelcase==1.0.5
 fastapi-login
 fastapi-users[sqlalchemy]
 fastapi==0.88.0

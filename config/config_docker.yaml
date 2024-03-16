@@ -12,10 +12,10 @@ port: 8000 # (default for uvicorn)
 
 # Regions returned by /api/data/regions
 regions:
-  central_us: 'NA Central'
-  east_us: 'NA East'
-  west_us: 'NA West'
-  east_au: 'Australia East'
+  - key: localhost
+    name: 'Local Agent'
+    host: 'http://localhost'
+    token: 'test_token'
 
 loginservers:
   - name: localhost
@@ -23,12 +23,3 @@ loginservers:
 
 status_polling_rate_secs: 30
 
-host_manager:
-  port: 8999
-
-  # mapping from region key to host (including http[s]://) & token
-  # host_manager iterates over this list so missing or extra regions wont cause errors
-  nodes:
-    local:
-      host: 'http://localhost'
-      token: 'test_token'
