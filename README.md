@@ -92,9 +92,9 @@ $ xdg-open prof/combined.svg
 ```
 
 ## Release
-Build for amd64 & arm64 & push to ECR
+Build for amd64 & arm64 & push to GHCR
 ```
-docker buildx build --platform linux/amd64,linux/arm64 --tag r.llamagrab.net/llamagrab -f api/Dockerfile --push .
+docker buildx build --platform linux/amd64,linux/arm64 --tag ghcr.io/chickenbellyfin/llamagrab -f api/Dockerfile --push .
 ```
 
 ## Production Deployment Setup
@@ -115,7 +115,7 @@ version: '3.6'
 
 services:
   llamagrab:
-    image: r.llamagrab.net/llamagrab
+    image: ghcr.io/chickenbellyfin/llamagrab
     container_name: llamagrab
     volumes:
       - './data/llamagrab:/data'

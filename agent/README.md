@@ -61,14 +61,14 @@ version: '3.6'
 
 services:
   llamagrab-agent:
-    image: r.llamagrab.net/llamagrab-agent
+    image: ghcr.io/chickenbellyfin/llamagrab-agent
     container_name: llamagrab-agent
     volumes:
       - './llamagrab_agent:/data'
       - '/var/run/docker.sock:/var/run/docker.sock'
     environment:
       - LG_HOST_ABS_DATA_DIR=/home/azureuser/llamagrab_agent
-      - LG_TASERVER_IMAGE=public.ecr.aws/i2q9d4v7/taserver
+      - LG_TASERVER_IMAGE=chickenbellyfin/taserver
       - LG_TOKENS=a1b2c3d4e5f6
     restart: unless-stopped
 
