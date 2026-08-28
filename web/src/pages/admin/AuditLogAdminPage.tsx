@@ -1,12 +1,10 @@
-import { PageHeader, Spin, Table, Tabs } from "antd";
+import { PageHeader, Spin, Table } from "antd";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import { useNavigate } from "react-router-dom";
 import { API } from "../../api";
 import ContentWrapper from "../../components/ContentWrapper";
 import { AuditLogEvent } from "../../domain";
 import useLoader from "../../useLoader";
-
-const { TabPane } = Tabs
 
 const DATE_FORMAT: Intl.DateTimeFormatOptions = {
   weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: '2-digit'

@@ -99,7 +99,7 @@ export default function EditServerPage() {
   const isValid = (
     settings?.region !== undefined
     && config?.displayName !== undefined
-    && config.displayName.length != 0
+    && config.displayName.length !== 0
   )
 
   const gameSpec = loader.value && games[loader.value?.settings.game];

@@ -23,7 +23,7 @@ export default function ServerCard(props: ServerCardProps) {
 
   const auth = useAuth()
   const [actionInProgress, setActionInProgress] = useState(false)
-  const isOwner = props.server.owner == auth.user?.username;
+  const isOwner = props.server.owner === auth.user?.username;
   const navigate = useNavigate();
 
   const maxWidth = props.maxWidth === undefined ? '360px' : props.maxWidth
@@ -85,8 +85,8 @@ export default function ServerCard(props: ServerCardProps) {
   const stopAction = (<div onClick={onStop}><PoweroffOutlined/> STOP</div>);
 
   const actions = [
-    ... props.server.enabled ? [stopAction] : [startAction],
-    ... (props.server.enabled && props.server.status == 'running') ?[restartAction] : [],
+    ...props.server.enabled ? [stopAction] : [startAction],
+    ...(props.server.enabled && props.server.status === 'running') ?[restartAction] : [],
     editAction
   ]
 

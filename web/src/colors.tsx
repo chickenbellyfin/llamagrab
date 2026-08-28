@@ -1,7 +1,7 @@
 import { presetDarkPalettes } from '@ant-design/colors';
 import { CSSProperties } from 'react';
 
-const colors = presetDarkPalettes;
+const palettes = presetDarkPalettes;
 
 // colors for user tier badges
 const tierColors: {[key: string]: any} = {
@@ -11,18 +11,18 @@ const tierColors: {[key: string]: any} = {
   'unverified': ''
 }
 
-export default {
+const colors = {
   success: {
-    hex: colors.green[6],
-    style: { color: colors.green[6] } as CSSProperties
+    hex: palettes.green[6],
+    style: { color: palettes.green[6] } as CSSProperties
   },
   warning: {
-    hex: colors.gold[6],
-    style: { color: colors.gold[6] } as CSSProperties
+    hex: palettes.gold[6],
+    style: { color: palettes.gold[6] } as CSSProperties
   },
   error: {
-    hex: colors.red[5],
-    style: { color: colors.red[5] } as CSSProperties
+    hex: palettes.red[5],
+    style: { color: palettes.red[5] } as CSSProperties
   },
   disabled: {
     hex: '#bfbfbf',
@@ -35,4 +35,6 @@ export default {
     hex: '#404854'
   },
   tiers: tierColors
-}
+};
+
+export default colors;

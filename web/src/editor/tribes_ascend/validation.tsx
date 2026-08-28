@@ -1,6 +1,6 @@
 import { Rule } from "antd/lib/form";
 
-export const allowedCharactersRegex = /^[a-zA-Z0-9 _\-\.:/,'*|[\]]+$/;
+export const allowedCharactersRegex = /^[a-zA-Z0-9 _\-.:/,'*|[\]]+$/;
 
 const Rules = {
   required: {required: true, message: 'Required'} as Rule,

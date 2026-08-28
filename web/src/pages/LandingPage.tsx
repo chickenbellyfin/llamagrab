@@ -55,7 +55,7 @@ export default function LandingPage() {
       title: 'Customizable',
       text:
         <p>Easy-to-use interface backed by the full power of&nbsp;
-          <a style={{color: 'white', textDecoration: 'underline'}} target='_blank' href='https://www.tamods.org/'>TAMods</a>. No coding/lua required. Brand New community maps already installed</p>
+          <a style={{color: 'white', textDecoration: 'underline'}} target='_blank' rel='noreferrer' href='https://www.tamods.org/'>TAMods</a>. No coding/lua required. Brand New community maps already installed</p>
     },
     {
       icon: CloudServerOutlined,

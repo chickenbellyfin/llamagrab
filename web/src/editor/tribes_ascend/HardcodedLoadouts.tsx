@@ -81,7 +81,7 @@ function ClassHardcodedLoadouts(props: ClassHardcodedLoadoutsProps) {
   }
 
   const updateWeapon = (slot: number, equipPoint: keyof HardcodedLoadout, weapon?: string) => {
-    weapon = (weapon == 'none') ? undefined : weapon;
+    weapon = (weapon === 'none') ? undefined : weapon;
     // deep copy
     const updatedLoadouts = state.hardcodedLoadouts.map(item => Object.assign({}, item))
     updatedLoadouts[slot][equipPoint] = weapon;
@@ -188,9 +188,9 @@ interface HardcodedLoadoutFormProps {
 export default function HardcodedLoadoutsForm ({config, updateCallbacks}: HardcodedLoadoutFormProps) {
 
   const [enabled, setEnabled] = useState<boolean>(
-    config.lightHardcodedLoadouts != undefined
-    || config.mediumHardcodedLoadouts != undefined
-    || config.heavyHardcodedLoadouts != undefined
+    config.lightHardcodedLoadouts !== undefined
+    || config.mediumHardcodedLoadouts !== undefined
+    || config.heavyHardcodedLoadouts !== undefined
   )
 
   const onToggle = (value: boolean) => {

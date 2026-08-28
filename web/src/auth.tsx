@@ -78,7 +78,7 @@ function ProvideAuth({ children }: any) {
         .then(auth.login)
         .catch(auth.logout);
     }
-  }, []);
+  }, []); // Do not add auth as a dependency here, nor remove the array. Doing so will cause an infinite request loop.
 
   return (
     <authContext.Provider value={auth}>

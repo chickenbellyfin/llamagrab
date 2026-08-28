@@ -2,7 +2,7 @@ import Icon, { SettingFilled } from "@ant-design/icons";
 import { Button, Layout, Modal, Space, Tooltip } from "antd";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ReactComponent as logo } from '../../public/gen.svg';
 import { useAuth } from "../auth";
 import LoginForm from './LoginForm';
@@ -17,7 +17,6 @@ export default function AppHeader(props: AppHeaderProps) {
   const [isLoginVisible, setLoginVisible] = useState(false);
   const auth = useAuth()
   const breakpoint = useBreakpoint();
-  const location = useLocation();
   const navigate = useNavigate();
 
   const showLogin = () => setLoginVisible(true);

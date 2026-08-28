@@ -4,7 +4,7 @@ import React from "react";
 
 interface ContentWrapperProps { }
 
-export default function (props: React.PropsWithChildren<ContentWrapperProps>) {
+export default function ContentWrapper(props: React.PropsWithChildren<ContentWrapperProps>) {
   const breakpoint = useBreakpoint();
   const padding = breakpoint.sm ? '20px' : '16px'; // less padding on smallest layout
   return (

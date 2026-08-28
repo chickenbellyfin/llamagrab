@@ -90,7 +90,7 @@ function App () {
                 label: 'Regions',
                 title: '' // disables tooltip on mobile
               },
-              ... auth.permissions.isAdmin() ? [{
+              ...auth.permissions.isAdmin() ? [{
                 key: '/admin',
                 icon: <Icon style={{fontSize:'18px'}} component={adminLogo}/>,
                 label: 'Admin',

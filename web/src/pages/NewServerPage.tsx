@@ -70,7 +70,7 @@ export default function NewServerPage() {
   const isValid = (
     settings.region !== undefined
     && config.displayName !== undefined
-    && config.displayName.length != 0
+    && config.displayName.length !== 0
     )
 
   const gameSpec = games[settings.game];

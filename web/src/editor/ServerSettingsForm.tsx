@@ -15,7 +15,7 @@ type ServerSettingsFormProps = {
 export default function ServerSettingsForm({ regions, settings, users, status, onChange }: ServerSettingsFormProps) {
 
   const auth = useAuth()
-  const nonOwnerUsers = users.filter((user) => user.username != status?.owner)
+  const nonOwnerUsers = users.filter((user) => user.username !== status?.owner)
 
   const onRegionChange = (value: string) => {
     if (onChange) {
