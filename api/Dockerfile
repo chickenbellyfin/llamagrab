@@ -1,7 +1,7 @@
 # Build Web App
 # yarn build takes a long time on arm, so this step is only run in buildarch/amd64, then the
 # static output is copied
-FROM --platform=$BUILDPLATFORM node:lts as build_web
+FROM --platform=$BUILDPLATFORM node:lts AS build_web
 
 # yarn install depends only on package.json and yarn.lock
 # Run yarn install before copying the rest of web to avoid reinstalling if deps didnt change
