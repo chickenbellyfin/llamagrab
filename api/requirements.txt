@@ -5,7 +5,8 @@ fastapi-camelcase==1.0.5
 fastapi-login
 fastapi-users[sqlalchemy]
 fastapi==0.88.0
-httpx
+# starlette 0.22 (pinned by fastapi 0.88) builds its TestClient on httpx's `app=` shortcut, which httpx removed in 0.28
+httpx<0.28
 loguru
 passlib
 pyyaml

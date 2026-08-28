@@ -3,5 +3,6 @@ docker
 fastapi==0.88.0
 loguru
 uvicorn
-httpx
+# starlette 0.22 (pinned by fastapi 0.88) builds its TestClient on httpx's `app=` shortcut, which httpx removed in 0.28
+httpx<0.28
 prometheus_client
