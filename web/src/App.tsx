@@ -167,8 +167,13 @@ function App () {
             <Route path='*' element={<Navigate replace to='/'/>}/>
           </Routes>
           </div>
-          <Footer style={{textAlign:'center', whiteSpace:'nowrap', opacity: .7}}>
-            © 2021-{new Date().getFullYear()} <a href='mailto:admin@llamagrab.net' style={{color:'unset', textDecoration: 'underline'}}>admin@llamagrab.net</a>
+          <Footer style={{display: 'flex', flexFlow: 'row wrap', justifyContent: 'center', alignItems: 'center', gap: '10px 15px', textAlign:'center', whiteSpace:'nowrap', opacity: .7}}>
+            © 2021-{new Date().getFullYear()}
+            <a href='https://discord.gg/dd8JgzJ' rel='noreferrer' style={{color:'unset', textDecoration: 'underline'}}>Ask a question</a>
+            <a href='https://feedback.wilderzone.org/' rel='noreferrer' style={{color:'unset', textDecoration: 'underline'}}>Give feedback</a>
+            <a href='https://ko-fi.com/wilderzone' rel='noreferrer' style={{color:'unset', textDecoration: 'underline'}}>Donate</a>
+            <a href='https://github.com/chickenbellyfin/llamagrab' rel='noreferrer' style={{color:'unset', textDecoration: 'underline'}}>Source code</a>
+            <a href='https://wilderzone.org/' rel='noreferrer' style={{color:'unset', textDecoration: 'underline'}}>Maintained by Wilderzone.org</a>
           </Footer>
         </Content>
       </Layout>
